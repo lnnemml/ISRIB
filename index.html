@@ -28,7 +28,7 @@
         "@type": "Offer",
         "url": "https://isrib.shop/",
         "priceCurrency": "USD",
-        "price": "197.00",
+        "price": "50.00",
         "availability": "https://schema.org/InStock",
         "seller": {
           "@type": "Organization",
@@ -49,28 +49,25 @@
         gtag('config', 'G-KMHX8Y9P2L');
         
         // CTA click tracking
-        function trackCTA(location) {
-            gtag('event', 'cta_click', {
+        function trackCTA(location, product = null) {
+            gtag('event', 'contact_intent', {
                 'event_category': 'engagement',
-                'event_label': location
+                'event_label': location,
+                'product': product
             });
             
             // Meta Pixel
             if (typeof fbq !== 'undefined') {
-                fbq('track', 'AddToCart', {
-                    content_name: 'ISRIB A15',
-                    content_category: 'Nootropics',
-                    value: 197.00,
-                    currency: 'USD'
+                fbq('track', 'Contact', {
+                    content_name: product || 'General Inquiry',
+                    content_category: 'Research Chemicals'
                 });
             }
             
             // Reddit Pixel
             if (typeof rdt !== 'undefined') {
-                rdt('track', 'AddToCart', {
-                    item_name: 'ISRIB A15',
-                    value: 197.00,
-                    currency: 'USD'
+                rdt('track', 'Contact', {
+                    item_name: product || 'General Inquiry'
                 });
             }
         }
@@ -109,8 +106,8 @@
                     <a href="about.html">About</a>
                     <a href="faq.html">FAQ</a>
                     <a href="contact.html">Contact</a>
-                    <a href="https://isrib.shop/checkout" class="cart-btn" onclick="trackCTA('header')" rel="noopener" target="_blank">
-                        🛒 Cart (0)
+                    <a href="contact.html?inquiry=order" class="cart-btn" onclick="trackCTA('header', 'cart')">
+                        💬 Contact to Order
                     </a>
                 </nav>
             </div>
@@ -142,10 +139,10 @@
                     </div>
 
                     <div class="cta-buttons">
-                        <a href="products.html" class="btn-primary" onclick="trackCTA('hero')">
+                        <a href="products.html" class="btn-primary" onclick="trackCTA('hero', 'browse_products')">
                             🧬 Browse Products
                         </a>
-                        <a href="about.html" class="btn-secondary">Learn More</a>
+                        <a href="contact.html?inquiry=order" class="btn-secondary" onclick="trackCTA('hero', 'contact_order')">Contact to Order</a>
                     </div>
                 </div>
 
@@ -178,9 +175,9 @@
                     <div class="trust-desc">Certificate of Analysis provided with every order</div>
                 </div>
                 <div class="trust-item">
-                    <span class="trust-icon">🔒</span>
-                    <div class="trust-title">Secure Payments</div>
-                    <div class="trust-desc">Encrypted transactions and data protection</div>
+                    <span class="trust-icon">💬</span>
+                    <div class="trust-title">Personal Service</div>
+                    <div class="trust-desc">Direct communication with researchers for custom orders</div>
                 </div>
             </div>
         </div>
@@ -207,8 +204,8 @@
                     <p class="product-description">Ultra Potent ISRIB Analogue with enhanced potency and selectivity. Targets eIF2B for cognitive enhancement research.</p>
                     <div class="product-specs">
                         <div class="spec-row">
-                            <span class="spec-label">CAS Number:</span>
-                            <span class="spec-value">Custom synthesis</span>
+                            <span class="spec-label">Available:</span>
+                            <span class="spec-value">100mg, 500mg, 1g</span>
                         </div>
                         <div class="spec-row">
                             <span class="spec-label">Purity:</span>
@@ -226,8 +223,8 @@
                     <div class="product-footer">
                         <div class="price-range">$50 - $200</div>
                         <div class="product-buttons">
-                            <a href="https://isrib.shop/product-page/isrib-a15-1g" class="view-product" target="_blank" rel="noopener">View Details</a>
-                            <a href="https://isrib.shop/checkout" class="add-to-cart" target="_blank" rel="noopener" onclick="trackCTA('product')">Add to Cart</a>
+                            <a href="products.html#isrib-a15" class="view-product">View Details</a>
+                            <a href="contact.html?product=isrib-a15&inquiry=order" class="add-to-cart" onclick="trackCTA('product', 'isrib-a15')">Contact to Order</a>
                         </div>
                     </div>
                 </div>
@@ -243,8 +240,8 @@
                     <p class="product-description">Integrated Stress Response Inhibitor. Selective inhibitor of eIF2α phosphorylation-induced stress granule formation.</p>
                     <div class="product-specs">
                         <div class="spec-row">
-                            <span class="spec-label">CAS Number:</span>
-                            <span class="spec-value">1597403-47-8</span>
+                            <span class="spec-label">Available:</span>
+                            <span class="spec-value">30mg, 100mg, 1g</span>
                         </div>
                         <div class="spec-row">
                             <span class="spec-label">Purity:</span>
@@ -255,15 +252,15 @@
                             <span class="spec-value">451.3 g/mol</span>
                         </div>
                         <div class="spec-row">
-                            <span class="spec-label">Solubility:</span>
-                            <span class="spec-value">1mg/ml DMSO</span>
+                            <span class="spec-label">CAS:</span>
+                            <span class="spec-value">1597403-47-8</span>
                         </div>
                     </div>
                     <div class="product-footer">
                         <div class="price-range">$14 - $100</div>
                         <div class="product-buttons">
-                            <a href="https://isrib.shop/product-page/isrib-5-pill" class="view-product" target="_blank" rel="noopener">View Details</a>
-                            <a href="https://isrib.shop/checkout" class="add-to-cart" target="_blank" rel="noopener" onclick="trackCTA('product')">Add to Cart</a>
+                            <a href="products.html#isrib" class="view-product">View Details</a>
+                            <a href="contact.html?product=isrib&inquiry=order" class="add-to-cart" onclick="trackCTA('product', 'isrib')">Contact to Order</a>
                         </div>
                     </div>
                 </div>
@@ -279,8 +276,8 @@
                     <p class="product-description">Fast-onset research compound. Disrupts SERT-nNOS interaction in the dorsal raphe nucleus. Blood-brain barrier permeable.</p>
                     <div class="product-specs">
                         <div class="spec-row">
-                            <span class="spec-label">CAS Number:</span>
-                            <span class="spec-value">99141-91-0</span>
+                            <span class="spec-label">Available:</span>
+                            <span class="spec-value">100mg, 500mg, 1g</span>
                         </div>
                         <div class="spec-row">
                             <span class="spec-label">Purity:</span>
@@ -291,22 +288,22 @@
                             <span class="spec-value">244.29 g/mol</span>
                         </div>
                         <div class="spec-row">
-                            <span class="spec-label">Solubility:</span>
-                            <span class="spec-value">250mg/ml DMSO</span>
+                            <span class="spec-label">CAS:</span>
+                            <span class="spec-value">99141-91-0</span>
                         </div>
                     </div>
                     <div class="product-footer">
                         <div class="price-range">$50 - $200</div>
                         <div class="product-buttons">
-                            <a href="https://isrib.shop/product-page/zzl-7-1g" class="view-product" target="_blank" rel="noopener">View Details</a>
-                            <a href="https://isrib.shop/checkout" class="add-to-cart" target="_blank" rel="noopener" onclick="trackCTA('product')">Add to Cart</a>
+                            <a href="products.html#zzl7" class="view-product">View Details</a>
+                            <a href="contact.html?product=zzl7&inquiry=order" class="add-to-cart" onclick="trackCTA('product', 'zzl7')">Contact to Order</a>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div style="text-align: center; margin-top: 40px;">
-                <a href="products.html" class="btn-primary" onclick="trackCTA('view-all')">View All Products</a>
+                <a href="products.html" class="btn-primary" onclick="trackCTA('view-all', 'products')">View All Products</a>
             </div>
         </div>
     </section>
@@ -326,7 +323,7 @@
                         <li>Climate-controlled storage facilities</li>
                         <li>Experienced chemical synthesis team</li>
                         <li>Worldwide shipping capabilities</li>
-                        <li>Dedicated customer support</li>
+                        <li>Personal customer support via chat</li>
                     </ul>
                 </div>
 
@@ -335,6 +332,37 @@
                     <h3 style="color: #1e293b; margin-bottom: 15px; font-weight: 700;">Research Excellence</h3>
                     <p style="color: #64748b; margin: 0;">Supporting breakthrough discoveries in neuroscience, biochemistry, and pharmaceutical research since 2020.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Order Section -->
+    <section style="background: #f8fafc; padding: 80px 0;">
+        <div class="container">
+            <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">How to Order</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
+                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
+                    <h3 style="color: #1e293b; margin-bottom: 15px;">Choose Product</h3>
+                    <p style="color: #64748b; font-size: 0.95rem;">Browse our catalog and select the compound and quantity you need.</p>
+                </div>
+                
+                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
+                    <h3 style="color: #1e293b; margin-bottom: 15px;">Contact Us</h3>
+                    <p style="color: #64748b; font-size: 0.95rem;">Send inquiry through our contact form or live chat with product details.</p>
+                </div>
+                
+                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
+                    <h3 style="color: #1e293b; margin-bottom: 15px;">Payment & Shipping</h3>
+                    <p style="color: #64748b; font-size: 0.95rem;">We'll arrange payment and shipping details directly with you.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="contact.html?inquiry=order" class="btn-primary" onclick="trackCTA('how-to-order', 'start_order')">Start Your Order</a>
             </div>
         </div>
     </section>
@@ -351,13 +379,13 @@
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-question">Is ISRIB safe for human use?</div>
-                    <div class="faq-answer">It is strictly for research use only, not approved for human consumption.</div>
+                    <div class="faq-question">How do I place an order?</div>
+                    <div class="faq-answer">Contact us directly through our contact form or live chat with your requirements.</div>
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-question">How should it be stored?</div>
-                    <div class="faq-answer">−20°C, dry environment.</div>
+                    <div class="faq-question">What payment methods do you accept?</div>
+                    <div class="faq-answer">We arrange payment individually with each customer - cryptocurrency, bank transfer, or other secure methods.</div>
                 </div>
 
                 <div class="faq-item">
@@ -381,8 +409,8 @@
                 </div>
 
                 <div class="faq-item">
-                    <div class="faq-question">What payment methods do you accept?</div>
-                    <div class="faq-answer">Cryptocurrency, bank transfer, and select credit cards.</div>
+                    <div class="faq-question">Can I get custom quantities?</div>
+                    <div class="faq-answer">Yes, contact us for custom synthesis and bulk orders.</div>
                 </div>
             </div>
         </div>
@@ -412,21 +440,21 @@
                 <div class="footer-section">
                     <h3>Information</h3>
                     <ul>
-                        <li><a href="shipping.html">Shipping Info</a></li>
-                        <li><a href="quality.html">Quality Control</a></li>
-                        <li><a href="coa.html">COA Library</a></li>
+                        <li><a href="about.html">About Us</a></li>
                         <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="safety.html">Safety Guidelines</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#quality">Quality Control</a></li>
+                        <li><a href="#safety">Safety Guidelines</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-section">
                     <h3>Legal</h3>
                     <ul>
-                        <li><a href="https://isrib.shop/terms" rel="noopener" target="_blank">Terms of Service</a></li>
-                        <li><a href="https://isrib.shop/privacy" rel="noopener" target="_blank">Privacy Policy</a></li>
-                        <li><a href="research-use.html">Research Use Only</a></li>
-                        <li><a href="disclaimer.html">Disclaimer</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#research-use">Research Use Only</a></li>
+                        <li><a href="#disclaimer">Disclaimer</a></li>
                     </ul>
                 </div>
             </div>
@@ -439,8 +467,8 @@
 
     <!-- Sticky Mobile CTA -->
     <div class="sticky-mobile-cta">
-        <a href="https://isrib.shop/checkout" target="_blank" rel="noopener" onclick="trackCTA('mobile-sticky')">
-            🛒 Shop A15 Now
+        <a href="contact.html?inquiry=order" onclick="trackCTA('mobile-sticky', 'contact_order')">
+            💬 Contact to Order
         </a>
     </div>
 
