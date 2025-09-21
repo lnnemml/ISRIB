@@ -560,4 +560,135 @@
         document.querySelectorAll('.quantity-option').forEach(option => {
             option.addEventListener('click', function() {
                 const card = this.closest('.product-card');
-                const quantity
+                const quantity = this.dataset.quantity;
+                const price = this.dataset.price;
+                
+                // Remove active class from siblings
+                card.querySelectorAll('.quantity-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // Update selected quantity in specs
+                const selectedQuantityEl = card.querySelector('.selected-quantity');
+                if (selectedQuantityEl) {
+                    selectedQuantityEl.textContent = quantity;
+                }
+                
+                // Update price display
+                const currentPriceEl = card.querySelector('.current-price');
+                const pricePerMgEl = card.querySelector('.price-per-mg');
+                
+                if (currentPriceEl) {
+                    currentPriceEl.textContent = `${price}.00`;
+                }
+                
+                if (pricePerMgEl) {
+                    // Calculate price per mg
+                    const quantityNum = parseFloat(quantity.replace(/mg|g/, ''));
+                    const quantityInMg = quantity.includes('g') ? quantityNum * 1000 : quantityNum;
+                    const pricePerMg = (parseFloat(price) / quantityInMg).toFixed(3);
+                    pricePerMgEl.textContent = `(${pricePerMg}/mg)`;
+                }
+                
+                // Update contact links with product info
+                const productName = card.querySelector('.product-name').textContent.toLowerCase().replace(/\s+/g, '-');
+                const contactLinks = card.querySelectorAll('.contact-to-order');
+                
+                contactLinks.forEach(link => {
+                    const baseUrl = 'contact.html';
+                    const params = new URLSearchParams({
+                        product: `${productName}-${quantity}`,
+                        price: price,
+                        inquiry: 'order'
+                    });
+                    link.href = `${baseUrl}?${params.toString()}`;
+                });
+                
+                // Track quantity selection
+                if (typeof trackEvent === 'function') {
+                    trackEvent('quantity_selected', {
+                        product: card.querySelector('.product-name').textContent,
+                        quantity: quantity,
+                        price: price
+                    });
+                }
+            });
+        });
+
+        // Initialize default selections on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Trigger click on first quantity option for each product to initialize
+            document.querySelectorAll('.product-card').forEach(card => {
+                const firstOption = card.querySelector('.quantity-option.active');
+                if (firstOption) {
+                    firstOption.click();
+                }
+            });
+        });
+
+        // Enhanced hover effects for product cards
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                if (window.innerWidth > 1024) { // Only on desktop
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                    this.style.boxShadow = '0 15px 40px rgba(0, 0, 0, 0.2)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (window.innerWidth > 1024) {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+                }
+            });
+        });
+
+        // Quick order function for immediate contact
+        function quickOrder(productName, quantity, price) {
+            const productSlug = productName.toLowerCase().replace(/\s+/g, '-');
+            const url = `contact.html?product=${productSlug}-${quantity}&price=${price}&inquiry=order`;
+            
+            // Track quick order event
+            if (typeof trackEvent === 'function') {
+                trackEvent('quick_order_click', {
+                    product: productName,
+                    quantity: quantity,
+                    price: price
+                });
+            }
+            
+            // Navigate to contact form
+            window.location.href = url;
+        }
+
+        // Smooth scroll to product anchors
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Highlight the target product card briefly
+                    targetElement.style.background = '#eff6ff';
+                    setTimeout(() => {
+                        targetElement.style.background = '';
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
