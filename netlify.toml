@@ -1,4 +1,4 @@
-# Netlify Build Configuration for ISRIB Shop
+# Netlify Build Configuration for ISRIB Shop (Manual Payment System)
 
 [build]
   # Build command (not needed for static site)
@@ -18,7 +18,9 @@
   # Analytics IDs (replace with real values)
   GOOGLE_ANALYTICS_ID = "G-KMHX8Y9P2L"
   TAWK_TO_ID = "YOUR_TAWK_TO_ID"
-  STRIPE_PUBLISHABLE_KEY = "pk_test_YOUR_STRIPE_KEY"
+  
+  # Contact details
+  CONTACT_EMAIL = "isrib.shop@protonmail.com"
 
 # Production context
 [context.production]
@@ -102,6 +104,24 @@
     name = "newsletter"
     template = "newsletter-template"
 
+# Form notifications
+[[forms.contact.notifications]]
+  type = "email"
+  event = "submission"
+  to = "isrib.shop@protonmail.com"
+  subject = "New Order Inquiry - ISRIB Shop"
+  body = """
+  New contact form submission:
+  
+  Name: {{ name }}
+  Email: {{ email }}
+  Subject: {{ subject }}
+  Product: {{ product }}
+  Message: {{ message }}
+  
+  Submitted: {{ created_at }}
+  """
+
 # Edge functions (future enhancement)
 [[edge_functions]]
   function = "geolocation"
@@ -132,13 +152,6 @@
   [plugins.inputs]
     # Lighthouse CI configuration
     output_path = "reports/lighthouse"
-    
-# Prerendering for better SEO (if needed)
-[[plugins]]
-  package = "@netlify/plugin-gatsby"
-  
-  [plugins.inputs]
-    # Only if using Gatsby in future
 
 # Development server configuration
 [dev]
@@ -146,3 +159,19 @@
   port = 8000
   publish = "."
   autoLaunch = true
+
+# Manual payment system redirects (no Stripe)
+[[redirects]]
+  from = "/checkout/*"
+  to = "/contact?inquiry=order"
+  status = 301
+
+[[redirects]]
+  from = "/payment/*"
+  to = "/contact?inquiry=payment"
+  status = 301
+
+[[redirects]]
+  from = "/order/*"
+  to = "/contact?inquiry=order"
+  status = 301
