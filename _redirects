@@ -1,7 +1,23 @@
-# Netlify Redirects for ISRIB Shop
+# Netlify Redirects for ISRIB Shop (Manual Payment System)
 
-# Basic checkout redirect
-/checkout    https://isrib.shop/checkout    301
+# Contact for ordering redirects
+/order-isrib-a15-100mg    /contact?product=isrib-a15-100mg&price=50    301
+/order-isrib-a15-500mg    /contact?product=isrib-a15-500mg&price=130   301
+/order-isrib-a15-1g       /contact?product=isrib-a15-1g&price=200      301
+/order-isrib-30mg         /contact?product=isrib-30mg&price=14         301
+/order-isrib-100mg        /contact?product=isrib-100mg&price=27        301
+/order-isrib-1g           /contact?product=isrib-1g&price=100          301
+/order-zzl7-100mg         /contact?product=zzl7-100mg&price=50         301
+/order-zzl7-500mg         /contact?product=zzl7-500mg&price=130        301
+/order-zzl7-1g            /contact?product=zzl7-1g&price=200           301
+/order-mpep-50mg          /contact?product=mpep-50mg&price=45          301
+/order-mpep-100mg         /contact?product=mpep-100mg&price=75         301
+/order-mpep-500mg         /contact?product=mpep-500mg&price=280        301
+/order-mpep-1g            /contact?product=mpep-1g&price=450           301
+
+# General order redirect
+/order                    /contact?inquiry=order                        301
+/checkout                 /contact?inquiry=checkout                     301
 
 # SPA fallback for all other routes
-/*           /index.html                   200
+/*                        /index.html                                   200
