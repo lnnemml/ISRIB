@@ -1,0 +1,148 @@
+# Netlify Build Configuration for ISRIB Shop
+
+[build]
+  # Build command (not needed for static site)
+  command = ""
+  
+  # Directory to deploy (root directory)
+  publish = "."
+  
+  # Functions directory (for future serverless functions)
+  functions = "netlify/functions"
+
+# Build environment variables
+[build.environment]
+  # Node.js version
+  NODE_VERSION = "18"
+  
+  # Analytics IDs (replace with real values)
+  GOOGLE_ANALYTICS_ID = "G-KMHX8Y9P2L"
+  TAWK_TO_ID = "YOUR_TAWK_TO_ID"
+  STRIPE_PUBLISHABLE_KEY = "pk_test_YOUR_STRIPE_KEY"
+
+# Production context
+[context.production]
+  command = ""
+  
+  [context.production.environment]
+    NODE_ENV = "production"
+    ANALYTICS_ENABLED = "true"
+
+# Deploy preview context  
+[context.deploy-preview]
+  command = ""
+  
+  [context.deploy-preview.environment]
+    NODE_ENV = "staging"
+    ANALYTICS_ENABLED = "false"
+
+# Branch deploys context
+[context.branch-deploy]
+  command = ""
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    
+    # Cache control
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# CSS files caching
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# JavaScript files caching  
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Images caching
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML files (shorter cache)
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# API endpoints (no cache)
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Form submissions
+[[headers]]
+  for = "/contact"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+# Netlify Forms configuration
+[forms]
+  # Contact form
+  [forms.contact]
+    name = "contact"
+    template = "contact-form-template"
+    
+  # Newsletter signup
+  [forms.newsletter]
+    name = "newsletter"
+    template = "newsletter-template"
+
+# Edge functions (future enhancement)
+[[edge_functions]]
+  function = "geolocation"
+  path = "/api/geo"
+
+# Plugin configuration
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+  
+  [plugins.inputs]
+    buildDir = "."
+    exclude = [
+      "/admin/**",
+      "/api/**"
+    ]
+
+# Analytics
+[[plugins]]
+  package = "netlify-plugin-google-analytics"
+  
+  [plugins.inputs]
+    googleAnalyticsId = "G-KMHX8Y9P2L"
+
+# Performance optimization
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+  
+  [plugins.inputs]
+    # Lighthouse CI configuration
+    output_path = "reports/lighthouse"
+    
+# Prerendering for better SEO (if needed)
+[[plugins]]
+  package = "@netlify/plugin-gatsby"
+  
+  [plugins.inputs]
+    # Only if using Gatsby in future
+
+# Development server configuration
+[dev]
+  command = "python -m http.server 8000"
+  port = 8000
+  publish = "."
+  autoLaunch = true
