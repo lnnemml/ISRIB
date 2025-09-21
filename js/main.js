@@ -12,11 +12,120 @@ function initializeApp() {
     initSmoothScrolling();
     initFadeInAnimations();
     initProductInteractions();
+    initQuantitySelectors();
+    initProductFilters();
     initCartFunctionality();
     initMobileOptimizations();
     initAnalytics();
     initContactForms();
     initPerformanceOptimizations();
+}
+
+// Quantity selector functionality for products page
+function initQuantitySelectors() {
+    document.querySelectorAll('.quantity-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const card = this.closest('.product-card');
+            const quantity = this.dataset.quantity;
+            const price = this.dataset.price;
+            
+            // Remove active class from siblings
+            card.querySelectorAll('.quantity-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            // Add active class to clicked option
+            this.classList.add('active');
+            
+            // Update selected quantity in specs
+            const selectedQuantityEl = card.querySelector('.selected-quantity');
+            if (selectedQuantityEl) {
+                selectedQuantityEl.textContent = quantity;
+            }
+            
+            // Update price display
+            const currentPriceEl = card.querySelector('.current-price');
+            const pricePerMgEl = card.querySelector('.price-per-mg');
+            
+            if (currentPriceEl) {
+                currentPriceEl.textContent = `${price}.00`;
+            }
+            
+            if (pricePerMgEl) {
+                // Calculate price per mg
+                const quantityNum = parseFloat(quantity.replace(/mg|g/, ''));
+                const quantityInMg = quantity.includes('g') ? quantityNum * 1000 : quantityNum;
+                const pricePerMg = (parseFloat(price) / quantityInMg).toFixed(3);
+                pricePerMgEl.textContent = `(${pricePerMg}/mg)`;
+            }
+            
+            // Update product link href
+            const productLink = card.querySelector('.product-link');
+            if (productLink) {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase().replace(/\s+/g, '-');
+                const newHref = `https://isrib.shop/product-page/${productName}-${quantity}`;
+                productLink.href = newHref;
+            }
+            
+            // Track quantity selection
+            trackEvent('quantity_selected', {
+                product: card.querySelector('.product-name').textContent,
+                quantity: quantity,
+                price: price
+            });
+        });
+    });
+
+    // Initialize default selections on page load
+    setTimeout(() => {
+        document.querySelectorAll('.product-card').forEach(card => {
+            const firstOption = card.querySelector('.quantity-option.active');
+            if (firstOption) {
+                firstOption.click();
+            }
+        });
+    }, 100);
+}
+
+// Product filtering functionality
+function initProductFilters() {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filter = this.dataset.filter;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'white';
+                b.style.color = '#1e40af';
+            });
+            this.classList.add('active');
+            this.style.background = '#1e40af';
+            this.style.color = 'white';
+            
+            // Filter products with animation
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (filter === 'all' || card.dataset.category === filter) {
+                    card.style.display = 'block';
+                    card.style.opacity = '0';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                    }, 100);
+                } else {
+                    card.style.opacity = '0';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+            
+            // Track filter usage
+            trackEvent('product_filter', {
+                filter_type: filter
+            });
+        });
+    });
 }
 
 // Header scroll effect with enhanced performance
