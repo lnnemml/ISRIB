@@ -1,50 +1,7 @@
 # Netlify Redirects for ISRIB Shop
-# Payment redirects to Stripe checkout links
 
-# ISRIB-A15 Products
-/checkout-isrib-a15-100mg    https://buy.stripe.com/test_PAYMENT_LINK_1    301
-/checkout-isrib-a15-500mg    https://buy.stripe.com/test_PAYMENT_LINK_2    301
-/checkout-isrib-a15-1g       https://buy.stripe.com/test_PAYMENT_LINK_3    301
+# Basic checkout redirect
+/checkout    https://isrib.shop/checkout    301
 
-# Original ISRIB Products  
-/checkout-isrib-30mg         https://buy.stripe.com/test_PAYMENT_LINK_4    301
-/checkout-isrib-100mg        https://buy.stripe.com/test_PAYMENT_LINK_5    301
-/checkout-isrib-1g           https://buy.stripe.com/test_PAYMENT_LINK_6    301
-
-# ZZL-7 Products
-/checkout-zzl7-100mg         https://buy.stripe.com/test_PAYMENT_LINK_7    301
-/checkout-zzl7-1g            https://buy.stripe.com/test_PAYMENT_LINK_8    301
-
-# MPEP Oxalate Products
-/checkout-mpep-50mg          https://buy.stripe.com/test_PAYMENT_LINK_9    301
-/checkout-mpep-1g            https://buy.stripe.com/test_PAYMENT_LINK_10   301
-
-# General checkout redirect
-/checkout                    https://isrib.shop/checkout                  301
-/buy                         https://isrib.shop/checkout                  301
-/order                       https://isrib.shop/checkout                  301
-
-# Product page redirects to current Wix store (temporary)
-/product-isrib-a15           https://isrib.shop/product-page/isrib-a15-1g  301
-/product-isrib               https://isrib.shop/product-page/isrib-5-pill  301
-/product-zzl7                https://isrib.shop/product-page/zzl-7-1g      301
-
-# Legacy URL redirects
-/shop                        /products                                     301
-/store                       /products                                     301
-/catalog                     /products                                     301
-
-# Success and cancel pages for Stripe
-/success                     /order-success                               200
-/cancel                      /order-cancelled                             200
-
-# API redirects for forms and webhooks
-/api/contact                 /.netlify/functions/contact                  200
-/api/newsletter              /.netlify/functions/newsletter               200
-/api/stripe-webhook          /.netlify/functions/stripe-webhook           200
-
-# Security headers and SPA fallback
-/*                           /index.html                                  200
-
-# File not found fallback
-/404                         /404.html                                    404
+# SPA fallback for all other routes
+/*           /index.html                   200
