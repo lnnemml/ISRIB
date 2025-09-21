@@ -1,4 +1,4 @@
-// ISRIB Shop - Main JavaScript
+// ISRIB Shop - Main JavaScript (Manual Payment System)
 // Modern ES6+ JavaScript for enhanced functionality
 
 // DOM Content Loaded Event
@@ -14,11 +14,113 @@ function initializeApp() {
     initProductInteractions();
     initQuantitySelectors();
     initProductFilters();
-    initCartFunctionality();
+    initContactFunctionality();
     initMobileOptimizations();
     initAnalytics();
     initContactForms();
     initPerformanceOptimizations();
+}
+
+// Contact-based functionality instead of cart
+function initContactFunctionality() {
+    let inquiries = getInquiriesFromStorage();
+    updateInquiryDisplay();
+    
+    // Contact to order buttons
+    document.querySelectorAll('.contact-to-order, .add-to-cart').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Don't prevent default for contact links
+            if (this.href && this.href.includes('contact.html')) {
+                // Track the contact intent
+                const productCard = this.closest('.product-card');
+                if (productCard) {
+                    const productName = productCard.querySelector('.product-name')?.textContent;
+                    trackEvent('contact_to_order', {
+                        product_name: productName,
+                        source: 'product_card'
+                    });
+                }
+                return; // Let it navigate to contact form
+            }
+            
+            e.preventDefault();
+            
+            const productCard = this.closest('.product-card');
+            const productName = productCard?.querySelector('.product-name')?.textContent;
+            
+            if (productName) {
+                addToInquiry({
+                    name: productName,
+                    timestamp: new Date().toISOString()
+                });
+                
+                showContactAnimation(this);
+                trackEvent('add_to_inquiry', {
+                    product_name: productName
+                });
+            }
+        });
+    });
+    
+    function addToInquiry(product) {
+        const existingItem = inquiries.find(item => item.name === product.name);
+        
+        if (!existingItem) {
+            inquiries.push(product);
+            saveInquiriesToStorage();
+            updateInquiryDisplay();
+            showContactFeedback();
+        }
+    }
+    
+    function updateInquiryDisplay() {
+        const contactBtn = document.querySelector('.cart-btn');
+        if (contactBtn) {
+            const totalInquiries = inquiries.length;
+            if (totalInquiries > 0) {
+                contactBtn.innerHTML = `💬 Contact (${totalInquiries} items)`;
+            } else {
+                contactBtn.innerHTML = `💬 Contact to Order`;
+            }
+        }
+    }
+    
+    function showContactAnimation(button) {
+        const originalText = button.innerHTML;
+        const originalStyle = button.style.background;
+        
+        button.innerHTML = '✓ Added to inquiry!';
+        button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        button.style.transform = 'scale(1.05)';
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = originalStyle;
+            button.style.transform = 'scale(1)';
+        }, 2000);
+    }
+    
+    function showContactFeedback() {
+        showNotification('Product added to inquiry! Contact us to place your order.', 'success');
+    }
+    
+    function getInquiriesFromStorage() {
+        try {
+            const stored = localStorage.getItem('isrib_inquiries');
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            console.warn('Could not load inquiries from storage:', e);
+            return [];
+        }
+    }
+    
+    function saveInquiriesToStorage() {
+        try {
+            localStorage.setItem('isrib_inquiries', JSON.stringify(inquiries));
+        } catch (e) {
+            console.warn('Could not save inquiries to storage:', e);
+        }
+    }
 }
 
 // Quantity selector functionality for products page
@@ -48,7 +150,7 @@ function initQuantitySelectors() {
             const pricePerMgEl = card.querySelector('.price-per-mg');
             
             if (currentPriceEl) {
-                currentPriceEl.textContent = `${price}.00`;
+                currentPriceEl.textContent = `$${price}.00`;
             }
             
             if (pricePerMgEl) {
@@ -56,16 +158,11 @@ function initQuantitySelectors() {
                 const quantityNum = parseFloat(quantity.replace(/mg|g/, ''));
                 const quantityInMg = quantity.includes('g') ? quantityNum * 1000 : quantityNum;
                 const pricePerMg = (parseFloat(price) / quantityInMg).toFixed(3);
-                pricePerMgEl.textContent = `(${pricePerMg}/mg)`;
+                pricePerMgEl.textContent = `($${pricePerMg}/mg)`;
             }
             
-            // Update product link href
-            const productLink = card.querySelector('.product-link');
-            if (productLink) {
-                const productName = card.querySelector('.product-name').textContent.toLowerCase().replace(/\s+/g, '-');
-                const newHref = `https://isrib.shop/product-page/${productName}-${quantity}`;
-                productLink.href = newHref;
-            }
+            // Update contact links with product info
+            updateContactLinks(card, quantity, price);
             
             // Track quantity selection
             trackEvent('quantity_selected', {
@@ -85,6 +182,22 @@ function initQuantitySelectors() {
             }
         });
     }, 100);
+}
+
+// Update contact links with current selection
+function updateContactLinks(card, quantity, price) {
+    const productName = card.querySelector('.product-name').textContent.toLowerCase().replace(/\s+/g, '-');
+    const contactLinks = card.querySelectorAll('a[href*="contact.html"]');
+    
+    contactLinks.forEach(link => {
+        const baseUrl = 'contact.html';
+        const params = new URLSearchParams({
+            product: `${productName}-${quantity}`,
+            price: price,
+            inquiry: 'order'
+        });
+        link.href = `${baseUrl}?${params.toString()}`;
+    });
 }
 
 // Product filtering functionality
@@ -234,7 +347,7 @@ function initProductInteractions() {
         
         // Product card click analytics
         card.addEventListener('click', function(e) {
-            if (!e.target.closest('a')) {
+            if (!e.target.closest('a, button')) {
                 const productName = this.querySelector('.product-name').textContent;
                 trackEvent('product_view', {
                     product_name: productName,
@@ -245,147 +358,8 @@ function initProductInteractions() {
     });
 }
 
-// Cart functionality with local storage and animations
-function initCartFunctionality() {
-    let cart = getCartFromStorage();
-    updateCartDisplay();
-    
-    // Add to cart buttons
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            // Don't prevent default for external links
-            if (this.href && this.href.includes('isrib.shop')) {
-                return; // Let it navigate to external checkout
-            }
-            
-            e.preventDefault();
-            
-            const productCard = this.closest('.product-card');
-            const productName = productCard.querySelector('.product-name').textContent;
-            const productPrice = productCard.querySelector('.price-range').textContent;
-            
-            addToCart({
-                name: productName,
-                price: productPrice,
-                quantity: 1
-            });
-            
-            showCartAnimation(this);
-            trackEvent('add_to_cart', {
-                product_name: productName,
-                price: productPrice
-            });
-        });
-    });
-    
-    function addToCart(product) {
-        const existingItem = cart.find(item => item.name === product.name);
-        
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push(product);
-        }
-        
-        saveCartToStorage();
-        updateCartDisplay();
-        showAddToCartFeedback();
-    }
-    
-    function updateCartDisplay() {
-        const cartBtn = document.querySelector('.cart-btn');
-        if (cartBtn) {
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartBtn.innerHTML = `🛒 Cart (${totalItems})`;
-        }
-    }
-    
-    function showCartAnimation(button) {
-        const originalText = button.innerHTML;
-        const originalStyle = button.style.background;
-        
-        button.innerHTML = '✓ Added!';
-        button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-        button.style.transform = 'scale(1.05)';
-        
-        setTimeout(() => {
-            button.innerHTML = originalText;
-            button.style.background = originalStyle;
-            button.style.transform = 'scale(1)';
-        }, 2000);
-    }
-    
-    function showAddToCartFeedback() {
-        // Create toast notification
-        const toast = document.createElement('div');
-        toast.className = 'cart-toast';
-        toast.innerHTML = '🛒 Product added to cart!';
-        toast.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            z-index: 10000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        `;
-        
-        document.body.appendChild(toast);
-        
-        // Animate in
-        setTimeout(() => {
-            toast.style.transform = 'translateX(0)';
-        }, 100);
-        
-        // Animate out and remove
-        setTimeout(() => {
-            toast.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                document.body.removeChild(toast);
-            }, 300);
-        }, 3000);
-    }
-    
-    function getCartFromStorage() {
-        try {
-            const stored = localStorage.getItem('isrib_cart');
-            return stored ? JSON.parse(stored) : [];
-        } catch (e) {
-            console.warn('Could not load cart from storage:', e);
-            return [];
-        }
-    }
-    
-    function saveCartToStorage() {
-        try {
-            localStorage.setItem('isrib_cart', JSON.stringify(cart));
-        } catch (e) {
-            console.warn('Could not save cart to storage:', e);
-        }
-    }
-}
-
 // Mobile optimizations and touch interactions
 function initMobileOptimizations() {
-    // Mobile menu toggle (if needed in future)
-    let mobileMenuOpen = false;
-    
-    function toggleMobileMenu() {
-        const nav = document.querySelector('.nav');
-        mobileMenuOpen = !mobileMenuOpen;
-        
-        if (mobileMenuOpen) {
-            nav.classList.add('mobile-active');
-        } else {
-            nav.classList.remove('mobile-active');
-        }
-    }
-    
     // Touch optimization for iOS Safari
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
         document.addEventListener('touchstart', function() {}, { passive: true });
@@ -472,9 +446,6 @@ function initContactForms() {
     
     contactForms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
             
@@ -482,40 +453,20 @@ function initContactForms() {
             submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
             
-            // Simulate form submission (replace with actual endpoint)
-            fetch(this.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    showFormSuccess();
-                    this.reset();
-                    trackEvent('form_submit', {
-                        form_name: 'contact'
-                    });
-                } else {
-                    throw new Error('Network response was not ok');
-                }
-            })
-            .catch(error => {
-                console.error('Form submission error:', error);
-                showFormError();
-            })
-            .finally(() => {
+            // Track form submission
+            trackEvent('contact_form_submit', {
+                form_name: 'contact',
+                subject: this.subject?.value,
+                product: this.product?.value
+            });
+            
+            // Re-enable button after a delay (Netlify will handle the redirect)
+            setTimeout(() => {
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-            });
+            }, 2000);
         });
     });
-    
-    function showFormSuccess() {
-        showNotification('Message sent successfully! We\'ll get back to you soon.', 'success');
-    }
-    
-    function showFormError() {
-        showNotification('There was an error sending your message. Please try again.', 'error');
-    }
 }
 
 // Performance optimizations
@@ -539,20 +490,6 @@ function initPerformanceOptimizations() {
             imageObserver.observe(img);
         });
     }
-    
-    // Preload critical resources
-    const criticalResources = [
-        '/css/styles.css',
-        '/js/main.js'
-    ];
-    
-    criticalResources.forEach(resource => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = resource.endsWith('.css') ? 'style' : 'script';
-        link.href = resource;
-        document.head.appendChild(link);
-    });
 }
 
 // Utility functions
@@ -562,9 +499,19 @@ function trackEvent(eventName, parameters = {}) {
         gtag('event', eventName, parameters);
     }
     
-    // Custom analytics endpoint (if needed)
-    if (window.customAnalytics) {
-        window.customAnalytics.track(eventName, parameters);
+    // Meta Pixel tracking for contact events
+    if (typeof fbq !== 'undefined' && eventName.includes('contact')) {
+        fbq('track', 'Contact', {
+            content_name: parameters.product_name || 'General Inquiry',
+            content_category: 'Research Chemicals'
+        });
+    }
+    
+    // Reddit Pixel tracking for contact events
+    if (typeof rdt !== 'undefined' && eventName.includes('contact')) {
+        rdt('track', 'Contact', {
+            item_name: parameters.product_name || 'General Inquiry'
+        });
     }
     
     console.log('Analytics Event:', eventName, parameters);
@@ -655,31 +602,28 @@ function showNotification(message, type = 'info') {
     });
 }
 
-// Keyboard navigation improvements
-document.addEventListener('keydown', function(e) {
-    // Escape key to close modals/notifications
-    if (e.key === 'Escape') {
-        document.querySelectorAll('.notification').forEach(notification => {
-            notification.click();
-        });
-    }
+// Quick order function (global)
+function quickOrder(productName, quantity, price) {
+    const productSlug = productName.toLowerCase().replace(/\s+/g, '-');
+    const url = `contact.html?product=${productSlug}-${quantity}&price=${price}&inquiry=order`;
     
-    // Enter key on focused buttons
-    if (e.key === 'Enter' && e.target.classList.contains('btn-primary', 'btn-secondary')) {
-        e.target.click();
-    }
-});
+    // Track quick order event
+    trackEvent('quick_order_click', {
+        product: productName,
+        quantity: quantity,
+        price: price
+    });
+    
+    // Navigate to contact form
+    window.location.href = url;
+}
 
-// Service Worker registration for PWA capabilities (future enhancement)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
+// Global CTA tracking function
+function trackCTA(location, product = null, action = null) {
+    trackEvent('cta_click', {
+        location: location,
+        product: product,
+        action: action
     });
 }
 
@@ -723,12 +667,10 @@ window.addEventListener('load', function() {
     }
 });
 
-// Export functions for external use (if needed)
+// Export functions for external use
 window.ISRIBShop = {
     trackEvent,
     showNotification,
-    addToCart: function(product) {
-        // Expose cart functionality
-        console.log('Add to cart:', product);
-    }
+    quickOrder,
+    trackCTA
 };
