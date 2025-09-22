@@ -132,7 +132,7 @@
                             <span class="price-per-mg">($0.50/mg)</span>
                         </div>
                         <div class="product-buttons">
-                            <a href="#isrib-a15" class="view-product">View Details</a>
+                            <a href="product_isrib_A15.html" class="view-product">View Details</a>
                             <a href="contact.html?product=isrib-a15-100mg&price=50&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'isrib-a15', 'contact_to_order')">Contact to Order</a>
                         </div>
                     </div>
@@ -192,7 +192,7 @@
                             <span class="price-per-mg">($0.47/mg)</span>
                         </div>
                         <div class="product-buttons">
-                            <a href="#isrib" class="view-product">View Details</a>
+                            <a href="product_isrib.html" class="view-product">View Details</a>
                             <a href="contact.html?product=isrib-30mg&price=14&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'isrib', 'contact_to_order')">Contact to Order</a>
                         </div>
                     </div>
@@ -252,7 +252,7 @@
                             <span class="price-per-mg">($0.50/mg)</span>
                         </div>
                         <div class="product-buttons">
-                            <a href="#zzl7" class="view-product">View Details</a>
+                            <a href="zzl7.html" class="view-product">View Details</a>
                             <a href="contact.html?product=zzl7-100mg&price=50&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'zzl7', 'contact_to_order')">Contact to Order</a>
                         </div>
                     </div>
@@ -317,7 +317,7 @@
                             <span class="price-per-mg">($0.90/mg)</span>
                         </div>
                         <div class="product-buttons">
-                            <a href="#mpep" class="view-product">View Details</a>
+                            <a href="mpep.html" class="view-product">View Details</a>
                             <a href="contact.html?product=mpep-50mg&price=45&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'mpep', 'contact_to_order')">Contact to Order</a>
                         </div>
                     </div>
@@ -381,10 +381,10 @@
                 <div class="footer-section">
                     <h3>Products</h3>
                     <ul>
-                        <li><a href="#isrib-a15">ISRIB-A15</a></li>
-                        <li><a href="#isrib">ISRIB Original</a></li>
-                        <li><a href="#zzl7">ZZL-7</a></li>
-                        <li><a href="#mpep">MPEP Oxalate</a></li>
+                        <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+                        <li><a href="product_isrib.html">ISRIB Original</a></li>
+                        <li><a href="zzl7.html">ZZL-7</a></li>
+                        <li><a href="mpep.html">MPEP Oxalate</a></li>
                         <li><a href="products.html">All Products</a></li>
                     </ul>
                 </div>
@@ -418,102 +418,6 @@
     </footer>
 
     <script src="js/main.js"></script>
-    
-    <style>
-        /* Quantity Selector Styles */
-        .quantity-selector {
-            margin: 20px 0;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .quantity-options {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .quantity-option {
-            flex: 1;
-            min-width: 80px;
-            padding: 12px 8px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            position: relative;
-        }
-
-        .quantity-option:hover {
-            border-color: #1e40af;
-            transform: translateY(-2px);
-        }
-
-        .quantity-option.active {
-            border-color: #1e40af;
-            background: #eff6ff;
-            transform: translateY(-2px);
-        }
-
-        .quantity-option .quantity {
-            display: block;
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 0.9rem;
-        }
-
-        .quantity-option .price {
-            display: block;
-            font-weight: 600;
-            color: #1e40af;
-            font-size: 1rem;
-            margin-top: 4px;
-        }
-
-        .quantity-option .save {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #10b981;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .price-display {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .current-price {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #1e40af;
-        }
-
-        .price-per-mg {
-            font-size: 0.9rem;
-            color: #64748b;
-            margin-top: 2px;
-        }
-
-        @media (max-width: 480px) {
-            .quantity-options {
-                flex-direction: column;
-            }
-            
-            .quantity-option {
-                flex: none;
-            }
-        }
-    </style>
     
     <script>
         // Product filtering
@@ -625,67 +529,6 @@
                 const firstOption = card.querySelector('.quantity-option.active');
                 if (firstOption) {
                     firstOption.click();
-                }
-            });
-        });
-
-        // Enhanced hover effects for product cards
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                if (window.innerWidth > 1024) { // Only on desktop
-                    this.style.transform = 'translateY(-8px) scale(1.02)';
-                    this.style.boxShadow = '0 15px 40px rgba(0, 0, 0, 0.2)';
-                }
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                if (window.innerWidth > 1024) {
-                    this.style.transform = 'translateY(0) scale(1)';
-                    this.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
-                }
-            });
-        });
-
-        // Quick order function for immediate contact
-        function quickOrder(productName, quantity, price) {
-            const productSlug = productName.toLowerCase().replace(/\s+/g, '-');
-            const url = `contact.html?product=${productSlug}-${quantity}&price=${price}&inquiry=order`;
-            
-            // Track quick order event
-            if (typeof trackEvent === 'function') {
-                trackEvent('quick_order_click', {
-                    product: productName,
-                    quantity: quantity,
-                    price: price
-                });
-            }
-            
-            // Navigate to contact form
-            window.location.href = url;
-        }
-
-        // Smooth scroll to product anchors
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    const headerHeight = document.querySelector('.header').offsetHeight;
-                    const targetPosition = targetElement.offsetTop - headerHeight - 20;
-                    
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Highlight the target product card briefly
-                    targetElement.style.background = '#eff6ff';
-                    setTimeout(() => {
-                        targetElement.style.background = '';
-                    }, 2000);
                 }
             });
         });
