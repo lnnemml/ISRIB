@@ -47,30 +47,6 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-KMHX8Y9P2L');
-        
-        // CTA click tracking
-        function trackCTA(location, product = null) {
-            gtag('event', 'contact_intent', {
-                'event_category': 'engagement',
-                'event_label': location,
-                'product': product
-            });
-            
-            // Meta Pixel
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'Contact', {
-                    content_name: product || 'General Inquiry',
-                    content_category: 'Research Chemicals'
-                });
-            }
-            
-            // Reddit Pixel
-            if (typeof rdt !== 'undefined') {
-                rdt('track', 'Contact', {
-                    item_name: product || 'General Inquiry'
-                });
-            }
-        }
     </script>
     
     <!-- External CSS -->
@@ -507,6 +483,8 @@
             💬 Contact to Order
         </a>
     </div>
+
+    <script src="js/main.js"></script>
 
         <!--Start of Tawk.to Script-->
 <script type="text/javascript">
