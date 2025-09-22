@@ -52,7 +52,7 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     
     # Cache control
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # CSS files caching
 [[headers]]
@@ -76,7 +76,7 @@
 [[headers]]
   for = "/*.html"
   [headers.values]
-    Cache-Control = "public, max-age=3600"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # API endpoints (no cache)
 [[headers]]
