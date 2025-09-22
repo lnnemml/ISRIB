@@ -17,6 +17,15 @@
   <url>
     <loc>https://isrib.shop/contact.html</loc>
   </url>
+  <url>
+  <loc>https://isrib.shop/quality.html</loc>
+</url>
+<url>
+  <loc>https://isrib.shop/safety.html</loc>
+</url>
+<url>
+  <loc>https://isrib.shop/terms.html</loc>
+</url>
 
   <!-- Product pages (present in your repo) -->
   <url>
@@ -31,11 +40,4 @@
   <url>
     <loc>https://isrib.shop/product_zzl_7.html</loc>
   </url>
-  <url>
-  <loc>https://isrib.shop/quality.html</loc>
-</url>
-<url>
-  <loc>https://isrib.shop/safety.html</loc>
-</url>
-
 </urlset>
