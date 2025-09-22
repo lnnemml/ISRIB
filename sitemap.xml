@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core pages -->
+  <url>
+    <loc>https://isrib.shop/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://isrib.shop/products.html</loc>
+  </url>
+  <url>
+    <loc>https://isrib.shop/about.html</loc>
+  </url>
+  <url>
+    <loc>https://isrib.shop/faq.html</loc>
+  </url>
+  <url>
+    <loc>https://isrib.shop/contact.html</loc>
+  </url>
+
+  <!-- Product pages (present in your repo) -->
+  <url>
+    <loc>https://isrib.shop/product_isrib.html</loc>
+  </url>
+  <url>
+    <loc>https://isrib.shop/product_isrib_A15.html</loc>
+  </url>
+  <url>
+    <loc>https://isrib.shop/product_MPEP.html</loc>
+  </url>
+  <url>
+    <loc>https://isrib.shop/product_zzl_7.html</loc>
+  </url>
+</urlset>
