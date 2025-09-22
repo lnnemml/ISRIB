@@ -620,10 +620,44 @@ function quickOrder(productName, quantity, price) {
 
 // Global CTA tracking function
 function trackCTA(location, product = null, action = null) {
+    const eventData = {
+        event_category: 'engagement',
+        event_label: location
+    };
+
+    if (product) {
+        eventData.product = product;
+    }
+
+    if (action) {
+        eventData.action = action;
+    }
+
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'contact_intent', eventData);
+    }
+
+    const contactDescriptor = product || action || 'General Inquiry';
+
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'Contact', {
+            content_name: contactDescriptor,
+            content_category: 'Research Chemicals',
+            event_label: location
+        });
+    }
+
+    if (typeof rdt !== 'undefined') {
+        rdt('track', 'Contact', {
+            item_name: contactDescriptor,
+            event_label: location
+        });
+    }
+
     trackEvent('cta_click', {
-        location: location,
-        product: product,
-        action: action
+        location,
+        product,
+        action
     });
 }
 
