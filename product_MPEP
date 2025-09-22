@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEP Oxalate - mGluR5 Negative Allosteric Modulator | ISRIB Shop</title>
+    <meta name="description" content="MPEP Oxalate: Selective mGluR5 negative allosteric modulator for glutamate receptor research. High specificity for cognitive and behavioral studies. 98%+ purity, COA included.">
+    <link rel="canonical" href="https://isrib.shop/mpep">
+    <meta property="og:title" content="MPEP Oxalate - mGluR5 Research Compound">
+    <meta property="og:description" content="MPEP Oxalate for glutamate receptor research. Selective mGluR5 negative allosteric modulator with high specificity.">
+    <meta property="og:image" content="https://isrib.shop/images/mpep-og.jpg">
+    <meta property="og:url" content="https://isrib.shop/mpep">
+    
+    <!-- Schema.org Product -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": "MPEP Oxalate",
+      "description": "MPEP Oxalate compound for mGluR5 research applications",
+      "brand": {
+        "@type": "Brand",
+        "name": "ISRIB Shop"
+      },
+      "offers": {
+        "@type": "AggregateOffer",
+        "url": "https://isrib.shop/mpep",
+        "priceCurrency": "USD",
+        "lowPrice": "45.00",
+        "highPrice": "450.00",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+    </script>
+    
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <svg width="160" height="40" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-image">
+                      <defs>
+                        <linearGradient id="hexagonGradient" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+                          <stop offset="0%" stop-color="#2563EB"/>
+                          <stop offset="100%" stop-color="#0EA5E9"/>
+                        </linearGradient>
+                        <linearGradient id="innerGradient" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+                          <stop offset="0%" stop-color="#0EA5E9"/>
+                          <stop offset="100%" stop-color="#06B6D4"/>
+                        </linearGradient>
+                      </defs>
+                      <g transform="translate(10, 10)">
+                        <path d="M15 20 L35 10 L55 20 L55 40 L35 50 L15 40 Z" fill="url(#hexagonGradient)" stroke="none"/>
+                        <path d="M20 25 L35 18 L50 25 L50 35 L35 42 L20 35 Z" fill="white" stroke="none"/>
+                        <path d="M25 30 L35 25 L45 30 L45 35 L35 40 L25 35 Z" fill="url(#innerGradient)" stroke="none"/>
+                      </g>
+                      <text x="80" y="38" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="800" fill="#1E293B">ISRIB.shop</text>
+                    </svg>
+                </a>
+                <nav class="nav">
+                    <a href="/">Home</a>
+                    <a href="products.html">Products</a>
+                    <a href="about.html">About</a>
+                    <a href="faq.html">FAQ</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="contact.html?product=mpep&inquiry=order" class="cart-btn" onclick="trackCTA('header', 'mpep')">
+                        💬 Contact to Order
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <nav style="background: #f8fafc; padding: 100px 0 20px; border-bottom: 1px solid #e5e7eb;">
+        <div class="container">
+            <div style="color: #64748b; font-size: 0.9rem;">
+                <a href="/" style="color: #64748b; text-decoration: none;">Home</a> 
+                <span style="margin: 0 8px;">›</span>
+                <a href="products.html" style="color: #64748b; text-decoration: none;">Products</a>
+                <span style="margin: 0 8px;">›</span>
+                <span style="color: #1e40af; font-weight: 600;">MPEP Oxalate</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Product Hero -->
+    <section style="background: #f8fafc; padding: 60px 0;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+                
+                <!-- Product Info -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                        <div style="background: #059669; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">Selective mGluR5</div>
+                        <div style="background: #dcfdf7; color: #059669; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">✓ In Stock</div>
+                    </div>
+                    
+                    <h1 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; color: #1e293b; margin-bottom: 15px;">MPEP Oxalate</h1>
+                    <p style="font-size: 1.1rem; color: #1e40af; font-weight: 600; margin-bottom: 25px; font-family: 'Courier New', monospace;">C₁₁H₁₀N₂•C₂H₂O₄</p>
+                    
+                    <p style="font-size: 1.2rem; color: #64748b; line-height: 1.7; margin-bottom: 30px;">Selective mGluR5 negative allosteric modulator with high specificity and potency. Essential research tool for glutamate receptor studies, cognitive research, and behavioral neuroscience applications.</p>
+                    
+                    <!-- Key Benefits -->
+                    <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #059669;">
+                        <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;">🧠 Research Applications</h3>
+                        <ul style="list-style: none; margin: 0; padding: 0;">
+                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
+                                <span style="color: #10b981; font-weight: 700;">✓</span> mGluR5 receptor antagonism studies
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
+                                <span style="color: #10b981; font-weight: 700;">✓</span> Glutamate signaling pathway research
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
+                                <span style="color: #10b981; font-weight: 700;">✓</span> Cognitive and behavioral studies
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 10px; color: #374151;">
+                                <span style="color: #10b981; font-weight: 700;">✓</span> Synaptic plasticity research
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- CTA Buttons -->
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <a href="#order-section" class="btn-primary" onclick="trackCTA('hero', 'mpep', 'scroll_to_order')" style="flex: 1; min-width: 200px; justify-content: center;">
+                            🧬 Order MPEP
+                        </a>
+                        <a href="#mechanism" class="btn-secondary" style="flex: 1; min-width: 200px; justify-content: center;">
+                            📖 How It Works
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Product Visual -->
+                <div style="text-align: center;">
+                    <div style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.1)); border-radius: 20px; padding: 40px; margin-bottom: 20px;">
+                        <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 20px; margin: 0 auto; display: flex; align-items: center; justify-content: center; position: relative; animation: pulse 3s ease-in-out infinite;">
+                            <div style="color: white; font-size: 2.2rem; font-weight: 800;">MPEP</div>
+                            <div style="position: absolute; top: -10px; right: -10px; background: #1e40af; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎯</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Trust Indicators -->
+                    <div style="display: flex; justify-content: center; gap: 30px; text-align: center;">
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">98%+</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">Purity</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">mGluR5</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">Selective</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">NAM</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">Mechanism</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scientific Background -->
+    <section style="background: white; padding: 80px 0;" id="mechanism">
+        <div class="container">
+            <div style="max-width: 1000px; margin: 0 auto;">
+                <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">Understanding MPEP</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 60px;">
+                    <div>
+                        <h3 style="color: #059669; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">🎯 Selective Modulation</h3>
+                        <p style="color: #64748b; line-height: 1.7; margin-bottom: 20px;">MPEP (2-methyl-6-(phenylethynyl)pyridine) is a highly selective negative allosteric modulator of the metabotropic glutamate receptor subtype 5 (mGluR5). Its exceptional selectivity and potency have made it an indispensable tool in glutamate research.</p>
+                        <p style="color: #64748b; line-height: 1.7;">As a negative allosteric modulator (NAM), MPEP binds to a site distinct from the glutamate binding site, providing non-competitive inhibition that offers unique research advantages over competitive antagonists.</p>
+                    </div>
+                    <div style="background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">🎯</div>
+                        <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 10px;">mGluR5 Selective</h4>
+                        <p style="color: #64748b; font-size: 0.95rem;">Negative allosteric modulator</p>
+                        <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">CAS: 219911-35-0</p>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #f0fdf4, #dcfdf7); border-radius: 20px; padding: 40px; margin-bottom: 60px;">
+                    <h3 style="color: #1e293b; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">Mechanism of Action</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
+                            <h4 style="color: #1e293b; margin-bottom: 10px;">Allosteric Binding</h4>
+                            <p style="color: #059669; font-size: 0.9rem;">MPEP binds to the transmembrane domain of mGluR5, distinct from the glutamate binding site.</p>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
+                            <h4 style="color: #1e293b; margin-bottom: 10px;">Receptor Inhibition</h4>
+                            <p style="color: #059669; font-size: 0.9rem;">Non-competitive inhibition blocks mGluR5-mediated signaling pathways.</p>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
+                            <h4 style="color: #1e293b; margin-bottom: 10px;">Downstream Effects</h4>
+                            <p style="color: #059669; font-size: 0.9rem;">Modulates synaptic plasticity, neuronal excitability, and behavioral responses.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Results -->
+                <div style="background: white; border-radius: 15px; padding: 30px; border: 1px solid #e5e7eb;">
+                    <h3 style="color: #1e293b; font-size: 1.5rem; font-weight: 700; margin-bottom: 25px; text-align: center;">🏆 Key Research Applications</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🧠</div>
+                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Learning & Memory</h4>
+                            <p style="color: #64748b; font-size: 0.9rem;">Essential tool for studying mGluR5 role in cognitive processes and memory formation</p>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🔬</div>
+                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Synaptic Plasticity</h4>
+                            <p style="color: #64748b; font-size: 0.9rem;">Investigates mGluR5-dependent long-term potentiation and depression mechanisms</p>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">⚕️</div>
+                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Disease Models</h4>
+                            <p style="color: #64748b; font-size: 0.9rem;">Critical for autism, schizophrenia, and addiction research involving glutamate dysfunction</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MPEP vs Other mGluR5 Modulators -->
+    <section style="background: #f8fafc; padding: 80px 0;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">MPEP vs Other mGluR5 Modulators</h2>
+            
+            <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8fafc;">
+                                <th style="padding: 20px; text-align: left; font-weight: 700; color: #1e293b; border-bottom: 2px solid #e5e7eb;">Feature</th>
+                                <th style="padding: 20px; text-align: center; font-weight: 700; color: #059669; border-bottom: 2px solid #e5e7eb;">MPEP</th>
+                                <th style="padding: 20px; text-align: center; font-weight: 700; color: #64748b; border-bottom: 2px solid #e5e7eb;">Other Modulators</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Selectivity</td>
+                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">mGluR5 Specific</td>
+                                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Variable</td>
+                            </tr>
+                            <tr style="background: #f8fafc;">
+                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Mechanism</td>
+                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Negative Allosteric</td>
+                                <td style="padding: 15px; text-align: center; color: #dc2626; border-bottom: 1px solid #f1f5f9;">Competitive/Mixed</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Research Use</td>
+                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Gold Standard</td>
+                                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Alternative Tools</td>
+                            </tr>
+                            <tr style="background: #f8fafc;">
+                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Potency</td>
+                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">High (nM range)</td>
+                                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Variable</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 15px; font-weight: 600; color: #374151;">Literature Support</td>
+                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600;">Extensive</td>
+                                <td style="padding: 15px; text-align: center; color: #64748b;">Limited</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="background: #f0fdf4; border: 1px solid #059669; border-radius: 12px; padding: 25px; margin-top: 30px;">
+                    <h4 style="color: #059669; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.2rem;">💡</span> MPEP remains the gold standard for mGluR5 research due to its exceptional selectivity, well-characterized pharmacology, and extensive literature support. Its negative allosteric mechanism provides unique research advantages over competitive antagonists.
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Specifications -->
+    <section style="background: #1e293b; color: white; padding: 80px 0;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Technical Specifications</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                
+                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🧪 Chemical Properties</h3>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Molecular Formula:</span>
+                            <span style="color: #f1f5f9; font-family: 'Courier New', monospace;">C₁₁H₁₀N₂•C₂H₂O₄</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Molecular Weight:</span>
+                            <span style="color: #f1f5f9;">260.25 g/mol</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">CAS Number:</span>
+                            <span style="color: #f1f5f9;">219911-35-0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Purity:</span>
+                            <span style="color: #10b981; font-weight: 600;">≥98%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Form:</span>
+                            <span style="color: #f1f5f9;">White to off-white powder</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #94a3b8;">Solubility:</span>
+                            <span style="color: #f1f5f9;">DMSO, Ethanol</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📦 Storage & Handling</h3>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Storage Temp:</span>
+                            <span style="color: #f1f5f9;">-20°C</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Stability:</span>
+                            <span style="color: #f1f5f9;">2+ years</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Light Sensitivity:</span>
+                            <span style="color: #f59e0b;">Store in dark</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Moisture:</span>
+                            <span style="color: #f59e0b;">Keep dry</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #94a3b8;">Container:</span>
+                            <span style="color: #f1f5f9;">Amber glass vial</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📋 Documentation</h3>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">COA:</span>
+                            <span style="color: #10b981; font-weight: 600;">✓ Included</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">¹H NMR:</span>
+                            <span style="color: #10b981; font-weight: 600;">✓ Available</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #94a3b8;">Mass Spec:</span>
+                            <span style="color: #10b981; font-weight: 600;">✓ Available</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #94a3b8;">Safety Data:</span>
+                            <span style="color: #10b981; font-weight: 600;">✓ Provided</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Ordering Section -->
+    <section style="background: #f8fafc; padding: 80px 0;" id="order-section">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">Order MPEP Oxalate</h2>
+            
+            <div style="max-width: 800px; margin: 0 auto;">
+                
+                <!-- Quantity Options -->
+                <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin-bottom: 40px;">
+                    <h3 style="color: #1e293b; font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; text-align: center;">Select Your Quantity</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px;">
+                        
+                        <!-- 50mg Option -->
+                        <div class="quantity-card" data-quantity="50mg" data-price="45" style="border: 2px solid #e2e8f0; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 8px;">50mg</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #059669; margin-bottom: 15px;">$45</div>
+                            <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 15px;">$0.90 per mg</div>
+                            <div style="background: #f8fafc; color: #64748b; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Research Starter</div>
+                        </div>
+
+                        <!-- 100mg Option -->
+                        <div class="quantity-card" data-quantity="100mg" data-price="75" style="border: 2px solid #e2e8f0; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 8px;">100mg</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #059669; margin-bottom: 15px;">$75</div>
+                            <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 15px;">$0.75 per mg</div>
+                            <div style="background: #f8fafc; color: #64748b; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Standard</div>
+                        </div>
+
+                        <!-- 500mg Option -->
+                        <div class="quantity-card" data-quantity="500mg" data-price="280" style="border: 2px solid #e2e8f0; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative;">
+                            <div style="position: absolute; top: -10px; right: -10px; background: #10b981; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 700;">SAVE $95</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 8px;">500mg</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #059669; margin-bottom: 15px;">$280</div>
+                            <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 15px;">$0.56 per mg</div>
+                            <div style="background: #f8fafc; color: #64748b; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Good Value</div>
+                        </div>
+
+                        <!-- 1g Option -->
+                        <div class="quantity-card" data-quantity="1g" data-price="450" style="border: 2px solid #059669; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative; background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(16, 185, 129, 0.05));">
+                            <div style="position: absolute; top: -10px; right: -10px; background: #dc2626; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 700;">SAVE $450</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 8px;">1000mg</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #059669; margin-bottom: 15px;">$450</div>
+                            <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 15px;">$0.45 per mg</div>
+                            <div style="background: #059669; color: white; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Best Value</div>
+                        </div>
+
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px;">
+                        <a href="contact.html?product=mpep-1g&price=450&inquiry=order" 
+                           id="order-link" 
+                           class="btn-primary" 
+                           onclick="trackCTA('order_section', 'mpep', 'contact_to_order')"
+                           style="font-size: 1.2rem; padding: 18px 40px;">
+                            💬 Contact to Order - 1g for $450
+                        </a>
+                        <p style="color: #64748b; margin-top: 15px; font-size: 0.95rem;">Secure payment arrangements discussed individually</p>
+                    </div>
+                </div>
+
+                <!-- Research Protocol Note -->
+                <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 15px; padding: 25px; margin-bottom: 40px;">
+                    <h3 style="color: #1e40af; font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.3rem;">📚</span> Research Protocol Information
+                    </h3>
+                    <p style="color: #1e40af; margin: 0; line-height: 1.6;">MPEP has extensive published research protocols for mGluR5 studies. Our team can provide guidance on established methodologies and literature references for your glutamate receptor research applications.</p>
+                </div>
+
+                <!-- How to Order Steps -->
+                <div style="background: white; border-radius: 15px; padding: 30px; border: 1px solid #e5e7eb;">
+                    <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 700; margin-bottom: 25px; text-align: center;">How to Order</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: #059669; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 700; font-size: 1.2rem;">1</div>
+                            <h4 style="color: #1e293b; margin-bottom: 8px; font-size: 1rem;">Select Quantity</h4>
+                            <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Choose your preferred amount above</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: #059669; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 700; font-size: 1.2rem;">2</div>
+                            <h4 style="color: #1e293b; margin-bottom: 8px; font-size: 1rem;">Contact Us</h4>
+                            <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Click button to start your order</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="width: 50px; height: 50px; background: #059669; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-weight: 700; font-size: 1.2rem;">3</div>
+                            <h4 style="color: #1e293b; margin-bottom: 8px; font-size: 1rem;">Payment & Ship</h4>
+                            <p style="color: #64748b; font-size: 0.9rem; margin: 0;">We arrange secure payment & shipping</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section style="background: white; padding: 80px 0;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">MPEP FAQ</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;">
+                
+                <div style="background: #f8fafc; border-radius: 15px; padding: 25px; border-left: 4px solid #059669;">
+                    <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">🧬 What makes MPEP unique for mGluR5 research?</h3>
+                    <p style="color: #64748b; line-height: 1.6; margin: 0;">MPEP is the gold standard negative allosteric modulator for mGluR5 with exceptional selectivity and potency. Its non-competitive mechanism and extensive literature support make it indispensable for glutamate research.</p>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 15px; padding: 25px; border-left: 4px solid #3b82f6;">
+                    <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">📚 What research applications are most common?</h3>
+                    <p style="color: #64748b; line-height: 1.6; margin: 0;">MPEP is widely used in synaptic plasticity studies, learning and memory research, autism spectrum disorder models, addiction studies, and schizophrenia research involving glutamate dysfunction.</p>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 15px; padding: 25px; border-left: 4px solid #10b981;">
+                    <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">🔬 Is MPEP oxalate form preferred?</h3>
+                    <p style="color: #64748b; line-height: 1.6; margin: 0;">Yes, the oxalate salt form provides improved solubility and stability compared to the free base. This enhances reproducibility and ease of use in research applications.</p>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 15px; padding: 25px; border-left: 4px solid #f59e0b;">
+                    <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">📦 How should I prepare stock solutions?</h3>
+                    <p style="color: #64748b; line-height: 1.6; margin: 0;">MPEP oxalate dissolves readily in DMSO and ethanol. We recommend preparing stock solutions fresh or storing aliquots at -80°C to maintain stability and activity.</p>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 15px; padding: 25px; border-left: 4px solid #06b6d4;">
+                    <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">🌍 Do you ship to research institutions?</h3>
+                    <p style="color: #64748b; line-height: 1.6; margin: 0;">Yes, we regularly ship to universities and research institutions worldwide. We provide proper documentation and invoicing for institutional purchasing and compliance requirements.</p>
+                </div>
+
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="faq.html#mpep" style="color: #059669; text-decoration: none; font-weight: 600;">View Complete FAQ →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ISRIB Shop</h3>
+                    <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality, reliability, and personalized service.</p>
+                    <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Products</h3>
+                    <ul>
+                        <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+                        <li><a href="product_isrib.html">ISRIB</a></li>
+                        <li><a href="zzl7.html">ZZL-7</a></li>
+                        <li><a href="mpep.html">MPEP Oxalate</a></li>
+                        <li><a href="products.html">All Products</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#quality">Quality Control</a></li>
+                        <li><a href="#safety">Safety Guidelines</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#terms">Terms of Service</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#research-use">Research Use Only</a></li>
+                        <li><a href="#disclaimer">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    
+    <style>
+        /* Quantity card interactions */
+        .quantity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: #059669;
+        }
+        
+        .quantity-card.selected {
+            border-color: #059669;
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(16, 185, 129, 0.05));
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            
+            .quantity-card {
+                padding: 20px;
+            }
+        }
+    </style>
+    
+    <script>
+        // Quantity card selection
+        document.querySelectorAll('.quantity-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards
+                document.querySelectorAll('.quantity-card').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked card
+                this.classList.add('selected');
+                
+                // Update order link
+                const quantity = this.dataset.quantity;
+                const price = this.dataset.price;
+                const orderLink = document.getElementById('order-link');
+                
+                if (orderLink) {
+                    orderLink.href = `contact.html?product=mpep-${quantity}&price=${price}&inquiry=order`;
+                    orderLink.innerHTML = `💬 Contact to Order - ${quantity} for ${price}`;
+                }
+                
+                // Track selection
+                if (typeof trackEvent === 'function') {
+                    trackEvent('quantity_selected', {
+                        product: 'mpep',
+                        quantity: quantity,
+                        price: price
+                    });
+                }
+            });
+        });
+
+        // Initialize default selection (1g)
+        document.addEventListener('DOMContentLoaded', function() {
+            const defaultCard = document.querySelector('.quantity-card[data-quantity="1g"]');
+            if (defaultCard) {
+                defaultCard.click();
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Analytics tracking for page interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Track page view
+            if (typeof trackEvent === 'function') {
+                trackEvent('product_page_view', {
+                    product: 'mpep',
+                    page_title: document.title
+                });
+            }
+        });
+    </script>
+</body>
+</html>
