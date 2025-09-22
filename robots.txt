@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Don’t index utility pages
+Disallow: /success.html
+Disallow: /404.html
+
+# Sitemap location
+Sitemap: https://isrib.shop/sitemap.xml
