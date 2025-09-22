@@ -7,8 +7,6 @@
   # Directory to deploy (root directory)
   publish = "."
   
-  # Functions directory (for future serverless functions)
-  functions = "netlify/functions"
 
 # Build environment variables
 [build.environment]
@@ -97,12 +95,10 @@
   # Contact form
   [forms.contact]
     name = "contact"
-    template = "contact-form-template"
-    
+
   # Newsletter signup
   [forms.newsletter]
     name = "newsletter"
-    template = "newsletter-template"
 
 # Form notifications
 [[forms.contact.notifications]]
@@ -121,11 +117,6 @@
   
   Submitted: {{ created_at }}
   """
-
-# Edge functions (future enhancement)
-[[edge_functions]]
-  function = "geolocation"
-  path = "/api/geo"
 
 # Plugin configuration
 [[plugins]]
