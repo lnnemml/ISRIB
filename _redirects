@@ -19,14 +19,14 @@
 /isrib-a15                /product_isrib_A15.html                      301
 /isrib-original           /product_isrib.html                          301
 /isrib                    /product_isrib.html                          301
-/zzl-7                    /zzl7.html                                   301
-/mpep-oxalate            /mpep.html                                   301
+/zzl-7                    /product_zzl_7.html                                   301
+/mpep-oxalate            /product_MPEP.html                                   301
 
 # Legacy product URLs
 /products/isrib-a15       /product_isrib_A15.html                      301
 /products/isrib           /product_isrib.html                          301
-/products/zzl7            /zzl7.html                                   301
-/products/mpep            /mpep.html                                   301
+/products/zzl7            /product_zzl_7.html                                   301
+/products/mpep            /product_MPEP.html                                   301
 
 # General order redirect
 /order                    /contact?inquiry=order                        301
@@ -35,8 +35,8 @@
 # Product anchors to individual pages
 /products#isrib-a15       /product_isrib_A15.html                      301
 /products#isrib           /product_isrib.html                          301
-/products#zzl7            /zzl7.html                                   301
-/products#mpep            /mpep.html                                   301
+/products#zzl7            /product_zzl_7.html                                   301
+/products#mpep            /product_MPEP.html                                   301
 
 # SPA fallback for all other routes
 /*                        /index.html                                   200
