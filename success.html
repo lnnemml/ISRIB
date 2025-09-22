@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Thank you | isrib.shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Thank you for your request. We’ll reply shortly with payment and shipping details.">
+  <meta name="robots" content="noindex,follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Thank you">
+  <meta property="og:description" content="We received your request and will get back to you shortly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://isrib.shop/success.html">
+  <meta property="og:image" content="https://isrib.shop/images/og-cover.jpg">
+
+  <link rel="canonical" href="https://isrib.shop/success.html">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">
+        <a href="/" aria-label="isrib.shop — home">isrib.shop</a>
+      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="/products.html">Products</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="min-height:60vh">
+    <section class="section" style="max-width:720px;margin:4rem auto 3rem;">
+      <h1 style="margin-bottom:.5rem;">Thank you! 🎉</h1>
+      <p class="lead" style="opacity:.9">
+        We’ve received your request. We’ll reply shortly with payment & shipping instructions.
+      </p>
+
+      <!-- Order summary (shown if query params exist) -->
+      <div id="summary" class="card" style="margin:1.5rem 0;display:none;">
+        <div class="card-body">
+          <h2 style="font-size:1.1rem;margin:0 0 .75rem;">Request summary</h2>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li><strong>Product:</strong> <span id="s-product">—</span></li>
+            <li><strong>Pack:</strong> <span id="s-pack">—</span></li>
+            <li><strong>Price:</strong> <span id="s-price">—</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="actions" style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.25rem;">
+        <a class="btn" href="/" aria-label="Go to home">Home</a>
+        <a class="btn btn-secondary" href="/products.html" aria-label="Back to catalog">Catalog</a>
+        <a class="btn btn-outline" href="/contact.html" aria-label="Send another request">Send another request</a>
+      </div>
+
+      <hr style="margin:2rem 0;opacity:.2">
+
+      <div class="next-steps">
+        <h2 style="font-size:1.05rem;margin-bottom:.5rem;">What’s next?</h2>
+        <ol style="margin:0;padding-left:1.25rem;">
+          <li>Check your email — we’ll reply soon.</li>
+          <li>For faster communication, write on Telegram: <a href="https://t.me/your_handle" target="_blank" rel="noopener">t.me/your_handle</a></li>
+          <li>If you don’t see our message, check the Spam folder or contact us again.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2025 isrib.shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Optional: auto-redirect to home after 12s -->
+  <!-- <meta http-equiv="refresh" content="12; url=/" /> -->
+
+  <script>
+    // Show summary if the form sent ?product=&pack=&price=
+    (function () {
+      const q = new URLSearchParams(location.search);
+      const p = q.get('product') || '';
+      const pack = q.get('pack') || '';
+      const price = q.get('price') || '';
+      if (p || pack || price) {
+        document.getElementById('summary').style.display = 'block';
+        if (p)    document.getElementById('s-product').textContent = p;
+        if (pack) document.getElementById('s-pack').textContent = pack;
+        if (price)document.getElementById('s-price').textContent = price;
+      }
+    })();
+  </script>
+
+  <script src="/js/main.js"></script>
+
+  <!-- Start of Tawk.to Script -->
+  <script type="text/javascript">
+  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+  (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+  })();
+  </script>
+  <!-- End of Tawk.to Script -->
+</body>
+</html>
