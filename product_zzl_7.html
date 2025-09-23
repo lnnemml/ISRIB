@@ -36,43 +36,25 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Header -->
+     <!-- Header -->
     <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="/" class="logo">
-                    <svg width="160" height="40" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-image">
-                      <defs>
-                        <linearGradient id="hexagonGradient" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-                          <stop offset="0%" stop-color="#2563EB"/>
-                          <stop offset="100%" stop-color="#0EA5E9"/>
-                        </linearGradient>
-                        <linearGradient id="innerGradient" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-                          <stop offset="0%" stop-color="#0EA5E9"/>
-                          <stop offset="100%" stop-color="#06B6D4"/>
-                        </linearGradient>
-                      </defs>
-                      <g transform="translate(10, 10)">
-                        <path d="M15 20 L35 10 L55 20 L55 40 L35 50 L15 40 Z" fill="url(#hexagonGradient)" stroke="none"/>
-                        <path d="M20 25 L35 18 L50 25 L50 35 L35 42 L20 35 Z" fill="white" stroke="none"/>
-                        <path d="M25 30 L35 25 L45 30 L45 35 L35 40 L25 35 Z" fill="url(#innerGradient)" stroke="none"/>
-                      </g>
-                      <text x="80" y="38" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="800" fill="#1E293B">ISRIB.shop</text>
-                    </svg>
-                </a>
-                <nav class="nav">
-                    <a href="/">Home</a>
-                    <a href="products.html">Products</a>
-                    <a href="about.html">About</a>
-                    <a href="faq.html">FAQ</a>
-                    <a href="contact.html">Contact</a>
-                    <a href="contact.html?product=zzl7&inquiry=order" class="cart-btn" onclick="trackCTA('header', 'zzl7')">
-                        💬 Contact to Order
-                    </a>
-                </nav>
-            </div>
-        </div>
-    </header>
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
+      </a>
+      <nav class="nav">
+        <a href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <a href="contact.html?inquiry=order" class="cart-btn" onclick="trackCTA('header', 'cart')">
+          💬 Contact to Order
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>
 
     <!-- Breadcrumbs -->
     <nav style="background: #f8fafc; padding: 100px 0 20px; border-bottom: 1px solid #e5e7eb;">
