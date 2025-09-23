@@ -1781,23 +1781,36 @@ body {
     background: #1d4ed8;
 }
 
+.header {
+  padding: 6px 0;
+}
+
+.nav a {
+  line-height: 1;  /* щоб меню не заважало по висоті */
+}
+
 /* --- Force bigger header logo --- */
-.header .header-content { min-height: 80px; }
+.header .header-content {
+  min-height: 80px;
+}
 
 .header .logo { 
   display: flex; 
   align-items: center; 
-  flex: 0 0 auto;              /* не давай логотипу стискатись */
+  flex: 0 0 auto;
 }
 
-.header .logo img.logo-image{
+.header .logo img.logo-image {
   display: block;
-  height: 64px !important;     /* ← збільш або постав 72px/80px */
-  width: auto !important;      /* пропорції збережуться */
-  max-height: none !important; /* прибирає старі обмеження */
+  height: 64px !important;
+  width: auto !important;
+  max-height: none !important;
   object-fit: contain;
   padding: 4px 0;
 }
 
-/* якщо десь глобально стоїть дуже малий max-height для картинок */
-img { max-width: 100%; height: auto; }
+img {
+  max-width: 100%;
+  height: auto;
+}
+
