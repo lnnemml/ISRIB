@@ -1,0 +1,230 @@
+/* Legacy content styles for policy and support pages */
+:root {
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-text: #1f2937;
+    --color-muted: #64748b;
+    --color-primary: #1e40af;
+    --color-primary-dark: #1d4ed8;
+    --color-border: rgba(15, 23, 42, 0.08);
+    --color-footer-bg: #0f172a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.75;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover,
+a:focus {
+    color: var(--color-primary-dark);
+}
+
+.container {
+    width: min(1080px, calc(100% - 3rem));
+    margin: 0 auto;
+}
+
+.site-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.site-header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0;
+}
+
+.logo a {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+}
+
+.site-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.site-nav a {
+    font-weight: 600;
+    color: #334155;
+}
+
+.site-nav a:hover,
+.site-nav a:focus {
+    color: var(--color-primary);
+}
+
+main {
+    padding-top: 2rem;
+}
+
+.section {
+    background: var(--color-surface);
+    border-radius: 1.25rem;
+    padding: clamp(2rem, 2vw + 1.5rem, 3.5rem);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+}
+
+h1,
+h2,
+h3 {
+    color: #111827;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+}
+
+h1 {
+    font-size: clamp(2.25rem, 1.8rem + 1vw, 3rem);
+}
+
+h2 {
+    font-size: clamp(1.5rem, 1.3rem + 0.6vw, 2rem);
+}
+
+h3 {
+    font-size: clamp(1.25rem, 1.1rem + 0.4vw, 1.5rem);
+}
+
+p {
+    margin: 0 0 1.25rem;
+    color: var(--color-text);
+}
+
+.lead {
+    font-size: 1.05rem;
+    color: var(--color-muted);
+}
+
+.card {
+    background: var(--color-surface);
+    border-radius: 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+ul,
+ol {
+    padding-left: 1.25rem;
+    margin: 0 0 1.5rem;
+    color: var(--color-text);
+}
+
+.muted {
+    color: var(--color-muted);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 10px 25px rgba(30, 64, 175, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn:hover,
+.btn:focus {
+    transform: translateY(-1px);
+    background: var(--color-primary-dark);
+    box-shadow: 0 12px 28px rgba(30, 64, 175, 0.25);
+}
+
+.btn-secondary {
+    background: #fff;
+    color: var(--color-primary);
+    border: 2px solid rgba(30, 64, 175, 0.2);
+    box-shadow: none;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background: rgba(30, 64, 175, 0.08);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid rgba(30, 64, 175, 0.35);
+    color: var(--color-primary);
+    box-shadow: none;
+}
+
+.btn-outline:hover,
+.btn-outline:focus {
+    background: rgba(30, 64, 175, 0.08);
+}
+
+.site-footer {
+    background: var(--color-footer-bg);
+    color: #e2e8f0;
+    padding: 2.5rem 0;
+    margin-top: 4rem;
+}
+
+.site-footer .footer-bottom {
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.site-footer a {
+    color: #cbd5f5;
+}
+
+.site-footer a:hover,
+.site-footer a:focus {
+    color: #fff;
+}
+
+@media (max-width: 720px) {
+    .site-header .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .site-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .section {
+        padding: 1.75rem;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
