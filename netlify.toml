@@ -1,8 +1,8 @@
 # netlify.toml — простий статичний деплой
 
 [build]
-  publish = "main"   # <- ВАЖЛИВО: саме папка main
-  command = ""       # ніякого білду
+  publish = "."   
+  command = ""       
 
 # (необов'язково) заголовки/кеш
 [[headers]]
