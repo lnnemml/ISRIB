@@ -708,3 +708,158 @@ window.ISRIBShop = {
     quickOrder,
     trackCTA
 };
+
+/** Набір кількостей для кожного продукту */
+const PRODUCT_QTY = {
+  "ISRIB A15": ["50 mg", "100 mg", "250 mg", "500 mg", "1 g", "Other (>1 g)"],
+  "ISRIB (Original)": ["50 mg", "100 mg", "250 mg", "500 mg", "1 g", "Other (>1 g)"],
+  "ZZL-7": ["50 mg", "100 mg", "250 mg", "500 mg", "1 g", "Other (>1 g)"],
+  "MPEP Oxalate": ["100 mg", "250 mg", "500 mg", "1 g", "Other (>1 g)"]
+};
+
+const $ = (sel) => document.querySelector(sel);
+
+function fillQuantityOptions(product) {
+  const qtySel = $("#quantity");
+  const wrapOther = $("#quantity-other-wrap");
+  const inputOther = $("#quantity-other");
+
+  qtySel.innerHTML = '<option value="" disabled selected>Select quantity</option>';
+
+  const opts = PRODUCT_QTY[product] || [];
+  opts.forEach(v => {
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = v;
+    qtySel.appendChild(o);
+  });
+
+  wrapOther.style.display = "none";
+  inputOther.value = "";
+}
+
+function maybeToggleOther() {
+  const val = $("#quantity").value;
+  const wrapOther = $("#quantity-other-wrap");
+  const inputOther = $("#quantity-other");
+  if (val === "Other (>1 g)") {
+    wrapOther.style.display = "block";
+    inputOther.required = true;
+    inputOther.focus();
+  } else {
+    wrapOther.style.display = "none";
+    inputOther.required = false;
+    inputOther.value = "";
+  }
+}
+
+function updateChannelUI() {
+  const channel = document.querySelector('input[name="channel"]:checked')?.value || "Email";
+  const wrap = $("#channel-handle-wrap");
+  const label = $("#channel-handle-label");
+  const input = $("#channel_handle");
+
+  if (channel === "Email") {
+    wrap.style.display = "none";
+    input.value = "";
+    input.required = false;
+  } else {
+    wrap.style.display = "block";
+    input.required = true;
+    label.textContent = channel + " contact";
+    input.placeholder = channel === "Telegram" ? "@your_handle" : "Full phone incl. country code";
+  }
+}
+
+function prefillFromURL() {
+  const params = new URLSearchParams(location.search);
+  const p = params.get("product");
+  const q = params.get("qty");
+
+  if (p && $("#product")) {
+    $("#product").value = p;
+    fillQuantityOptions(p);
+  }
+  if (q && $("#quantity")) {
+    // якщо передали arbitrary кількість у грамах
+    if ([...$("#quantity").options].some(o => o.value === q)) {
+      $("#quantity").value = q;
+    } else if (!isNaN(parseFloat(q))) {
+      $("#quantity").value = "Other (>1 g)";
+      maybeToggleOther();
+      $("#quantity-other").value = q;
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // product -> quantity options
+  $("#product")?.addEventListener("change", (e) => fillQuantityOptions(e.target.value));
+  $("#quantity")?.addEventListener("change", maybeToggleOther);
+
+  // channel UI
+  document.querySelectorAll('input[name="channel"]').forEach(r => {
+    r.addEventListener("change", updateChannelUI);
+  });
+  updateChannelUI();
+
+  // префіл з URL
+  prefillFromURL();
+
+  // submit
+  $("#checkout-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = e.submitter || e.target.querySelector('button[type="submit"]');
+    const status = $("#checkout-status");
+    status.textContent = "";
+    btn.disabled = true;
+
+    const product = $("#product").value;
+    let quantity = $("#quantity").value;
+    if (quantity === "Other (>1 g)") {
+      const val = parseFloat($("#quantity-other").value);
+      if (!val || val < 1) {
+        status.textContent = "Please enter a valid amount ≥ 1 g.";
+        btn.disabled = false;
+        return;
+      }
+      quantity = `${val} g`;
+    }
+
+    const payload = {
+      product,
+      quantity,
+      full_name: $("#full_name").value.trim(),
+      email: $("#email").value.trim(),
+      channel: document.querySelector('input[name="channel"]:checked')?.value || "Email",
+      channel_handle: $("#channel_handle").value.trim(),
+      notes: $("#notes").value.trim(),
+      // технічне
+      source: "checkout",
+      url: location.href
+    };
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data?.ok) {
+        status.textContent = "Thanks! We received your request and will get back within 4–8 hours.";
+        e.target.reset();
+        $("#quantity-other-wrap").style.display = "none";
+        updateChannelUI();
+      } else {
+        throw new Error(data?.error || "Failed to submit");
+      }
+    } catch (err) {
+      status.textContent = "Submission failed. Please try again or email isrib.shop@protonmail.com";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+});
+
+
