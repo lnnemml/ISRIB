@@ -1813,4 +1813,12 @@ img {
   max-width: 100%;
   height: auto;
 }
+.checkout-form .form-two { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+.checkout-form .radio-row { display:flex; gap:16px; flex-wrap:wrap; }
+.checkout-form .form-group { margin-bottom: 14px; }
+.checkout-form .btn-primary { padding: 10px 16px; font-weight: 600; }
+.checkout-form .form-status { font-size: 0.95rem; }
+@media (max-width: 768px) {
+  .checkout-form .form-two { grid-template-columns: 1fr; }
+}
 
