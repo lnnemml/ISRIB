@@ -1,0 +1,6 @@
+{
+  "name": "isrib-site",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "18.x" }
+}
