@@ -1,4 +1,5 @@
 // checkout.js
+console.log('checkout.js loaded');
 const PRODUCT_QTY = {
   "ISRIB A15": ["50 mg", "100 mg", "250 mg", "500 mg", "1 g", "Other (>1 g)"],
   "ISRIB (Original)": ["50 mg", "100 mg", "250 mg", "500 mg", "1 g", "Other (>1 g)"],
