@@ -1821,4 +1821,7 @@ img {
 @media (max-width: 768px) {
   .checkout-form .form-two { grid-template-columns: 1fr; }
 }
+.hidden{ display:none !important; }
+.form-inline{ display:flex; gap:.5rem; align-items:center; }
+.hint{ font-size:.85rem; opacity:.8; }
 
