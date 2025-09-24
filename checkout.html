@@ -56,133 +56,76 @@
     </div>
   </header>
 
-  <main class="checkout-wrap">
-    <div class="container">
-      <h1>Checkout</h1>
-      <p class="muted">Fill out the form below. We’ll confirm availability, shipping and payment details via email or messenger.</p>
+ <section class="page-section">
+  <div class="container">
+    <h1>Checkout</h1>
+    <p>Fill the form below — we’ll confirm availability and send payment options.</p>
 
-      <div class="checkout-grid">
-        <!-- LEFT: Form -->
-        <form id="checkoutForm" class="card" novalidate>
-          <div class="body">
-            <h2>Order Details</h2>
-            <div class="row row-2">
-              <div>
-                <label for="product">Product<span class="danger">*</span></label>
-                <select id="product" name="product" required>
-                  <option value="">Select a product…</option>
-                  <option>ISRIB A15</option>
-                  <option>ISRIB (Original)</option>
-                  <option>ZZL-7</option>
-                  <option>MPEP Oxalate</option>
-                </select>
-              </div>
-              <div>
-                <label for="quantity">Quantity<span class="danger">*</span></label>
-                <input id="quantity" name="quantity" type="number" min="1" step="1" required value="1" />
-              </div>
-            </div>
+    <form id="checkout-form" class="checkout-form">
+      <!-- Product -->
+      <div class="form-group">
+        <label for="product">Product</label>
+        <select id="product" name="product" required>
+          <option value="" disabled selected>Select product</option>
+          <option value="ISRIB A15">ISRIB A15</option>
+          <option value="ISRIB (Original)">ISRIB (Original)</option>
+          <option value="ZZL-7">ZZL-7</option>
+          <option value="MPEP Oxalate">MPEP Oxalate</option>
+        </select>
+      </div>
 
-            <div class="row row-2" style="margin-top:8px">
-              <div>
-                <label for="packaging">Packaging</label>
-                <select id="packaging" name="packaging">
-                  <option value="">Select…</option>
-                  <option>Powder (vial)</option>
-                  <option>Solution</option>
-                </select>
-              </div>
-              <div>
-                <label for="purity">Requested purity (optional)</label>
-                <select id="purity" name="purity">
-                  <option value="">Standard (≥98%)</option>
-                  <option>≥99%</option>
-                </select>
-              </div>
-            </div>
+      <!-- Quantity -->
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <select id="quantity" name="quantity" required>
+          <option value="" disabled selected>Select quantity</option>
+        </select>
+        <div id="quantity-other-wrap" class="form-inline" style="display:none; margin-top:8px;">
+          <label for="quantity-other" class="sr-only">Other amount (grams)</label>
+          <input id="quantity-other" name="quantity_other" type="number" min="1" step="0.1" placeholder="Enter grams (≥ 1.0 g)">
+        </div>
+      </div>
 
-            <hr style="margin:18px 0; border:none; border-top:1px solid #e5e7eb" />
+      <!-- Contact -->
+      <div class="form-two">
+        <div class="form-group">
+          <label for="full_name">Full name</label>
+          <input id="full_name" name="full_name" type="text" autocomplete="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+      </div>
 
-            <h2>Shipping Details</h2>
-            <div class="row row-2">
-              <div>
-                <label for="firstName">First name<span class="danger">*</span></label>
-                <input id="firstName" name="firstName" required />
-              </div>
-              <div>
-                <label for="lastName">Last name<span class="danger">*</span></label>
-                <input id="lastName" name="lastName" required />
-              </div>
-            </div>
-            <div class="row">
-              <div>
-                <label for="email">Email<span class="danger">*</span></label>
-                <input id="email" name="email" type="email" required />
-              </div>
-            </div>
-            <div class="row row-3">
-              <div>
-                <label for="country">Country<span class="danger">*</span></label>
-                <input id="country" name="country" required />
-              </div>
-              <div>
-                <label for="city">City<span class="danger">*</span></label>
-                <input id="city" name="city" required />
-              </div>
-              <div>
-                <label for="postal">Postal code<span class="danger">*</span></label>
-                <input id="postal" name="postal" required />
-              </div>
-            </div>
-            <div class="row">
-              <div>
-                <label for="address">Address<span class="danger">*</span></label>
-                <input id="address" name="address" required />
-              </div>
-            </div>
+      <!-- Messenger -->
+      <div class="form-group">
+        <label>Preferred contact channel</label>
+        <div class="radio-row">
+          <label><input type="radio" name="channel" value="Email" checked> Email</label>
+          <label><input type="radio" name="channel" value="Telegram"> Telegram</label>
+          <label><input type="radio" name="channel" value="WhatsApp"> WhatsApp</label>
+          <label><input type="radio" name="channel" value="Signal"> Signal</label>
+        </div>
+        <div class="form-group" id="channel-handle-wrap" style="margin-top:8px; display:none;">
+          <label for="channel_handle" id="channel-handle-label">Your handle</label>
+          <input id="channel_handle" name="channel_handle" type="text" placeholder="@username or phone">
+          <small class="help">No auto-prefixes — enter your Telegram @handle or full phone for messengers.</small>
+        </div>
+      </div>
 
-            <div class="row row-2">
-              <div>
-                <label for="messenger">Messenger (optional)</label>
-                <select id="messenger" name="messenger">
-                  <option value="">Select…</option>
-                  <option>Telegram</option>
-                  <option>Signal</option>
-                  <option>WhatsApp</option>
-                </select>
-              </div>
-              <div>
-                <label for="handle">Handle / phone (optional)</label>
-                <input id="handle" name="handle" placeholder="@username or +380…" />
-              </div>
-            </div>
+      <!-- Notes -->
+      <div class="form-group">
+        <label for="notes">Notes (optional)</label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Shipping preferences, lab details, etc."></textarea>
+      </div>
 
-            <div class="row">
-              <div>
-                <label for="notes">Notes (optional)</label>
-                <textarea id="notes" name="notes" placeholder="Any specifics on shipping, formulation, timeline…"></textarea>
-              </div>
-            </div>
+      <button type="submit" class="btn btn-primary">Submit order request</button>
+      <p id="checkout-status" class="form-status" role="status" aria-live="polite" style="margin-top:10px;"></p>
+    </form>
+  </div>
+</section>
 
-            <!-- honeypot -->
-            <input type="text" name="_gotcha" class="hidden" aria-hidden="true" tabindex="-1" autocomplete="off"/>
-
-            <div class="row" style="margin-top:4px">
-              <label style="display:flex; gap:10px; align-items:flex-start">
-                <input type="checkbox" id="researchOnly" required />
-                <span class="disclaimer">
-                  I confirm the products are ordered strictly for <strong>research use only</strong>. Not for human consumption, clinical, or veterinary use. I agree to the
-                  <a href="terms.html">Terms</a>, <a href="privacy.html">Privacy Policy</a>, and <a href="disclaimer.html">Disclaimer</a>.
-                </span>
-              </label>
-            </div>
-
-            <div class="row" style="margin-top:16px">
-              <button class="btn-primary" type="submit">Submit Order Request</button>
-              <div id="formMsg" class="muted" style="margin-top:8px"></div>
-            </div>
-          </div>
-        </form>
 
         <!-- RIGHT: Summary / Help -->
         <aside class="card">
