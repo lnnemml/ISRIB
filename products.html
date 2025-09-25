@@ -14,7 +14,20 @@
     @media (max-width: 1024px){ .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
     @media (max-width: 720px){ .grid{ grid-template-columns:1fr; } }
 
-    .product-card{ background:#fff; border-radius:16px; border:1px solid #e5e7eb; box-shadow: 0 4px 20px rgba(0,0,0,.04); padding:20px; display:flex; flex-direction:column; gap:16px; }
+    .product-card{
+      position:relative;
+      background:#fff; border-radius:16px; border:1px solid #e5e7eb;
+      box-shadow: 0 4px 20px rgba(0,0,0,.04);
+      padding:20px; display:flex; flex-direction:column; gap:16px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .product-card.linkable{ cursor:pointer; }
+    .product-card.linkable:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0,0,0,.10);
+      border-color:#c7d2fe;
+    }
+
     .product-header{ display:flex; align-items:center; gap:12px; }
     .product-title{ font-weight:800; font-size:1.1rem; color:#0f172a; }
     .product-sub{ color:#64748b; font-size:.94rem; }
@@ -22,7 +35,9 @@
     .quantity-wrap{ border:1px solid #e5e7eb; border-radius:14px; padding:14px; }
     .quantity-title{ font-weight:700; margin-bottom:10px; color:#0f172a; }
     .quantity-row{ display:flex; gap:10px; flex-wrap:wrap; }
-    .quantity-option{ border:2px solid #e2e8f0; border-radius:12px; padding:10px 14px; cursor:pointer; user-select:none; background:#fff; transition:transform .08s ease; }
+    .quantity-option{
+      border:2px solid #e2e8f0; border-radius:12px; padding:10px 14px; cursor:pointer; user-select:none; background:#fff; transition:transform .08s ease, border-color .18s ease, box-shadow .18s ease;
+    }
     .quantity-option:active{ transform:scale(.98); }
     .quantity-option .tag { display:block; font-weight:800; color:#0f172a; }
     .quantity-option .price { display:block; color:#64748b; font-size:.9rem; }
@@ -49,12 +64,34 @@
       background:#1e40af; color:#fff; border-radius:12px; font-size:12px; font-weight:800;
       transform-origin:center; line-height:1; border:1px solid rgba(0,0,0,.06);
     }
-    @keyframes pop {
-      0%   { transform:scale(1); }
-      40%  { transform:scale(1.22); }
-      100% { transform:scale(1); }
-    }
+    @keyframes pop { 0% {transform:scale(1);} 40% {transform:scale(1.22);} 100% {transform:scale(1);} }
     .badge.pop { animation: pop .35s cubic-bezier(.2,.8,.2,1); }
+
+    /* -------- shake для кнопки/лінка кошика -------- */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-2px); }
+      40% { transform: translateX(2px); }
+      60% { transform: translateX(-1px); }
+      80% { transform: translateX(1px); }
+    }
+    .shake { animation: shake .45s ease; }
+
+    /* -------- toast (top-right) -------- */
+    .toast-wrap{
+      position:fixed; top:16px; right:16px; z-index:9999;
+      display:flex; flex-direction:column; gap:10px; pointer-events:none;
+    }
+    .toast{
+      background:#0b1220; color:#e7eefc; border:1px solid #1f2a44;
+      border-radius:12px; padding:12px 14px; font-weight:600; min-width:240px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(-8px);
+      animation: toast-in .22s ease forwards, toast-out .22s ease forwards 1.5s;
+    }
+    .toast svg{ flex:0 0 auto }
+    @keyframes toast-in { to { opacity:1; transform: translateY(0); } }
+    @keyframes toast-out{ to { opacity:0; transform: translateY(-8px); } }
   </style>
 </head>
 <body>
@@ -70,7 +107,7 @@
           <a href="about.html">About</a>
           <a href="faq.html">FAQ</a>
           <a href="contact.html">Contact</a>
-          <a href="checkout.html" class="cart-btn">
+          <a href="checkout.html" class="cart-btn" id="cartBtn">
             🛒 Cart <span id="cartCount" class="badge">0</span>
           </a>
         </nav>
@@ -92,7 +129,7 @@
         <div class="grid">
 
           <!-- A15 -->
-          <article class="product-card" data-sku="isrib-a15" data-name="ISRIB A15">
+          <article class="product-card linkable" data-sku="isrib-a15" data-name="ISRIB A15">
             <div class="product-header">
               <h2 class="product-title">ISRIB A15</h2>
               <span class="product-sub">Ultra Potent Analog</span>
@@ -103,7 +140,7 @@
               <div class="quantity-row">
                 <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
                 <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
-                <div class="quantity-option" data-quantity="1000mg" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
+                <div class="quantity-option" data-quantity="1g" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
               </div>
             </div>
 
@@ -128,7 +165,7 @@
           </article>
 
           <!-- ISRIB Original -->
-          <article class="product-card" data-sku="isrib" data-name="ISRIB (Original)">
+          <article class="product-card linkable" data-sku="isrib" data-name="ISRIB (Original)">
             <div class="product-header">
               <h2 class="product-title">ISRIB (Original)</h2>
               <span class="product-sub">Original Compound</span>
@@ -139,7 +176,7 @@
               <div class="quantity-row">
                 <div class="quantity-option active" data-quantity="30mg" data-price="14"><span class="tag">30mg</span><span class="price">$14</span></div>
                 <div class="quantity-option" data-quantity="100mg" data-price="27"><span class="tag">100mg</span><span class="price">$27</span></div>
-                <div class="quantity-option" data-quantity="1000mg" data-price="100"><span class="tag">1000mg</span><span class="price">$100</span></div>
+                <div class="quantity-option" data-quantity="1g" data-price="100"><span class="tag">1000mg</span><span class="price">$100</span></div>
               </div>
             </div>
 
@@ -164,7 +201,7 @@
           </article>
 
           <!-- ZZL-7 -->
-          <article class="product-card" data-sku="zzl7" data-name="ZZL-7">
+          <article class="product-card linkable" data-sku="zzl7" data-name="ZZL-7">
             <div class="product-header">
               <h2 class="product-title">ZZL‑7</h2>
               <span class="product-sub">Fast-Onset Antidepressant</span>
@@ -175,7 +212,7 @@
               <div class="quantity-row">
                 <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
                 <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
-                <div class="quantity-option" data-quantity="1000mg" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
+                <div class="quantity-option" data-quantity="1g" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
               </div>
             </div>
 
@@ -200,7 +237,7 @@
           </article>
 
           <!-- MPEP Oxalate -->
-          <article class="product-card" data-sku="mpep" data-name="MPEP Oxalate">
+          <article class="product-card linkable" data-sku="mpep" data-name="MPEP Oxalate">
             <div class="product-header">
               <h2 class="product-title">MPEP Oxalate</h2>
               <span class="product-sub">mGluR5 Negative Allosteric Modulator</span>
@@ -211,7 +248,7 @@
               <div class="quantity-row">
                 <div class="quantity-option active" data-quantity="50mg" data-price="45"><span class="tag">50mg</span><span class="price">$45</span></div>
                 <div class="quantity-option" data-quantity="500mg" data-price="280"><span class="tag">500mg</span><span class="price">$280</span></div>
-                <div class="quantity-option" data-quantity="1000mg" data-price="450"><span class="tag">1000mg</span><span class="price">$450</span></div>
+                <div class="quantity-option" data-quantity="1g" data-price="450"><span class="tag">1000mg</span><span class="price">$450</span></div>
               </div>
             </div>
 
@@ -249,6 +286,9 @@
     </div>
   </footer>
 
+  <!-- Toast container -->
+  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
   <!-- Твій глобальний JS -->
   <script src="js/main.js"></script>
 
@@ -258,14 +298,58 @@
       const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
       const $  = (s, r = document) => r.querySelector(s);
       const CART_KEY = 'isrib_cart';
+      const badge = $('#cartCount');
+      const cartBtn = $('#cartBtn');
       document.getElementById('y').textContent = new Date().getFullYear();
 
+      // --- utils ---
       const toGrams = (q) => {
         q = String(q).trim().toLowerCase();
         if (q.endsWith('mg')) return Number(q.replace('mg','')) / 1000;
         if (q.endsWith('g'))  return Number(q.replace('g',''));
         return Number(q) || 1;
       };
+
+      function showToast(message){
+        const wrap = $('#toastWrap'); if(!wrap) return;
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 12l2 2 4-4" stroke="#31c48d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="9" stroke="#31c48d" stroke-width="2" fill="none"/>
+          </svg>
+          <span>${message}</span>`;
+        wrap.appendChild(el);
+        setTimeout(()=> wrap.removeChild(el), 1750);
+      }
+
+      function shakeCart(){
+        if(!cartBtn) return;
+        cartBtn.classList.remove('shake'); void cartBtn.offsetWidth;
+        cartBtn.classList.add('shake');
+        setTimeout(()=>cartBtn.classList.remove('shake'), 500);
+      }
+
+      function popBadge(){
+        if (!badge) return;
+        badge.classList.remove('pop'); void badge.offsetWidth; // restart animation
+        badge.classList.add('pop');
+      }
+
+      function getCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }catch{ return []; } }
+      function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
+
+      function updateCartCount(){
+        if (!badge) return;
+        let cart = getCart();
+        // міграція (старі записи могли мати qty замість grams/count)
+        cart = cart.map(i => (i && i.count == null && (i.qty != null || i.grams != null))
+          ? ({...i, grams: i.grams ?? i.qty, count: 1, unit:'pack', qty: undefined})
+          : i);
+        const total = cart.reduce((n,i) => n + (Number(i.count)||0), 0);
+        badge.textContent = total;
+      }
 
       const updateCard = (card) => {
         const sel = $('.quantity-option.active', card);
@@ -281,8 +365,7 @@
 
         const ppm = $('.price-per-mg', card);
         if (ppm) {
-          const mg = q.endsWith('mg') ? Number(q.replace('mg',''))
-                    : Number(q.replace('g','')) * 1000;
+          const mg = q.endsWith('mg') ? Number(q.replace('mg','')) : Number(q.replace('g','')) * 1000;
           ppm.textContent = `($${(price / mg).toFixed(2)}/mg)`;
         }
 
@@ -292,13 +375,15 @@
         if (priceEl) priceEl.textContent = `$${price}`;
       };
 
-      // активатор вибору кількості
+      // --- Ініціалізація карток + selection ---
       $$('.product-card').forEach((card) => {
         const first = $('.quantity-option', card);
         if (first && !$('.quantity-option.active', card)) first.classList.add('active');
 
         $$('.quantity-option', card).forEach(opt => {
-          opt.addEventListener('click', () => {
+          // не віддавати клік нагору (щоб не спрацьовувала навігація картки)
+          opt.addEventListener('click', (e) => {
+            e.stopPropagation();
             $$('.quantity-option', card).forEach(o => o.classList.remove('active'));
             opt.classList.add('active');
             updateCard(card);
@@ -308,31 +393,10 @@
         updateCard(card); // init
       });
 
-      // Додавання до кошика + поп-ін бейджу
-      const badge = document.getElementById('cartCount');
-
-      const popBadge = () => {
-        if (!badge) return;
-        badge.classList.remove('pop'); // перезапуск анімації
-        // force reflow
-        void badge.offsetWidth;
-        badge.classList.add('pop');
-      };
-
-      const updateCartCount = () => {
-        if (!badge) return;
-        let cart = [];
-        try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch {}
-        // міграція (старі записи мали qty як грами)
-        cart = cart.map(i => (i && i.count == null && i.qty != null)
-          ? ({...i, grams: i.grams ?? i.qty, count: 1, qty: undefined})
-          : i);
-        const total = cart.reduce((n,i) => n + (Number(i.count)||0), 0);
-        badge.textContent = total;
-      };
-
+      // --- Додавання до кошика + фідбек (без редіректу) ---
       $$('.add-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation(); // не переходити на сторінку продукту
           const card = btn.closest('.product-card');
           const sel  = $('.quantity-option.active', card);
           if (!sel) return;
@@ -340,31 +404,49 @@
           const qStr  = sel.dataset.quantity;         // "100mg" | "1g" ...
           const price = Number(sel.dataset.price);
           const grams = toGrams(qStr);
-
           const name = btn.dataset.name || card.dataset.name;
           const sku  = btn.dataset.sku  || card.dataset.sku;
 
-          // fallback: localStorage (пакети, не грами)
-          let cart = [];
-          try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch {}
+          const cart = getCart();
           cart.push({ name, sku, grams, display: qStr, price, count: 1, unit: 'pack' });
-          localStorage.setItem(CART_KEY, JSON.stringify(cart));
+          saveCart(cart);
 
-          updateCartCount();
           popBadge();
+          shakeCart();
+          showToast(`Added to cart: ${name} — ${qStr} ($${price})`);
 
           // короткий зворотній зв'язок на кнопці
           const oldHTML = btn.innerHTML;
           btn.disabled = true;
-          btn.innerText = '✔️ Added!';
-          setTimeout(() => {
-            btn.disabled = false;
-            btn.innerHTML = oldHTML;
-          }, 1200);
+          btn.textContent = '✔️ Added!';
+          setTimeout(() => { btn.disabled = false; btn.innerHTML = oldHTML; }, 1200);
         });
       });
 
-      // стартове число у бейджі
+      // --- Клік по картці → перейти на сторінку продукту ---
+      // орієнтуємось на href у кнопці "View Details"
+      $$('.product-card.linkable').forEach(card => {
+        const detailsLink = $('.view-product', card);
+        if (!detailsLink) return;
+        const href = detailsLink.getAttribute('href');
+
+        card.addEventListener('click', (e) => {
+          // якщо клікнувся будь‑який елемент, що не повинен ініціювати перехід — ігноруємо
+          const target = e.target;
+          if (
+            target.closest('.quantity-wrap') || // кліки в зоні вибору кількості
+            target.closest('.add-btn') ||       // кнопка add to cart
+            target.closest('.view-product') ||  // власне лінк View Details
+            target.closest('.view-cart') ||     // лінк View Cart
+            target.tagName === 'A' || target.closest('a') // будь-які інші <a>
+          ){
+            return;
+          }
+          if (href) window.location.assign(href);
+        });
+      });
+
+      // --- стартове число у бейджі ---
       updateCartCount();
     })();
   </script>
