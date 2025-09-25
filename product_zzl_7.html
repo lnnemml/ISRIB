@@ -402,13 +402,11 @@
                     </div>
 
                     <div style="text-align: center; margin-top: 40px;">
-                        <a href="contact.html?product=zzl7-1g&price=200&inquiry=order" 
-                           id="order-link" 
-                           class="btn-primary" 
-                           onclick="trackCTA('order_section', 'zzl7', 'contact_to_order')"
-                           style="font-size: 1.2rem; padding: 18px 40px;">
-                            💬 Contact to Order - 1g for $200
-                        </a>
+                        <button class="btn-primary"
+                         style="font-size: 1.2rem; padding: 18px 40px;"
+                         onclick="addToCart('ZZL-7','zzl7',1)">
+                        ➕ Add to Cart — 1g
+                        </button>
                         <p style="color: #64748b; margin-top: 15px; font-size: 0.95rem;">Secure payment arrangements discussed individually</p>
                     </div>
                 </div>
@@ -645,6 +643,25 @@
             }
         });
     </script>
+    <script>
+  const CART_KEY='isrib_cart';
+  function getCart(){ try{return JSON.parse(localStorage.getItem(CART_KEY))||[]}catch{return[]} }
+  function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
+  function updateCartCount(){
+    const el=document.getElementById('cartCount');
+    if(el){ el.textContent=getCart().reduce((n,i)=>n+Number(i.qty||0),0); }
+  }
+  function addToCart(name, sku, qty){
+    const c=getCart();
+    const ex=c.find(i=>i.sku===sku);
+    if(ex) ex.qty+=Number(qty||1); else c.push({name, sku, qty:Number(qty||1), unit:'g'});
+    saveCart(c);
+    alert(`${name} added to cart`);
+    // Можеш одразу вести на checkout:
+    // location.href='checkout.html';
+  }
+  document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
     <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
