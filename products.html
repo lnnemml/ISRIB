@@ -233,7 +233,7 @@
     </div>
   </footer>
 
-  <!-- Твій глобальний JS (залиш як є у проекті) -->
+  <!-- Твій глобальний JS -->
   <script src="js/main.js"></script>
 
   <!-- Універсальний “клей” для сторінки Products -->
@@ -295,8 +295,11 @@
       // Додавання до кошика
       const updateCartCount = () => {
         const el = $('#cartCount'); if (!el) return;
-        const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-        const total = cart.reduce((n,i) => n + Number(i.qty||0), 0);
+        let cart = [];
+        try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch {}
+        // міграція (старі записи мали qty як грами)
+        cart = cart.map(i => (i && i.count == null && i.qty != null) ? ({...i, grams: i.grams ?? i.qty, count: 1, qty: undefined}) : i);
+        const total = cart.reduce((n,i) => n + (Number(i.count)||0), 0);
         el.textContent = total;
       };
 
@@ -317,8 +320,9 @@
             try { window.addToCart(name, sku, grams, price, qStr); }
             catch {}
           } else {
-            // fallback: localStorage
-            const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+            // fallback: localStorage (пакети, не грами)
+            let cart = [];
+            try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch {}
             cart.push({ name, sku, grams, display: qStr, price, count: 1, unit: 'pack' });
             localStorage.setItem(CART_KEY, JSON.stringify(cart));
           }
@@ -331,17 +335,18 @@
       updateCartCount();
     })();
   </script>
-     <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
+
+  <!-- Tawk.to -->
+  <script>
+  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+  (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+  })();
+  </script>
 </body>
 </html>
