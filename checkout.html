@@ -1,266 +1,290 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Checkout — ISRIB.shop</title>
-<meta name="description" content="Complete your order request. Research use only. Worldwide shipping.">
-<link href="css/styles.css" rel="stylesheet">
-<style>
-  /* локальні стилі поверх існуючих */
-  body{background:#f8fafc;color:#0f172a}
-  .page-header{padding:24px 0 8px;border-bottom:1px solid #e5e7eb;background:#fff}
-  .checkout-wrap{padding:28px 0 60px}
-  .checkout-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:24px;align-items:start}
-  .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden}
-  .card .body{padding:20px}
-  .row{display:grid;gap:12px;margin-top:12px}
-  .row-2{grid-template-columns:1fr 1fr}
-  .row-3{grid-template-columns:1fr 1fr 1fr}
-  label{display:block;font-weight:600;margin-bottom:6px}
-  input,select,textarea{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:#fff}
-  textarea{resize:vertical}
-  .btn-primary{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 18px;background:#1e40af;color:#fff;border-radius:12px;border:none;font-weight:700;cursor:pointer}
-  .btn-primary:hover{background:#1b389a}
-  .muted{color:#64748b}
-  .danger{color:#dc2626}
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:12px}
-  .cart-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-  .cart-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa}
-  .cart-title{font-weight:600}
-  .cart-ctrl{display:flex;align-items:center;gap:8px}
-  .cart-qty{width:76px}
-  .link{background:none;border:none;color:#1e40af;cursor:pointer;padding:0}
-  .link.danger{color:#dc2626}
-  .header{padding:14px 0;border-bottom:1px solid #e5e7eb;background:#fff;position:sticky;top:0;z-index:20}
-  .header .header-content{display:flex;align-items:center;justify-content:space-between;gap:16px}
-  .logo-image{height:36px;width:auto;object-fit:contain}
-  .nav{display:flex;gap:18px;align-items:center}
-  .nav a{text-decoration:none;color:#0f172a;font-weight:600}
-  .cart-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;background:#0f766e;color:#fff;border-radius:12px;font-weight:700;text-decoration:none}
-  .cart-btn:hover{background:#0b5e57}
-  .badge{display:inline-flex;min-width:22px;height:22px;padding:0 6px;border-radius:999px;align-items:center;justify-content:center;background:#fff;color:#0f766e;font-size:12px;font-weight:800}
-  @media (max-width: 980px){.checkout-grid{grid-template-columns:1fr}.row-2,.row-3{grid-template-columns:1fr}}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Checkout — ISRIB.shop</title>
+  <meta name="description" content="Complete your order request. Research use only. Worldwide shipping.">
+  <link href="css/styles.css" rel="stylesheet"/>
+  <style>
+    /* Невеличкі доповнення до існуючого стилю */
+    body{background:#f8fafc;color:#0f172a}
+    .page-header{padding:24px 0 8px;border-bottom:1px solid #e5e7eb;background:#fff}
+    .checkout-wrap{padding:28px 0 60px}
+    .checkout-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:24px;align-items:start}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden}
+    .card .body{padding:20px}
+    .row{display:grid;gap:12px;margin-top:12px}
+    .row-2{grid-template-columns:1fr 1fr}
+    .row-3{grid-template-columns:1fr 1fr 1fr}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:#fff}
+    textarea{resize:vertical}
+    .btn-primary{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 18px;background:#1e40af;color:#fff;border-radius:12px;border:none;font-weight:700;cursor:pointer}
+    .btn-primary:hover{background:#1b399b}
+    .muted{color:#64748b}
+    .danger{color:#dc2626}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:12px}
+    .cart-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .cart-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa}
+    .cart-title{font-weight:600}
+    .cart-ctrl{display:flex;align-items:center;gap:8px}
+    .cart-qty{width:76px}
+    .link{background:none;border:none;color:#1e40af;cursor:pointer;padding:0}
+    .link.danger{color:#dc2626}
+
+    .header{padding:14px 0;border-bottom:1px solid #e5e7eb;background:#fff;position:sticky;top:0;z-index:20}
+    .header .header-content{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .logo-image{height:36px;width:auto;object-fit:contain}
+    .nav{display:flex;gap:18px;align-items:center}
+    .nav a{text-decoration:none;color:#0f172a;font-weight:600}
+    .cart-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;background:#0f766e;color:#fff;border-radius:12px;font-weight:700;text-decoration:none}
+    .cart-btn:hover{background:#0b5e57}
+    .badge{display:inline-flex;min-width:22px;height:22px;padding:0 6px;border-radius:999px;align-items:center;justify-content:center;background:#fff;color:#0f766e;font-size:12px;font-weight:800}
+
+    @media (max-width: 980px){
+      .checkout-grid{grid-template-columns:1fr}
+      .row-2,.row-3{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
 
-<!-- Header (локально, щоб точно було видно зміни) -->
-<header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout2.html" class="cart-btn" id="cartBtn">🧺 Cart <span id="cartCount" class="badge">0</span></a>
-      </nav>
-    </div>
-  </div>
-</header>
-
-<section class="page-header">
-  <div class="container">
-    <h1>Checkout</h1>
-    <p class="muted">Fill the form below. We’ll confirm availability, shipping and payment details via email or messenger.</p>
-  </div>
-</section>
-
-<main class="checkout-wrap">
-  <div class="container">
-    <div class="checkout-grid">
-
-      <!-- LEFT: form -->
-      <form id="checkoutForm" class="card" novalidate>
-        <div class="body">
-          <h2>Shipping & Contact</h2>
-
-          <div class="row row-2">
-            <div>
-              <label for="firstName">First name<span class="danger">*</span></label>
-              <input id="firstName" name="firstName" autocomplete="given-name" required>
-            </div>
-            <div>
-              <label for="lastName">Last name<span class="danger">*</span></label>
-              <input id="lastName" name="lastName" autocomplete="family-name" required>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label for="email">Email<span class="danger">*</span></label>
-              <input id="email" name="email" type="email" autocomplete="email" required>
-            </div>
-          </div>
-
-          <div class="row row-3">
-            <div>
-              <label for="country">Country<span class="danger">*</span></label>
-              <input id="country" name="country" autocomplete="country-name" required>
-            </div>
-            <div>
-              <label for="city">City<span class="danger">*</span></label>
-              <input id="city" name="city" autocomplete="address-level2" required>
-            </div>
-            <div>
-              <label for="postal">Postal code<span class="danger">*</span></label>
-              <input id="postal" name="postal" autocomplete="postal-code" required>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label for="address">Address<span class="danger">*</span></label>
-              <input id="address" name="address" autocomplete="address-line1" required>
-            </div>
-          </div>
-
-          <div class="row row-2">
-            <div>
-              <label for="messenger">Preferred messenger (optional)</label>
-              <select id="messenger" name="messenger">
-                <option value="">Select…</option>
-                <option>Telegram</option>
-                <option>Signal</option>
-                <option>WhatsApp</option>
-              </select>
-            </div>
-            <div>
-              <label for="handle">Handle / phone (optional)</label>
-              <input id="handle" name="handle" placeholder="@username or +1…">
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label for="notes">Notes (optional)</label>
-              <textarea id="notes" name="notes" rows="3" placeholder="Institute / lab, delivery preferences, etc."></textarea>
-            </div>
-          </div>
-
-          <input type="text" name="_gotcha" class="hidden" aria-hidden="true" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0"/>
-
-          <div class="row" style="margin-top:6px">
-            <label style="display:flex;gap:10px;align-items:flex-start">
-              <input type="checkbox" id="researchOnly" required>
-              <span class="muted">
-                I confirm the products are ordered strictly for <strong>research use only</strong>. Not for human consumption, clinical, or veterinary use. I agree to the
-                <a href="terms.html">Terms</a>, <a href="privacy.html">Privacy Policy</a>, and <a href="disclaimer.html">Disclaimer</a>.
-              </span>
-            </label>
-          </div>
-
-          <div class="row" style="margin-top:14px">
-            <button class="btn-primary" type="submit">Submit Order Request</button>
-            <div id="formMsg" class="muted" style="margin-top:8px"></div>
-          </div>
-        </div>
-      </form>
-
-      <!-- RIGHT: summary -->
-      <aside class="card">
-        <div class="body">
-          <h2>Order Summary</h2>
-          <div id="cartList" class="cart-list"></div>
-
-          <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb">
-          <div class="pill">Research Use Only</div>
-          <ul class="muted" style="margin-top:12px;line-height:1.8">
-            <li>COA available per batch</li>
-            <li>Worldwide shipping</li>
-            <li>Secure packaging</li>
-            <li>Support via Email/Telegram/Signal</li>
-            <li>Payments arranged individually</li>
-          </ul>
-        </div>
-      </aside>
-
-    </div>
-  </div>
-</main>
-
-<footer class="footer">
-  <div class="container">
-    <div class="muted" style="padding:18px 0;border-top:1px solid #e5e7eb;">
-      © <span id="y"></span> ISRIB.shop — Research chemicals. All rights reserved.
-    </div>
-  </div>
-</footer>
-
-<script>
-  // рік у футері
-  document.getElementById('y').textContent = new Date().getFullYear();
-
-  /* ====== КОШИК (все локально у сторінці) ====== */
-  const CART_KEY = 'isrib_cart';
-  const $ = s => document.querySelector(s);
-
-  function getCart(){ try{return JSON.parse(localStorage.getItem(CART_KEY))||[]}catch{return[]} }
-  function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
-  function updateCartCount(){
-    const el = $('#cartCount'); if(!el) return;
-    const total = getCart().reduce((n,i)=>n+Number(i.qty||0),0);
-    el.textContent = total;
-  }
-  function renderCheckoutCart(){
-    const wrap = $('#cartList'); if(!wrap) return;
-    const cart = getCart();
-    if(!cart.length){ wrap.innerHTML = '<p class="muted">Your cart is empty. Go to <a href="products.html">Products</a>.</p>'; updateCartCount(); return; }
-    wrap.innerHTML = cart.map((it,idx)=>`
-      <div class="cart-row">
-        <div class="cart-title"><strong>${it.name||it.product}</strong></div>
-        <div class="cart-ctrl">
-          <input type="number" min="1" value="${Number(it.qty||1)}" data-idx="${idx}" class="cart-qty">
-          <span class="unit">${it.unit||'g'}</span>
-          <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
-        </div>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
+        </a>
+        <nav class="nav">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn" id="cartBtn">🧺 Cart <span id="cartCount" class="badge">0</span></a>
+        </nav>
       </div>
-    `).join('');
-    wrap.querySelectorAll('.cart-qty').forEach(inp=>{
-      inp.addEventListener('change',e=>{
-        const i=+e.target.dataset.idx; const c=getCart();
-        c[i].qty = Math.max(1, Number(e.target.value||1)); saveCart(c); renderCheckoutCart();
-      });
-    });
-    wrap.querySelectorAll('.cart-remove').forEach(btn=>{
-      btn.addEventListener('click',e=>{
-        const i=+e.target.dataset.idx; const c=getCart(); c.splice(i,1); saveCart(c); renderCheckoutCart();
-      });
-    });
-  }
+    </div>
+  </header>
 
-  // сабміт форми → /api/checkout
-  (function(){
-    const form = $('#checkoutForm'); const msg = $('#formMsg');
-    if(!form) return;
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault(); msg.textContent=''; msg.className='muted';
-      if(!form.checkValidity()){ msg.className='danger'; msg.textContent='Please fill all required fields.'; return; }
-      const cart = getCart(); if(!cart.length){ msg.className='danger'; msg.textContent='Your cart is empty.'; return; }
-      const data = Object.fromEntries(new FormData(form).entries());
-      data.cart = cart; data.timestamp = new Date().toISOString();
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Checkout</h1>
+      <p class="muted">Fill the form below. We’ll confirm availability, shipping and payment details via email or messenger.</p>
+    </div>
+  </section>
 
-      try{
-        const r = await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-        if(!r.ok) throw new Error('submit failed');
-        localStorage.removeItem(CART_KEY); updateCartCount();
-        const oid = Math.random().toString(36).slice(2,8).toUpperCase();
-        window.location.href = `/success.html?order=${oid}`;
-      }catch(err){
-        msg.className='danger'; msg.textContent='Submission failed. Please try again or email isrib.shop@protonmail.com';
+  <!-- Content -->
+  <main class="checkout-wrap">
+    <div class="container">
+      <div class="checkout-grid">
+        <!-- LEFT: Form -->
+        <form id="checkoutForm" class="card" novalidate>
+          <div class="body">
+            <h2>Shipping & Contact</h2>
+
+            <div class="row row-2">
+              <div>
+                <label for="firstName">First name<span class="danger">*</span></label>
+                <input id="firstName" name="firstName" autocomplete="given-name" required />
+              </div>
+              <div>
+                <label for="lastName">Last name<span class="danger">*</span></label>
+                <input id="lastName" name="lastName" autocomplete="family-name" required />
+              </div>
+            </div>
+
+            <div class="row">
+              <div>
+                <label for="email">Email<span class="danger">*</span></label>
+                <input id="email" name="email" type="email" autocomplete="email" required />
+              </div>
+            </div>
+
+            <div class="row row-3">
+              <div>
+                <label for="country">Country<span class="danger">*</span></label>
+                <input id="country" name="country" autocomplete="country-name" required />
+              </div>
+              <div>
+                <label for="city">City<span class="danger">*</span></label>
+                <input id="city" name="city" autocomplete="address-level2" required />
+              </div>
+              <div>
+                <label for="postal">Postal code<span class="danger">*</span></label>
+                <input id="postal" name="postal" autocomplete="postal-code" required />
+              </div>
+            </div>
+
+            <div class="row">
+              <div>
+                <label for="address">Address<span class="danger">*</span></label>
+                <input id="address" name="address" autocomplete="address-line1" required />
+              </div>
+            </div>
+
+            <div class="row row-2">
+              <div>
+                <label for="messenger">Preferred messenger (optional)</label>
+                <select id="messenger" name="messenger">
+                  <option value="">Select…</option>
+                  <option>Telegram</option>
+                  <option>Signal</option>
+                  <option>WhatsApp</option>
+                </select>
+              </div>
+              <div>
+                <label for="handle">Handle / phone (optional)</label>
+                <input id="handle" name="handle" placeholder="@username or +1…" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div>
+                <label for="notes">Notes (optional)</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Institute / lab, delivery preferences, etc."></textarea>
+              </div>
+            </div>
+
+            <!-- honeypot -->
+            <input type="text" name="_gotcha" class="hidden" aria-hidden="true" tabindex="-1" autocomplete="off"/>
+
+            <div class="row" style="margin-top:6px">
+              <label style="display:flex; gap:10px; align-items:flex-start">
+                <input type="checkbox" id="researchOnly" required />
+                <span class="muted">
+                  I confirm the products are ordered strictly for <strong>research use only</strong>. Not for human consumption, clinical, or veterinary use. I agree to the
+                  <a href="terms.html">Terms</a>, <a href="privacy.html">Privacy Policy</a>, and <a href="disclaimer.html">Disclaimer</a>.
+                </span>
+              </label>
+            </div>
+
+            <div class="row" style="margin-top:14px">
+              <button class="btn-primary" type="submit">Submit Order Request</button>
+              <div id="formMsg" class="muted" style="margin-top:8px"></div>
+            </div>
+          </div>
+        </form>
+
+        <!-- RIGHT: Summary -->
+        <aside class="card">
+          <div class="body">
+            <h2>Order Summary</h2>
+            <div id="cartList" class="cart-list"></div>
+
+            <hr style="margin:16px 0; border:none; border-top:1px solid #e5e7eb" />
+            <div class="pill">Research Use Only</div>
+            <ul class="muted" style="margin-top:12px; line-height:1.8">
+              <li>COA available per batch</li>
+              <li>Worldwide shipping</li>
+              <li>Secure packaging</li>
+              <li>Support via Email/Telegram/Signal</li>
+              <li>Payments arranged individually</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="muted" style="padding:18px 0; border-top:1px solid #e5e7eb;">
+        © <span id="y"></span> ISRIB.shop — Research chemicals. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- INLINE JS: кошик + сабміт -->
+  <script>
+    // рік у футері
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    const CART_KEY = 'isrib_cart';
+    const $ = s => document.querySelector(s);
+
+    function getCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY)) || [] } catch { return [] } }
+    function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
+    function updateCartCount(){
+      const el = $('#cartCount'); if(!el) return;
+      const total = getCart().reduce((n,i)=>n+Number(i.qty||0),0);
+      el.textContent = total;
+    }
+
+    function renderCheckoutCart(){
+      const wrap = $('#cartList'); if(!wrap) return;
+      const cart = getCart();
+      if(!cart.length){
+        wrap.innerHTML = '<p class="muted">Your cart is empty. Go to <a href="products.html">Products</a>.</p>';
+        updateCartCount(); return;
       }
-    });
-  })();
+      wrap.innerHTML = cart.map((it,idx)=>`
+        <div class="cart-row">
+          <div class="cart-title"><strong>${it.name || it.product}</strong></div>
+          <div class="cart-ctrl">
+            <input type="number" min="1" value="${Number(it.qty||1)}" data-idx="${idx}" class="cart-qty">
+            <span class="unit">${it.unit || 'g'}</span>
+            <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
+          </div>
+        </div>
+      `).join('');
 
-  // ініт
-  document.addEventListener('DOMContentLoaded',()=>{
-    updateCartCount();
-    renderCheckoutCart();
-  });
-</script>
+      wrap.querySelectorAll('.cart-qty').forEach(inp=>{
+        inp.addEventListener('change',e=>{
+          const i=+e.target.dataset.idx; const c=getCart();
+          c[i].qty = Math.max(1, Number(e.target.value||1)); saveCart(c); renderCheckoutCart();
+        });
+      });
+      wrap.querySelectorAll('.cart-remove').forEach(btn=>{
+        btn.addEventListener('click',e=>{
+          const i=+e.target.dataset.idx; const c=getCart(); c.splice(i,1); saveCart(c); renderCheckoutCart();
+        });
+      });
+    }
+
+    (function(){
+      const form = $('#checkoutForm'); const msg = $('#formMsg');
+      if(!form) return;
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault(); msg.textContent=''; msg.className='muted';
+
+        if (!form.checkValidity()){
+          msg.className='danger'; msg.textContent='Please fill all required fields.'; return;
+        }
+        const cart = getCart();
+        if (!cart.length){
+          msg.className='danger'; msg.textContent='Your cart is empty.'; return;
+        }
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.cart = cart; data.timestamp = new Date().toISOString();
+
+        try{
+          const r = await fetch('/api/checkout',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(data)
+          });
+          if (!r.ok) throw new Error('submit failed');
+
+          localStorage.removeItem(CART_KEY); updateCartCount();
+          const oid = Math.random().toString(36).slice(2,8).toUpperCase();
+          window.location.href = `/success.html?order=${oid}`;
+        }catch(err){
+          msg.className='danger';
+          msg.textContent='Submission failed. Please try again or email isrib.shop@protonmail.com';
+        }
+      });
+    })();
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      updateCartCount();
+      renderCheckoutCart();
+    });
+  </script>
 </body>
 </html>
