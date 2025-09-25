@@ -29,6 +29,58 @@
   }
   </script>
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Hover/selected styles for quantity cards -->
+  <style>
+    .quantity-card:hover{
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,.15);
+      border-color:#fbbf24;
+    }
+    .quantity-card.selected{
+      border-color:#fbbf24;
+      background:linear-gradient(135deg, rgba(251,191,36,.05), rgba(245,158,11,.05));
+      transform: translateY(-5px);
+      box-shadow:0 10px 25px rgba(251,191,36,.2);
+    }
+    @media (max-width:768px){ .quantity-card{ padding:20px; } }
+
+    /* --- cart badge pop‑in + shake --- */
+    .cart-btn{ position:relative; display:inline-flex; align-items:center; gap:6px; }
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:22px; height:22px; padding:0 6px;
+      background:#1e40af; color:#fff; border-radius:12px; font-size:12px; font-weight:800;
+      transform-origin:center; line-height:1; border:1px solid rgba(0,0,0,.06);
+    }
+    @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.22)} 100%{transform:scale(1)} }
+    .badge.pop{ animation: pop .35s cubic-bezier(.2,.8,.2,1); }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-2px); }
+      40% { transform: translateX(2px); }
+      60% { transform: translateX(-1px); }
+      80% { transform: translateX(1px); }
+    }
+    .shake { animation: shake .45s ease; }
+
+    /* --- toast (top-right) --- */
+    .toast-wrap{
+      position:fixed; top:16px; right:16px; z-index:9999;
+      display:flex; flex-direction:column; gap:10px; pointer-events:none;
+    }
+    .toast{
+      background:#0b1220; color:#e7eefc; border:1px solid #1f2a44;
+      border-radius:12px; padding:12px 14px; font-weight:600; min-width:240px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(-8px);
+      animation: toast-in .22s ease forwards, toast-out .22s ease forwards 1.5s;
+    }
+    .toast svg{ flex:0 0 auto }
+    @keyframes toast-in { to { opacity:1; transform: translateY(0); } }
+    @keyframes toast-out{ to { opacity:0; transform: translateY(-8px); } }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -62,308 +114,209 @@
     </div>
   </nav>
 
-    <!-- Product Hero -->
-    <section style="background: #f8fafc; padding: 60px 0;">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
-                
-                <!-- Product Info -->
-                <div>
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                        <div style="background: #fbbf24; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">Original Formula</div>
-                        <div style="background: #dcfdf7; color: #059669; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">✓ In Stock</div>
-                    </div>
-                    
-                    <h1 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; color: #1e293b; margin-bottom: 15px;">ISRIB</h1>
-                    <p style="font-size: 1.1rem; color: #1e40af; font-weight: 600; margin-bottom: 25px; font-family: 'Courier New', monospace;">C₂₂H₂₄Cl₂N₂O₄</p>
-                    
-                    <p style="font-size: 1.2rem; color: #64748b; line-height: 1.7; margin-bottom: 30px;">The foundational ISRIB compound discovered at UCSF that revolutionized cognitive enhancement research. Selective inhibitor of eIF2α phosphorylation-induced stress granule formation with proven efficacy in memory restoration studies.</p>
-                    
-                    <!-- Key Benefits -->
-                    <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #fbbf24;">
-                        <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;">🧠 Research Applications</h3>
-                        <ul style="list-style: none; margin: 0; padding: 0;">
-                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> Memory formation and consolidation studies
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> Integrated stress response pathway research
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> Cognitive aging and neurodegeneration models
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> Traumatic brain injury recovery research
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <!-- CTA Buttons -->
-                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                        <a href="#order-section" class="btn-primary" onclick="trackCTA('hero', 'isrib', 'scroll_to_order')" style="flex: 1; min-width: 200px; justify-content: center;">
-                            🧬 Order ISRIB
-                        </a>
-                        <a href="#mechanism" class="btn-secondary" style="flex: 1; min-width: 200px; justify-content: center;">
-                            📖 How It Works
-                        </a>
-                    </div>
-                </div>
+  <!-- Product Hero -->
+  <section style="background: #f8fafc; padding: 60px 0;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+        <!-- Product Info -->
+        <div>
+          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <div style="background: #fbbf24; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">Original Formula</div>
+            <div style="background: #dcfdf7; color: #059669; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">✓ In Stock</div>
+          </div>
+          <h1 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; color: #1e293b; margin-bottom: 15px;">ISRIB</h1>
+          <p style="font-size: 1.1rem; color: #1e40af; font-weight: 600; margin-bottom: 25px; font-family: 'Courier New', monospace;">C₂₂H₂₄Cl₂N₂O₄</p>
+          <p style="font-size: 1.2rem; color: #64748b; line-height: 1.7; margin-bottom: 30px;">The foundational ISRIB compound discovered at UCSF that revolutionized cognitive enhancement research. Selective inhibitor of eIF2α phosphorylation-induced stress granule formation with proven efficacy in memory restoration studies.</p>
 
-                <!-- Product Visual -->
-                <div style="text-align: center;">
-                    <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1)); border-radius: 20px; padding: 40px; margin-bottom: 20px;">
-                        <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 20px; margin: 0 auto; display: flex; align-items: center; justify-content: center; position: relative; animation: pulse 3s ease-in-out infinite;">
-                            <div style="color: white; font-size: 2.5rem; font-weight: 800;">ISRIB</div>
-                            <div style="position: absolute; top: -10px; right: -10px; background: #1e40af; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🧪</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Trust Indicators -->
-                    <div style="display: flex; justify-content: center; gap: 30px; text-align: center;">
-                        <div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">96%+</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">Purity</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">COA</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">Included</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">UCSF</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">Discovered</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <!-- CTA Buttons -->
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <a href="#order-section" class="btn-primary" style="flex: 1; min-width: 200px; justify-content: center;">🧬 Order ISRIB</a>
+            <a href="#mechanism" class="btn-secondary" style="flex: 1; min-width: 200px; justify-content: center;">📖 How It Works</a>
+          </div>
         </div>
-    </section>
 
-    <!-- Scientific Background -->
-    <section style="background: white; padding: 80px 0;" id="mechanism">
-        <div class="container">
-            <div style="max-width: 1000px; margin: 0 auto;">
-                <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">The ISRIB Discovery</h2>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 60px;">
-                    <div>
-                        <h3 style="color: #fbbf24; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">🔬 UCSF Breakthrough</h3>
-                        <p style="color: #64748b; line-height: 1.7; margin-bottom: 20px;">In 2013, Dr. Peter Walter's laboratory at UCSF published groundbreaking research on a small molecule they called ISRIB (Integrated Stress Response Inhibitor). This compound could do what was thought impossible: restore memory function in aged and brain-injured laboratory models.</p>
-                        <p style="color: #64748b; line-height: 1.7;">The ISRIB compound became the foundation for understanding how cellular stress responses impact cognition and opened new avenues for treating memory disorders and cognitive decline.</p>
-                    </div>
-                    <div style="background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center;">
-                        <div style="font-size: 4rem; margin-bottom: 15px;">📚</div>
-                        <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 10px;">Published Research</h4>
-                        <p style="color: #64748b; font-size: 0.95rem;">Original findings in Science journal</p>
-                        <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">CAS: 1597403-47-8</p>
-                    </div>
-                </div>
-
-                <div style="background: linear-gradient(135deg, #fef3c7, #fcd34d); border-radius: 20px; padding: 40px; margin-bottom: 60px;">
-                    <h3 style="color: #1e293b; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">Mechanism of Action</h3>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
-                            <h4 style="color: #1e293b; margin-bottom: 10px;">ISR Activation</h4>
-                            <p style="color: #92400e; font-size: 0.9rem;">Cellular stress activates eIF2α phosphorylation, shutting down protein synthesis essential for memory formation.</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
-                            <h4 style="color: #1e293b; margin-bottom: 10px;">ISRIB Binding</h4>
-                            <p style="color: #92400e; font-size: 0.9rem;">ISRIB selectively binds to eIF2B, preventing stress-induced inhibition of translation initiation.</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
-                            <h4 style="color: #1e293b; margin-bottom: 10px;">Memory Restoration</h4>
-                            <p style="color: #92400e; font-size: 0.9rem;">Protein synthesis resumes, enabling synaptic plasticity and memory consolidation processes.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Research Results -->
-                <div style="background: white; border-radius: 15px; padding: 30px; border: 1px solid #e5e7eb;">
-                    <h3 style="color: #1e293b; font-size: 1.5rem; font-weight: 700; margin-bottom: 25px; text-align: center;">🏆 Key Research Findings</h3>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
-                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">🐭</div>
-                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Aged Mice Recovery</h4>
-                            <p style="color: #64748b; font-size: 0.9rem;">Old mice performed like young mice in memory tests after ISRIB treatment</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">🧠</div>
-                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">TBI Reversal</h4>
-                            <p style="color: #64748b; font-size: 0.9rem;">Cognitive deficits from traumatic brain injury were reversed months post-injury</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">⏰</div>
-                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Lasting Benefits</h4>
-                            <p style="color: #64748b; font-size: 0.9rem;">Memory improvements persisted weeks after treatment cessation</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Product Visual -->
+        <div style="text-align: center;">
+          <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1)); border-radius: 20px; padding: 40px; margin-bottom: 20px;">
+            <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 20px; margin: 0 auto; display: flex; align-items: center; justify-content: center; position: relative; animation: pulse 3s ease-in-out infinite;">
+              <div style="color: white; font-size: 2.5rem; font-weight: 800;">ISRIB</div>
+              <div style="position: absolute; top: -10px; right: -10px; background: #1e40af; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🧪</div>
             </div>
+          </div>
+          <div style="display: flex; justify-content: center; gap: 30px; text-align: center;">
+            <div><div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">96%+</div><div style="font-size: 0.85rem; color: #64748b;">Purity</div></div>
+            <div><div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">COA</div><div style="font-size: 0.85rem; color: #64748b;">Included</div></div>
+            <div><div style="font-size: 1.5rem; font-weight: 800; color: #fbbf24;">UCSF</div><div style="font-size: 0.85rem; color: #64748b;">Discovered</div></div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- ISRIB vs ISRIB A15 Comparison -->
-    <section style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">ISRIB vs ISRIB A15</h2>
-            
-            <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #f8fafc;">
-                                <th style="padding: 20px; text-align: left; font-weight: 700; color: #1e293b; border-bottom: 2px solid #e5e7eb;">Feature</th>
-                                <th style="padding: 20px; text-align: center; font-weight: 700; color: #fbbf24; border-bottom: 2px solid #e5e7eb;">ISRIB</th>
-                                <th style="padding: 20px; text-align: center; font-weight: 700; color: #64748b; border-bottom: 2px solid #e5e7eb;">ISRIB A15</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Research History</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Original Discovery</td>
-                                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Optimized Analog</td>
-                            </tr>
-                            <tr style="background: #f8fafc;">
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Effective Dose</td>
-                                <td style="padding: 15px; text-align: center; color: #fbbf24; font-weight: 600; border-bottom: 1px solid #f1f5f9;">50+ mg</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; border-bottom: 1px solid #f1f5f9;">5-15mg</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Bioavailability</td>
-                                <td style="padding: 15px; text-align: center; color: #fbbf24; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Moderate</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; border-bottom: 1px solid #f1f5f9;">Enhanced</td>
-                            </tr>
-                            <tr style="background: #f8fafc;">
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Research Applications</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Extensive</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; border-bottom: 1px solid #f1f5f9;">Growing</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 15px; font-weight: 600; color: #374151;">Cost per Study</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600;">Lower</td>
-                                <td style="padding: 15px; text-align: center; color: #dc2626;">Higher</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 25px; margin-top: 30px;">
-                    <h4 style="color: #d97706; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 1.2rem;">💡</span> ISRIB remains the gold standard for research applications where established protocols and extensive literature support are essential. It offers proven efficacy with a lower cost per study, making it ideal for academic research and replication studies.
-                    </h4>
-                </div>
+  <!-- Scientific Background -->
+  <section style="background: white; padding: 80px 0;" id="mechanism">
+    <div class="container">
+      <div style="max-width: 1000px; margin: 0 auto;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">The ISRIB Discovery</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 60px;">
+          <div>
+            <h3 style="color: #fbbf24; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">🔬 UCSF Breakthrough</h3>
+            <p style="color: #64748b; line-height: 1.7; margin-bottom: 20px;">In 2013, Dr. Peter Walter's laboratory at UCSF published groundbreaking research on a small molecule they called ISRIB (Integrated Stress Response Inhibitor). This compound could do what was thought impossible: restore memory function in aged and brain-injured laboratory models.</p>
+            <p style="color: #64748b; line-height: 1.7;">The ISRIB compound became the foundation for understanding how cellular stress responses impact cognition and opened new avenues for treating memory disorders and cognitive decline.</p>
+          </div>
+          <div style="background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 15px;">📚</div>
+            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 10px;">Published Research</h4>
+            <p style="color: #64748b; font-size: 0.95rem;">Original findings in Science journal</p>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">CAS: 1597403-47-8</p>
+          </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #fef3c7, #fcd34d); border-radius: 20px; padding: 40px; margin-bottom: 60px;">
+          <h3 style="color: #1e293b; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">Mechanism of Action</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
+              <h4 style="color: #1e293b; margin-bottom: 10px;">ISR Activation</h4>
+              <p style="color: #92400e; font-size: 0.9rem;">Cellular stress activates eIF2α phosphorylation, shutting down protein synthesis essential for memory formation.</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Technical Specifications -->
-    <section style="background: #1e293b; color: white; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Technical Specifications</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-                
-                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
-                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🧪 Chemical Properties</h3>
-                    <div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Molecular Formula:</span>
-                            <span style="color: #f1f5f9; font-family: 'Courier New', monospace;">C₂₂H₂₄Cl₂N₂O₄</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Molecular Weight:</span>
-                            <span style="color: #f1f5f9;">451.3 g/mol</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">CAS Number:</span>
-                            <span style="color: #f1f5f9;">1597403-47-8</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Purity:</span>
-                            <span style="color: #10b981; font-weight: 600;">≥96%</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Form:</span>
-                            <span style="color: #f1f5f9;">White to off-white powder</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #94a3b8;">Solubility:</span>
-                            <span style="color: #f1f5f9;">DMSO</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
-                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📦 Storage & Handling</h3>
-                    <div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Storage Temp:</span>
-                            <span style="color: #f1f5f9;">-20°C</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Stability:</span>
-                            <span style="color: #f1f5f9;">2+ years</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Light Sensitivity:</span>
-                            <span style="color: #f59e0b;">Store in dark</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Moisture:</span>
-                            <span style="color: #f59e0b;">Keep dry</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #94a3b8;">Container:</span>
-                            <span style="color: #f1f5f9;">Amber glass vial</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
-                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📋 Documentation</h3>
-                    <div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">COA:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Included</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">¹H NMR:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Available</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Mass Spec:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Available</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #94a3b8;">Safety Data:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Provided</span>
-                        </div>
-                    </div>
-                </div>
-
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
+              <h4 style="color: #1e293b; margin-bottom: 10px;">ISRIB Binding</h4>
+              <p style="color: #92400e; font-size: 0.9rem;">ISRIB selectively binds to eIF2B, preventing stress-induced inhibition of translation initiation.</p>
             </div>
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
+              <h4 style="color: #1e293b; margin-bottom: 10px;">Memory Restoration</h4>
+              <p style="color: #92400e; font-size: 0.9rem;">Protein synthesis resumes, enabling synaptic plasticity and memory consolidation processes.</p>
+            </div>
+          </div>
         </div>
-    </section>
 
+        <!-- Research Results -->
+        <div style="background: white; border-radius: 15px; padding: 30px; border: 1px solid #e5e7eb;">
+          <h3 style="color: #1e293b; font-size: 1.5rem; font-weight: 700; margin-bottom: 25px; text-align: center;">🏆 Key Research Findings</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+              <div style="font-size: 2rem; margin-bottom: 10px;">🐭</div>
+              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Aged Mice Recovery</h4>
+              <p style="color: #64748b; font-size: 0.9rem;">Old mice performed like young mice in memory tests after ISRIB treatment</p>
+            </div>
+            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+              <div style="font-size: 2rem; margin-bottom: 10px;">🧠</div>
+              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">TBI Reversal</h4>
+              <p style="color: #64748b; font-size: 0.9rem;">Cognitive deficits from traumatic brain injury were reversed months post-injury</p>
+            </div>
+            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+              <div style="font-size: 2rem; margin-bottom: 10px;">⏰</div>
+              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Lasting Benefits</h4>
+              <p style="color: #64748b; font-size: 0.9rem;">Memory improvements persisted weeks after treatment cessation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ISRIB vs ISRIB A15 Comparison -->
+  <section style="background: #f8fafc; padding: 80px 0;">
+    <div class="container">
+      <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">ISRIB vs ISRIB A15</h2>
+      <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f8fafc;">
+                <th style="padding: 20px; text-align: left; font-weight: 700; color: #1e293b; border-bottom: 2px solid #e5e7eb;">Feature</th>
+                <th style="padding: 20px; text-align: center; font-weight: 700; color: #fbbf24; border-bottom: 2px solid #e5e7eb;">ISRIB</th>
+                <th style="padding: 20px; text-align: center; font-weight: 700; color: #64748b; border-bottom: 2px solid #e5e7eb;">ISRIB A15</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Research History</td>
+                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Original Discovery</td>
+                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Optimized Analog</td>
+              </tr>
+              <tr style="background: #f8fafc;">
+                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Effective Dose</td>
+                <td style="padding: 15px; text-align: center; color: #fbbf24; font-weight: 600; border-bottom: 1px solid #f1f5f9;">50+ mg</td>
+                <td style="padding: 15px; text-align: center; color: #059669; border-bottom: 1px solid #f1f5f9;">5–15 mg</td>
+              </tr>
+              <tr>
+                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Bioavailability</td>
+                <td style="padding: 15px; text-align: center; color: #fbbf24; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Moderate</td>
+                <td style="padding: 15px; text-align: center; color: #059669; border-bottom: 1px solid #f1f5f9;">Enhanced</td>
+              </tr>
+              <tr style="background: #f8fafc;">
+                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Research Applications</td>
+                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Extensive</td>
+                <td style="padding: 15px; text-align: center; color: #059669; border-bottom: 1px solid #f1f5f9;">Growing</td>
+              </tr>
+              <tr>
+                <td style="padding: 15px; font-weight: 600; color: #374151;">Cost per Study</td>
+                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600;">Lower</td>
+                <td style="padding: 15px; text-align: center; color: #dc2626;">Higher</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 25px; margin-top: 30px;">
+          <h4 style="color: #d97706; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.2rem;">💡</span> ISRIB remains the gold standard for research applications where established protocols and extensive literature support are essential.
+          </h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Specifications -->
+  <section style="background: #1e293b; color: white; padding: 80px 0;">
+    <div class="container">
+      <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Technical Specifications</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+          <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🧪 Chemical Properties</h3>
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Molecular Formula:</span><span style="color: #f1f5f9; font-family: 'Courier New', monospace;">C₂₂H₂₄Cl₂N₂O₄</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Molecular Weight:</span><span style="color: #f1f5f9;">451.3 g/mol</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">CAS Number:</span><span style="color: #f1f5f9;">1597403-47-8</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Purity:</span><span style="color: #10b981; font-weight: 600;">≥96%</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Form:</span><span style="color: #f1f5f9;">White to off-white powder</span></div>
+            <div style="display: flex; justify-content: space-between;"><span style="color: #94a3b8;">Solubility:</span><span style="color: #f1f5f9;">DMSO</span></div>
+          </div>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+          <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📦 Storage & Handling</h3>
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Storage Temp:</span><span style="color: #f1f5f9;">-20°C</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Stability:</span><span style="color: #f1f5f9;">2+ years</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Light Sensitivity:</span><span style="color: #f59e0b;">Store in dark</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Moisture:</span><span style="color: #f59e0b;">Keep dry</span></div>
+            <div style="display: flex; justify-content: space-between;"><span style="color: #94a3b8;">Container:</span><span style="color: #f1f5f9;">Amber glass vial</span></div>
+          </div>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+          <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📋 Documentation</h3>
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">COA:</span><span style="color: #10b981; font-weight: 600;">✓ Included</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">¹H NMR:</span><span style="color: #10b981; font-weight: 600;">✓ Available</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Mass Spec:</span><span style="color: #10b981; font-weight: 600;">✓ Available</span></div>
+            <div style="display: flex; justify-content: space-between;"><span style="color: #94a3b8;">Safety Data:</span><span style="color: #10b981; font-weight: 600;">✓ Provided</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Ordering Section -->
   <section style="background:#f8fafc; padding:80px 0;" id="order-section">
     <div class="container">
       <h2 style="font-size:2.5rem; font-weight:800; color:#1e293b; text-align:center; margin-bottom:60px;">Order ISRIB</h2>
-
       <div style="max-width:800px; margin:0 auto;">
         <!-- Quantity Options -->
         <div style="background:#fff; border-radius:20px; padding:40px; box-shadow:0 10px 30px rgba(0,0,0,.1); margin-bottom:40px;">
           <h3 style="color:#1e293b; font-size:1.5rem; font-weight:700; margin-bottom:30px; text-align:center;">Select Your Quantity</h3>
-
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px;">
             <!-- 50mg -->
             <div class="quantity-card" data-quantity="50mg" data-price="18" style="border:2px solid #e2e8f0; border-radius:15px; padding:25px; text-align:center; cursor:pointer; transition:.3s; position:relative;">
@@ -372,7 +325,6 @@
               <div style="color:#64748b; font-size:.9rem; margin-bottom:15px;">$0.36 per mg</div>
               <div style="background:#f8fafc; color:#64748b; padding:8px 12px; border-radius:20px; font-size:.8rem; font-weight:600;">Minimum Order</div>
             </div>
-
             <!-- 100mg -->
             <div class="quantity-card" data-quantity="100mg" data-price="27" style="border:2px solid #e2e8f0; border-radius:15px; padding:25px; text-align:center; cursor:pointer; transition:.3s; position:relative;">
               <div style="font-size:1.5rem; font-weight:800; color:#1e293b; margin-bottom:8px;">100mg</div>
@@ -380,7 +332,6 @@
               <div style="color:#64748b; font-size:.9rem; margin-bottom:15px;">$0.27 per mg</div>
               <div style="background:#f8fafc; color:#64748b; padding:8px 12px; border-radius:20px; font-size:.8rem; font-weight:600;">Standard Size</div>
             </div>
-
             <!-- 1g -->
             <div class="quantity-card" data-quantity="1g" data-price="100" style="border:2px solid #fbbf24; border-radius:15px; padding:25px; text-align:center; cursor:pointer; transition:.3s; position:relative; background:linear-gradient(135deg, rgba(251,191,36,.05), rgba(245,158,11,.05));">
               <div style="position:absolute; top:-10px; right:-10px; background:#10b981; color:#fff; padding:5px 10px; border-radius:15px; font-size:.75rem; font-weight:700;">SAVE $—</div>
@@ -450,65 +401,90 @@
     </div>
   </footer>
 
+  <!-- Toast container -->
+  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
   <!-- Small helpers -->
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
 
-  <!-- Hover/selected styles for quantity cards -->
-  <style>
-    .quantity-card:hover{
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,.15);
-      border-color:#fbbf24;
-    }
-    .quantity-card.selected{
-      border-color:#fbbf24;
-      background:linear-gradient(135deg, rgba(251,191,36,.05), rgba(245,158,11,.05));
-      transform: translateY(-5px);
-      box-shadow:0 10px 25px rgba(251,191,36,.2);
-    }
-    @media (max-width:768px){ .quantity-card{ padding:20px; } }
-  </style>
-
   <!-- === CART + DYNAMIC CTA (ISRIB) === -->
   <script>
-    // Convert "500mg" / "1g" → grams
-    function qtyToGrams(qtyStr){
-      if(!qtyStr) return 1;
-      const s = qtyStr.toString().trim().toLowerCase();
+    // Convert "50mg" / "1g" → grams
+    function qtyToGrams(q){
+      if(!q) return 1;
+      const s = q.toString().trim().toLowerCase();
       if(s.endsWith('mg')) return parseFloat(s)/1000;
       if(s.endsWith('g'))  return parseFloat(s);
       return parseFloat(s)||1;
     }
 
-    // Cart helpers (localStorage)
+    // Cart helpers (packs model, як на products/A15)
     const CART_KEY='isrib_cart';
+    const badge   = document.getElementById('cartCount');
+    const cartBtn = document.getElementById('cartBtn');
+
     function getCart(){ try{return JSON.parse(localStorage.getItem(CART_KEY))||[]}catch{return[]} }
     function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
+
     function updateCartCount(){
-      const el=document.getElementById('cartCount');
-      if(el){ el.textContent=getCart().reduce((n,i)=>n+Number(i.qty||0),0); }
-    }
-    function addToCart(name, sku, qtyGrams, price){
-      const c=getCart();
-      const ex=c.find(i=>i.sku===sku && i.price===Number(price||0) && i.unit==='g');
-      if(ex) ex.qty += Number(qtyGrams||1);
-      else c.push({name, sku, qty:Number(qtyGrams||1), unit:'g', price:Number(price)||null});
-      saveCart(c);
-      alert(`${name} (${qtyGrams}g) added to cart`);
-      // location.href='checkout.html'; // якщо хочеш — розкоментуй
+      if(!badge) return;
+      let cart = getCart();
+      // міграція старого формату (qty у грамах → packs)
+      cart = cart.map(i => (i && i.count == null && i.qty != null)
+        ? ({...i, grams: i.grams ?? i.qty, count: 1, unit: 'pack', qty: undefined})
+        : i);
+      const total = cart.reduce((n,i)=> n + (Number(i.count)||0), 0);
+      badge.textContent = total;
     }
 
-    // Render the CTA area under the selected option
+    function popBadge(){
+      if(!badge) return;
+      badge.classList.remove('pop'); void badge.offsetWidth;
+      badge.classList.add('pop');
+    }
+
+    function shakeCart(){
+      if(!cartBtn) return;
+      cartBtn.classList.remove('shake'); void cartBtn.offsetWidth;
+      cartBtn.classList.add('shake');
+      setTimeout(()=>cartBtn.classList.remove('shake'), 500);
+    }
+
+    function showToast(message){
+      const wrap = document.getElementById('toastWrap');
+      if(!wrap) return;
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 12l2 2 4-4" stroke="#31c48d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="12" r="9" stroke="#31c48d" stroke-width="2" fill="none"/>
+        </svg>
+        <span>${message}</span>
+      `;
+      wrap.appendChild(el);
+      setTimeout(()=> wrap.removeChild(el), 1750);
+    }
+
+    function addToCart(name, sku, grams, price, display){
+      let cart = getCart();
+      cart.push({ name, sku, grams, display, price:Number(price)||0, count:1, unit:'pack' });
+      saveCart(cart);
+      popBadge();
+      shakeCart();
+      showToast(`Added to cart: ${name} — ${display} ($${price})`);
+    }
+
+    // Render the CTA area under the selected option (без редіректу)
     function renderAddToCartBtn(qtyLabel, price){
       const grams = qtyToGrams(qtyLabel);
       const wrap  = document.getElementById('cartActions');
       if(!wrap) return;
       wrap.innerHTML = `
-        <button class="btn-primary"
-          style="font-size:1.2rem; padding:18px 40px; margin-right:12px;"
-          onclick="addToCart('ISRIB (Original)','isrib',${grams},${Number(price)})">
+        <button id="addISRIB" class="btn-primary"
+          style="font-size:1.2rem; padding:18px 40px; margin-right:12px;">
           ➕ Add to Cart — ${qtyLabel} for $${price}
         </button>
         <a href="checkout.html" class="btn-secondary"
@@ -517,6 +493,17 @@
         </a>
         <p style="color:#64748b; margin-top:15px; font-size:.95rem;">Secure payment arrangements discussed individually</p>
       `;
+      const btn = document.getElementById('addISRIB');
+      if(btn){
+        btn.addEventListener('click', ()=>{
+          addToCart('ISRIB (Original)','isrib',grams,Number(price),qtyLabel);
+          // короткий фідбек на кнопці
+          const old = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = '✔️ Added!';
+          setTimeout(()=>{ btn.disabled=false; btn.textContent = old; }, 1200);
+        });
+      }
     }
 
     // Attach listeners to cards & set default (1g)
@@ -534,7 +521,6 @@
         });
       });
 
-      // default: 1g, якщо є; інакше — перша картка
       const def = document.querySelector('.quantity-card[data-quantity="1g"]') || cards[0];
       if(def) def.click();
     });
