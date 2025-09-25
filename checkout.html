@@ -43,7 +43,7 @@
     .cart-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa}
     .cart-title{font-weight:600}
     .cart-ctrl{display:flex;align-items:center;gap:8px}
-    .cart-qty{width:76px}
+    .cart-count{width:76px}
 
     .price-line{display:flex;align-items:center;gap:8px;color:#475569;font-size:.95rem}
     .price-line .x{opacity:.7}
@@ -221,163 +221,178 @@
   </footer>
 
   <!-- INLINE JS: cart + submit + totals -->
- <script>
-  // Рік у футері
-  document.getElementById('y').textContent = new Date().getFullYear();
+  <script>
+    // Рік у футері
+    document.getElementById('y').textContent = new Date().getFullYear();
 
-  (function () {
-    const $ = (s, r = document) => r.querySelector(s);
-    const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-    const CART_KEY = 'isrib_cart';
+    (function () {
+      const $ = (s, r = document) => r.querySelector(s);
+      const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+      const CART_KEY = 'isrib_cart';
 
-    // Працюємо через глобальні хелпери з main.js, але маємо fallback
-    const readCart = window.getCart || function () {
-      try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
-      catch { return []; }
-    };
-    const writeCart = window.saveCart || function (arr) {
-      localStorage.setItem(CART_KEY, JSON.stringify(arr));
-      updateBadge(arr);
-    };
+      // Хелпери для читання/запису кошика (fallback, якщо немає у main.js)
+      const readCart = window.getCart || function () {
+        try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+        catch { return []; }
+      };
+      const writeCart = window.saveCart || function (arr) {
+        localStorage.setItem(CART_KEY, JSON.stringify(arr));
+        updateBadge(arr);
+      };
 
-    function updateBadge(arr) {
-      const el = $('#cartCount');
-      if (!el) return;
-      const cart = Array.isArray(arr) ? arr : readCart();
-      const total = cart.reduce((n, i) => n + (Number(i.count) || 0), 0);
-      el.textContent = total;
-    }
-
-    function fmtSize(it) {
-      if (it.display) return it.display;
-      if (it.grams != null) {
-        return it.grams >= 1 ? `${it.grams}g` : `${Math.round(it.grams * 1000)}mg`;
+      function updateBadge(arr) {
+        const el = $('#cartCount');
+        if (!el) return;
+        const cart = Array.isArray(arr) ? arr : readCart();
+        const total = cart.reduce((n, i) => n + (Number(i.count) || 0), 0);
+        el.textContent = total;
       }
-      return '';
-    }
 
-    function renderCart() {
-      const wrap = $('#cartList');
-      const subEl = $('#subtotalVal');
-      const totalEl = $('#totalVal');
-
-      if (!wrap) return;
-
-      const cart = readCart().map((it) => {
-        // міграція на льоту (якщо зайшли напряму)
-        if (it && it.count == null && it.qty != null) {
-          it.grams = it.grams ?? it.qty;
-          delete it.qty;
-          it.count = 1;
+      function fmtSize(it) {
+        if (it.display) return it.display;
+        if (it.grams != null) {
+          return it.grams >= 1 ? `${it.grams}g` : `${Math.round(it.grams * 1000)}mg`;
         }
-        return it;
-      });
-
-      if (!cart.length) {
-        wrap.innerHTML = '<p class="muted">Your cart is empty. Go to <a href="products.html">Products</a>.</p>';
-        subEl && (subEl.textContent = '$0.00');
-        totalEl && (totalEl.textContent = '$0.00');
-        updateBadge(cart);
-        return;
+        return '';
       }
 
-      wrap.innerHTML = cart.map((it, idx) => {
-        const count = Number(it.count) || 1;
-        const line = (Number(it.price) || 0) * count;
-        const size = fmtSize(it);
-        return `
-          <div class="cart-row">
-            <div class="cart-title">
-              <strong>${it.name || it.sku}</strong>
-              <div class="muted">${size} × $${Number(it.price).toFixed(2)}</div>
-            </div>
-            <div class="cart-ctrl">
-              <input type="number" min="1" value="${count}" data-idx="${idx}" class="cart-count">
-              <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
-            </div>
-            <div class="line-total">$${line.toFixed(2)}</div>
+      function renderTotals(subtotal) {
+        const box = $('#summaryTotals');
+        if (!box) return;
+        box.innerHTML = `
+          <div class="totals-row">
+            <span class="label">Subtotal</span>
+            <span class="value" id="subtotalVal">$${subtotal.toFixed(2)}</span>
+          </div>
+          <div class="totals-row">
+            <span class="label">Shipping</span>
+            <span class="value">TBD</span>
+          </div>
+          <div class="totals-row total">
+            <span class="label">Total</span>
+            <span class="value" id="totalVal">$${subtotal.toFixed(2)}</span>
           </div>
         `;
-      }).join('');
+      }
 
-      // Обробники кількості та видалення
-      $$('.cart-count', wrap).forEach(inp => {
-        inp.addEventListener('change', (e) => {
-          const i = +e.target.dataset.idx;
-          const cart2 = readCart();
-          cart2[i].count = Math.max(1, Number(e.target.value) || 1);
-          writeCart(cart2);
-          renderCart();
+      function renderCart() {
+        const wrap = $('#cartList');
+        if (!wrap) return;
+
+        const cart = readCart().map((it) => {
+          // Міграція старого формату → нового
+          if (it && it.count == null && it.qty != null) {
+            it.grams = it.grams ?? it.qty;
+            delete it.qty;
+            it.count = 1;
+          }
+          return it;
         });
-      });
 
-      $$('.cart-remove', wrap).forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const i = +e.target.dataset.idx;
-          const cart2 = readCart();
-          cart2.splice(i, 1);
-          writeCart(cart2);
-          renderCart();
-        });
-      });
-
-      // Підсумки
-      const subtotal = cart.reduce((sum, it) => sum + (Number(it.price) || 0) * (Number(it.count) || 1), 0);
-      subEl && (subEl.textContent = `$${subtotal.toFixed(2)}`);
-      totalEl && (totalEl.textContent = `$${subtotal.toFixed(2)}`); // Shipping TBD
-      updateBadge(cart);
-    }
-
-    // Сабміт форми → /api/checkout (без змін)
-    const form = $('#checkoutForm');
-    const msg = $('#formMsg');
-    if (form) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        msg.textContent = '';
-        msg.className = 'muted';
-
-        if (!form.checkValidity()) {
-          msg.className = 'danger';
-          msg.textContent = 'Please fill all required fields.';
-          return;
-        }
-
-        const cart = readCart();
         if (!cart.length) {
-          msg.className = 'danger';
-          msg.textContent = 'Your cart is empty.';
+          wrap.innerHTML = '<p class="muted">Your cart is empty. Go to <a href="products.html">Products</a>.</p>';
+          renderTotals(0);
+          updateBadge(cart);
           return;
         }
 
-        const data = Object.fromEntries(new FormData(form).entries());
-        data.cart = cart;
-        data.timestamp = new Date().toISOString();
+        wrap.innerHTML = cart.map((it, idx) => {
+          const count = Number(it.count) || 1;
+          const line = (Number(it.price) || 0) * count;
+          const size = fmtSize(it);
+          return `
+            <div class="cart-row">
+              <div class="cart-title">
+                <strong>${it.name || it.sku}</strong>
+                <div class="muted">${size} × $${Number(it.price).toFixed(2)}</div>
+              </div>
+              <div class="cart-ctrl">
+                <input type="number" min="1" value="${count}" data-idx="${idx}" class="cart-count">
+                <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
+              </div>
+              <div class="line-total">$${line.toFixed(2)}</div>
+            </div>
+          `;
+        }).join('');
 
-        try {
-          const r = await fetch('/api/checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+        // Кількість / видалення
+        $$('.cart-count', wrap).forEach(inp => {
+          inp.addEventListener('change', (e) => {
+            const i = +e.target.dataset.idx;
+            const cart2 = readCart();
+            cart2[i].count = Math.max(1, Number(e.target.value) || 1);
+            writeCart(cart2);
+            renderCart();
           });
-          if (!r.ok) throw new Error('submit failed');
+        });
 
-          // очищаємо кошик
-          writeCart([]);
-          const oid = Math.random().toString(36).slice(2, 8).toUpperCase();
-          window.location.href = `/success.html?order=${oid}`;
-        } catch (err) {
-          msg.className = 'danger';
-          msg.textContent = 'Submission failed. Please try again or email isrib.shop@protonmail.com';
-        }
+        $$('.cart-remove', wrap).forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const i = +e.target.dataset.idx;
+            const cart2 = readCart();
+            cart2.splice(i, 1);
+            writeCart(cart2);
+            renderCart();
+          });
+        });
+
+        // Підсумки
+        const subtotal = cart.reduce(
+          (sum, it) => sum + (Number(it.price) || 0) * (Number(it.count) || 1), 0
+        );
+        renderTotals(subtotal);
+        updateBadge(cart);
+      }
+
+      // Сабміт → /api/checkout
+      const form = $('#checkoutForm');
+      const msg = $('#formMsg');
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          msg.textContent = '';
+          msg.className = 'muted';
+
+          if (!form.checkValidity()) {
+            msg.className = 'danger';
+            msg.textContent = 'Please fill all required fields.';
+            return;
+          }
+
+          const cart = readCart();
+          if (!cart.length) {
+            msg.className = 'danger';
+            msg.textContent = 'Your cart is empty.';
+            return;
+          }
+
+          const data = Object.fromEntries(new FormData(form).entries());
+          data.cart = cart;
+          data.timestamp = new Date().toISOString();
+
+          try {
+            const r = await fetch('/api/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            if (!r.ok) throw new Error('submit failed');
+
+            writeCart([]); // clear cart
+            const oid = Math.random().toString(36).slice(2, 8).toUpperCase();
+            window.location.href = `/success.html?order=${oid}`;
+          } catch (err) {
+            msg.className = 'danger';
+            msg.textContent = 'Submission failed. Please try again or email isrib.shop@protonmail.com';
+          }
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        updateBadge();
+        renderCart();
       });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      updateBadge();
-      renderCart();
-    });
-  })();
-</script>
+    })();
+  </script>
 </body>
 </html>
