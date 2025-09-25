@@ -849,4 +849,72 @@ document.addEventListener('DOMContentLoaded', () => {
   mountAddToCartButtons();
   renderCheckoutCart();
 });
+/* ==== CART CORE (packs, not grams) ==== */
+(function () {
+  const CART_KEY = 'isrib_cart';
+
+  function migrate(it) {
+    // старі записи мали it.qty (грами) без count
+    if (it && it.count == null && it.qty != null) {
+      it.grams = it.grams ?? it.qty; // збережемо вагу інформаційно
+      delete it.qty;
+      it.count = 1;
+    }
+    return it;
+  }
+
+  function readCart() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+      return raw.map(migrate);
+    } catch {
+      return [];
+    }
+  }
+
+  function writeCart(arr) {
+    localStorage.setItem(CART_KEY, JSON.stringify(arr));
+    updateCartBadge(arr);
+  }
+
+  function updateCartBadge(arr) {
+    const el = document.getElementById('cartCount');
+    if (!el) return;
+    const cart = Array.isArray(arr) ? arr : readCart();
+    const total = cart.reduce((n, i) => n + (Number(i.count) || 0), 0);
+    el.textContent = total;
+  }
+
+  // Глобальні хелпери (використовуємо і з product-сторінок, і з products.html)
+  window.getCart = readCart;
+  window.saveCart = writeCart;
+  window.updateCartCount = updateCartBadge;
+
+  // Єдина точка додавання до кошика
+  // name, sku, grams(інформативно), price(за 1 варіант), display("100mg"/"1g")
+  window.addToCart = function (name, sku, grams, price, display) {
+    const cart = readCart();
+    const key = JSON.stringify([sku, display || grams, price]);
+    const found = cart.find(
+      (i) => JSON.stringify([i.sku, i.display || i.grams, i.price]) === key
+    );
+    if (found) {
+      found.count = (found.count || 0) + 1; // додаємо ще 1 упаковку
+    } else {
+      cart.push({
+        name,
+        sku,
+        grams,
+        display,    // "100mg" / "1g"
+        price,      // ціна за 1 варіант
+        count: 1,   // кількість упаковок
+        unit: 'pack'
+      });
+    }
+    writeCart(cart);
+  };
+
+  // ініціалізація бейджа
+  document.addEventListener('DOMContentLoaded', () => updateCartBadge());
+})();
 
