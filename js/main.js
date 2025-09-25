@@ -14,7 +14,6 @@ function initializeApp() {
     initProductInteractions();
     initQuantitySelectors();
     initProductFilters();
-    initContactFunctionality();
     initMobileOptimizations();
     initAnalytics();
     initContactForms();
