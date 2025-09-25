@@ -319,7 +319,7 @@
           } else {
             // fallback: localStorage
             const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-            cart.push({ name, sku, qty: grams, display: qStr, price, unit:'g' });
+            cart.push({ name, sku, grams, display: qStr, price, count: 1, unit: 'pack' });
             localStorage.setItem(CART_KEY, JSON.stringify(cart));
           }
           updateCartCount();
