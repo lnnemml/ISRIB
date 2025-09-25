@@ -11,6 +11,59 @@
   <meta property="og:image" content="/images/mpep-og.jpg">
   <meta property="og:url" content="https://isrib.shop/mpep">
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Card hover/selected + cart badge pop-in + toast + shake -->
+  <style>
+    .quantity-card:hover{
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,.15);
+      border-color:#059669;
+    }
+    .quantity-card.selected{
+      border-color:#059669;
+      background:linear-gradient(135deg, rgba(5,150,105,.05), rgba(16,185,129,.05));
+      transform: translateY(-5px);
+      box-shadow:0 10px 25px rgba(5,150,105,.2);
+    }
+    @media (max-width:768px){ .quantity-card{ padding:20px; } }
+
+    /* cart badge pop-in */
+    .cart-btn{ position:relative; display:inline-flex; align-items:center; gap:6px; }
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:22px; height:22px; padding:0 6px;
+      background:#1e40af; color:#fff; border-radius:12px; font-size:12px; font-weight:800;
+      transform-origin:center; line-height:1; border:1px solid rgba(0,0,0,.06);
+    }
+    @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.22)} 100%{transform:scale(1)} }
+    .badge.pop{ animation: pop .35s cubic-bezier(.2,.8,.2,1); }
+
+    /* shake for cart button */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-2px); }
+      40% { transform: translateX(2px); }
+      60% { transform: translateX(-1px); }
+      80% { transform: translateX(1px); }
+    }
+    .shake { animation: shake .45s ease; }
+
+    /* toast (top-right) */
+    .toast-wrap{
+      position:fixed; top:16px; right:16px; z-index:9999;
+      display:flex; flex-direction:column; gap:10px; pointer-events:none;
+    }
+    .toast{
+      background:#0b1220; color:#e7eefc; border:1px solid #1f2a44;
+      border-radius:12px; padding:12px 14px; font-weight:600; min-width:240px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(-8px);
+      animation: toast-in .22s ease forwards, toast-out .22s ease forwards 1.5s;
+    }
+    .toast svg{ flex:0 0 auto }
+    @keyframes toast-in { to { opacity:1; transform: translateY(0); } }
+    @keyframes toast-out{ to { opacity:0; transform: translateY(-8px); } }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -40,300 +93,154 @@
       <span style="margin:0 8px;">›</span>
       <a href="products.html" style="color:#64748b; text-decoration:none;">Products</a>
       <span style="margin:0 8px;">›</span>
-      <span style="color:#1e40af; font-weight:600;">MPEP Oxalate</span>
+      <span style="color:#059669; font-weight:600;">MPEP Oxalate</span>
     </div>
   </nav>
 
-      <!-- Product Hero -->
-    <section style="background: #f8fafc; padding: 60px 0;">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
-                
-                <!-- Product Info -->
-                <div>
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                        <div style="background: #059669; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">Selective mGluR5</div>
-                        <div style="background: #dcfdf7; color: #059669; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">✓ In Stock</div>
-                    </div>
-                    
-                    <h1 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; color: #1e293b; margin-bottom: 15px;">MPEP Oxalate</h1>
-                    <p style="font-size: 1.1rem; color: #1e40af; font-weight: 600; margin-bottom: 25px; font-family: 'Courier New', monospace;">C₁₁H₁₀N₂•C₂H₂O₄</p>
-                    
-                    <p style="font-size: 1.2rem; color: #64748b; line-height: 1.7; margin-bottom: 30px;">Selective mGluR5 negative allosteric modulator with high specificity and potency. Essential research tool for glutamate receptor studies, cognitive research, and behavioral neuroscience applications.</p>
-                    
-                    <!-- Key Benefits -->
-                    <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #059669;">
-                        <h3 style="color: #1e293b; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;">🧠 Research Applications</h3>
-                        <ul style="list-style: none; margin: 0; padding: 0;">
-                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> mGluR5 receptor antagonism studies
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> Glutamate signaling pathway research
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> Cognitive and behavioral studies
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px; color: #374151;">
-                                <span style="color: #10b981; font-weight: 700;">✓</span> Synaptic plasticity research
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <!-- CTA Buttons -->
-                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                        <a href="#order-section" class="btn-primary" onclick="trackCTA('hero', 'mpep', 'scroll_to_order')" style="flex: 1; min-width: 200px; justify-content: center;">
-                            🧬 Order MPEP
-                        </a>
-                        <a href="#mechanism" class="btn-secondary" style="flex: 1; min-width: 200px; justify-content: center;">
-                            📖 How It Works
-                        </a>
-                    </div>
-                </div>
+  <!-- Product Hero -->
+  <section style="background: #f8fafc; padding: 60px 0;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+        <!-- Product Info -->
+        <div>
+          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <div style="background: #059669; color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">Selective mGluR5</div>
+            <div style="background: #dcfdf7; color: #059669; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">✓ In Stock</div>
+          </div>
+          <h1 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; color: #1e293b; margin-bottom: 15px;">MPEP Oxalate</h1>
+          <p style="font-size: 1.1rem; color: #1e40af; font-weight: 600; margin-bottom: 25px; font-family: 'Courier New', monospace;">C₁₁H₁₀N₂•C₂H₂O₄</p>
+          <p style="font-size: 1.2rem; color: #64748b; line-height: 1.7; margin-bottom: 30px;">Selective mGluR5 negative allosteric modulator with high specificity and potency. Essential research tool for glutamate receptor studies, cognitive research, and behavioral neuroscience applications.</p>
 
-                <!-- Product Visual -->
-                <div style="text-align: center;">
-                    <div style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.1)); border-radius: 20px; padding: 40px; margin-bottom: 20px;">
-                        <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 20px; margin: 0 auto; display: flex; align-items: center; justify-content: center; position: relative; animation: pulse 3s ease-in-out infinite;">
-                            <div style="color: white; font-size: 2.2rem; font-weight: 800;">MPEP</div>
-                            <div style="position: absolute; top: -10px; right: -10px; background: #1e40af; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎯</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Trust Indicators -->
-                    <div style="display: flex; justify-content: center; gap: 30px; text-align: center;">
-                        <div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">98%+</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">Purity</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">mGluR5</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">Selective</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">NAM</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">Mechanism</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <!-- CTA Buttons -->
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <a href="#order-section" class="btn-primary" style="flex: 1; min-width: 200px; justify-content: center;">🧬 Order MPEP</a>
+            <a href="#mechanism" class="btn-secondary" style="flex: 1; min-width: 200px; justify-content: center;">📖 How It Works</a>
+          </div>
         </div>
-    </section>
 
-    <!-- Scientific Background -->
-    <section style="background: white; padding: 80px 0;" id="mechanism">
-        <div class="container">
-            <div style="max-width: 1000px; margin: 0 auto;">
-                <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">Understanding MPEP</h2>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 60px;">
-                    <div>
-                        <h3 style="color: #059669; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">🎯 Selective Modulation</h3>
-                        <p style="color: #64748b; line-height: 1.7; margin-bottom: 20px;">MPEP (2-methyl-6-(phenylethynyl)pyridine) is a highly selective negative allosteric modulator of the metabotropic glutamate receptor subtype 5 (mGluR5). Its exceptional selectivity and potency have made it an indispensable tool in glutamate research.</p>
-                        <p style="color: #64748b; line-height: 1.7;">As a negative allosteric modulator (NAM), MPEP binds to a site distinct from the glutamate binding site, providing non-competitive inhibition that offers unique research advantages over competitive antagonists.</p>
-                    </div>
-                    <div style="background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center;">
-                        <div style="font-size: 4rem; margin-bottom: 15px;">🎯</div>
-                        <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 10px;">mGluR5 Selective</h4>
-                        <p style="color: #64748b; font-size: 0.95rem;">Negative allosteric modulator</p>
-                        <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">CAS: 219911-35-0</p>
-                    </div>
-                </div>
-
-                <div style="background: linear-gradient(135deg, #f0fdf4, #dcfdf7); border-radius: 20px; padding: 40px; margin-bottom: 60px;">
-                    <h3 style="color: #1e293b; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">Mechanism of Action</h3>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
-                            <h4 style="color: #1e293b; margin-bottom: 10px;">Allosteric Binding</h4>
-                            <p style="color: #059669; font-size: 0.9rem;">MPEP binds to the transmembrane domain of mGluR5, distinct from the glutamate binding site.</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
-                            <h4 style="color: #1e293b; margin-bottom: 10px;">Receptor Inhibition</h4>
-                            <p style="color: #059669; font-size: 0.9rem;">Non-competitive inhibition blocks mGluR5-mediated signaling pathways.</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
-                            <h4 style="color: #1e293b; margin-bottom: 10px;">Downstream Effects</h4>
-                            <p style="color: #059669; font-size: 0.9rem;">Modulates synaptic plasticity, neuronal excitability, and behavioral responses.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Research Results -->
-                <div style="background: white; border-radius: 15px; padding: 30px; border: 1px solid #e5e7eb;">
-                    <h3 style="color: #1e293b; font-size: 1.5rem; font-weight: 700; margin-bottom: 25px; text-align: center;">🏆 Key Research Applications</h3>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
-                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">🧠</div>
-                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Learning & Memory</h4>
-                            <p style="color: #64748b; font-size: 0.9rem;">Essential tool for studying mGluR5 role in cognitive processes and memory formation</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">🔬</div>
-                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Synaptic Plasticity</h4>
-                            <p style="color: #64748b; font-size: 0.9rem;">Investigates mGluR5-dependent long-term potentiation and depression mechanisms</p>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">⚕️</div>
-                            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Disease Models</h4>
-                            <p style="color: #64748b; font-size: 0.9rem;">Critical for autism, schizophrenia, and addiction research involving glutamate dysfunction</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Product Visual -->
+        <div style="text-align: center;">
+          <div style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.1)); border-radius: 20px; padding: 40px; margin-bottom: 20px;">
+            <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 20px; margin: 0 auto; display: flex; align-items: center; justify-content: center; position: relative; animation: pulse 3s ease-in-out infinite;">
+              <div style="color: white; font-size: 2.2rem; font-weight: 800;">MPEP</div>
+              <div style="position: absolute; top: -10px; right: -10px; background: #1e40af; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎯</div>
             </div>
+          </div>
+          <div style="display: flex; justify-content: center; gap: 30px; text-align: center;">
+            <div><div style="font-size: 1.5rem; font-weight: 800; color: #059669;">98%+</div><div style="font-size: 0.85rem; color: #64748b;">Purity</div></div>
+            <div><div style="font-size: 1.5rem; font-weight: 800; color: #059669;">mGluR5</div><div style="font-size: 0.85rem; color: #64748b;">Selective</div></div>
+            <div><div style="font-size: 1.5rem; font-weight: 800; color: #059669;">NAM</div><div style="font-size: 0.85rem; color: #64748b;">Mechanism</div></div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- MPEP vs Other mGluR5 Modulators -->
-    <section style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">MPEP vs Other mGluR5 Modulators</h2>
-            
-            <div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #f8fafc;">
-                                <th style="padding: 20px; text-align: left; font-weight: 700; color: #1e293b; border-bottom: 2px solid #e5e7eb;">Feature</th>
-                                <th style="padding: 20px; text-align: center; font-weight: 700; color: #059669; border-bottom: 2px solid #e5e7eb;">MPEP</th>
-                                <th style="padding: 20px; text-align: center; font-weight: 700; color: #64748b; border-bottom: 2px solid #e5e7eb;">Other Modulators</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Selectivity</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">mGluR5 Specific</td>
-                                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Variable</td>
-                            </tr>
-                            <tr style="background: #f8fafc;">
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Mechanism</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Negative Allosteric</td>
-                                <td style="padding: 15px; text-align: center; color: #dc2626; border-bottom: 1px solid #f1f5f9;">Competitive/Mixed</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Research Use</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Gold Standard</td>
-                                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Alternative Tools</td>
-                            </tr>
-                            <tr style="background: #f8fafc;">
-                                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Potency</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">High (nM range)</td>
-                                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Variable</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 15px; font-weight: 600; color: #374151;">Literature Support</td>
-                                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600;">Extensive</td>
-                                <td style="padding: 15px; text-align: center; color: #64748b;">Limited</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div style="background: #f0fdf4; border: 1px solid #059669; border-radius: 12px; padding: 25px; margin-top: 30px;">
-                    <h4 style="color: #059669; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 1.2rem;">💡</span> MPEP remains the gold standard for mGluR5 research due to its exceptional selectivity, well-characterized pharmacology, and extensive literature support. Its negative allosteric mechanism provides unique research advantages over competitive antagonists.
-                    </h4>
-                </div>
+  <!-- Scientific Background -->
+  <section style="background: white; padding: 80px 0;" id="mechanism">
+    <div class="container">
+      <div style="max-width: 1000px; margin: 0 auto;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">Understanding MPEP</h2>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 60px;">
+          <div>
+            <h3 style="color: #059669; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">🎯 Selective Modulation</h3>
+            <p style="color: #64748b; line-height: 1.7; margin-bottom: 20px;">MPEP (2-methyl-6-(phenylethynyl)pyridine) is a highly selective negative allosteric modulator of the metabotropic glutamate receptor subtype 5 (mGluR5). Its exceptional selectivity and potency have made it an indispensable tool in glutamate research.</p>
+            <p style="color: #64748b; line-height: 1.7;">As a negative allosteric modulator (NAM), MPEP binds to a site distinct from the glutamate binding site, providing non-competitive inhibition that offers unique research advantages over competitive antagonists.</p>
+          </div>
+          <div style="background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 15px;">🎯</div>
+            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 10px;">mGluR5 Selective</h4>
+            <p style="color: #64748b; font-size: 0.95rem;">Negative allosteric modulator</p>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">CAS: 219911-35-0</p>
+          </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #f0fdf4, #dcfdf7); border-radius: 20px; padding: 40px; margin-bottom: 60px;">
+          <h3 style="color: #1e293b; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">Mechanism of Action</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
+              <h4 style="color: #1e293b; margin-bottom: 10px;">Allosteric Binding</h4>
+              <p style="color: #059669; font-size: 0.9rem;">MPEP binds to the transmembrane domain of mGluR5, distinct from the glutamate binding site.</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Technical Specifications -->
-    <section style="background: #1e293b; color: white; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Technical Specifications</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-                
-                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
-                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🧪 Chemical Properties</h3>
-                    <div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Molecular Formula:</span>
-                            <span style="color: #f1f5f9; font-family: 'Courier New', monospace;">C₁₁H₁₀N₂•C₂H₂O₄</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Molecular Weight:</span>
-                            <span style="color: #f1f5f9;">260.25 g/mol</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">CAS Number:</span>
-                            <span style="color: #f1f5f9;">219911-35-0</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Purity:</span>
-                            <span style="color: #10b981; font-weight: 600;">≥98%</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Form:</span>
-                            <span style="color: #f1f5f9;">White to off-white powder</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #94a3b8;">Solubility:</span>
-                            <span style="color: #f1f5f9;">DMSO, Ethanol</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
-                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📦 Storage & Handling</h3>
-                    <div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Storage Temp:</span>
-                            <span style="color: #f1f5f9;">-20°C</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Stability:</span>
-                            <span style="color: #f1f5f9;">2+ years</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Light Sensitivity:</span>
-                            <span style="color: #f59e0b;">Store in dark</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Moisture:</span>
-                            <span style="color: #f59e0b;">Keep dry</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #94a3b8;">Container:</span>
-                            <span style="color: #f1f5f9;">Amber glass vial</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
-                    <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📋 Documentation</h3>
-                    <div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">COA:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Included</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">¹H NMR:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Available</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                            <span style="color: #94a3b8;">Mass Spec:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Available</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #94a3b8;">Safety Data:</span>
-                            <span style="color: #10b981; font-weight: 600;">✓ Provided</span>
-                        </div>
-                    </div>
-                </div>
-
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
+              <h4 style="color: #1e293b; margin-bottom: 10px;">Receptor Inhibition</h4>
+              <p style="color: #059669; font-size: 0.9rem;">Non-competitive inhibition blocks mGluR5-mediated signaling pathways.</p>
             </div>
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
+              <h4 style="color: #1e293b; margin-bottom: 10px;">Downstream Effects</h4>
+              <p style="color: #059669; font-size: 0.9rem;">Modulates synaptic plasticity, neuronal excitability, and behavioral responses.</p>
+            </div>
+          </div>
         </div>
-    </section>
+
+        <!-- Applications -->
+        <div style="background: white; border-radius: 15px; padding: 30px; border: 1px solid #e5e7eb;">
+          <h3 style="color: #1e293b; font-size: 1.5rem; font-weight: 700; margin-bottom: 25px; text-align: center;">🏆 Key Research Applications</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+              <div style="font-size: 2rem; margin-bottom: 10px;">🧠</div>
+              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Learning & Memory</h4>
+              <p style="color: #64748b; font-size: 0.9rem;">Study mGluR5’s role in cognition and memory formation</p>
+            </div>
+            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+              <div style="font-size: 2rem; margin-bottom: 10px;">🔬</div>
+              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Synaptic Plasticity</h4>
+              <p style="color: #64748b; font-size: 0.9rem;">Investigate mGluR5-dependent LTP/LTD mechanisms</p>
+            </div>
+            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
+              <div style="font-size: 2rem; margin-bottom: 10px;">⚕️</div>
+              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Disease Models</h4>
+              <p style="color: #64748b; font-size: 0.9rem;">Autism, schizophrenia, addiction models with glutamatergic dysfunction</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Specifications -->
+  <section style="background: #1e293b; color: white; padding: 80px 0;">
+    <div class="container">
+      <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Technical Specifications</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+          <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🧪 Chemical Properties</h3>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Molecular Formula:</span><span style="color:#f1f5f9; font-family:'Courier New', monospace;">C₁₁H₁₀N₂•C₂H₂O₄</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Molecular Weight:</span><span style="color:#f1f5f9;">260.25 g/mol</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">CAS Number:</span><span style="color:#f1f5f9;">219911-35-0</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Purity:</span><span style="color:#10b981; font-weight:600;">≥98%</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Form:</span><span style="color:#f1f5f9;">White to off-white powder</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Solubility:</span><span style="color:#f1f5f9;">DMSO, Ethanol</span></div>
+          </div>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+          <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📦 Storage & Handling</h3>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Storage Temp:</span><span style="color:#f1f5f9;">-20°C</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Stability:</span><span style="color:#f1f5f9;">2+ years</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Light Sensitivity:</span><span style="color:#f59e0b;">Store in dark</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Moisture:</span><span style="color:#f59e0b;">Keep dry</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Container:</span><span style="color:#f1f5f9;">Amber glass vial</span></div>
+          </div>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
+          <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📋 Documentation</h3>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">COA:</span><span style="color:#10b981; font-weight:600;">✓ Included</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">¹H NMR:</span><span style="color:#10b981; font-weight:600;">✓ Available</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Mass Spec:</span><span style="color:#10b981; font-weight:600;">✓ Available</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Safety Data:</span><span style="color:#10b981; font-weight:600;">✓ Provided</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Ordering Section -->
   <section id="order-section" style="background:#f8fafc; padding:80px 0;">
@@ -381,22 +288,21 @@
             </div>
           </div>
 
-          <!-- тут з’являються кнопки Add to Cart + View Cart -->
+          <!-- Dynamic CTA goes here -->
           <div id="cartActions" style="text-align:center; margin-top:40px;"></div>
         </div>
 
-        <!-- Note -->
         <div style="background:#eff6ff; border:1px solid #3b82f6; border-radius:15px; padding:25px; margin-bottom:40px;">
           <h3 style="color:#1e40af; font-size:1.2rem; font-weight:700; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
             <span style="font-size:1.3rem;">📚</span> Research Protocol Information
           </h3>
-          <p style="color:#1e40af; margin:0; line-height:1.6;">We can provide guidance on established methodologies and literature references for your glutamate receptor research applications.</p>
+          <p style="color:#1e40af; margin:0; line-height:1.6;">We can provide guidance on methodologies and literature references for your glutamate receptor research applications.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer (без змін) -->
+  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -441,74 +347,90 @@
     </div>
   </footer>
 
-  <script>
-    // рік у футері
-    document.getElementById('y').textContent = new Date().getFullYear();
+  <!-- Toast container -->
+  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
 
-    // hover/selected для карток
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.quantity-card').forEach(card => {
-        card.addEventListener('mouseenter', () => card.classList.add('hover'));
-        card.addEventListener('mouseleave', () => card.classList.remove('hover'));
-      });
-    });
+  <!-- Small helpers -->
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
   </script>
 
-  <style>
-    .quantity-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,.15);
-      border-color: #059669;
-    }
-    .quantity-card.selected {
-      border-color: #059669;
-      background: linear-gradient(135deg, rgba(5,150,105,.05), rgba(16,185,129,.05));
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(5,150,105,.20);
-    }
-    @media (max-width:768px){
-      .quantity-card{ padding:20px; }
-    }
-  </style>
-
-  <!-- === CART + DYNAMIC CTA === -->
+  <!-- === CART + DYNAMIC CTA (MPEP) === -->
   <script>
-    // перетворити "500mg"/"1g"/"2 g" → число грамів
-    function qtyToGrams(qtyStr){
-      if(!qtyStr) return 1;
-      const s = qtyStr.toString().trim().toLowerCase();
+    // utils
+    function qtyToGrams(q){
+      if(!q) return 1;
+      const s = q.toString().trim().toLowerCase();
       if(s.endsWith('mg')) return parseFloat(s)/1000;
       if(s.endsWith('g'))  return parseFloat(s);
-      return parseFloat(s) || 1;
+      return parseFloat(s)||1;
     }
 
-    // мінімальний кошик
+    // cart helpers (packs model — як на products/A15/ISRIB)
     const CART_KEY='isrib_cart';
+    const badge   = document.getElementById('cartCount');
+    const cartBtn = document.getElementById('cartBtn');
+
     function getCart(){ try{return JSON.parse(localStorage.getItem(CART_KEY))||[]}catch{return[]} }
     function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
+
     function updateCartCount(){
-      const el=document.getElementById('cartCount');
-      if(el){ el.textContent=getCart().reduce((n,i)=>n+Number(i.qty||0),0); }
-    }
-    function addToCart(name, sku, qtyGrams, price){
-      const c=getCart();
-      const ex=c.find(i=>i.sku===sku && i.price===Number(price||0) && i.unit==='g');
-      if(ex) ex.qty += Number(qtyGrams||1);
-      else c.push({name, sku, qty:Number(qtyGrams||1), unit:'g', price:Number(price)||null});
-      saveCart(c);
-      alert(`${name} (${qtyGrams}g) added to cart`);
-      // location.href='checkout.html'; // розкоментуй, якщо потрібен автоперехід
+      if(!badge) return;
+      let cart = getCart();
+      // міграція старого формату (qty у грамах → packs)
+      cart = cart.map(i => (i && i.count == null && i.qty != null)
+        ? ({...i, grams: i.grams ?? i.qty, count: 1, unit:'pack', qty: undefined})
+        : i);
+      const total = cart.reduce((n,i)=> n + (Number(i.count)||0), 0);
+      badge.textContent = total;
     }
 
-    // намалювати кнопки Add to Cart / View Cart під вибором
+    function popBadge(){
+      if(!badge) return;
+      badge.classList.remove('pop'); void badge.offsetWidth;
+      badge.classList.add('pop');
+    }
+
+    function shakeCart(){
+      if(!cartBtn) return;
+      cartBtn.classList.remove('shake'); void cartBtn.offsetWidth;
+      cartBtn.classList.add('shake');
+      setTimeout(()=>cartBtn.classList.remove('shake'), 500);
+    }
+
+    function showToast(message){
+      const wrap = document.getElementById('toastWrap');
+      if(!wrap) return;
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 12l2 2 4-4" stroke="#31c48d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="12" r="9" stroke="#31c48d" stroke-width="2" fill="none"/>
+        </svg>
+        <span>${message}</span>
+      `;
+      wrap.appendChild(el);
+      setTimeout(()=> wrap.removeChild(el), 1750);
+    }
+
+    function addToCart(name, sku, grams, price, display){
+      let cart = getCart();
+      cart.push({ name, sku, grams, display, price:Number(price)||0, count:1, unit:'pack' });
+      saveCart(cart);
+      popBadge();
+      shakeCart();
+      showToast(`Added to cart: ${name} — ${display} ($${price})`);
+    }
+
+    // dynamic CTA renderer (no redirect)
     function renderAddToCartBtn(qtyLabel, price){
       const grams = qtyToGrams(qtyLabel);
       const wrap  = document.getElementById('cartActions');
       if(!wrap) return;
       wrap.innerHTML = `
-        <button class="btn-primary"
-          style="font-size:1.2rem; padding:18px 40px; margin-right:12px;"
-          onclick="addToCart('MPEP Oxalate','mpep',${grams},${Number(price)})">
+        <button id="addMPEP" class="btn-primary"
+          style="font-size:1.2rem; padding:18px 40px; margin-right:12px;">
           ➕ Add to Cart — ${qtyLabel} for $${price}
         </button>
         <a href="checkout.html" class="btn-secondary"
@@ -517,10 +439,20 @@
         </a>
         <p style="color:#64748b; margin-top:15px; font-size:.95rem;">Secure payment arrangements discussed individually</p>
       `;
+      const btn = document.getElementById('addMPEP');
+      if(btn){
+        btn.addEventListener('click', ()=>{
+          addToCart('MPEP Oxalate','mpep',grams,Number(price),qtyLabel);
+          const old = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = '✔️ Added!';
+          setTimeout(()=>{ btn.disabled=false; btn.textContent = old; }, 1200);
+        });
+      }
     }
 
-    // підключення до карток та автоселект за замовчуванням (1g)
-    document.addEventListener('DOMContentLoaded', () => {
+    // init
+    document.addEventListener('DOMContentLoaded', ()=>{
       updateCartCount();
 
       const cards = document.querySelectorAll('.quantity-card');
@@ -528,13 +460,12 @@
         card.addEventListener('click', function(){
           cards.forEach(c=>c.classList.remove('selected'));
           this.classList.add('selected');
-          const qty   = this.dataset.quantity; // "500mg" або "1g"
-          const price = this.dataset.price;    // "280", "450", ...
+          const qty   = this.dataset.quantity; // "50mg" | "100mg" | "500mg" | "1g"
+          const price = this.dataset.price;
           renderAddToCartBtn(qty, price);
         });
       });
 
-      // якщо є 1g — виділяємо її, інакше першу
       const def = document.querySelector('.quantity-card[data-quantity="1g"]') || cards[0];
       if(def) def.click();
     });
