@@ -22,7 +22,8 @@
     .quantity-wrap{ border:1px solid #e5e7eb; border-radius:14px; padding:14px; }
     .quantity-title{ font-weight:700; margin-bottom:10px; color:#0f172a; }
     .quantity-row{ display:flex; gap:10px; flex-wrap:wrap; }
-    .quantity-option{ border:2px solid #e2e8f0; border-radius:12px; padding:10px 14px; cursor:pointer; user-select:none; background:#fff; }
+    .quantity-option{ border:2px solid #e2e8f0; border-radius:12px; padding:10px 14px; cursor:pointer; user-select:none; background:#fff; transition:transform .08s ease; }
+    .quantity-option:active{ transform:scale(.98); }
     .quantity-option .tag { display:block; font-weight:800; color:#0f172a; }
     .quantity-option .price { display:block; color:#64748b; font-size:.9rem; }
     .quantity-option.active{ border-color:#2563eb; box-shadow:0 0 0 4px rgba(37,99,235,.08); }
@@ -39,6 +40,21 @@
 
     .price-line{ font-size:1.15rem; font-weight:800; color:#0f172a; }
     .price-line small{ color:#64748b; font-weight:600; }
+
+    /* -------- cart badge pop‑in -------- */
+    .cart-btn{ position:relative; display:inline-flex; align-items:center; gap:6px; }
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:22px; height:22px; padding:0 6px;
+      background:#1e40af; color:#fff; border-radius:12px; font-size:12px; font-weight:800;
+      transform-origin:center; line-height:1; border:1px solid rgba(0,0,0,.06);
+    }
+    @keyframes pop {
+      0%   { transform:scale(1); }
+      40%  { transform:scale(1.22); }
+      100% { transform:scale(1); }
+    }
+    .badge.pop { animation: pop .35s cubic-bezier(.2,.8,.2,1); }
   </style>
 </head>
 <body>
@@ -292,15 +308,27 @@
         updateCard(card); // init
       });
 
-      // Додавання до кошика
+      // Додавання до кошика + поп-ін бейджу
+      const badge = document.getElementById('cartCount');
+
+      const popBadge = () => {
+        if (!badge) return;
+        badge.classList.remove('pop'); // перезапуск анімації
+        // force reflow
+        void badge.offsetWidth;
+        badge.classList.add('pop');
+      };
+
       const updateCartCount = () => {
-        const el = $('#cartCount'); if (!el) return;
+        if (!badge) return;
         let cart = [];
         try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch {}
         // міграція (старі записи мали qty як грами)
-        cart = cart.map(i => (i && i.count == null && i.qty != null) ? ({...i, grams: i.grams ?? i.qty, count: 1, qty: undefined}) : i);
+        cart = cart.map(i => (i && i.count == null && i.qty != null)
+          ? ({...i, grams: i.grams ?? i.qty, count: 1, qty: undefined})
+          : i);
         const total = cart.reduce((n,i) => n + (Number(i.count)||0), 0);
-        el.textContent = total;
+        badge.textContent = total;
       };
 
       $$('.add-btn').forEach(btn => {
@@ -316,18 +344,23 @@
           const name = btn.dataset.name || card.dataset.name;
           const sku  = btn.dataset.sku  || card.dataset.sku;
 
-          if (window.addToCart) {
-            try { window.addToCart(name, sku, grams, price, qStr); }
-            catch {}
-          } else {
-            // fallback: localStorage (пакети, не грами)
-            let cart = [];
-            try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch {}
-            cart.push({ name, sku, grams, display: qStr, price, count: 1, unit: 'pack' });
-            localStorage.setItem(CART_KEY, JSON.stringify(cart));
-          }
+          // fallback: localStorage (пакети, не грами)
+          let cart = [];
+          try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch {}
+          cart.push({ name, sku, grams, display: qStr, price, count: 1, unit: 'pack' });
+          localStorage.setItem(CART_KEY, JSON.stringify(cart));
+
           updateCartCount();
-          window.location.href = 'checkout.html';
+          popBadge();
+
+          // короткий зворотній зв'язок на кнопці
+          const oldHTML = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerText = '✔️ Added!';
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = oldHTML;
+          }, 1200);
         });
       });
 
