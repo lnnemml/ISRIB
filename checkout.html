@@ -1,4 +1,3 @@
-<!-- BUILD: v2 -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,11 +7,13 @@
   <meta name="description" content="Complete your order request. Research use only. Worldwide shipping.">
   <link href="css/styles.css" rel="stylesheet"/>
   <style>
-    /* Невеличкі доповнення до існуючого стилю */
+    /* layout */
     body{background:#f8fafc;color:#0f172a}
     .page-header{padding:24px 0 8px;border-bottom:1px solid #e5e7eb;background:#fff}
     .checkout-wrap{padding:28px 0 60px}
     .checkout-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:24px;align-items:start}
+
+    /* cards & form */
     .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden}
     .card .body{padding:20px}
     .row{display:grid;gap:12px;margin-top:12px}
@@ -26,14 +27,8 @@
     .muted{color:#64748b}
     .danger{color:#dc2626}
     .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:12px}
-    .cart-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-    .cart-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa}
-    .cart-title{font-weight:600}
-    .cart-ctrl{display:flex;align-items:center;gap:8px}
-    .cart-qty{width:76px}
-    .link{background:none;border:none;color:#1e40af;cursor:pointer;padding:0}
-    .link.danger{color:#dc2626}
 
+    /* header */
     .header{padding:14px 0;border-bottom:1px solid #e5e7eb;background:#fff;position:sticky;top:0;z-index:20}
     .header .header-content{display:flex;align-items:center;justify-content:space-between;gap:16px}
     .logo-image{height:36px;width:auto;object-fit:contain}
@@ -43,7 +38,29 @@
     .cart-btn:hover{background:#0b5e57}
     .badge{display:inline-flex;min-width:22px;height:22px;padding:0 6px;border-radius:999px;align-items:center;justify-content:center;background:#fff;color:#0f766e;font-size:12px;font-weight:800}
 
-    @media (max-width: 980px){
+    /* cart list */
+    .cart-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .cart-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa}
+    .cart-title{font-weight:600}
+    .cart-ctrl{display:flex;align-items:center;gap:8px}
+    .cart-qty{width:76px}
+
+    .price-line{display:flex;align-items:center;gap:8px;color:#475569;font-size:.95rem}
+    .price-line .x{opacity:.7}
+    .price-line .eq{font-weight:700;color:#0f172a}
+
+    .link{background:none;border:none;color:#1e40af;cursor:pointer;padding:0}
+    .link.danger{color:#dc2626}
+
+    /* totals */
+    .totals{margin-top:14px}
+    .totals-row{display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:1rem}
+    .totals-row .label{color:#334155}
+    .totals-row .value{font-weight:700;color:#0f172a}
+    .totals-row.total{margin-top:10px;padding-top:10px;border-top:1px solid #e5e7eb;font-size:1.1rem}
+    .totals-row.total .value{font-size:1.2rem}
+
+    @media (max-width:980px){
       .checkout-grid{grid-template-columns:1fr}
       .row-2,.row-3{grid-template-columns:1fr}
     }
@@ -173,7 +190,11 @@
         <aside class="card">
           <div class="body">
             <h2>Order Summary</h2>
+
             <div id="cartList" class="cart-list"></div>
+
+            <!-- totals -->
+            <div id="summaryTotals" class="totals" aria-live="polite"></div>
 
             <hr style="margin:16px 0; border:none; border-top:1px solid #e5e7eb" />
             <div class="pill">Research Use Only</div>
@@ -199,9 +220,9 @@
     </div>
   </footer>
 
-  <!-- INLINE JS: кошик + сабміт -->
+  <!-- INLINE JS: cart + submit + totals -->
   <script>
-    // рік у футері
+    // year
     document.getElementById('y').textContent = new Date().getFullYear();
 
     const CART_KEY = 'isrib_cart';
@@ -211,41 +232,87 @@
     function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
     function updateCartCount(){
       const el = $('#cartCount'); if(!el) return;
-      const total = getCart().reduce((n,i)=>n+Number(i.qty||0),0);
+      const total = getCart().reduce((n,i)=> n + Number(i.qty||0), 0);
       el.textContent = total;
+    }
+
+    function usd(n){
+      return (typeof n === 'number' && isFinite(n)) ? ('$' + n.toFixed(2)) : '—';
+    }
+
+    function renderTotals(cart){
+      const box = $('#summaryTotals'); if(!box) return;
+      // subtotal: only items that have price
+      const subtotal = cart.reduce((s,it)=> s + (Number(it.price||0) * Number(it.qty||0)), 0);
+      const shipping = null; // TBD — розраховується менеджером
+      const total = subtotal + (shipping || 0);
+
+      box.innerHTML = `
+        <div class="totals-row"><span class="label">Subtotal</span><span class="value">${usd(subtotal)}</span></div>
+        <div class="totals-row"><span class="label">Shipping</span><span class="value">${shipping===null?'TBD':usd(shipping)}</span></div>
+        <div class="totals-row total"><span class="label">Total</span><span class="value">${usd(total)}</span></div>
+      `;
     }
 
     function renderCheckoutCart(){
       const wrap = $('#cartList'); if(!wrap) return;
       const cart = getCart();
+
       if(!cart.length){
         wrap.innerHTML = '<p class="muted">Your cart is empty. Go to <a href="products.html">Products</a>.</p>';
-        updateCartCount(); return;
+        renderTotals(cart);
+        updateCartCount();
+        return;
       }
-      wrap.innerHTML = cart.map((it,idx)=>`
-        <div class="cart-row">
-          <div class="cart-title"><strong>${it.name || it.product}</strong></div>
-          <div class="cart-ctrl">
-            <input type="number" min="1" value="${Number(it.qty||1)}" data-idx="${idx}" class="cart-qty">
-            <span class="unit">${it.unit || 'g'}</span>
-            <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
-          </div>
-        </div>
-      `).join('');
 
+      wrap.innerHTML = cart.map((it,idx)=>{
+        const qty = Number(it.qty||1);
+        const price = (it.price!=null) ? Number(it.price) : null;
+        const line = (price!=null) ? (price * qty) : null;
+
+        return `
+          <div class="cart-row">
+            <div>
+              <div class="cart-title"><strong>${it.name || it.product}</strong></div>
+              <div class="price-line">
+                <span>${qty}${it.unit || 'g'}</span>
+                <span class="x">×</span>
+                <span>${price!=null ? usd(price) : '—'}</span>
+                <span class="x">=</span>
+                <span class="eq">${usd(line)}</span>
+              </div>
+            </div>
+            <div class="cart-ctrl">
+              <input type="number" min="1" value="${qty}" data-idx="${idx}" class="cart-qty" aria-label="Quantity for ${it.name || it.product}">
+              <button class="link danger cart-remove" data-idx="${idx}" aria-label="Remove ${it.name || it.product}">Remove</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // events
       wrap.querySelectorAll('.cart-qty').forEach(inp=>{
         inp.addEventListener('change',e=>{
           const i=+e.target.dataset.idx; const c=getCart();
-          c[i].qty = Math.max(1, Number(e.target.value||1)); saveCart(c); renderCheckoutCart();
+          c[i].qty = Math.max(1, Number(e.target.value||1));
+          saveCart(c);
+          renderCheckoutCart();
         });
       });
       wrap.querySelectorAll('.cart-remove').forEach(btn=>{
         btn.addEventListener('click',e=>{
-          const i=+e.target.dataset.idx; const c=getCart(); c.splice(i,1); saveCart(c); renderCheckoutCart();
+          const i=+e.target.dataset.idx; const c=getCart();
+          c.splice(i,1);
+          saveCart(c);
+          renderCheckoutCart();
         });
       });
+
+      renderTotals(cart);
+      updateCartCount();
     }
 
+    // submit → /api/checkout
     (function(){
       const form = $('#checkoutForm'); const msg = $('#formMsg');
       if(!form) return;
@@ -272,7 +339,8 @@
           });
           if (!r.ok) throw new Error('submit failed');
 
-          localStorage.removeItem(CART_KEY); updateCartCount();
+          localStorage.removeItem(CART_KEY);
+          updateCartCount();
           const oid = Math.random().toString(36).slice(2,8).toUpperCase();
           window.location.href = `/success.html?order=${oid}`;
         }catch(err){
