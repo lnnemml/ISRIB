@@ -1,407 +1,337 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - ISRIB Shop | Research Chemicals Catalog</title>
-    <meta name="description" content="Browse our complete catalog of research chemicals including ISRIB A15, original ISRIB, ZZL-7, and MPEP. High purity, lab tested, worldwide shipping.">
-    <link rel="canonical" href="https://isrib.shop/products">
-    <meta property="og:title" content="Research Chemicals Catalog - ISRIB Shop">
-    <meta property="og:description" content="Complete catalog of research chemicals including ISRIB A15, ZZL-7, and more. 98%+ purity guaranteed.">
-    <meta property="og:image" content="/images/og-products.jpg">
-    <meta property="og:url" content="https://isrib.shop/products">
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Products – ISRIB.shop</title>
+  <meta name="description" content="Research-grade chemical catalog: ISRIB A15, ISRIB Original, ZZL-7, MPEP Oxalate." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="images/favicon-32.png" type="image/png" />
+  <style>
+    /* легкі підсилення стилів карток (працює поверх styles.css) */
+    .products-hero { padding: 36px 0 8px; }
+    .grid { display:grid; gap:24px; grid-template-columns:repeat(3,minmax(0,1fr)); }
+    @media (max-width: 1024px){ .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 720px){ .grid{ grid-template-columns:1fr; } }
+
+    .product-card{ background:#fff; border-radius:16px; border:1px solid #e5e7eb; box-shadow: 0 4px 20px rgba(0,0,0,.04); padding:20px; display:flex; flex-direction:column; gap:16px; }
+    .product-header{ display:flex; align-items:center; gap:12px; }
+    .product-title{ font-weight:800; font-size:1.1rem; color:#0f172a; }
+    .product-sub{ color:#64748b; font-size:.94rem; }
+
+    .quantity-wrap{ border:1px solid #e5e7eb; border-radius:14px; padding:14px; }
+    .quantity-title{ font-weight:700; margin-bottom:10px; color:#0f172a; }
+    .quantity-row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .quantity-option{ border:2px solid #e2e8f0; border-radius:12px; padding:10px 14px; cursor:pointer; user-select:none; background:#fff; }
+    .quantity-option .tag { display:block; font-weight:800; color:#0f172a; }
+    .quantity-option .price { display:block; color:#64748b; font-size:.9rem; }
+    .quantity-option.active{ border-color:#2563eb; box-shadow:0 0 0 4px rgba(37,99,235,.08); }
+
+    .facts{ background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; font-size:.95rem; color:#334155; }
+    .facts .row{ display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed #e5e7eb; }
+    .facts .row:last-child{ border-bottom:0; }
+    .facts .val{ font-weight:700; }
+
+    .product-footer{ display:flex; align-items:center; gap:10px; margin-top:auto; }
+    .btn-primary{ background:#1e40af; border-radius:12px; padding:12px 18px; color:#fff; font-weight:800; border:0; cursor:pointer; }
+    .view-product{ border-radius:12px; padding:12px 18px; font-weight:700; border:1px solid #e5e7eb; color:#0f172a; background:#fff; }
+    .view-cart{ margin-left:auto; color:#1e40af; font-weight:800; }
+
+    .price-line{ font-size:1.15rem; font-weight:800; color:#0f172a; }
+    .price-line small{ color:#64748b; font-weight:600; }
+  </style>
 </head>
 <body>
-     <!-- Header -->
-    <header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-         🧺 Cart <span id="cartCount" class="badge">0</span>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image" width="180" height="40" style="object-fit:contain" />
         </a>
-      </nav>
+        <nav class="nav">
+          <a href="products.html" aria-current="page">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn">
+            🛒 Cart <span id="cartCount" class="badge">0</span>
+          </a>
+        </nav>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-    <!-- Page Header -->
-    <section class="page-header" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 150px 0 80px; text-align: center;">
-        <div class="container">
-            <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: #1e293b; margin-bottom: 20px;">Research Chemicals Catalog</h1>
-            <p style="font-size: 1.2rem; color: #64748b; max-width: 600px; margin: 0 auto;">Discover our complete selection of high-purity research compounds, each backed by rigorous quality control and comprehensive documentation.</p>
-        </div>
+  <!-- Page -->
+  <main>
+    <section class="products-hero">
+      <div class="container">
+        <h1>ISRIB Shop Products</h1>
+        <p class="muted">Research‑grade chemical catalog • 98%+ Purity • Worldwide Shipping</p>
+      </div>
     </section>
 
-    <!-- Products Filter -->
-    <section style="background: white; padding: 40px 0; border-bottom: 1px solid #e5e7eb;">
-        <div class="container">
-            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                <button class="filter-btn active" data-filter="all" style="padding: 10px 20px; border: 2px solid #1e40af; background: #1e40af; color: white; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">All Products</button>
-                <button class="filter-btn" data-filter="isrib" style="padding: 10px 20px; border: 2px solid #1e40af; background: white; color: #1e40af; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">ISRIB Series</button>
-                <button class="filter-btn" data-filter="zzl7" style="padding: 10px 20px; border: 2px solid #1e40af; background: white; color: #1e40af; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">ZZL-7</button>
-                <button class="filter-btn" data-filter="mpep" style="padding: 10px 20px; border: 2px solid #1e40af; background: white; color: #1e40af; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">MPEP</button>
+    <section>
+      <div class="container">
+        <div class="grid">
+
+          <!-- A15 -->
+          <article class="product-card" data-sku="isrib-a15" data-name="ISRIB A15">
+            <div class="product-header">
+              <h2 class="product-title">ISRIB A15</h2>
+              <span class="product-sub">Ultra Potent Analog</span>
             </div>
+
+            <div class="quantity-wrap">
+              <div class="quantity-title">Select Quantity</div>
+              <div class="quantity-row">
+                <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
+                <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
+                <div class="quantity-option" data-quantity="1000mg" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
+              </div>
+            </div>
+
+            <div class="facts">
+              <div class="row"><span>Selected:</span><span class="val selected-quantity">100mg</span></div>
+              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
+              <div class="row"><span>COA:</span><span class="val">Included</span></div>
+            </div>
+
+            <div class="price-line">
+              <span class="current-price">$50.00</span>
+              <small class="price-per-mg">($0.50/mg)</small>
+            </div>
+
+            <div class="product-footer">
+              <a class="view-product" href="product_isrib_A15.html">View Details</a>
+              <button class="btn-primary add-btn" data-sku="isrib-a15" data-name="ISRIB A15">
+                ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$50</span>
+              </button>
+              <a class="view-cart" href="checkout.html">View Cart</a>
+            </div>
+          </article>
+
+          <!-- ISRIB Original -->
+          <article class="product-card" data-sku="isrib" data-name="ISRIB (Original)">
+            <div class="product-header">
+              <h2 class="product-title">ISRIB (Original)</h2>
+              <span class="product-sub">Original Compound</span>
+            </div>
+
+            <div class="quantity-wrap">
+              <div class="quantity-title">Select Quantity</div>
+              <div class="quantity-row">
+                <div class="quantity-option active" data-quantity="30mg" data-price="14"><span class="tag">30mg</span><span class="price">$14</span></div>
+                <div class="quantity-option" data-quantity="100mg" data-price="27"><span class="tag">100mg</span><span class="price">$27</span></div>
+                <div class="quantity-option" data-quantity="1000mg" data-price="100"><span class="tag">1000mg</span><span class="price">$100</span></div>
+              </div>
+            </div>
+
+            <div class="facts">
+              <div class="row"><span>Selected:</span><span class="val selected-quantity">30mg</span></div>
+              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
+              <div class="row"><span>COA:</span><span class="val">Included</span></div>
+            </div>
+
+            <div class="price-line">
+              <span class="current-price">$14.00</span>
+              <small class="price-per-mg">($0.47/mg)</small>
+            </div>
+
+            <div class="product-footer">
+              <a class="view-product" href="product_isrib.html">View Details</a>
+              <button class="btn-primary add-btn" data-sku="isrib" data-name="ISRIB (Original)">
+                ➕ Add to Cart — <span class="add-label">30mg</span> <span class="add-price">$14</span>
+              </button>
+              <a class="view-cart" href="checkout.html">View Cart</a>
+            </div>
+          </article>
+
+          <!-- ZZL-7 -->
+          <article class="product-card" data-sku="zzl7" data-name="ZZL-7">
+            <div class="product-header">
+              <h2 class="product-title">ZZL‑7</h2>
+              <span class="product-sub">Fast-Onset Antidepressant</span>
+            </div>
+
+            <div class="quantity-wrap">
+              <div class="quantity-title">Select Quantity</div>
+              <div class="quantity-row">
+                <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
+                <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
+                <div class="quantity-option" data-quantity="1000mg" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
+              </div>
+            </div>
+
+            <div class="facts">
+              <div class="row"><span>Selected:</span><span class="val selected-quantity">100mg</span></div>
+              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
+              <div class="row"><span>COA:</span><span class="val">Included</span></div>
+            </div>
+
+            <div class="price-line">
+              <span class="current-price">$50.00</span>
+              <small class="price-per-mg">($0.50/mg)</small>
+            </div>
+
+            <div class="product-footer">
+              <a class="view-product" href="product_zzl_7.html">View Details</a>
+              <button class="btn-primary add-btn" data-sku="zzl7" data-name="ZZL-7">
+                ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$50</span>
+              </button>
+              <a class="view-cart" href="checkout.html">View Cart</a>
+            </div>
+          </article>
+
+          <!-- MPEP Oxalate -->
+          <article class="product-card" data-sku="mpep" data-name="MPEP Oxalate">
+            <div class="product-header">
+              <h2 class="product-title">MPEP Oxalate</h2>
+              <span class="product-sub">mGluR5 Negative Allosteric Modulator</span>
+            </div>
+
+            <div class="quantity-wrap">
+              <div class="quantity-title">Select Quantity</div>
+              <div class="quantity-row">
+                <div class="quantity-option active" data-quantity="50mg" data-price="45"><span class="tag">50mg</span><span class="price">$45</span></div>
+                <div class="quantity-option" data-quantity="500mg" data-price="280"><span class="tag">500mg</span><span class="price">$280</span></div>
+                <div class="quantity-option" data-quantity="1000mg" data-price="450"><span class="tag">1000mg</span><span class="price">$450</span></div>
+              </div>
+            </div>
+
+            <div class="facts">
+              <div class="row"><span>Selected:</span><span class="val selected-quantity">50mg</span></div>
+              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
+              <div class="row"><span>COA:</span><span class="val">Included</span></div>
+            </div>
+
+            <div class="price-line">
+              <span class="current-price">$45.00</span>
+              <small class="price-per-mg">($0.90/mg)</small>
+            </div>
+
+            <div class="product-footer">
+              <a class="view-product" href="product_MPEP.html">View Details</a>
+              <button class="btn-primary add-btn" data-sku="mpep" data-name="MPEP Oxalate">
+                ➕ Add to Cart — <span class="add-label">50mg</span> <span class="add-price">$45</span>
+              </button>
+              <a class="view-cart" href="checkout.html">View Cart</a>
+            </div>
+          </article>
+
         </div>
+      </div>
     </section>
+  </main>
 
-    <!-- Products Grid -->
-    <section class="products-section">
-        <div class="container">
-            <div class="products-grid">
-                
-                <!-- ISRIB-A15 with quantity selector -->
-                <div class="product-card" data-category="isrib" id="isrib-a15">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">ISRIB-A15</div>
-                            <div class="product-chemical">C₂₂H₂₂Cl₄N₂O₄</div>
-                        </div>
-                        <div class="product-badge most-popular">Most Popular</div>
-                    </div>
-                    <p class="product-description">Ultra Potent ISRIB Analogue with enhanced bioavailability and selectivity. Targets eIF2B for cognitive enhancement research.</p>
-                    
-                    <!-- Quantity Selector -->
-                    <div class="quantity-selector">
-                        <label style="font-weight: 600; color: #374151; margin-bottom: 10px; display: block;">Select Quantity:</label>
-                        <div class="quantity-options">
-                            <div class="quantity-option active" data-quantity="100mg" data-price="50">
-                                <span class="quantity">100mg</span>
-                                <span class="price">$50</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="500mg" data-price="130">
-                                <span class="quantity">500mg</span>
-                                <span class="price">$130</span>
-                                <span class="save">Save $20</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="1g" data-price="200">
-                                <span class="quantity">1000mg</span>
-                                <span class="price">$200</span>
-                                <span class="save">Save $100</span>
-                            </div>
-                        </div>
-                    </div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>© <span id="y"></span> ISRIB.shop — Research use only.</div>
+      </div>
+    </div>
+  </footer>
 
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Selected:</span>
-                            <span class="spec-value selected-quantity">100mg</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥98% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Storage:</span>
-                            <span class="spec-value">-20°C, dry</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">COA:</span>
-                            <span class="spec-value">Included</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-display">
-                            <span class="current-price">$50.00</span>
-                            <span class="price-per-mg">($0.50/mg)</span>
-                        </div>
-                        <div class="product-buttons">
-                            <a href="product_isrib_A15.html" class="view-product">View Details</a>
-                            <a href="contact.html?product=isrib-a15-100mg&price=50&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'isrib-a15', 'contact_to_order')">Contact to Order</a>
-                        </div>
-                    </div>
-                </div>
+  <!-- Твій глобальний JS (залиш як є у проекті) -->
+  <script src="js/main.js"></script>
 
-                <!-- Original ISRIB with quantity selector -->
-                <div class="product-card" data-category="isrib" id="isrib">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">ISRIB Original</div>
-                            <div class="product-chemical">C₂₂H₂₄Cl₂N₂O₄</div>
-                        </div>
-                    </div>
-                    <p class="product-description">Original ISRIB compound. Selective inhibitor of eIF2α phosphorylation-induced stress granule formation.</p>
-                    
-                    <!-- Quantity Selector -->
-                    <div class="quantity-selector">
-                        <label style="font-weight: 600; color: #374151; margin-bottom: 10px; display: block;">Select Quantity:</label>
-                        <div class="quantity-options">
-                            <div class="quantity-option active" data-quantity="30mg" data-price="14">
-                                <span class="quantity">30mg</span>
-                                <span class="price">$14</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="100mg" data-price="27">
-                                <span class="quantity">100mg</span>
-                                <span class="price">$27</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="1g" data-price="100">
-                                <span class="quantity">1000mg</span>
-                                <span class="price">$100</span>
-                                <span class="save">Best Value</span>
-                            </div>
-                        </div>
-                    </div>
+  <!-- Універсальний “клей” для сторінки Products -->
+  <script>
+    (function () {
+      const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+      const $  = (s, r = document) => r.querySelector(s);
+      const CART_KEY = 'isrib_cart';
+      document.getElementById('y').textContent = new Date().getFullYear();
 
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Selected:</span>
-                            <span class="spec-value selected-quantity">30mg</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥96% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">CAS:</span>
-                            <span class="spec-value">1597403-47-8</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">MW:</span>
-                            <span class="spec-value">451.3 g/mol</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-display">
-                            <span class="current-price">$14.00</span>
-                            <span class="price-per-mg">($0.47/mg)</span>
-                        </div>
-                        <div class="product-buttons">
-                            <a href="product_isrib.html" class="view-product">View Details</a>
-                            <a href="contact.html?product=isrib-30mg&price=14&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'isrib', 'contact_to_order')">Contact to Order</a>
-                        </div>
-                    </div>
-                </div>
+      const toGrams = (q) => {
+        q = String(q).trim().toLowerCase();
+        if (q.endsWith('mg')) return Number(q.replace('mg','')) / 1000;
+        if (q.endsWith('g'))  return Number(q.replace('g',''));
+        return Number(q) || 1;
+      };
 
-                <!-- ZZL-7 with quantity selector -->
-                <div class="product-card" data-category="zzl7" id="zzl7">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">ZZL-7</div>
-                            <div class="product-chemical">C₁₁H₂₀N₂O₄</div>
-                        </div>
-                    </div>
-                    <p class="product-description">Fast-onset antidepressant research compound. Disrupts SERT-nNOS interaction with high blood-brain barrier permeability.</p>
-                    
-                    <!-- Quantity Selector -->
-                    <div class="quantity-selector">
-                        <label style="font-weight: 600; color: #374151; margin-bottom: 10px; display: block;">Select Quantity:</label>
-                        <div class="quantity-options">
-                            <div class="quantity-option active" data-quantity="100mg" data-price="50">
-                                <span class="quantity">100mg</span>
-                                <span class="price">$50</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="500mg" data-price="130">
-                                <span class="quantity">500mg</span>
-                                <span class="price">$130</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="1g" data-price="200">
-                                <span class="quantity">1000mg</span>
-                                <span class="price">$200</span>
-                                <span class="save">Best Value</span>
-                            </div>
-                        </div>
-                    </div>
+      const updateCard = (card) => {
+        const sel = $('.quantity-option.active', card);
+        if (!sel) return;
+        const q = sel.dataset.quantity;
+        const price = Number(sel.dataset.price);
 
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Selected:</span>
-                            <span class="spec-value selected-quantity">100mg</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥98% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">CAS:</span>
-                            <span class="spec-value">99141-91-0</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">MW:</span>
-                            <span class="spec-value">244.29 g/mol</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-display">
-                            <span class="current-price">$50.00</span>
-                            <span class="price-per-mg">($0.50/mg)</span>
-                        </div>
-                        <div class="product-buttons">
-                            <a href="product_zzl_7.html" class="view-product">View Details</a>
-                            <a href="contact.html?product=zzl7-100mg&price=50&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'zzl7', 'contact_to_order')">Contact to Order</a>
-                        </div>
-                    </div>
-                </div>
+        const selectedOut = $('.selected-quantity', card);
+        if (selectedOut) selectedOut.textContent = q;
 
-                <!-- MPEP Oxalate -->
-                <div class="product-card" data-category="mpep" id="mpep">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">MPEP Oxalate</div>
-                            <div class="product-chemical">C₁₁H₁₀N₂•C₂H₂O₄</div>
-                        </div>
-                        <div class="product-badge">Back in Stock</div>
-                    </div>
-                    <p class="product-description">Selective mGluR5 negative allosteric modulator. Important tool for glutamate receptor research and cognitive studies.</p>
-                    
-                    <!-- Quantity Selector -->
-                    <div class="quantity-selector">
-                        <label style="font-weight: 600; color: #374151; margin-bottom: 10px; display: block;">Select Quantity:</label>
-                        <div class="quantity-options">
-                            <div class="quantity-option active" data-quantity="50mg" data-price="45">
-                                <span class="quantity">50mg</span>
-                                <span class="price">$45</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="100mg" data-price="75">
-                                <span class="quantity">100mg</span>
-                                <span class="price">$75</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="500mg" data-price="280">
-                                <span class="quantity">500mg</span>
-                                <span class="price">$280</span>
-                            </div>
-                            <div class="quantity-option" data-quantity="1g" data-price="450">
-                                <span class="quantity">1000mg</span>
-                                <span class="price">$450</span>
-                                <span class="save">Best Value</span>
-                            </div>
-                        </div>
-                    </div>
+        const currentPrice = $('.current-price', card);
+        if (currentPrice) currentPrice.textContent = `$${price.toFixed(2)}`;
 
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Selected:</span>
-                            <span class="spec-value selected-quantity">50mg</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥98% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">CAS:</span>
-                            <span class="spec-value">219911-35-0</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">MW:</span>
-                            <span class="spec-value">260.25 g/mol</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-display">
-                            <span class="current-price">$45.00</span>
-                            <span class="price-per-mg">($0.90/mg)</span>
-                        </div>
-                        <div class="product-buttons">
-                            <a href="product_MPEP.html" class="view-product">View Details</a>
-                            <a href="contact.html?product=mpep-50mg&price=45&inquiry=order" class="add-to-cart contact-to-order" onclick="trackCTA('product', 'mpep', 'contact_to_order')">Contact to Order</a>
-                        </div>
-                    </div>
-                </div>
+        const ppm = $('.price-per-mg', card);
+        if (ppm) {
+          const mg = q.endsWith('mg') ? Number(q.replace('mg',''))
+                    : Number(q.replace('g','')) * 1000;
+          ppm.textContent = `($${(price / mg).toFixed(2)}/mg)`;
+        }
 
-            </div>
-        </div>
-    </section>
+        const label = $('.add-label', card);
+        const priceEl = $('.add-price', card);
+        if (label) label.textContent = q;
+        if (priceEl) priceEl.textContent = `$${price}`;
+      };
 
-    <!-- How to Order Section -->
-    <section style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">How to Order</h2>
-            <p style="text-align: center; color: #64748b; margin-bottom: 50px; font-size: 1.1rem;">Simple 3-step process to get your research chemicals:</p>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px;">Select Product & Quantity</h3>
-                    <p style="color: #64748b; font-size: 0.95rem;">Choose your compound and desired quantity using our selection tools above.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px;">Contact Us</h3>
-                    <p style="color: #64748b; font-size: 0.95rem;">Click "Contact to Order" to send us your inquiry with pre-filled product details.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px;">Payment & Shipping</h3>
-                    <p style="color: #64748b; font-size: 0.95rem;">We arrange secure payment and discrete shipping directly with you.</p>
-                </div>
-            </div>
+      // активатор вибору кількості
+      $$('.product-card').forEach((card) => {
+        const first = $('.quantity-option', card);
+        if (first && !$('.quantity-option.active', card)) first.classList.add('active');
 
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="contact.html?inquiry=order" class="btn-primary" onclick="trackCTA('how-to-order', 'start_order')">Start Your Order</a>
-            </div>
-        </div>
-    </section>
+        $$('.quantity-option', card).forEach(opt => {
+          opt.addEventListener('click', () => {
+            $$('.quantity-option', card).forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            updateCard(card);
+          });
+        });
 
-    <!-- Call to Action -->
-    <section style="background: #1e293b; color: white; padding: 80px 0; text-align: center;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px;">Can't Find What You Need?</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">We offer custom synthesis services for specialized research requirements.</p>
-            <a href="contact.html?inquiry=custom-synthesis" class="btn-primary" onclick="trackCTA('custom_synthesis', 'cta')">Contact Us for Custom Synthesis</a>
-        </div>
-    </section>
+        updateCard(card); // init
+      });
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>ISRIB Shop</h3>
-                    <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality and reliability.</p>
-                    <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
-                </div>
+      // Додавання до кошика
+      const updateCartCount = () => {
+        const el = $('#cartCount'); if (!el) return;
+        const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+        const total = cart.reduce((n,i) => n + Number(i.qty||0), 0);
+        el.textContent = total;
+      };
 
-                <div class="footer-section">
-                    <h3>Products</h3>
-                    <ul>
-                        <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
-                        <li><a href="product_isrib.html">ISRIB Original</a></li>
-                        <li><a href="product_zzl_7.html">ZZL-7</a></li>
-                        <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
-                        <li><a href="products.html">All Products</a></li>
-                    </ul>
-                </div>
+      $$('.add-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const card = btn.closest('.product-card');
+          const sel  = $('.quantity-option.active', card);
+          if (!sel) return;
 
-                <div class="footer-section">
-                    <h3>Information</h3>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="quality.html">Quality Control</a></li>
-                        <li><a href="safety.html">Safety Guidelines</a></li>
-                    </ul>
-                </div>
+          const qStr  = sel.dataset.quantity;         // "100mg" | "1g" ...
+          const price = Number(sel.dataset.price);
+          const grams = toGrams(qStr);
 
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="research.html">Research Use Only</a></li>
-                        <li><a href="disclaimer.html">Disclaimer</a></li>
-                    </ul>
-                </div>
-            </div>
+          const name = btn.dataset.name || card.dataset.name;
+          const sku  = btn.dataset.sku  || card.dataset.sku;
 
-            <div class="footer-bottom">
-                <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
-            </div>
-        </div>
-    </footer>
+          if (window.addToCart) {
+            try { window.addToCart(name, sku, grams, price, qStr); }
+            catch {}
+          } else {
+            // fallback: localStorage
+            const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+            cart.push({ name, sku, qty: grams, display: qStr, price, unit:'g' });
+            localStorage.setItem(CART_KEY, JSON.stringify(cart));
+          }
+          updateCartCount();
+          window.location.href = 'checkout.html';
+        });
+      });
 
-    <script src="js/main.js"></script>
-
-    <!--Start of Tawk.to Script-->
+      // стартове число у бейджі
+      updateCartCount();
+    })();
+  </script>
+     <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 (function(){
@@ -413,6 +343,5 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-<!--End of Tawk.to Script-->
 </body>
 </html>
