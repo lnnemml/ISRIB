@@ -708,4 +708,146 @@ window.ISRIBShop = {
     quickOrder,
     trackCTA
 };
+/* ---------- CART CORE ---------- */
+const CART_KEY = 'isrib_cart';
+
+function getCart() {
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const el = document.getElementById('cartCount');
+  if (!el) return;
+  const total = getCart().reduce((n, i) => n + Number(i.qty || 0), 0);
+  el.textContent = total;
+}
+
+function addToCart(item) {
+  const cart = getCart();
+  const same = cart.find(x => x.sku === item.sku && x.unit === item.unit);
+  if (same) same.qty = Number(same.qty) + Number(item.qty || 1);
+  else cart.push({ sku:item.sku, name:item.product, qty:Number(item.qty||1), unit:item.unit||'g' });
+  saveCart(cart);
+}
+
+/* ---------- WIRE UP “ADD TO CART” BUTTONS ---------- */
+function mountAddToCartButtons() {
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const b = e.currentTarget;
+      const item = {
+        sku: b.dataset.sku,
+        product: b.dataset.product,
+        qty: Number(b.dataset.qty || 1),
+        unit: b.dataset.unit || 'g'
+      };
+      addToCart(item);
+      // РЕДИРЕКТ В CHECKOUT — якщо не треба, закоментуй рядок нижче:
+      window.location.href = 'checkout.html';
+    });
+  });
+}
+
+/* ---------- CHECKOUT RENDER (if present) ---------- */
+function renderCheckoutCart() {
+  const wrap = document.getElementById('cartList');
+  if (!wrap) return; // не на сторінці checkout
+  const cart = getCart();
+
+  if (!cart.length) {
+    wrap.innerHTML = `<p class="muted">Your cart is empty. Go to <a href="products.html">Products</a>.</p>`;
+    updateCartCount();
+    return;
+  }
+
+  wrap.innerHTML = cart.map((it, idx) => `
+    <div class="cart-row">
+      <div class="cart-title"><strong>${it.name}</strong></div>
+      <div class="cart-ctrl">
+        <input type="number" min="1" value="${it.qty}" data-idx="${idx}" class="cart-qty" />
+        <span class="unit">${it.unit}</span>
+        <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
+      </div>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('.cart-qty').forEach(inp => {
+    inp.addEventListener('change', (e) => {
+      const i = Number(e.target.dataset.idx);
+      const cart = getCart();
+      cart[i].qty = Math.max(1, Number(e.target.value||1));
+      saveCart(cart);
+      renderCheckoutCart();
+    });
+  });
+
+  wrap.querySelectorAll('.cart-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const i = Number(e.target.dataset.idx);
+      const cart = getCart();
+      cart.splice(i, 1);
+      saveCart(cart);
+      renderCheckoutCart();
+    });
+  });
+}
+
+/* ---------- FORM SUBMIT HOOK (checkout) ---------- */
+(function mountCheckoutSubmit(){
+  const form = document.getElementById('checkoutForm');
+  const msg  = document.getElementById('formMsg');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.textContent = '';
+    if (!form.checkValidity()) {
+      msg.className = 'danger'; msg.textContent = 'Please fill all required fields.'; return;
+    }
+
+    const cart = getCart();
+    if (!cart.length) {
+      msg.className = 'danger'; msg.textContent = 'Your cart is empty.'; return;
+    }
+
+    // зібрати дані форми
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.cart = cart;
+    data.timestamp = new Date().toISOString();
+
+    // зберегти для success
+    try { localStorage.setItem('lastOrder', JSON.stringify(data)); } catch {}
+
+    try {
+      // якщо використовуєш серверну функцію Vercel /api/checkout:
+      const r = await fetch('/api/checkout', {
+        method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(data)
+      });
+      if (!r.ok) throw new Error('submit failed');
+
+      // очистити кошик
+      localStorage.removeItem(CART_KEY);
+      updateCartCount();
+
+      const oid = Math.random().toString(36).slice(2,8).toUpperCase();
+      window.location.href = `/success.html?order=${oid}`;
+    } catch (err) {
+      msg.className = 'danger';
+      msg.textContent = 'Submission failed. Please try again or contact us via chat/email.';
+    }
+  });
+})();
+
+/* ---------- INIT ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  updateCartCount();
+  mountAddToCartButtons();
+  renderCheckoutCart();
+});
 
