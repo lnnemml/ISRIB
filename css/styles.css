@@ -765,3 +765,67 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
   .products-hero .muted{ color:#cbd5e1; }
 }
+/* Page hero */
+.page-hero{
+  padding: 56px 0 24px;
+  background: linear-gradient(135deg, rgba(30,64,175,.06), rgba(14,165,233,.06));
+  border-bottom: 1px solid rgba(2,6,23,.06);
+}
+.page-hero h1{
+  font-weight:900; letter-spacing:-.02em;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  background: linear-gradient(135deg, #1e40af, #0ea5e9);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom: 6px;
+}
+.page-hero .subtitle{ color:#475569; max-width: 860px; }
+
+/* About sections */
+.about-section{ background:#fff; padding:80px 0 }
+.about-section.alt{ background:#f8fafc }
+.about-content{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center }
+.about-text h2{ font-size:clamp(1.8rem,4vw,2.2rem); font-weight:800; color:#1e293b; margin-bottom:18px }
+.about-text p{ color:#64748b; margin-bottom:16px; font-size:1.05rem; line-height:1.8 }
+.about-text.center-narrow{ max-width:800px; margin:0 auto; text-align:center }
+.about-text.center-narrow p{ text-align:left }
+
+.about-visual .lab-icon{ font-size:3rem; margin-bottom:12px }
+.about-visual h3{ color:#1e293b; margin-bottom:10px; font-weight:700 }
+
+/* Feature cards */
+.center{ text-align:center }
+.feature-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px }
+.feature-card{ background:#f8fafc; padding:24px; border-radius:15px; border-left:4px solid #1e40af }
+.feature-card h3{ color:#1e293b; margin-bottom:10px; font-size:1.15rem }
+
+/* Simple cards */
+.cards-3up{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px }
+.card-plain{ text-align:center; background:#fff; border-radius:15px; padding:24px; box-shadow:0 4px 15px rgba(0,0,0,.05) }
+.card-emoji{ font-size:3rem; margin-bottom:10px }
+
+/* Team */
+.about-section.team.dark{ background:#1e293b; color:#fff }
+.about-section.team.dark .light{ color:#f1f5f9 }
+.team-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 26px; max-width: 1000px; margin: 0 auto }
+.team-card{ text-align:center }
+.team-avatar{ width:120px; height:120px; background: linear-gradient(135deg, #1e40af, #0ea5e9); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:3rem }
+
+/* Reasons list */
+.reasons{ display:grid; gap:20px; max-width:800px; margin:0 auto }
+.reason{ display:flex; align-items:flex-start; gap:20px; background:#fff; padding:22px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,.05) }
+.reason-num{ background:#1e40af; color:#fff; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0 }
+.reason-body h3{ color:#1e293b; margin-bottom:8px }
+
+/* CTA */
+.about-cta{
+  background: linear-gradient(135deg, #1e40af, #0ea5e9);
+  color:#fff; text-align:center; padding:80px 0;
+}
+.about-cta .light{ color:#fff }
+.about-cta .subt{ font-size:1.1rem; opacity:.9; margin-bottom:18px }
+.about-cta .cta-actions{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap }
+
+/* Responsive */
+@media (max-width: 980px){
+  .about-content{ grid-template-columns:1fr; gap:36px; text-align:center }
+}
