@@ -659,14 +659,18 @@ function showToast(message = 'Done', type = 'info') {
     document.body.appendChild(host);
   }
 
+  // 🔼 ПРИВ’ЯЗКА ДО ВЕРХУ ЕКРАНА
+  host.style.top = '20px';
+  host.style.bottom = 'auto';
+
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
   toast.textContent = message;
 
   host.appendChild(toast);
 
-  // анімація авто‑закриття
   requestAnimationFrame(() => toast.classList.add('show'));
   setTimeout(() => toast.classList.add('hide'), 2200);
   setTimeout(() => toast.remove(), 2800);
 }
+
