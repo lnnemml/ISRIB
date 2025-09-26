@@ -17,7 +17,8 @@ function initializeApp() {
   initAnalytics();
   initContactForms();
   initPerformanceOptimizations();
-
+  initFAQAccordion();       // FAQ акордеон (a11y + аналітика)
+  initAnchorHighlight();    // підсвічування при переході за якорями
   updateCartBadge();
   mountAddToCartButtons();
   renderCheckoutCart();
@@ -512,4 +513,51 @@ function updateContactLinks() {
       a.setAttribute('href', href + sep + 'start=' + ref);
     }
   });
+}
+// === FAQ accordion (accessible + analytics) ===
+function initFAQAccordion(){
+  document.querySelectorAll('.faq-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      const panel = document.getElementById(btn.getAttribute('aria-controls'));
+
+      // toggle current
+      btn.setAttribute('aria-expanded', String(!expanded));
+      if (panel) expanded ? panel.setAttribute('hidden','') : panel.removeAttribute('hidden');
+
+      // update +/– icon
+      const icon = btn.querySelector('.faq-icon');
+      if (icon) icon.textContent = expanded ? '+' : '–';
+
+      // OPTIONAL: відкрите тільки одне питання
+      // if (!expanded) {
+      //   document.querySelectorAll('.faq-button[aria-expanded="true"]').forEach(b => {
+      //     if (b !== btn) {
+      //       b.setAttribute('aria-expanded','false');
+      //       const p = document.getElementById(b.getAttribute('aria-controls'));
+      //       if (p) p.setAttribute('hidden','');
+      //       const ic = b.querySelector('.faq-icon'); if (ic) ic.textContent = '+';
+      //     }
+      //   });
+      // }
+
+      // analytics
+      if (typeof trackEvent === 'function') {
+        const q = btn.querySelector('.faq-question')?.textContent?.trim();
+        trackEvent('faq_toggle', { question: q, expanded: !expanded });
+      }
+    });
+  });
+}
+
+// === Smooth highlight on deep links (#anchor) ===
+function initAnchorHighlight(){
+  const paint = (el) => {
+    if (!el) return;
+    const prev = el.style.background;
+    el.style.background = '#eff6ff';
+    setTimeout(() => { el.style.background = prev || ''; }, 1600);
+  };
+  if (window.location.hash) paint(document.querySelector(window.location.hash));
+  window.addEventListener('hashchange', () => paint(document.querySelector(window.location.hash)));
 }
