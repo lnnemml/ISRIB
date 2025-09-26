@@ -489,3 +489,9 @@ img { max-width: 100%; height: auto; }
 
 /* заголовок без дефолтного верхнього відступу */
 h1, .hero h1, .page-title{ margin-top: 0 !important; }
+/* Products page hero spacing */
+.products-hero { padding: 28px 0 8px; }
+
+/* Make card feel clickable (already for index, дублюємо для надійності) */
+.product-card[data-href] { cursor: pointer; }
+
