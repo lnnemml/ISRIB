@@ -10,7 +10,7 @@ function initializeApp() {
   initHeaderBehavior();           // burger + hide-on-scroll + compact + mobile badge sync
   initSmoothScrolling();          // anchor scroll offset by header height
   initFadeInAnimations();         // IO-based reveal
-  initProductInteractions();      // card hovers + analytics
+  initProductInteractions();      // card clicks (full-card link), accessibility
   initQuantitySelectors();        // per-card qty/price selection + contact link update
   initProductFilters();           // filter buttons
   initMobileOptimizations();      // touch tweaks
@@ -143,9 +143,12 @@ function initProductInteractions() {
   const cards = document.querySelectorAll('.product-card');
 
   cards.forEach((card) => {
-    // Зробити всю картку посиланням (крім кліків по <a>, <button>, .quantity-option)
+    // Повна клікабельність картки (окрім <a>, <button>, .quantity-option і будь-яких кліків з хедера)
     card.addEventListener('click', (e) => {
-      if (e.target.closest('a, button, .quantity-option')) return;
+      if (
+        e.target.closest('a, button, .quantity-option') ||
+        e.target.closest('#siteHeader, .header-slim, .nav-slim')
+      ) return;
 
       const name =
         card.querySelector('.product-name')?.textContent ||
@@ -480,7 +483,7 @@ function mountAddToCartButtons() {
       updateCartBadge?.();                    // оновлюємо бейдж у хедері
       showToast('Added to cart');             // ✅ тост замість редиректу
 
-      // НІЯКИХ редиректів: рядок типу window.location.href = 'checkout.html' — видалений
+      // НІЯКИХ редиректів
       window.trackEvent?.('add_to_cart_click', { name, sku, grams, price, display });
     });
   });
