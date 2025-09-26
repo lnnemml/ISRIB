@@ -88,11 +88,16 @@ img { max-width: 100%; height: auto; }
 }
 
 /* ========== Hero ========== */
-.hero{
+.hero {
   background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
-  padding: 180px 0 80px;
-  position: relative; overflow: hidden; min-height: 90vh; display:flex; align-items:center;
+  padding: 120px 0 80px; /* ← оновлено тут */
+  position: relative;
+  overflow: hidden;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
 }
+
 .hero::before{
   content:''; position:absolute; inset:0;
   background: radial-gradient(circle at 20% 80%, rgba(30,64,175,.10) 0%, transparent 50%),
