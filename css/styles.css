@@ -607,3 +607,39 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .products-hero{ background: linear-gradient(135deg, rgba(148,163,184,.08), rgba(59,130,246,.08)); border-bottom-color:#1e293b; }
   .products-hero .muted{ color:#cbd5e1; }
 }
+/* === Product footer layout: стабільна лінія з кнопкою === */
+.product-footer{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;           /* <- не дозволяємо перенесення на новий рядок */
+  min-height: 48px;
+}
+
+.product-footer .view-product,
+.product-footer .view-cart{
+  white-space: nowrap;         /* лінки не рвуться */
+  flex: 0 0 auto;
+}
+
+.product-footer .add-to-cart{
+  flex: 1 1 auto;              /* кнопка займає весь доступний простір */
+  min-width: 220px;            /* запобігає "зламу" при дуже коротких лейблах (100mg) */
+  white-space: nowrap;         /* текст в кнопці на одній лінії */
+}
+
+/* Мобільна поведінка: стек у два рядки — але контрольовано */
+@media (max-width: 560px){
+  .product-footer{
+    flex-wrap: wrap;           /* на вузьких екранах дозволяємо перенос */
+  }
+  .product-footer .add-to-cart{
+    order: 3;
+    width: 100%;
+    min-width: 0;
+  }
+}
+.add-to-cart{
+  will-change: transform, box-shadow, filter;
+  transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, background .2s ease;
+}
