@@ -90,10 +90,10 @@ img { max-width: 100%; height: auto; }
 /* ========== Hero ========== */
 .hero {
   background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
-  padding: 120px 0 80px; /* ← оновлено тут */
+  padding: 80px 0 60px; /* ← було 180px 0 80px */
   position: relative;
   overflow: hidden;
-  min-height: 90vh;
+  min-height: 75vh; /* ← зменшено з 90vh */
   display: flex;
   align-items: center;
 }
@@ -281,7 +281,7 @@ img { max-width: 100%; height: auto; }
 /* ========== Responsive (mobile-first tweaks) ========== */
 @media (max-width:480px){
   .container{ padding: 0 15px; }
-  .hero{ padding:120px 0 60px; min-height:60vh; }
+  .hero { padding: 60px 0 40px; min-height: auto;}
   .hero-content{ grid-template-columns:1fr; gap:30px; text-align:center; }
   .hero-text h1{ font-size:2rem; line-height:1.1; margin-bottom:20px; }
   .tagline{ font-size:1rem; margin-bottom:15px; }
