@@ -52,6 +52,9 @@ function initHeaderBehavior() {
   const header = document.getElementById('siteHeader');
   if (!header) return;
 
+  // 🔒 Захист: блокуємо "клік" від хедера, щоб він не дійшов до карток (capture-фаза)
+  header.addEventListener('click', (e) => e.stopPropagation(), true);
+
   let lastY = window.scrollY;
   const compactThreshold = 24; // px
   const hideThreshold    = 12; // px delta to decide direction
@@ -145,10 +148,18 @@ function initProductInteractions() {
   cards.forEach((card) => {
     // Повна клікабельність картки (окрім <a>, <button>, .quantity-option і будь-яких кліків з хедера)
     card.addEventListener('click', (e) => {
-      if (
-        e.target.closest('a, button, .quantity-option') ||
-        e.target.closest('#siteHeader, .header-slim, .nav-slim')
-      ) return;
+      // 1) Явні елементи керування
+      if (e.target.closest('a, button, .quantity-option')) return;
+
+      // 2) Якщо клік у візуальній зоні хедера — ігноруємо (захист від оверлеїв/стеків)
+      const header = document.getElementById('siteHeader');
+      if (header) {
+        const hb = header.getBoundingClientRect();
+        if (e.clientY <= hb.bottom) return;
+      }
+
+      // 3) Додатково: якщо вузол із хедера
+      if (e.target.closest('#siteHeader, .header-slim, .nav-slim')) return;
 
       const name =
         card.querySelector('.product-name')?.textContent ||
