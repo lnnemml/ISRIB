@@ -1,324 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - ISRIB Shop | Research Chemical Excellence</title>
-    <meta name="description" content="Learn about ISRIB Shop's mission to provide high-quality research chemicals. Our commitment to scientific advancement, quality control, and personalized customer service.">
-    <link rel="canonical" href="https://isrib.shop/about">
-    <meta property="og:title" content="About ISRIB Shop - Research Chemical Excellence">
-    <meta property="og:description" content="Leading provider of research chemicals with 98%+ purity. Supporting scientific advancement worldwide with personalized service.">
-    <meta property="og:image" content="/images/og-about.jpg">
-    <meta property="og:url" content="https://isrib.shop/about">
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us - ISRIB Shop | Research Chemical Excellence</title>
+  <meta name="description" content="Learn about ISRIB Shop's mission to provide high-quality research chemicals. Our commitment to scientific advancement, quality control, and personalized customer service.">
+  <link rel="canonical" href="https://isrib.shop/about">
+  <meta property="og:title" content="About ISRIB Shop - Research Chemical Excellence">
+  <meta property="og:description" content="Leading provider of research chemicals with 98%+ purity. Supporting scientific advancement worldwide with personalized service.">
+  <meta property="og:image" content="/images/og-about.jpg">
+  <meta property="og:url" content="https://isrib.shop/about">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-         🧺 Cart <span id="cartCount" class="badge">0</span>
+
+  <!-- Slim Header -->
+  <header id="siteHeader" class="header-slim">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim">
         </a>
-      </nav>
+
+        <!-- Desktop nav -->
+        <nav class="nav-slim">
+          <a href="products.html">Products</a>
+          <a href="about.html" aria-current="page">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn-slim" onclick="trackCTA?.('header','cart')">
+            🧺 Cart <span id="cartCount" class="badge-slim">0</span>
+          </a>
+        </nav>
+
+        <!-- Burger -->
+        <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false">
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+        </button>
+      </div>
     </div>
-  </div>
-</header>
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <h1>About ISRIB Shop</h1>
-            <p>Advancing scientific research through premium quality compounds, personalized service, and unwavering commitment to excellence.</p>
+
+    <!-- Mobile menu -->
+    <nav id="mobileMenu" class="mobile-menu" aria-label="Mobile">
+      <a class="mm-link" href="products.html">Products</a>
+      <a class="mm-link" href="about.html" aria-current="page">About</a>
+      <a class="mm-link" href="faq.html">FAQ</a>
+      <a class="mm-link" href="contact.html">Contact</a>
+      <a class="mm-link mm-cart" href="checkout.html">🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
+    </nav>
+  </header>
+
+  <!-- Page hero -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>About ISRIB Shop</h1>
+      <p class="subtitle">Advancing scientific research through premium quality compounds, personalized service, and unwavering commitment to excellence.</p>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="about-section">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-text">
+          <h2>Our Mission</h2>
+          <p>ISRIB Shop was founded with a singular mission: to provide researchers worldwide with access to the highest quality research chemicals through personalized service and direct communication. We believe that groundbreaking scientific discoveries require not only reliable, pure compounds, but also the support and guidance that comes from working directly with fellow scientists.</p>
+          <p>Since our establishment in 2020, we have been dedicated to supporting the global research community by maintaining the strictest quality standards while providing personalized consultation for every order. Our approach combines scientific rigor with human connection.</p>
         </div>
-    </section>
-
-    <!-- Mission Statement -->
-    <section style="background: white; padding: 80px 0;">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Our Mission</h2>
-                    <p>ISRIB Shop was founded with a singular mission: to provide researchers worldwide with access to the highest quality research chemicals through personalized service and direct communication. We believe that groundbreaking scientific discoveries require not only reliable, pure compounds, but also the support and guidance that comes from working directly with fellow scientists.</p>
-                    <p>Since our establishment in 2020, we have been dedicated to supporting the global research community by maintaining the strictest quality standards while providing personalized consultation for every order. Our approach combines scientific rigor with human connection.</p>
-                </div>
-                <div class="about-visual">
-                    <div class="lab-icon">🔬</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-weight: 700;">Scientific Excellence</h3>
-                    <p style="color: #64748b; margin: 0;">Supporting breakthrough discoveries through quality compounds and personalized researcher support.</p>
-                </div>
-            </div>
+        <div class="about-visual">
+          <div class="lab-icon">🔬</div>
+          <h3>Scientific Excellence</h3>
+          <p class="muted">Supporting breakthrough discoveries through quality compounds and personalized researcher support.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Our Story -->
-    <section style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-                <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; margin-bottom: 40px;">Our Story</h2>
-                <div style="text-align: left; font-size: 1.1rem; color: #64748b; line-height: 1.8;">
-                    <p style="margin-bottom: 25px;">ISRIB Shop began when our founder, a former neuroscience researcher, experienced firsthand the challenges of sourcing reliable research chemicals. Too often, experiments were compromised by impure compounds, inconsistent quality, or impersonal automated systems that couldn't provide the guidance researchers needed.</p>
-                    <p style="margin-bottom: 25px;">Recognizing the critical need for a trustworthy source that combined quality with personal service, we set out to create a company that would prioritize both scientific rigor and human connection. We established partnerships with accredited laboratories and implemented rigorous testing protocols, while maintaining the personal touch that large suppliers had abandoned.</p>
-                    <p style="margin-bottom: 25px;">Today, ISRIB Shop serves researchers in over 50 countries, from individual investigators to major research institutions. Our commitment to quality and personalized service has made us a trusted partner in advancing human knowledge, one conversation at a time.</p>
-                </div>
-            </div>
+  <!-- Our Story -->
+  <section class="about-section alt">
+    <div class="container">
+      <div class="about-text center-narrow">
+        <h2>Our Story</h2>
+        <p>ISRIB Shop began when our founder, a former neuroscience researcher, experienced firsthand the challenges of sourcing reliable research chemicals. Too often, experiments were compromised by impure compounds, inconsistent quality, or impersonal automated systems that couldn't provide the guidance researchers needed.</p>
+        <p>Recognizing the critical need for a trustworthy source that combined quality with personal service, we set out to create a company that would prioritize both scientific rigor and human connection. We established partnerships with accredited laboratories and implemented rigorous testing protocols, while maintaining the personal touch that large suppliers had abandoned.</p>
+        <p>Today, ISRIB Shop serves researchers in over 50 countries, from individual investigators to major research institutions. Our commitment to quality and personalized service has made us a trusted partner in advancing human knowledge, one conversation at a time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quality Commitment -->
+  <section class="about-section">
+    <div class="container">
+      <h2 class="center">Our Quality Commitment</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🧪 Independent Testing</h3>
+          <p class="muted">Every batch undergoes comprehensive analysis by independent third-party laboratories using HPLC, NMR, and mass spectrometry.</p>
         </div>
-    </section>
 
-    <!-- Quality Commitment -->
-    <section style="background: white; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">Our Quality Commitment</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-                <div style="background: #f8fafc; padding: 30px; border-radius: 15px; border-left: 4px solid #1e40af;">
-                    <h3 style="color: #1e40af; margin-bottom: 15px; font-size: 1.3rem;">🧪 Independent Testing</h3>
-                    <p style="color: #64748b;">Every batch undergoes comprehensive analysis by independent third-party laboratories using HPLC, NMR, and mass spectrometry.</p>
-                </div>
-                
-                <div style="background: #f8fafc; padding: 30px; border-radius: 15px; border-left: 4px solid #1e40af;">
-                    <h3 style="color: #1e40af; margin-bottom: 15px; font-size: 1.3rem;">📋 Certificate of Analysis</h3>
-                    <p style="color: #64748b;">Complete COA documentation accompanies every order, providing detailed purity analysis and structural confirmation.</p>
-                </div>
-                
-                <div style="background: #f8fafc; padding: 30px; border-radius: 15px; border-left: 4px solid #1e40af;">
-                    <h3 style="color: #1e40af; margin-bottom: 15px; font-size: 1.3rem;">❄️ Proper Storage</h3>
-                    <p style="color: #64748b;">Climate-controlled facilities maintain optimal storage conditions to preserve compound integrity from synthesis to delivery.</p>
-                </div>
-                
-                <div style="background: #f8fafc; padding: 30px; border-radius: 15px; border-left: 4px solid #1e40af;">
-                    <h3 style="color: #1e40af; margin-bottom: 15px; font-size: 1.3rem;">🔬 Research Grade</h3>
-                    <p style="color: #64748b;">All compounds meet or exceed 98% purity standards required for rigorous scientific research applications.</p>
-                </div>
-                
-                <div style="background: #f8fafc; padding: 30px; border-radius: 15px; border-left: 4px solid #1e40af;">
-                    <h3 style="color: #1e40af; margin-bottom: 15px; font-size: 1.3rem;">📦 Secure Packaging</h3>
-                    <p style="color: #64748b;">Professional packaging with proper labeling and safety information ensures compounds arrive in perfect condition.</p>
-                </div>
-                
-                <div style="background: #f8fafc; padding: 30px; border-radius: 15px; border-left: 4px solid #1e40af;">
-                    <h3 style="color: #1e40af; margin-bottom: 15px; font-size: 1.3rem;">🌍 Global Shipping</h3>
-                    <p style="color: #64748b;">Worldwide shipping with discrete packaging and proper documentation for research chemical transport.</p>
-                </div>
-            </div>
+        <div class="feature-card">
+          <h3>📋 Certificate of Analysis</h3>
+          <p class="muted">Complete COA documentation accompanies every order, providing detailed purity analysis and structural confirmation.</p>
         </div>
-    </section>
 
-    <!-- Our Approach -->
-    <section style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">Our Personalized Approach</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">💬</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Direct Communication</h3>
-                    <p style="color: #64748b;">Every order is handled personally. No automated systems, no call centers - just direct communication with our scientific team.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">🔒</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Secure Transactions</h3>
-                    <p style="color: #64748b;">Payment arrangements are discussed individually for maximum security and convenience, including cryptocurrency and international transfers.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">⚡</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Flexible Service</h3>
-                    <p style="color: #64748b;">Custom quantities, special packaging requirements, expedited shipping - we adapt our service to meet your research needs.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">📞</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Technical Support</h3>
-                    <p style="color: #64748b;">Our PhD-level scientists provide technical guidance on compound handling, storage, and research applications.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">🤝</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Long-term Partnerships</h3>
-                    <p style="color: #64748b;">We build lasting relationships with researchers, understanding their evolving needs and supporting their scientific journey.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">🎯</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Custom Solutions</h3>
-                    <p style="color: #64748b;">From custom synthesis to bulk orders for institutions, we provide tailored solutions for unique research requirements.</p>
-                </div>
-            </div>
+        <div class="feature-card">
+          <h3>❄️ Proper Storage</h3>
+          <p class="muted">Climate-controlled facilities maintain optimal storage conditions to preserve compound integrity from synthesis to delivery.</p>
         </div>
-    </section>
 
-    <!-- Team Section -->
-    <section style="background: #1e293b; color: white; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Our Team</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1000px; margin: 0 auto;">
-                <div style="text-align: center;">
-                    <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #1e40af, #0ea5e9); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">👨‍🔬</div>
-                    <h3 style="margin-bottom: 10px; color: #f1f5f9;">Research Team</h3>
-                    <p style="color: #94a3b8; font-size: 0.95rem;">PhD-level scientists with expertise in organic chemistry, neuroscience, and analytical chemistry providing personal consultation.</p>
-                </div>
-                
-                <div style="text-align: center;">
-                    <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #1e40af, #0ea5e9); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">🧪</div>
-                    <h3 style="margin-bottom: 10px; color: #f1f5f9;">Quality Control</h3>
-                    <p style="color: #94a3b8; font-size: 0.95rem;">Dedicated analytical chemists ensuring every compound meets our rigorous purity standards before shipping.</p>
-                </div>
-                
-                <div style="text-align: center;">
-                    <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #1e40af, #0ea5e9); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">💬</div>
-                    <h3 style="margin-bottom: 10px; color: #f1f5f9;">Customer Service</h3>
-                    <p style="color: #94a3b8; font-size: 0.95rem;">Personal support team providing individual attention to every inquiry, order, and research requirement.</p>
-                </div>
-            </div>
+        <div class="feature-card">
+          <h3>🔬 Research Grade</h3>
+          <p class="muted">All compounds meet or exceed 98% purity standards required for rigorous scientific research applications.</p>
         </div>
-    </section>
 
-    <!-- Values Section -->
-    <section style="background: white; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">Our Values</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-                <div style="text-align: center; padding: 30px;">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">🎯</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Scientific Integrity</h3>
-                    <p style="color: #64748b;">We maintain the highest ethical standards in all our operations, from synthesis to personal customer interactions.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px;">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">🔍</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Transparency</h3>
-                    <p style="color: #64748b;">Complete documentation and open communication about our processes, quality standards, and pricing.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px;">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">🚀</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Innovation Support</h3>
-                    <p style="color: #64748b;">Empowering researchers to push the boundaries of scientific knowledge through quality compounds and personal support.</p>
-                </div>
-            </div>
+        <div class="feature-card">
+          <h3>📦 Secure Packaging</h3>
+          <p class="muted">Professional packaging with proper labeling and safety information ensures compounds arrive in perfect condition.</p>
         </div>
-    </section>
 
-    <!-- Why Choose Us -->
-    <section style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">Why Researchers Choose ISRIB Shop</h2>
-            
-            <div style="max-width: 800px; margin: 0 auto;">
-                <div style="display: grid; gap: 30px;">
-                    <div style="display: flex; align-items: flex-start; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        <div style="background: #1e40af; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">1</div>
-                        <div>
-                            <h3 style="color: #1e293b; margin-bottom: 10px;">Personal Attention</h3>
-                            <p style="color: #64748b;">Every order receives individual attention from our scientific team, ensuring you get exactly what your research requires.</p>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: flex-start; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        <div style="background: #1e40af; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">2</div>
-                        <div>
-                            <h3 style="color: #1e293b; margin-bottom: 10px;">Flexible Solutions</h3>
-                            <p style="color: #64748b;">Custom quantities, payment methods, and shipping arrangements tailored to your institutional or personal requirements.</p>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: flex-start; gap: 20px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                        <div style="background: #1e40af; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">3</div>
-                        <div>
-                            <h3 style="color: #1e293b; margin-bottom: 10px;">Trusted Expertise</h3>
-                            <p style="color: #64748b;">Our team includes researchers who understand your challenges and can provide technical guidance when needed.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="feature-card">
+          <h3>🌍 Global Shipping</h3>
+          <p class="muted">Worldwide shipping with discrete packaging and proper documentation for research chemical transport.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Contact CTA -->
-    <section style="background: linear-gradient(135deg, #1e40af, #0ea5e9); color: white; padding: 80px 0; text-align: center;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px;">Ready to Experience the Difference?</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Join thousands of researchers worldwide who trust ISRIB Shop for their research chemical needs.</p>
-            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <a href="products.html" class="btn-primary" style="background: white; color: #1e40af;">Browse Products</a>
-                <a href="contact.html?inquiry=consultation" class="btn-secondary" style="border-color: white; color: white;">Get Personal Consultation</a>
-            </div>
+  <!-- Personalized Approach -->
+  <section class="about-section alt">
+    <div class="container">
+      <h2 class="center">Our Personalized Approach</h2>
+
+      <div class="cards-3up">
+        <div class="card-plain">
+          <div class="card-emoji">💬</div>
+          <h3>Direct Communication</h3>
+          <p class="muted">Every order is handled personally. No automated systems, no call centers — just direct communication with our scientific team.</p>
         </div>
-    </section>
 
-   <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>ISRIB Shop</h3>
-                    <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality, reliability, and personalized service.</p>
-                    <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Products</h3>
-                    <ul>
-                        <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
-                        <li><a href="product_isrib.html">ISRIB Original</a></li>
-                        <li><a href="product_zzl_7.html">ZZL-7</a></li>
-                        <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
-                        <li><a href="products.html">All Products</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Information</h3>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                         <li><a href="quality.html">Quality Control</a></li>
-                        <li><a href="safety.html">Safety Guidelines</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="research.html">Research Use Only</a></li>
-                        <li><a href="disclaimer.html">Disclaimer</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
-            </div>
+        <div class="card-plain">
+          <div class="card-emoji">🔒</div>
+          <h3>Secure Transactions</h3>
+          <p class="muted">Payment arrangements are discussed individually for maximum security and convenience, including cryptocurrency and international transfers.</p>
         </div>
-    </footer>
-    
-    <script src="js/main.js"></script>
-    <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+
+        <div class="card-plain">
+          <div class="card-emoji">⚡</div>
+          <h3>Flexible Service</h3>
+          <p class="muted">Custom quantities, special packaging requirements, expedited shipping — we adapt our service to meet your research needs.</p>
+        </div>
+
+        <div class="card-plain">
+          <div class="card-emoji">📞</div>
+          <h3>Technical Support</h3>
+          <p class="muted">Our PhD-level scientists provide technical guidance on compound handling, storage, and research applications.</p>
+        </div>
+
+        <div class="card-plain">
+          <div class="card-emoji">🤝</div>
+          <h3>Long-term Partnerships</h3>
+          <p class="muted">We build lasting relationships with researchers, understanding their evolving needs and supporting their scientific journey.</p>
+        </div>
+
+        <div class="card-plain">
+          <div class="card-emoji">🎯</div>
+          <h3>Custom Solutions</h3>
+          <p class="muted">From custom synthesis to bulk orders for institutions, we provide tailored solutions for unique research requirements.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="about-section team dark">
+    <div class="container">
+      <h2 class="center light">Our Team</h2>
+
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">👨‍🔬</div>
+          <h3>Research Team</h3>
+          <p class="muted">PhD-level scientists with expertise in organic chemistry, neuroscience, and analytical chemistry providing personal consultation.</p>
+        </div>
+
+        <div class="team-card">
+          <div class="team-avatar">🧪</div>
+          <h3>Quality Control</h3>
+          <p class="muted">Dedicated analytical chemists ensuring every compound meets our rigorous purity standards before shipping.</p>
+        </div>
+
+        <div class="team-card">
+          <div class="team-avatar">💬</div>
+          <h3>Customer Service</h3>
+          <p class="muted">Personal support team providing individual attention to every inquiry, order, and research requirement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="about-section">
+    <div class="container">
+      <h2 class="center">Our Values</h2>
+
+      <div class="cards-3up">
+        <div class="card-plain">
+          <div class="card-emoji">🎯</div>
+          <h3>Scientific Integrity</h3>
+          <p class="muted">We maintain the highest ethical standards in all our operations, from synthesis to personal customer interactions.</p>
+        </div>
+
+        <div class="card-plain">
+          <div class="card-emoji">🔍</div>
+          <h3>Transparency</h3>
+          <p class="muted">Complete documentation and open communication about our processes, quality standards, and pricing.</p>
+        </div>
+
+        <div class="card-plain">
+          <div class="card-emoji">🚀</div>
+          <h3>Innovation Support</h3>
+          <p class="muted">Empowering researchers to push the boundaries of scientific knowledge through quality compounds and personal support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="about-section alt">
+    <div class="container">
+      <h2 class="center">Why Researchers Choose ISRIB Shop</h2>
+
+      <div class="reasons">
+        <div class="reason">
+          <div class="reason-num">1</div>
+          <div class="reason-body">
+            <h3>Personal Attention</h3>
+            <p class="muted">Every order receives individual attention from our scientific team, ensuring you get exactly what your research requires.</p>
+          </div>
+        </div>
+
+        <div class="reason">
+          <div class="reason-num">2</div>
+          <div class="reason-body">
+            <h3>Flexible Solutions</h3>
+            <p class="muted">Custom quantities, payment methods, and shipping arrangements tailored to your institutional or personal requirements.</p>
+          </div>
+        </div>
+
+        <div class="reason">
+          <div class="reason-num">3</div>
+          <div class="reason-body">
+            <h3>Trusted Expertise</h3>
+            <p class="muted">Our team includes researchers who understand your challenges and can provide technical guidance when needed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="about-cta">
+    <div class="container center">
+      <h2 class="light">Ready to Experience the Difference?</h2>
+      <p class="light subt">Join thousands of researchers worldwide who trust ISRIB Shop for their research chemical needs.</p>
+      <div class="cta-actions">
+        <a href="products.html" class="btn btn-ghost">Browse Products</a>
+        <a href="contact.html?inquiry=consultation" class="btn btn-primary">Get Personal Consultation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>ISRIB Shop</h3>
+          <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality, reliability, and personalized service.</p>
+          <p><strong>Email:</strong> <a href="mailto:isrib.shop@protonmail.com" data-append-ref>isrib.shop@protonmail.com</a></p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Products</h3>
+          <ul>
+            <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+            <li><a href="product_isrib.html">ISRIB Original</a></li>
+            <li><a href="product_zzl_7.html">ZZL-7</a></li>
+            <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+            <li><a href="products.html">All Products</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Information</h3>
+          <ul>
+            <li><a href="about.html" aria-current="page">About Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="quality.html">Quality Control</a></li>
+            <li><a href="safety.html">Safety Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="research.html">Research Use Only</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+  (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+  })();
+  </script>
+  <!--End of Tawk.to Script-->
 </body>
 </html>
