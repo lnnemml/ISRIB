@@ -1,29 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-    <title>ISRIB Shop - Advanced Research Chemicals</title>
-    <meta
-        name="description"
-        content="Buy ISRIB A15, the most advanced ISR inhibitor for cognitive research. 98%+ purity. Worldwide shipping.">
-    <link rel="canonical" href="https://isrib.shop/">
-    <meta property="og:title" content="ISRIB Shop – Buy ISRIB A15 & Research Compounds">
-    <meta
-        property="og:description"
-        content="Cognitive enhancers for real scientists. ISRIB A15 now available.">
-    <meta property="og:image" content="/images/og-isrib.jpg">
-    <meta property="og:url" content="https://isrib.shop/">
-    <meta property="og:type" content="website">
-    <link
-        rel="icon"
-        type="image/x-icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISRIB Shop - Advanced Research Chemicals</title>
+  <meta name="description" content="Buy ISRIB A15, the most advanced ISR inhibitor for cognitive research. 98%+ purity. Worldwide shipping.">
+  <link rel="canonical" href="https://isrib.shop/">
+  <meta property="og:title" content="ISRIB Shop – Buy ISRIB A15 & Research Compounds">
+  <meta property="og:description" content="Cognitive enhancers for real scientists. ISRIB A15 now available.">
+  <meta property="og:image" content="/images/og-isrib.jpg">
+  <meta property="og:url" content="https://isrib.shop/">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
 
-    <!-- Schema.org Product -->
-    <script type="application/ld+json">
+  <!-- Schema.org Product -->
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -43,357 +34,267 @@
   }
   </script>
 
-    <!-- Analytics -->
-    <script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-KMHX8Y9P2L"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-KMHX8Y9P2L');
-    </script>
+  <!-- Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMHX8Y9P2L"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KMHX8Y9P2L');
+  </script>
 
-    <!-- External CSS -->
-    <link rel="stylesheet" href="css/styles.css">
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    /* --- Hero molecule SVG styles (replaces old gif) --- */
+    .hero-visual {
+      display:flex; align-items:center; justify-content:center;
+      min-height:320px;
+    }
+    .molecule-svg {
+      width:min(520px, 90%);
+      height:auto;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,.12));
+    }
+    .mol-rotor { transform-origin: 50% 50%; animation: spin 28s linear infinite; }
+    .mol-pulse { animation: pulse 3.2s ease-in-out infinite; }
+    .bond { stroke:#60a5fa; stroke-width:2; opacity:.9 }
+    .node { fill:#1e40af; }
+    .node.core { fill:#0ea5e9; }
+    .ring { stroke:#93c5fd; stroke-dasharray:6 6; opacity:.6; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .mol-rotor, .mol-pulse { animation:none; }
+    }
+
+    /* Make cards clickable cursor hint */
+    .clickable-card { cursor:pointer; }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="/" class="logo">
-                    <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-                </a>
-                <nav class="nav">
-                    <a href="products.html">Products</a>
-                    <a href="about.html">About</a>
-                    <a href="faq.html">FAQ</a>
-                    <a href="contact.html">Contact</a>
-                    <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-                        🧺 Cart <span id="cartCount" class="badge">0</span>
-                    </a>
-                </nav>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
+        </a>
+        <nav class="nav">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
+            🧺 Cart <span id="cartCount" class="badge">0</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>Advanced <span class="highlight">Research Chemicals</span> for Scientific Innovation</h1>
+          <p class="tagline">Home of ISRIB A15 – Pure. Tested. Effective.</p>
+          <p>Access cutting-edge compounds like ISRIB, ZZL-7, and MPEP with guaranteed purity and worldwide shipping. Trusted by researchers globally.</p>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-number">98%+</span>
+              <span class="stat-label">Purity</span>
             </div>
+            <div class="stat">
+              <span class="stat-number">500+</span>
+              <span class="stat-label">Researchers</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">50+</span>
+              <span class="stat-label">Countries</span>
+            </div>
+          </div>
+
+          <div class="cta-buttons">
+            <a href="products.html" class="btn-primary" onclick="trackCTA('hero', 'browse_products')">🧬 Browse Products</a>
+            <a href="contact.html?inquiry=order" class="btn-secondary" onclick="trackCTA('hero', 'contact_order')">Contact to Order</a>
+          </div>
         </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1>Advanced <span class="highlight">Research Chemicals</span> for Scientific Innovation</h1>
-                    <p class="tagline">Home of ISRIB A15 – Pure. Tested. Effective.</p>
-                    <p>Access cutting-edge compounds like ISRIB, ZZL-7, and MPEP with guaranteed purity and worldwide shipping. Trusted by researchers globally.</p>
-
-                    <div class="hero-stats">
-                        <div class="stat">
-                            <span class="stat-number">98%+</span>
-                            <span class="stat-label">Purity</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">500+</span>
-                            <span class="stat-label">Researchers</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">50+</span>
-                            <span class="stat-label">Countries</span>
-                        </div>
-                    </div>
-
-                    <div class="cta-buttons">
-                        <a href="products.html" class="btn-primary" onclick="trackCTA('hero', 'browse_products')">🧬 Browse Products</a>
-                        <a href="contact.html?inquiry=order" class="btn-secondary" onclick="trackCTA('hero', 'contact_order')">Contact to Order</a>
-                    </div>
-                </div>
-
-                <div class="hero-visual">
-                    <div class="molecule-container">
-                        <div class="molecule"></div>
-                    </div>
-                </div>
-            </div>
+        <!-- NEW: Clean SVG molecule visual -->
+        <div class="hero-visual" aria-label="Stylized molecular structure illustration">
+          <svg class="molecule-svg" viewBox="0 0 500 500" role="img">
+            <title>Stylized Molecular Structure</title>
+            <!-- outer rings -->
+            <circle class="ring" cx="250" cy="250" r="200" fill="none" stroke-width="1.5"/>
+            <circle class="ring" cx="250" cy="250" r="150" fill="none" stroke-width="1.2"/>
+            <!-- bonds rotor -->
+            <g class="mol-rotor">
+              <!-- hex lattice -->
+              <g opacity=".9">
+                <path class="bond" d="M150 250 L200 200 L275 200 L325 250 L275 300 L200 300 Z" fill="none"/>
+                <path class="bond" d="M200 200 L250 150 L325 150 L375 200 L325 250" fill="none"/>
+                <path class="bond" d="M200 300 L250 350 L325 350 L375 300 L325 250" fill="none"/>
+                <path class="bond" d="M150 250 L125 210 L160 170 L200 200" fill="none" opacity=".7"/>
+                <path class="bond" d="M150 250 L125 290 L160 330 L200 300" fill="none" opacity=".7"/>
+              </g>
+              <!-- nodes -->
+              <g>
+                <circle class="node" cx="150" cy="250" r="6"/>
+                <circle class="node" cx="200" cy="200" r="6"/>
+                <circle class="node" cx="275" cy="200" r="6"/>
+                <circle class="node core mol-pulse" cx="325" cy="250" r="8"/>
+                <circle class="node" cx="275" cy="300" r="6"/>
+                <circle class="node" cx="200" cy="300" r="6"/>
+                <circle class="node" cx="250" cy="150" r="5"/>
+                <circle class="node" cx="325" cy="150" r="5"/>
+                <circle class="node" cx="375" cy="200" r="5"/>
+                <circle class="node" cx="250" cy="350" r="5"/>
+                <circle class="node" cx="325" cy="350" r="5"/>
+                <circle class="node" cx="375" cy="300" r="5"/>
+              </g>
+            </g>
+          </svg>
         </div>
-    </section>
+        <!-- /hero-visual -->
+      </div>
+    </div>
+  </section>
 
-    <!-- Trust Indicators -->
-    <section class="trust-section">
-        <div class="container">
-            <div class="trust-grid">
-                <div class="trust-item">
-                    <span class="trust-icon">🔬</span>
-                    <div class="trust-title">Lab Tested</div>
-                    <div class="trust-text">COA and spectra available</div>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-icon">📦</span>
-                    <div class="trust-title">Fast Shipping</div>
-                    <div class="trust-text">Discreet packaging</div>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-icon">🧪</span>
-                    <div class="trust-title">High Purity</div>
-                    <div class="trust-text">98%+ HPLC</div>
-                </div>
-            </div>
+  <!-- Trust Indicators -->
+  <section class="trust-section">
+    <div class="container">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <span class="trust-icon">🔬</span>
+          <div class="trust-title">Lab Tested</div>
+          <div class="trust-text">COA and spectra available</div>
         </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products-section" id="products">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Featured Research Compounds</h2>
-                <p class="section-subtitle">Explore cutting-edge molecules. Click any product to learn more</p>
-            </div>
-
-            <div class="products-grid">
-                <!-- ISRIB-A15 -->
-                <div class="product-card">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">ISRIB-A15</div>
-                            <div class="product-chemical">C₂₂H₂₂Cl₄N₂O₄</div>
-                        </div>
-                        <div class="product-badge most-popular">Most Popular</div>
-                    </div>
-                    <p class="product-description">Ultra Potent ISRIB Analogue with enhanced potency and selectivity. Targets eIF2B for cognitive enhancement research.</p>
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Available:</span>
-                            <span class="spec-value">100mg, 500mg, 1g</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥98% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Solubility:</span>
-                            <span class="spec-value">DMSO</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Storage:</span>
-                            <span class="spec-value">-20°C, dry</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-range">$50 - $200</div>
-                        <div class="product-buttons">
-                            <a href="product_isrib_A15.html" class="view-product">View Details</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Original ISRIB -->
-                <div class="product-card">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">ISRIB</div>
-                            <div class="product-chemical">C₂₂H₂₄Cl₂N₂O₄</div>
-                        </div>
-                    </div>
-                    <p class="product-description">Integrated Stress Response Inhibitor. Selective inhibitor of eIF2α phosphorylation-induced stress granule formation.</p>
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Available:</span>
-                            <span class="spec-value">30mg, 100mg, 1g</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥96% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">MW:</span>
-                            <span class="spec-value">451.34 g/mol</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Solubility:</span>
-                            <span class="spec-value">DMSO, EtOH</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-range">$14 - $100</div>
-                        <div class="product-buttons">
-                            <a href="product_isrib.html" class="view-product">View Details</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ZZL-7 -->
-                <div class="product-card">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">ZZL‑7</div>
-                            <div class="product-chemical">C₁₁H₂₀N₂O₄</div>
-                        </div>
-                    </div>
-                    <p class="product-description">Fast‑onset antidepressant research compound that disrupts SERT–nNOS interaction. High BBB permeability.</p>
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Available:</span>
-                            <span class="spec-value">100mg, 500mg, 1g</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥98% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Solubility:</span>
-                            <span class="spec-value">DMSO, Water</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-range">$50 - $200</div>
-                        <div class="product-buttons">
-                            <a href="product_zzl_7.html" class="view-product">View Details</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MPEP -->
-                <div class="product-card">
-                    <div class="product-header">
-                        <div>
-                            <div class="product-name">MPEP Oxalate</div>
-                            <div class="product-chemical">C₁₁H₁₀N₂•C₂H₂O₄</div>
-                        </div>
-                    </div>
-                    <p class="product-description">Selective mGluR5 negative allosteric modulator with high specificity. Essential tool for glutamate receptor research.</p>
-                    <div class="product-specs">
-                        <div class="spec-row">
-                            <span class="spec-label">Available:</span>
-                            <span class="spec-value">50mg, 500mg, 1g</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Purity:</span>
-                            <span class="spec-value">≥98% HPLC</span>
-                        </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Solubility:</span>
-                            <span class="spec-value">DMSO, EtOH</span>
-                        </div>
-                    </div>
-                    <div class="product-footer">
-                        <div class="price-range">$45 - $450</div>
-                        <div class="product-buttons">
-                            <a href="product_MPEP.html" class="view-product">View Details</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        <div class="trust-item">
+          <span class="trust-icon">📦</span>
+          <div class="trust-title">Fast Shipping</div>
+          <div class="trust-text">Discreet packaging</div>
         </div>
-    </section>
-     <!-- About Section -->
-    <section class="about-section" id="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Advancing Scientific Research Through Quality</h2>
-                    <p>ISRIB Shop is dedicated to providing researchers worldwide with access to advanced research chemicals. Our compounds undergo rigorous quality control to ensure the highest standards of purity and consistency.</p>
-                    <p>We work exclusively with accredited laboratories and maintain strict protocols for synthesis, purification, and storage to guarantee the integrity of every compound we supply.</p>
-                    
-                    <ul class="features-list">
-                        <li>Independent third-party testing</li>
-                        <li>Comprehensive certificates of analysis</li>
-                        <li>Climate-controlled storage facilities</li>
-                        <li>Experienced chemical synthesis team</li>
-                        <li>Worldwide shipping capabilities</li>
-                        <li>Personal customer support via chat</li>
-                    </ul>
-                </div>
-
-                <div class="about-visual">
-                    <div class="lab-icon">🧪</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-weight: 700;">Research Excellence</h3>
-                    <p style="color: #64748b; margin: 0;">Supporting breakthrough discoveries in neuroscience, biochemistry, and pharmaceutical research since 2020.</p>
-                </div>
-            </div>
+        <div class="trust-item">
+          <span class="trust-icon">🧪</span>
+          <div class="trust-title">High Purity</div>
+          <div class="trust-text">98%+ HPLC</div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- How to Order Section -->
-    <section style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">How to Order</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px;">Choose Product</h3>
-                    <p style="color: #64748b; font-size: 0.95rem;">Browse our catalog and select the compound and quantity you need.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px;">Contact Us</h3>
-                    <p style="color: #64748b; font-size: 0.95rem;">Send inquiry through our contact form or live chat with product details.</p>
-                </div>
-                
-                <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px;">Payment & Shipping</h3>
-                    <p style="color: #64748b; font-size: 0.95rem;">We'll arrange payment and shipping details directly with you.</p>
-                </div>
-            </div>
+  <!-- Products Section -->
+  <section class="products-section" id="products">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured Research Compounds</h2>
+        <p class="section-subtitle">Explore cutting-edge molecules. Click any product to learn more</p>
+      </div>
 
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="contact.html?inquiry=order" class="btn-primary" onclick="trackCTA('how-to-order', 'start_order')">Start Your Order</a>
+      <div class="products-grid">
+        <!-- ISRIB-A15 -->
+        <div class="product-card">
+          <div class="product-header">
+            <div>
+              <div class="product-name">ISRIB-A15</div>
+              <div class="product-chemical">C₂₂H₂₂Cl₄N₂O₄</div>
             </div>
+            <div class="product-badge most-popular">Most Popular</div>
+          </div>
+          <p class="product-description">Ultra Potent ISRIB Analogue with enhanced potency and selectivity. Targets eIF2B for cognitive enhancement research.</p>
+          <div class="product-specs">
+            <div class="spec-row"><span class="spec-label">Available:</span><span class="spec-value">100mg, 500mg, 1g</span></div>
+            <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥98% HPLC</span></div>
+            <div class="spec-row"><span class="spec-label">Solubility:</span><span class="spec-value">DMSO</span></div>
+            <div class="spec-row"><span class="spec-label">Storage:</span><span class="spec-value">-20°C, dry</span></div>
+          </div>
+          <div class="product-footer">
+            <div class="price-range">$50 - $200</div>
+            <div class="product-buttons">
+              <a href="product_isrib_A15.html" class="view-product">View Details</a>
+            </div>
+          </div>
         </div>
-    </section>
 
-    <!-- FAQ Section -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-            <h2>Frequently Asked Questions</h2>
-            
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <div class="faq-question">What is ISRIB A15?</div>
-                    <div class="faq-answer">A next-gen ISRIB analogue with improved bioavailability & potency.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">How do I place an order?</div>
-                    <div class="faq-answer">Contact us directly through our contact form or live chat with your requirements.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">What payment methods do you accept?</div>
-                    <div class="faq-answer">We arrange payment individually with each customer - cryptocurrency, bank transfer, or other secure methods.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">Do you ship internationally?</div>
-                    <div class="faq-answer">Yes, to 50+ countries with discrete packaging.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">Is there a Certificate of Analysis?</div>
-                    <div class="faq-answer">Yes, provided with every order.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">What purity levels do you guarantee?</div>
-                    <div class="faq-answer">All compounds are ≥98% purity verified by independent labs.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">How long does shipping take?</div>
-                    <div class="faq-answer">5-15 business days depending on destination country.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">Can I get custom quantities?</div>
-                    <div class="faq-answer">Yes, contact us for custom synthesis and bulk orders.</div>
-                </div>
+        <!-- ISRIB Original -->
+        <div class="product-card">
+          <div class="product-header">
+            <div>
+              <div class="product-name">ISRIB</div>
+              <div class="product-chemical">C₂₂H₂₄Cl₂N₂O₄</div>
             </div>
+          </div>
+          <p class="product-description">Integrated Stress Response Inhibitor. Selective inhibitor of eIF2α phosphorylation-induced stress granule formation.</p>
+          <div class="product-specs">
+            <div class="spec-row"><span class="spec-label">Available:</span><span class="spec-value">30mg, 100mg, 1g</span></div>
+            <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥96% HPLC</span></div>
+            <div class="spec-row"><span class="spec-label">MW:</span><span class="spec-value">451.34 g/mol</span></div>
+            <div class="spec-row"><span class="spec-label">Solubility:</span><span class="spec-value">DMSO, EtOH</span></div>
+          </div>
+          <div class="product-footer">
+            <div class="price-range">$14 - $100</div>
+            <div class="product-buttons">
+              <a href="product_isrib.html" class="view-product">View Details</a>
+            </div>
+          </div>
         </div>
-    </section>
 
-       <!-- Footer -->
+        <!-- ZZL-7 -->
+        <div class="product-card">
+          <div class="product-header">
+            <div>
+              <div class="product-name">ZZL‑7</div>
+              <div class="product-chemical">C₁₁H₂₀N₂O₄</div>
+            </div>
+          </div>
+          <p class="product-description">Fast‑onset antidepressant research compound that disrupts SERT–nNOS interaction. High BBB permeability.</p>
+          <div class="product-specs">
+            <div class="spec-row"><span class="spec-label">Available:</span><span class="spec-value">100mg, 500mg, 1g</span></div>
+            <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥98% HPLC</span></div>
+            <div class="spec-row"><span class="spec-label">Solubility:</span><span class="spec-value">DMSO, Water</span></div>
+          </div>
+          <div class="product-footer">
+            <div class="price-range">$50 - $200</div>
+            <div class="product-buttons">
+              <a href="product_zzl_7.html" class="view-product">View Details</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- MPEP Oxalate -->
+        <div class="product-card">
+          <div class="product-header">
+            <div>
+              <div class="product-name">MPEP Oxalate</div>
+              <div class="product-chemical">C₁₁H₁₀N₂•C₂H₂O₄</div>
+            </div>
+          </div>
+          <p class="product-description">Selective mGluR5 negative allosteric modulator with high specificity. Essential tool for glutamate receptor research.</p>
+          <div class="product-specs">
+            <div class="spec-row"><span class="spec-label">Available:</span><span class="spec-value">50mg, 500mg, 1g</span></div>
+            <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥98% HPLC</span></div>
+            <div class="spec-row"><span class="spec-label">Solubility:</span><span class="spec-value">DMSO, EtOH</span></div>
+          </div>
+          <div class="product-footer">
+            <div class="price-range">$45 - $450</div>
+            <div class="product-buttons">
+              <a href="product_MPEP.html" class="view-product">View Details</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+   <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -448,45 +349,33 @@
             💬 Contact to Order
         </a>
     </div>
-    
-    <script>
-        document.getElementById('y').textContent = new Date().getFullYear();
-    </script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
 
-    <script src="js/main.js"></script>
+    // Make the entire product card clickable (except internal links)
+    document.querySelectorAll('.products-grid .product-card').forEach(card => {
+      const linkEl = card.querySelector('.view-product');
+      if (!linkEl) return;
+      const href = linkEl.getAttribute('href');
+      card.classList.add('clickable-card');
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return; // don't hijack internal links
+        if (href) window.location.assign(href);
+      });
+    });
+  </script>
 
-    <!-- Tawk.to chat -->
-    <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
-
-    <!-- ⬇️ ДОДАНО: клік по всій картці продукту (крім внутрішніх <a>) -->
-    <script>
-      (function(){
-        var cards = document.querySelectorAll('.products-grid .product-card');
-        cards.forEach(function(card){
-          var linkEl = card.querySelector('.view-product');
-          if(!linkEl) return;
-          var href = linkEl.getAttribute('href');
-          if(!href) return;
-          card.classList.add('clickable-card');
-          card.style.cursor = 'pointer';
-          card.addEventListener('click', function(e){
-            // якщо клік по будь-якому <a> всередині — не перехоплюємо
-            if (e.target.closest('a')) return;
-            window.location.assign(href);
-          });
-        });
-      })();
-    </script>
-    <!--End of Tawk.to Script-->
+  <!-- Tawk.to chat -->
+  <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true;
+      s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+      s1.charset='UTF-8';
+      s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
+    })();
+  </script>
 </body>
 </html>
