@@ -261,16 +261,53 @@
 
 
     <!-- Contact CTA -->
-    <section style="background: linear-gradient(135deg, #1e40af, #0ea5e9); color: white; padding: 80px 0; text-align: center;">
-      <div class="container">
-          <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px;">Still Have Questions?</h2>
-          <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Our expert team is here to help with any questions about our research chemicals.</p>
-          <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-              <a href="contact.html" class="btn-primary" style="background: white; color: #1e40af;">Contact Support</a>
-              <a href="mailto:isrib.shop@protonmail.com" class="btn-secondary" style="border-color: white; color: white;">Email Directly</a>
-          </div>
-      </div>
-    </section>
+<section style="background: linear-gradient(135deg, #1e40af, #0ea5e9); color: white; padding: 80px 0; text-align: center;">
+  <div class="container">
+    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px;">Still Have Questions?</h2>
+    <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Our expert team is here to help with any questions about our research chemicals.</p>
+
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+      <!-- solid button -->
+      <a href="contact.html" class="cta-btn cta-btn--solid">Contact Support</a>
+      <!-- ghost button (fixed visibility) -->
+      <a href="mailto:isrib.shop@protonmail.com" class="cta-btn cta-btn--ghost">Email Directly</a>
+    </div>
+  </div>
+
+  <!-- Scoped styles so we don't fight global .btn-* rules -->
+  <style>
+    .cta-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 12px 18px; border-radius: 12px; font-weight: 800;
+      text-decoration:none; transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+      font-size: 1rem;
+    }
+    .cta-btn:focus-visible{ outline: 2px solid #fff; outline-offset: 3px; }
+
+    .cta-btn--solid{
+      background:#fff; color:#1e40af; border:1px solid rgba(255,255,255,.6);
+      box-shadow:0 10px 24px rgba(0,0,0,.15);
+    }
+    .cta-btn--solid:hover{ transform:translateY(-1px); }
+
+    /* Ghost button: always visible white text and border on gradient bg */
+    .cta-btn--ghost{
+      background: transparent; color:#fff; border:1.5px solid #fff;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+    .cta-btn--ghost:hover{
+      background: rgba(255,255,255,.12);
+      transform: translateY(-1px);
+    }
+    .cta-btn--ghost:active{ background: rgba(255,255,255,.18); }
+
+    /* small screens spacing tweak */
+    @media (max-width: 480px){
+      .cta-btn{ width:100%; }
+    }
+  </style>
+</section>
+
 
     <!-- Footer -->
     <footer class="footer">
