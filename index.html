@@ -70,25 +70,26 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="container">
-      <div class="header-content">
-        <a href="/" class="logo">
-          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
+  <!-- Header (compact version) -->
+<header class="header-slim">
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo-slim">
+        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim">
+      </a>
+
+      <nav class="nav-slim">
+        <a href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <a href="checkout.html" class="cart-btn-slim" id="cartBtn" onclick="trackCTA?.('header','cart')">
+          🧺 <span id="cartCount" class="badge-slim">0</span>
         </a>
-        <nav class="nav">
-          <a href="products.html">Products</a>
-          <a href="about.html">About</a>
-          <a href="faq.html">FAQ</a>
-          <a href="contact.html">Contact</a>
-          <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-            🧺 Cart <span id="cartCount" class="badge">0</span>
-          </a>
-        </nav>
-      </div>
+      </nav>
     </div>
-  </header>
+  </div>
+</header>
 
   <!-- HERO SECTION (updated) -->
 <section class="hero">
