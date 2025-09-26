@@ -918,3 +918,73 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('DOMContentLoaded', () => updateCartBadge());
 })();
 
+  // Burger open/close
+  (function() {
+    const burger = document.getElementById('burgerBtn');
+    const panel  = document.getElementById('mobileMenu');
+    if (!burger || !panel) return;
+
+    function closeMenu() {
+      burger.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      panel.classList.remove('is-open');
+    }
+    function toggleMenu() {
+      const open = !burger.classList.contains('is-open');
+      burger.classList.toggle('is-open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      panel.classList.toggle('is-open', open);
+    }
+
+    burger.addEventListener('click', toggleMenu);
+    panel.addEventListener('click', (e) => {
+      if (e.target.matches('a')) closeMenu();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+  })();
+
+  // Hide-on-scroll + compact state
+  (function() {
+    const header = document.getElementById('siteHeader');
+    if (!header) return;
+
+    let lastY = window.scrollY;
+    const compactThreshold = 48; // px scrolled to compact header
+
+    function onScroll() {
+      const y = window.scrollY;
+
+      // add shadow when scrolled
+      header.classList.toggle('scrolled', y > 4);
+
+      // compact size after some scroll
+      header.classList.toggle('compact', y > compactThreshold);
+
+      // hide when scrolling down, show when up
+      const goingDown = y > lastY && y > 80;
+      header.classList.toggle('scrolling-down', goingDown);
+
+      lastY = y;
+    }
+
+    // run once and on scroll
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // Sync cart count to mobile badge if you update #cartCount elsewhere
+  (function() {
+    const desktop = document.getElementById('cartCount');
+    const mobile  = document.getElementById('cartCountMobile');
+    if (!desktop || !mobile) return;
+
+    const sync = () => { mobile.textContent = desktop.textContent; };
+    const mo = new MutationObserver(sync);
+    mo.observe(desktop, { childList: true, characterData: true, subtree: true });
+    sync();
+  })();
+
+
+
