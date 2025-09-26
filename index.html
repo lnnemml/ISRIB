@@ -70,15 +70,16 @@
   </style>
 </head>
 <body>
-   <!-- Header (compact version) -->
-<header class="header-slim">
+   <!-- Header (slim + sticky + burger) -->
+<header class="header-slim is-sticky" id="siteHeader">
   <div class="container">
     <div class="header-content">
-      <a href="/" class="logo-slim">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim">
+      <a href="/" class="logo-slim" aria-label="ISRIB.shop home">
+        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim" />
       </a>
 
-      <nav class="nav-slim">
+      <!-- Desktop nav -->
+      <nav class="nav-slim" aria-label="Primary">
         <a href="products.html">Products</a>
         <a href="about.html">About</a>
         <a href="faq.html">FAQ</a>
@@ -87,9 +88,26 @@
           🧺 <span id="cartCount" class="badge-slim">0</span>
         </a>
       </nav>
+
+      <!-- Burger button (mobile) -->
+      <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </button>
     </div>
   </div>
+
+  <!-- Mobile menu panel -->
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+    <a href="products.html" class="mm-link">Products</a>
+    <a href="about.html" class="mm-link">About</a>
+    <a href="faq.html" class="mm-link">FAQ</a>
+    <a href="contact.html" class="mm-link">Contact</a>
+    <a href="checkout.html" class="mm-link mm-cart" onclick="trackCTA?.('header','cart_mobile')">🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
+  </nav>
 </header>
+
 
 
   <!-- HERO SECTION (updated) -->
