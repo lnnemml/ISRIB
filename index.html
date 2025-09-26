@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ISRIB Shop - Advanced Research Chemicals</title>
   <meta name="description" content="Buy ISRIB A15, the most advanced ISR inhibitor for cognitive research. 98%+ purity. Worldwide shipping.">
   <link rel="canonical" href="https://isrib.shop/">
+
+  <!-- Open Graph -->
   <meta property="og:title" content="ISRIB Shop – Buy ISRIB A15 & Research Compounds">
   <meta property="og:description" content="Cognitive enhancers for real scientists. ISRIB A15 now available.">
   <meta property="og:image" content="/images/og-isrib.jpg">
   <meta property="og:url" content="https://isrib.shop/">
   <meta property="og:type" content="website">
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>"/>
 
   <!-- Schema.org Product -->
   <script type="application/ld+json">
@@ -38,16 +43,16 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMHX8Y9P2L"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-KMHX8Y9P2L');
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date()); gtag('config', 'G-KMHX8Y9P2L');
   </script>
 
-  <!-- External CSS -->
-  <link rel="stylesheet" href="css/styles.css">
+  <!-- Unified CSS -->
+  <link rel="stylesheet" href="css/styles.css"/>
 
+  <!-- Page-scoped styles kept minimal (visual blocks only) -->
   <style>
-    /* Hero right-side: benefit card (replaces previous animation) */
+    /* Benefit card (right side of HERO) */
     .benefit-card{
       display:grid; grid-template-columns:1fr 1fr; gap:18px;
       background:linear-gradient(180deg,#f8fafc, #eef2ff); border:1px solid #e2e8f0;
@@ -65,189 +70,116 @@
       .b-row b{ color:#e5e7eb; } .b-row small{ color:#94a3b8; }
     }
 
-    /* Cursor hint for clickable product cards */
-    .clickable-card { cursor:pointer; }
+    /* HERO layout helpers */
+    .hero-grid {
+      display:grid; grid-template-columns:minmax(0,1fr) 640px; grid-auto-rows:auto; align-items:center; gap:40px;
+    }
+    .page-title {
+      grid-column:1/-1; margin:0 0 8px 0; line-height:1.05; font-weight:900; font-size:clamp(2.4rem,4.5vw,4rem);
+    }
+    .highlighted-chem {
+      background:linear-gradient(90deg,#38bdf8,#3b82f6);
+      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-fill-color:transparent;
+    }
+    .hero-left { max-width:720px; }
+    .hero-subtext { font-size:1.15rem; line-height:1.65; margin-bottom:20px; color:#334155; }
+    .hero-stats .stat-number { font-size:1.5rem; font-weight:bold; }
+    @media (max-width:1100px){ .hero-grid{ grid-template-columns:minmax(0,1fr) 560px; } }
+    @media (max-width:900px){ .hero-grid{ grid-template-columns:1fr; } .hero-visual{ order:3; } .benefit-card{ max-width:100%; } }
+    @media (prefers-color-scheme: dark){
+      .hero-subtext { color:#cbd5e1; }
+    }
+
+    /* FAQ local cosmetics */
+    .faq-item-link{ text-decoration:none; display:block; border-radius:14px; transition:transform .2s ease, box-shadow .2s ease; }
+    .faq-item-link:hover{ transform:translateY(-2px); box-shadow:0 12px 25px rgba(0,0,0,.06); }
+    .faq-item{ background:#f8fafc; padding:20px 24px; border-radius:14px; border:1px solid #e2e8f0; color:#1e293b; }
+    .faq-question{ font-weight:700; margin-bottom:6px; font-size:1.05rem; }
+    .faq-answer{ color:#475569; font-size:.95rem; }
+    @media (prefers-color-scheme: dark){
+      .faq-item{ background:#0f172a; border-color:#1e293b; color:#e2e8f0; }
+      .faq-answer{ color:#94a3b8; }
+    }
   </style>
 </head>
 <body>
-   <!-- Header (slim + sticky + burger) -->
-<header class="header-slim is-sticky" id="siteHeader">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo-slim" aria-label="ISRIB.shop home">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim" />
-      </a>
 
-      <!-- Desktop nav -->
-      <nav class="nav-slim" aria-label="Primary">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout.html" class="cart-btn-slim" id="cartBtn" onclick="trackCTA?.('header','cart')">
-          🧺 <span id="cartCount" class="badge-slim">0</span>
+  <!-- Header (slim + sticky + burger) -->
+  <header class="header-slim is-sticky" id="siteHeader">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo-slim" aria-label="ISRIB.shop home">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
         </a>
-      </nav>
 
-      <!-- Burger button (mobile) -->
-      <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-        <span class="burger-line"></span>
-        <span class="burger-line"></span>
-        <span class="burger-line"></span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Mobile menu panel -->
-  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-    <a href="products.html" class="mm-link">Products</a>
-    <a href="about.html" class="mm-link">About</a>
-    <a href="faq.html" class="mm-link">FAQ</a>
-    <a href="contact.html" class="mm-link">Contact</a>
-    <a href="checkout.html" class="mm-link mm-cart" onclick="trackCTA?.('header','cart_mobile')">🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
-  </nav>
-</header>
-
-
-
-  <!-- HERO SECTION (updated) -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-content hero-grid">
-      
-      <!-- Title with highlight -->
-      <h1 class="page-title">
-        Advanced <span class="highlighted-chem">Research Chemicals</span> for Scientific Innovation
-      </h1>
-
-      <!-- Text left column -->
-      <div class="hero-left">
-        <p class="hero-subtext">
-          Access cutting-edge compounds like ISRIB, ZZL‑7, and MPEP with guaranteed purity and worldwide shipping. Trusted by researchers globally.
-        </p>
-
-        <div class="hero-stats">
-          <div class="stat">
-            <span class="stat-number">500+</span>
-            <span class="stat-label">Researchers</span>
-          </div>
-          <div class="stat">
-            <span class="stat-number">50+</span>
-            <span class="stat-label">Countries</span>
-          </div>
-        </div>
-
-        <div class="cta-buttons">
-          <a href="products.html" class="btn-primary" onclick="trackCTA?.('hero','browse_products')">
-            🧬 Browse Products
+        <!-- Desktop nav -->
+        <nav class="nav-slim" aria-label="Primary">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn-slim" id="cartBtn" onclick="trackCTA?.('header','cart')">
+            🧺 <span id="cartCount" class="badge-slim">0</span>
           </a>
-        </div>
-      </div>
+        </nav>
 
-      <!-- Right column — benefit card -->
-      <div class="hero-visual">
-        <div class="benefit-card">
-          <div class="b-row"><span>🧪</span><div><b>98%+ Purity</b><br><small>HPLC & NMR verified</small></div></div>
-          <div class="b-row"><span>📦</span><div><b>Fast Worldwide</b><br><small>Discreet packaging</small></div></div>
-          <div class="b-row"><span>📄</span><div><b>COA Included</b><br><small>MS & NMR on request</small></div></div>
-          <div class="b-row"><span>🛡️</span><div><b>QC Protocol</b><br><small>Batch‑level control</small></div></div>
+        <!-- Burger (mobile) -->
+        <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+      <a href="products.html" class="mm-link">Products</a>
+      <a href="about.html" class="mm-link">About</a>
+      <a href="faq.html" class="mm-link">FAQ</a>
+      <a href="contact.html" class="mm-link">Contact</a>
+      <a href="checkout.html" class="mm-link mm-cart" onclick="trackCTA?.('header','cart_mobile')">
+        🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content hero-grid">
+        <h1 class="page-title">
+          Advanced <span class="highlighted-chem">Research Chemicals</span> for Scientific Innovation
+        </h1>
+
+        <div class="hero-left">
+          <p class="hero-subtext">
+            Access cutting-edge compounds like ISRIB, ZZL‑7, and MPEP with guaranteed purity and worldwide shipping. Trusted by researchers globally.
+          </p>
+
+          <div class="hero-stats">
+            <div class="stat"><span class="stat-number">500+</span><span class="stat-label">Researchers</span></div>
+            <div class="stat"><span class="stat-number">50+</span><span class="stat-label">Countries</span></div>
+          </div>
+
+          <div class="cta-buttons">
+            <a href="products.html" class="btn btn-primary" onclick="trackCTA?.('hero','browse_products')">🧬 Browse Products</a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="benefit-card">
+            <div class="b-row"><span>🧪</span><div><b>98%+ Purity</b><br><small>HPLC & NMR verified</small></div></div>
+            <div class="b-row"><span>📦</span><div><b>Fast Worldwide</b><br><small>Discreet packaging</small></div></div>
+            <div class="b-row"><span>📄</span><div><b>COA Included</b><br><small>MS & NMR on request</small></div></div>
+            <div class="b-row"><span>🛡️</span><div><b>QC Protocol</b><br><small>Batch‑level control</small></div></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <style>
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0,1fr) 640px;
-      grid-auto-rows: auto;
-      align-items: center;
-      gap: 40px;
-    }
-
-    .page-title {
-      grid-column: 1 / -1;
-      margin: 0 0 8px 0;
-      line-height: 1.05;
-      font-weight: 900;
-      font-size: clamp(2.4rem, 4.5vw, 4rem);
-    }
-
-    .highlighted-chem {
-      background: linear-gradient(90deg, #38bdf8, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
-    }
-
-    .hero-left { max-width: 720px; }
-
-    .hero-subtext {
-      font-size: 1.15rem;
-      line-height: 1.65;
-      margin-bottom: 20px;
-      color: #334155;
-    }
-
-    .hero-stats .stat-number {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-
-    .benefit-card {
-      max-width: 640px;
-      padding: 26px;
-      grid-template-columns: 1fr 1fr;
-      display: grid;
-      gap: 18px;
-      background: linear-gradient(180deg, #f8fafc, #eef2ff);
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(2,6,23,.08);
-    }
-
-    .b-row {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 14px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-    }
-
-    .b-row span { font-size: 24px; }
-    .b-row b { color: #0f172a; }
-    .b-row small { color: #64748b; }
-
-    @media (max-width: 1100px) {
-      .hero-grid { grid-template-columns: minmax(0,1fr) 560px; }
-    }
-
-    @media (max-width: 900px) {
-      .hero-grid { grid-template-columns: 1fr; }
-      .hero-visual { order: 3; }
-      .benefit-card { max-width: 100%; }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .hero-subtext { color: #cbd5e1; }
-      .benefit-card {
-        background: linear-gradient(180deg, #0b1220, #0f172a);
-        border-color: #1e293b;
-      }
-      .b-row {
-        background: #0b1220;
-        border-color: #1e293b;
-      }
-      .b-row b { color: #e5e7eb; }
-      .b-row small { color: #94a3b8; }
-    }
-  </style>
-</section>
-
-  <!-- Products Section -->
+  <!-- Products -->
   <section class="products-section" id="products">
     <div class="container">
       <div class="section-header">
@@ -350,365 +282,142 @@
       </div>
     </div>
   </section>
-     <!-- About Section -->
-    <section class="about-section" id="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Advancing Scientific Research Through Quality</h2>
-                    <p>ISRIB Shop is dedicated to providing researchers worldwide with access to advanced research chemicals. Our compounds undergo rigorous quality control to ensure the highest standards of purity and consistency.</p>
-                    <p>We work exclusively with accredited laboratories and maintain strict protocols for synthesis, purification, and storage to guarantee the integrity of every compound we supply.</p>
-                    
-                    <ul class="features-list">
-                        <li>Independent third-party testing</li>
-                        <li>Comprehensive certificates of analysis</li>
-                        <li>Climate-controlled storage facilities</li>
-                        <li>Experienced chemical synthesis team</li>
-                        <li>Worldwide shipping capabilities</li>
-                        <li>Personal customer support via chat</li>
-                    </ul>
-                </div>
 
-                <div class="about-visual">
-                    <div class="lab-icon">🧪</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-weight: 700;">Research Excellence</h3>
-                    <p style="color: #64748b; margin: 0;">Supporting breakthrough discoveries in neuroscience, biochemistry, and pharmaceutical research since 2020.</p>
-                </div>
-            </div>
+  <!-- About -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-text">
+          <h2>Advancing Scientific Research Through Quality</h2>
+          <p>ISRIB Shop is dedicated to providing researchers worldwide with access to advanced research chemicals. Our compounds undergo rigorous quality control to ensure the highest standards of purity and consistency.</p>
+          <p>We work exclusively with accredited laboratories and maintain strict protocols for synthesis, purification, and storage to guarantee the integrity of every compound we supply.</p>
+          <ul class="features-list">
+            <li>Independent third-party testing</li>
+            <li>Comprehensive certificates of analysis</li>
+            <li>Climate-controlled storage facilities</li>
+            <li>Experienced chemical synthesis team</li>
+            <li>Worldwide shipping capabilities</li>
+            <li>Personal customer support via chat</li>
+          </ul>
         </div>
-    </section>
-  
-  <!-- Trust Section -->
-<section style="background: #ffffff; padding: 80px 0;">
-  <div class="container">
-    <h2 style="text-align: center; font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 800; color: #1e293b; margin-bottom: 50px;">
-      Why Researchers Trust Us
-    </h2>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; text-align: center; max-width: 1100px; margin: 0 auto;">
-
-      <!-- Social proof -->
-      <div style="background: #f8fafc; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
-        <div style="font-size: 2.2rem;">🌍</div>
-        <h3 style="margin: 14px 0 8px; color: #1e293b;">Trusted Worldwide</h3>
-        <p style="color: #475569; font-size: 0.95rem;">Used by researchers in <strong>50+ countries</strong> — from biotech labs to cognitive science teams.</p>
-      </div>
-
-      <!-- Secure payments -->
-      <div style="background: #f8fafc; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
-        <div style="font-size: 2.2rem;">💳</div>
-        <h3 style="margin: 14px 0 8px; color: #1e293b;">Secure Checkout</h3>
-        <p style="color: #475569; font-size: 0.95rem;">Flexible payment methods (USDT, Wise, SWIFT, BTC). Privacy-first processing. No accounts required.</p>
-      </div>
-
-      <!-- Batch QC -->
-      <div style="background: #f8fafc; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
-        <div style="font-size: 2.2rem;">🧬</div>
-        <h3 style="margin: 14px 0 8px; color: #1e293b;">Batch-Level QC</h3>
-        <p style="color: #475569; font-size: 0.95rem;">Every batch is verified for purity and identity by NMR and LC-MS before release.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-    <!-- How to Order Section -->
-<section style="background: #f8fafc; padding: 80px 0;">
-  <div class="container">
-    <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">
-      How to Order
-    </h2>
-    
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
-      
-      <!-- Step 1 -->
-      <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
-        <h3 style="color: #1e293b; margin-bottom: 15px;">Choose Product</h3>
-        <p style="color: #64748b; font-size: 0.95rem;">Browse our catalog and select the compound and quantity you need.</p>
-      </div>
-      
-      <!-- Step 2 (updated) -->
-      <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
-        <h3 style="color: #1e293b; margin-bottom: 15px;">Add to Cart</h3>
-        <p style="color: #64748b; font-size: 0.95rem;">Select your desired amount and add products to your cart for instant checkout.</p>
-      </div>
-      
-      <!-- Step 3 -->
-      <div style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);">
-        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
-        <h3 style="color: #1e293b; margin-bottom: 15px;">Payment & Shipping</h3>
-        <p style="color: #64748b; font-size: 0.95rem;">We'll arrange payment and shipping details directly with you.</p>
+        <div class="about-visual">
+          <div class="lab-icon">🧪</div>
+          <h3 style="color:#1e293b;margin-bottom:15px;font-weight:700;">Research Excellence</h3>
+          <p style="color:#64748b;margin:0;">Supporting breakthrough discoveries in neuroscience, biochemistry, and pharmaceutical research since 2020.</p>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div style="text-align: center; margin-top: 40px;">
-      <a href="products.html" class="btn-primary" onclick="trackCTA('how-to-order', 'start_order')">Start Your Order</a>
+  <!-- Trust -->
+  <section class="trust-section">
+    <div class="container">
+      <h2 class="section-title" style="text-align:center; margin-bottom:50px;">Why Researchers Trust Us</h2>
+      <div class="trust-grid" style="max-width:1100px; margin:0 auto;">
+        <div class="trust-indicator">
+          <span class="icon">🌍</span>
+          <h3 class="trust-title">Trusted Worldwide</h3>
+          <p class="trust-desc">Used by researchers in <strong>50+ countries</strong> — from biotech labs to cognitive science teams.</p>
+        </div>
+        <div class="trust-indicator">
+          <span class="icon">💳</span>
+          <h3 class="trust-title">Secure Checkout</h3>
+          <p class="trust-desc">Flexible payment methods (USDT, Wise, SWIFT, BTC). Privacy-first processing. No accounts required.</p>
+        </div>
+        <div class="trust-indicator">
+          <span class="icon">🧬</span>
+          <h3 class="trust-title">Batch-Level QC</h3>
+          <p class="trust-desc">Every batch is verified for purity and identity by NMR and LC-MS before release.</p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-  <!-- Custom Synthesis (Dark Themed Section) -->
-<section class="custom-synth-section">
-  <div class="container">
-    <div class="cs-grid">
-      
-      <!-- Text block -->
-      <header class="cs-head">
-        <h2>Custom <span>Synthesis</span> for Research Teams</h2>
-        <p>
-          Route scouting • Small‑to‑mid scale • Analytical package (LC-MS / NMR) •
-          Discreet worldwide shipping • NDA‑friendly process
-        </p>
-      </header>
+  <!-- How to Order -->
+  <section class="howto">
+    <div class="container">
+      <h2 class="howto-title">How to Order</h2>
+      <div class="howto-grid">
+        <div class="howto-card">
+          <div class="howto-step">1</div>
+          <h3 class="howto-card-title">Choose Product</h3>
+          <p class="howto-card-text">Browse our catalog and select the compound and quantity you need.</p>
+        </div>
+        <div class="howto-card">
+          <div class="howto-step">2</div>
+          <h3 class="howto-card-title">Add to Cart</h3>
+          <p class="howto-card-text">Select your desired amount and add products to your cart for instant checkout.</p>
+        </div>
+        <div class="howto-card">
+          <div class="howto-step">3</div>
+          <h3 class="howto-card-title">Payment & Shipping</h3>
+          <p class="howto-card-text">We'll arrange payment and shipping details directly with you.</p>
+        </div>
+      </div>
+      <div class="howto-cta">
+        <a href="products.html" class="btn btn-primary" onclick="trackCTA('how-to-order','start_order')">Start Your Order</a>
+      </div>
+    </div>
+  </section>
 
-      <!-- Bullet list -->
-      <ul class="cs-list">
-        <li>⚗️ <b>Route Development</b> — literature search, retrosynthesis, risk & cost estimation</li>
-        <li>🧪 <b>SAR / Analogue Series</b> — iterative batches for screening & optimization</li>
-        <li>📈 <b>Scaling</b> — from mg to multi‑gram with documented procedures</li>
-        <li>🔬 <b>QC Suite</b> — LC‑MS and NMR (¹H/¹³C) purity</li>
-        <li>🔒 <b>Confidentiality</b> — IP‑safe workflow, NDA available</li>
-        <li>🌍 <b>Logistics</b> — secure packing, paperwork assistance</li>
-      </ul>
+  <!-- Custom Synthesis (dark section) -->
+  <section class="custom-synth-section">
+    <div class="container">
+      <div class="cs-grid">
+        <header class="cs-head">
+          <h2>Custom <span>Synthesis</span> for Research Teams</h2>
+          <p>Route scouting • Small‑to‑mid scale • Analytical package (LC-MS / NMR) • Discreet worldwide shipping • NDA‑friendly process</p>
+        </header>
+        <ul class="cs-list">
+          <li>⚗️ <b>Route Development</b> — literature search, retrosynthesis, risk & cost estimation</li>
+          <li>🧪 <b>SAR / Analogue Series</b> — iterative batches for screening & optimization</li>
+          <li>📈 <b>Scaling</b> — from mg to multi‑gram with documented procedures</li>
+          <li>🔬 <b>QC Suite</b> — LC‑MS and NMR (¹H/¹³C) purity</li>
+          <li>🔒 <b>Confidentiality</b> — IP‑safe workflow, NDA available</li>
+          <li>🌍 <b>Logistics</b> — secure packing, paperwork assistance</li>
+        </ul>
+        <div class="cs-cta">
+          <a href="contact.html?inquiry=custom-synthesis" class="btn btn-primary" onclick="trackCTA?.('custom-synth','contact')">
+            Contact Us about Custom Synthesis
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <!-- CTA button -->
-      <div class="cs-cta">
-        <a href="contact.html?inquiry=custom-synthesis" class="btn-primary" onclick="trackCTA?.('custom-synth','contact')">
-          Contact Us about Custom Synthesis
+  <!-- FAQ -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <a href="faq.html#isrib-a15" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">What is ISRIB A15?</div><div class="faq-answer">A next-gen ISRIB analogue with improved bioavailability & potency.</div></div>
+        </a>
+        <a href="faq.html#how-to-order" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">How do I place an order?</div><div class="faq-answer">Place items in cart and proceed to checkout. Simple and fast.</div></div>
+        </a>
+        <a href="faq.html#payments" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">What payment methods do you accept?</div><div class="faq-answer">Crypto, Wise, SEPA/SWIFT, USDT, and other secure options.</div></div>
+        </a>
+        <a href="faq.html#international-shipping" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">Do you ship internationally?</div><div class="faq-answer">Yes, to 50+ countries with discreet packaging.</div></div>
+        </a>
+        <a href="faq.html#coa" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">Is there a Certificate of Analysis?</div><div class="faq-answer">Yes, provided with every order.</div></div>
+        </a>
+        <a href="faq.html#purity" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">What purity levels do you guarantee?</div><div class="faq-answer">All compounds are ≥98% purity verified by independent labs.</div></div>
+        </a>
+        <a href="faq.html#shipping-times" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">How long does shipping take?</div><div class="faq-answer">5–15 business days depending on destination country.</div></div>
+        </a>
+        <a href="faq.html#custom-orders" class="faq-item-link">
+          <div class="faq-item"><div class="faq-question">Can I get custom quantities?</div><div class="faq-answer">Yes, contact us for custom synthesis and bulk orders.</div></div>
         </a>
       </div>
     </div>
-  </div>
-
-  <!-- SCOPED STYLES -->
-  <style>
-    .custom-synth-section {
-      background: radial-gradient(120% 120% at 10% 0%, #0b1220 0%, #0f172a 55%, #0b1220 100%);
-      border-top: 1px solid #1f2937;
-      border-bottom: 1px solid #1f2937;
-      padding: 84px 0;
-      color: #e5e7eb;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .custom-synth-section::before {
-      content: ""; position: absolute; inset: auto -120px -120px auto;
-      width: 420px; height: 420px;
-      background: radial-gradient(closest-side, rgba(59,130,246,.28), rgba(59,130,246,0));
-      filter: blur(6px); pointer-events: none;
-    }
-
-    .cs-grid {
-      display: grid;
-      gap: 32px;
-      grid-template-columns: 1.1fr 1fr;
-      align-items: start;
-    }
-
-    @media (max-width: 960px) {
-      .cs-grid { grid-template-columns: 1fr; }
-    }
-
-    .cs-head h2 {
-      font-weight: 900;
-      line-height: 1.05;
-      font-size: clamp(2.1rem, 4.2vw, 3rem);
-      margin: 0 0 10px 0;
-      letter-spacing: -0.01em;
-    }
-
-    .cs-head h2 span {
-      background: linear-gradient(90deg, #38bdf8, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
-    }
-
-    .cs-head p {
-      margin: 0;
-      color: #cbd5e1;
-      font-size: 1.05rem;
-      line-height: 1.65;
-      max-width: 740px;
-    }
-
-    .cs-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 14px;
-      background: rgba(2,6,23,.45);
-      border: 1px solid #1f2937;
-      border-radius: 16px;
-      padding: 22px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 20px 50px rgba(0,0,0,.25);
-    }
-
-    .cs-list li {
-      background: rgba(15,23,42,.55);
-      border: 1px solid #263243;
-      border-radius: 12px;
-      padding: 12px 14px;
-      color: #dbeafe;
-      font-size: 0.98rem;
-      line-height: 1.55;
-    }
-
-    .cs-list b { color: #e2e8f0; }
-
-    .cs-cta {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    /* Use existing site's .btn-primary styling for consistency */
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px 22px;
-      font-weight: 700;
-      font-size: 1rem;
-      border-radius: 12px;
-      background: linear-gradient(180deg, #3b82f6, #1e40af);
-      color: white;
-      text-decoration: none;
-      border: none;
-      transition: background .2s ease, transform .15s ease;
-      box-shadow: 0 8px 20px rgba(59,130,246,.4);
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(180deg, #2563eb, #1e3a8a);
-      transform: translateY(-1px);
-    }
-
-    .btn-primary:active {
-      transform: translateY(0);
-      background: linear-gradient(180deg, #1e40af, #1e40af);
-    }
-  </style>
-</section>
-
-
-   <!-- FAQ Section -->
-<section class="faq-section" id="faq">
-  <div class="container">
-    <h2>Frequently Asked Questions</h2>
-
-    <div class="faq-grid">
-      <a href="faq.html#isrib-a15" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">What is ISRIB A15?</div>
-          <div class="faq-answer">A next-gen ISRIB analogue with improved bioavailability & potency.</div>
-        </div>
-      </a>
-
-      <a href="faq.html#how-to-order" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">How do I place an order?</div>
-          <div class="faq-answer">Place items in cart and proceed to checkout. Simple and fast.</div>
-        </div>
-      </a>
-
-      <a href="faq.html#payments" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">What payment methods do you accept?</div>
-          <div class="faq-answer">Crypto, Wise, SEPA/SWIFT, USDT, and other secure options.</div>
-        </div>
-      </a>
-
-      <a href="faq.html#international-shipping" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">Do you ship internationally?</div>
-          <div class="faq-answer">Yes, to 50+ countries with discreet packaging.</div>
-        </div>
-      </a>
-
-      <a href="faq.html#coa" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">Is there a Certificate of Analysis?</div>
-          <div class="faq-answer">Yes, provided with every order.</div>
-        </div>
-      </a>
-
-      <a href="faq.html#purity" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">What purity levels do you guarantee?</div>
-          <div class="faq-answer">All compounds are ≥98% purity verified by independent labs.</div>
-        </div>
-      </a>
-
-      <a href="faq.html#shipping-times" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">How long does shipping take?</div>
-          <div class="faq-answer">5–15 business days depending on destination country.</div>
-        </div>
-      </a>
-
-      <a href="faq.html#custom-orders" class="faq-item-link">
-        <div class="faq-item">
-          <div class="faq-question">Can I get custom quantities?</div>
-          <div class="faq-answer">Yes, contact us for custom synthesis and bulk orders.</div>
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <style>
-    .faq-item-link {
-      text-decoration: none;
-      display: block;
-      border-radius: 14px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .faq-item-link:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
-    }
-
-    .faq-item {
-      background: #f8fafc;
-      padding: 20px 24px;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
-      color: #1e293b;
-    }
-
-    .faq-question {
-      font-weight: 700;
-      margin-bottom: 6px;
-      font-size: 1.05rem;
-    }
-
-    .faq-answer {
-      color: #475569;
-      font-size: 0.95rem;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .faq-item {
-        background: #0f172a;
-        border-color: #1e293b;
-        color: #e2e8f0;
-      }
-
-      .faq-answer {
-        color: #94a3b8;
-      }
-    }
-  </style>
-</section>
-
+  </section>
 
   <!-- Footer -->
   <footer class="footer">
@@ -719,7 +428,6 @@
           <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality and reliability.</p>
           <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
         </div>
-
         <div class="footer-section">
           <h3>Products</h3>
           <ul>
@@ -730,7 +438,6 @@
             <li><a href="products.html">All Products</a></li>
           </ul>
         </div>
-
         <div class="footer-section">
           <h3>Information</h3>
           <ul>
@@ -741,7 +448,6 @@
             <li><a href="safety.html">Safety Guidelines</a></li>
           </ul>
         </div>
-
         <div class="footer-section">
           <h3>Legal</h3>
           <ul>
@@ -752,44 +458,27 @@
           </ul>
         </div>
       </div>
-
       <div class="footer-bottom">
         <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Sticky Mobile CTA (залишив без змін) -->
+  <!-- Sticky Mobile CTA -->
   <div class="sticky-mobile-cta">
-    <a href="contact.html?inquiry=order" onclick="trackCTA('mobile-sticky', 'contact_order')">
-      💬 Contact to Order
-    </a>
+    <a href="contact.html?inquiry=order" onclick="trackCTA('mobile-sticky','contact_order')">💬 Contact to Order</a>
   </div>
 
-  <script>
-    // Make the entire product card clickable (except internal links)
-    document.querySelectorAll('.products-grid .product-card').forEach(card => {
-      const linkEl = card.querySelector('.view-product');
-      if (!linkEl) return;
-      const href = linkEl.getAttribute('href');
-      card.classList.add('clickable-card');
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('a')) return; // don't hijack internal links
-        if (href) window.location.assign(href);
-      });
-    });
-  </script>
+  <!-- Unified JS (no per-page inline scripts needed) -->
+  <script src="js/main.js"></script>
 
   <!-- Tawk.to chat -->
   <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
       var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-      s1.async=true;
-      s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-      s1.charset='UTF-8';
-      s1.setAttribute('crossorigin','*');
-      s0.parentNode.insertBefore(s1,s0);
+      s1.async=true; s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+      s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
     })();
   </script>
 </body>
