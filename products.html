@@ -5,118 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Products – ISRIB.shop</title>
   <meta name="description" content="Research-grade chemical catalog: ISRIB A15, ISRIB Original, ZZL-7, MPEP Oxalate." />
-  <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" href="images/favicon-32.png" type="image/png" />
-  <style>
-    /* легкі підсилення стилів карток (працює поверх styles.css) */
-    .products-hero { padding: 36px 0 8px; }
-    .grid { display:grid; gap:24px; grid-template-columns:repeat(3,minmax(0,1fr)); }
-    @media (max-width: 1024px){ .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media (max-width: 720px){ .grid{ grid-template-columns:1fr; } }
-
-    .product-card{
-      position:relative;
-      background:#fff; border-radius:16px; border:1px solid #e5e7eb;
-      box-shadow: 0 4px 20px rgba(0,0,0,.04);
-      padding:20px; display:flex; flex-direction:column; gap:16px;
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    }
-    .product-card.linkable{ cursor:pointer; }
-    .product-card.linkable:hover{
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(0,0,0,.10);
-      border-color:#c7d2fe;
-    }
-
-    .product-header{ display:flex; align-items:center; gap:12px; }
-    .product-title{ font-weight:800; font-size:1.1rem; color:#0f172a; }
-    .product-sub{ color:#64748b; font-size:.94rem; }
-
-    .quantity-wrap{ border:1px solid #e5e7eb; border-radius:14px; padding:14px; }
-    .quantity-title{ font-weight:700; margin-bottom:10px; color:#0f172a; }
-    .quantity-row{ display:flex; gap:10px; flex-wrap:wrap; }
-    .quantity-option{
-      border:2px solid #e2e8f0; border-radius:12px; padding:10px 14px; cursor:pointer; user-select:none; background:#fff; transition:transform .08s ease, border-color .18s ease, box-shadow .18s ease;
-    }
-    .quantity-option:active{ transform:scale(.98); }
-    .quantity-option .tag { display:block; font-weight:800; color:#0f172a; }
-    .quantity-option .price { display:block; color:#64748b; font-size:.9rem; }
-    .quantity-option.active{ border-color:#2563eb; box-shadow:0 0 0 4px rgba(37,99,235,.08); }
-
-    .facts{ background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; font-size:.95rem; color:#334155; }
-    .facts .row{ display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed #e5e7eb; }
-    .facts .row:last-child{ border-bottom:0; }
-    .facts .val{ font-weight:700; }
-
-    .product-footer{ display:flex; align-items:center; gap:10px; margin-top:auto; }
-    .btn-primary{ background:#1e40af; border-radius:12px; padding:12px 18px; color:#fff; font-weight:800; border:0; cursor:pointer; }
-    .view-product{ border-radius:12px; padding:12px 18px; font-weight:700; border:1px solid #e5e7eb; color:#0f172a; background:#fff; }
-    .view-cart{ margin-left:auto; color:#1e40af; font-weight:800; }
-
-    .price-line{ font-size:1.15rem; font-weight:800; color:#0f172a; }
-    .price-line small{ color:#64748b; font-weight:600; }
-
-    /* -------- cart badge pop‑in -------- */
-    .cart-btn{ position:relative; display:inline-flex; align-items:center; gap:6px; }
-    .badge{
-      display:inline-flex; align-items:center; justify-content:center;
-      min-width:22px; height:22px; padding:0 6px;
-      background:#1e40af; color:#fff; border-radius:12px; font-size:12px; font-weight:800;
-      transform-origin:center; line-height:1; border:1px solid rgba(0,0,0,.06);
-    }
-    @keyframes pop { 0% {transform:scale(1);} 40% {transform:scale(1.22);} 100% {transform:scale(1);} }
-    .badge.pop { animation: pop .35s cubic-bezier(.2,.8,.2,1); }
-
-    /* -------- shake для кнопки/лінка кошика -------- */
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20% { transform: translateX(-2px); }
-      40% { transform: translateX(2px); }
-      60% { transform: translateX(-1px); }
-      80% { transform: translateX(1px); }
-    }
-    .shake { animation: shake .45s ease; }
-
-    /* -------- toast (top-right) -------- */
-    .toast-wrap{
-      position:fixed; top:16px; right:16px; z-index:9999;
-      display:flex; flex-direction:column; gap:10px; pointer-events:none;
-    }
-    .toast{
-      background:#0b1220; color:#e7eefc; border:1px solid #1f2a44;
-      border-radius:12px; padding:12px 14px; font-weight:600; min-width:240px;
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
-      display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(-8px);
-      animation: toast-in .22s ease forwards, toast-out .22s ease forwards 1.5s;
-    }
-    .toast svg{ flex:0 0 auto }
-    @keyframes toast-in { to { opacity:1; transform: translateY(0); } }
-    @keyframes toast-out{ to { opacity:0; transform: translateY(-8px); } }
-  </style>
+  <link rel="stylesheet" href="css/styles.css?v=5" />
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="container">
-      <div class="header-content">
-        <a href="/" class="logo">
-          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image" width="180" height="40" style="object-fit:contain" />
+
+  <!-- Header (уніфікований, slim, hide-on-scroll) -->
+  <header class="header-slim is-sticky" id="siteHeader">
+    <div class="container header-content">
+      <a href="index.html" class="logo">
+        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim" width="180" height="40" />
+      </a>
+
+      <nav class="nav-slim">
+        <a href="products.html" aria-current="page">Products</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <a href="checkout.html" class="cart-btn-slim" id="cartBtn">
+          🛒 <span>Cart</span> <span id="cartCount" class="badge-slim">0</span>
         </a>
-        <nav class="nav">
-          <a href="products.html" aria-current="page">Products</a>
-          <a href="about.html">About</a>
-          <a href="faq.html">FAQ</a>
-          <a href="contact.html">Contact</a>
-          <a href="checkout.html" class="cart-btn" id="cartBtn">
-            🛒 Cart <span id="cartCount" class="badge">0</span>
-          </a>
-        </nav>
-      </div>
+      </nav>
+
+      <!-- burger (можна прибрати, якщо не потрібен) -->
+      <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false">
+        <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+      </button>
+    </div>
+
+    <!-- mobile menu -->
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <a class="mm-link" href="products.html" aria-current="page">Products</a>
+      <a class="mm-link" href="about.html">About</a>
+      <a class="mm-link" href="faq.html">FAQ</a>
+      <a class="mm-link" href="contact.html">Contact</a>
+      <a class="mm-link mm-cart" href="checkout.html">🛒 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
     </div>
   </header>
 
-  <!-- Page -->
   <main>
+    <!-- легкий page-hero -->
     <section class="products-hero">
       <div class="container">
         <h1>ISRIB Shop Products</h1>
@@ -124,15 +52,21 @@
       </div>
     </section>
 
-    <section>
+    <!-- каталог -->
+    <section class="products-section">
       <div class="container">
-        <div class="grid">
+        <div class="products-grid">
 
           <!-- A15 -->
-          <article class="product-card linkable" data-sku="isrib-a15" data-name="ISRIB A15">
+          <article class="product-card" data-href="product_isrib_A15.html" data-sku="isrib-a15">
             <div class="product-header">
-              <h2 class="product-title">ISRIB A15</h2>
-              <span class="product-sub">Ultra Potent Analog</span>
+              <h2 class="product-title product-name">ISRIB A15</h2>
+              <span class="product-sub muted">Ultra Potent Analog</span>
+            </div>
+
+            <div class="product-specs">
+              <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥98% HPLC</span></div>
+              <div class="spec-row"><span class="spec-label">COA:</span><span class="spec-value">Included</span></div>
             </div>
 
             <div class="quantity-wrap">
@@ -144,12 +78,6 @@
               </div>
             </div>
 
-            <div class="facts">
-              <div class="row"><span>Selected:</span><span class="val selected-quantity">100mg</span></div>
-              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
-              <div class="row"><span>COA:</span><span class="val">Included</span></div>
-            </div>
-
             <div class="price-line">
               <span class="current-price">$50.00</span>
               <small class="price-per-mg">($0.50/mg)</small>
@@ -157,7 +85,13 @@
 
             <div class="product-footer">
               <a class="view-product" href="product_isrib_A15.html">View Details</a>
-              <button class="btn-primary add-btn" data-sku="isrib-a15" data-name="ISRIB A15">
+              <button
+                class="btn-primary add-to-cart"
+                data-name="ISRIB A15"
+                data-sku="isrib-a15"
+                data-grams="100"
+                data-display="100mg"
+                data-price="50">
                 ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$50</span>
               </button>
               <a class="view-cart" href="checkout.html">View Cart</a>
@@ -165,10 +99,15 @@
           </article>
 
           <!-- ISRIB Original -->
-          <article class="product-card linkable" data-sku="isrib" data-name="ISRIB (Original)">
+          <article class="product-card" data-href="product_isrib.html" data-sku="isrib">
             <div class="product-header">
-              <h2 class="product-title">ISRIB (Original)</h2>
-              <span class="product-sub">Original Compound</span>
+              <h2 class="product-title product-name">ISRIB (Original)</h2>
+              <span class="product-sub muted">Original Compound</span>
+            </div>
+
+            <div class="product-specs">
+              <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥96% HPLC</span></div>
+              <div class="spec-row"><span class="spec-label">COA:</span><span class="spec-value">Included</span></div>
             </div>
 
             <div class="quantity-wrap">
@@ -180,12 +119,6 @@
               </div>
             </div>
 
-            <div class="facts">
-              <div class="row"><span>Selected:</span><span class="val selected-quantity">30mg</span></div>
-              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
-              <div class="row"><span>COA:</span><span class="val">Included</span></div>
-            </div>
-
             <div class="price-line">
               <span class="current-price">$14.00</span>
               <small class="price-per-mg">($0.47/mg)</small>
@@ -193,7 +126,13 @@
 
             <div class="product-footer">
               <a class="view-product" href="product_isrib.html">View Details</a>
-              <button class="btn-primary add-btn" data-sku="isrib" data-name="ISRIB (Original)">
+              <button
+                class="btn-primary add-to-cart"
+                data-name="ISRIB (Original)"
+                data-sku="isrib"
+                data-grams="30"
+                data-display="30mg"
+                data-price="14">
                 ➕ Add to Cart — <span class="add-label">30mg</span> <span class="add-price">$14</span>
               </button>
               <a class="view-cart" href="checkout.html">View Cart</a>
@@ -201,10 +140,15 @@
           </article>
 
           <!-- ZZL-7 -->
-          <article class="product-card linkable" data-sku="zzl7" data-name="ZZL-7">
+          <article class="product-card" data-href="product_zzl_7.html" data-sku="zzl7">
             <div class="product-header">
-              <h2 class="product-title">ZZL‑7</h2>
-              <span class="product-sub">Fast-Onset Antidepressant</span>
+              <h2 class="product-title product-name">ZZL‑7</h2>
+              <span class="product-sub muted">Fast-Onset Antidepressant</span>
+            </div>
+
+            <div class="product-specs">
+              <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥98% HPLC</span></div>
+              <div class="spec-row"><span class="spec-label">COA:</span><span class="spec-value">Included</span></div>
             </div>
 
             <div class="quantity-wrap">
@@ -216,12 +160,6 @@
               </div>
             </div>
 
-            <div class="facts">
-              <div class="row"><span>Selected:</span><span class="val selected-quantity">100mg</span></div>
-              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
-              <div class="row"><span>COA:</span><span class="val">Included</span></div>
-            </div>
-
             <div class="price-line">
               <span class="current-price">$50.00</span>
               <small class="price-per-mg">($0.50/mg)</small>
@@ -229,7 +167,13 @@
 
             <div class="product-footer">
               <a class="view-product" href="product_zzl_7.html">View Details</a>
-              <button class="btn-primary add-btn" data-sku="zzl7" data-name="ZZL-7">
+              <button
+                class="btn-primary add-to-cart"
+                data-name="ZZL-7"
+                data-sku="zzl7"
+                data-grams="100"
+                data-display="100mg"
+                data-price="50">
                 ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$50</span>
               </button>
               <a class="view-cart" href="checkout.html">View Cart</a>
@@ -237,10 +181,15 @@
           </article>
 
           <!-- MPEP Oxalate -->
-          <article class="product-card linkable" data-sku="mpep" data-name="MPEP Oxalate">
+          <article class="product-card" data-href="product_MPEP.html" data-sku="mpep">
             <div class="product-header">
-              <h2 class="product-title">MPEP Oxalate</h2>
-              <span class="product-sub">mGluR5 Negative Allosteric Modulator</span>
+              <h2 class="product-title product-name">MPEP Oxalate</h2>
+              <span class="product-sub muted">mGluR5 Negative Allosteric Modulator</span>
+            </div>
+
+            <div class="product-specs">
+              <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥98% HPLC</span></div>
+              <div class="spec-row"><span class="spec-label">COA:</span><span class="spec-value">Included</span></div>
             </div>
 
             <div class="quantity-wrap">
@@ -252,12 +201,6 @@
               </div>
             </div>
 
-            <div class="facts">
-              <div class="row"><span>Selected:</span><span class="val selected-quantity">50mg</span></div>
-              <div class="row"><span>Purity:</span><span class="val">≥98% HPLC</span></div>
-              <div class="row"><span>COA:</span><span class="val">Included</span></div>
-            </div>
-
             <div class="price-line">
               <span class="current-price">$45.00</span>
               <small class="price-per-mg">($0.90/mg)</small>
@@ -265,7 +208,13 @@
 
             <div class="product-footer">
               <a class="view-product" href="product_MPEP.html">View Details</a>
-              <button class="btn-primary add-btn" data-sku="mpep" data-name="MPEP Oxalate">
+              <button
+                class="btn-primary add-to-cart"
+                data-name="MPEP Oxalate"
+                data-sku="mpep"
+                data-grams="50"
+                data-display="50mg"
+                data-price="45">
                 ➕ Add to Cart — <span class="add-label">50mg</span> <span class="add-price">$45</span>
               </button>
               <a class="view-cart" href="checkout.html">View Cart</a>
@@ -277,191 +226,13 @@
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-grid">
-        <div>© <span id="y"></span> ISRIB.shop — Research use only.</div>
-      </div>
+      <div class="footer-bottom">© <span id="y"></span> ISRIB.shop — Research use only.</div>
     </div>
   </footer>
 
-  <!-- Toast container -->
-  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- Твій глобальний JS -->
-  <script src="js/main.js"></script>
-
-  <!-- Універсальний “клей” для сторінки Products -->
-  <script>
-    (function () {
-      const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-      const $  = (s, r = document) => r.querySelector(s);
-      const CART_KEY = 'isrib_cart';
-      const badge = $('#cartCount');
-      const cartBtn = $('#cartBtn');
-      document.getElementById('y').textContent = new Date().getFullYear();
-
-      // --- utils ---
-      const toGrams = (q) => {
-        q = String(q).trim().toLowerCase();
-        if (q.endsWith('mg')) return Number(q.replace('mg','')) / 1000;
-        if (q.endsWith('g'))  return Number(q.replace('g',''));
-        return Number(q) || 1;
-      };
-
-      function showToast(message){
-        const wrap = $('#toastWrap'); if(!wrap) return;
-        const el = document.createElement('div');
-        el.className = 'toast';
-        el.innerHTML = `
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M9 12l2 2 4-4" stroke="#31c48d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="12" r="9" stroke="#31c48d" stroke-width="2" fill="none"/>
-          </svg>
-          <span>${message}</span>`;
-        wrap.appendChild(el);
-        setTimeout(()=> wrap.removeChild(el), 1750);
-      }
-
-      function shakeCart(){
-        if(!cartBtn) return;
-        cartBtn.classList.remove('shake'); void cartBtn.offsetWidth;
-        cartBtn.classList.add('shake');
-        setTimeout(()=>cartBtn.classList.remove('shake'), 500);
-      }
-
-      function popBadge(){
-        if (!badge) return;
-        badge.classList.remove('pop'); void badge.offsetWidth; // restart animation
-        badge.classList.add('pop');
-      }
-
-      function getCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }catch{ return []; } }
-      function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
-
-      function updateCartCount(){
-        if (!badge) return;
-        let cart = getCart();
-        // міграція (старі записи могли мати qty замість grams/count)
-        cart = cart.map(i => (i && i.count == null && (i.qty != null || i.grams != null))
-          ? ({...i, grams: i.grams ?? i.qty, count: 1, unit:'pack', qty: undefined})
-          : i);
-        const total = cart.reduce((n,i) => n + (Number(i.count)||0), 0);
-        badge.textContent = total;
-      }
-
-      const updateCard = (card) => {
-        const sel = $('.quantity-option.active', card);
-        if (!sel) return;
-        const q = sel.dataset.quantity;
-        const price = Number(sel.dataset.price);
-
-        const selectedOut = $('.selected-quantity', card);
-        if (selectedOut) selectedOut.textContent = q;
-
-        const currentPrice = $('.current-price', card);
-        if (currentPrice) currentPrice.textContent = `$${price.toFixed(2)}`;
-
-        const ppm = $('.price-per-mg', card);
-        if (ppm) {
-          const mg = q.endsWith('mg') ? Number(q.replace('mg','')) : Number(q.replace('g','')) * 1000;
-          ppm.textContent = `($${(price / mg).toFixed(2)}/mg)`;
-        }
-
-        const label = $('.add-label', card);
-        const priceEl = $('.add-price', card);
-        if (label) label.textContent = q;
-        if (priceEl) priceEl.textContent = `$${price}`;
-      };
-
-      // --- Ініціалізація карток + selection ---
-      $$('.product-card').forEach((card) => {
-        const first = $('.quantity-option', card);
-        if (first && !$('.quantity-option.active', card)) first.classList.add('active');
-
-        $$('.quantity-option', card).forEach(opt => {
-          // не віддавати клік нагору (щоб не спрацьовувала навігація картки)
-          opt.addEventListener('click', (e) => {
-            e.stopPropagation();
-            $$('.quantity-option', card).forEach(o => o.classList.remove('active'));
-            opt.classList.add('active');
-            updateCard(card);
-          });
-        });
-
-        updateCard(card); // init
-      });
-
-      // --- Додавання до кошика + фідбек (без редіректу) ---
-      $$('.add-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation(); // не переходити на сторінку продукту
-          const card = btn.closest('.product-card');
-          const sel  = $('.quantity-option.active', card);
-          if (!sel) return;
-
-          const qStr  = sel.dataset.quantity;         // "100mg" | "1g" ...
-          const price = Number(sel.dataset.price);
-          const grams = toGrams(qStr);
-          const name = btn.dataset.name || card.dataset.name;
-          const sku  = btn.dataset.sku  || card.dataset.sku;
-
-          const cart = getCart();
-          cart.push({ name, sku, grams, display: qStr, price, count: 1, unit: 'pack' });
-          saveCart(cart);
-
-          popBadge();
-          shakeCart();
-          showToast(`Added to cart: ${name} — ${qStr} ($${price})`);
-
-          // короткий зворотній зв'язок на кнопці
-          const oldHTML = btn.innerHTML;
-          btn.disabled = true;
-          btn.textContent = '✔️ Added!';
-          setTimeout(() => { btn.disabled = false; btn.innerHTML = oldHTML; }, 1200);
-        });
-      });
-
-      // --- Клік по картці → перейти на сторінку продукту ---
-      // орієнтуємось на href у кнопці "View Details"
-      $$('.product-card.linkable').forEach(card => {
-        const detailsLink = $('.view-product', card);
-        if (!detailsLink) return;
-        const href = detailsLink.getAttribute('href');
-
-        card.addEventListener('click', (e) => {
-          // якщо клікнувся будь‑який елемент, що не повинен ініціювати перехід — ігноруємо
-          const target = e.target;
-          if (
-            target.closest('.quantity-wrap') || // кліки в зоні вибору кількості
-            target.closest('.add-btn') ||       // кнопка add to cart
-            target.closest('.view-product') ||  // власне лінк View Details
-            target.closest('.view-cart') ||     // лінк View Cart
-            target.tagName === 'A' || target.closest('a') // будь-які інші <a>
-          ){
-            return;
-          }
-          if (href) window.location.assign(href);
-        });
-      });
-
-      // --- стартове число у бейджі ---
-      updateCartCount();
-    })();
-  </script>
-
-  <!-- Tawk.to -->
-  <script>
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
+  <script src="js/main.js?v=5"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>
