@@ -456,22 +456,36 @@ function addToCart(name, sku, grams, price, display) {
   });
 }
 
+// ===================== ADD-TO-CART BUTTONS =====================
 function mountAddToCartButtons() {
-  document.querySelectorAll('.add-to-cart').forEach(btn => {
+  const btns = document.querySelectorAll('.add-to-cart');
+  if (!btns.length) return;
+
+  btns.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const b = e.currentTarget;
-      addToCart(
-        b.dataset.name || b.dataset.product || 'Unknown',
-        b.dataset.sku  || 'SKU',
-        Number(b.dataset.grams || 0),
-        Number(b.dataset.price || 0),
-        b.dataset.display || b.dataset.qty || ''
-      );
-      // Redirect to checkout (keep behavior — change if needed)
-      window.location.href = 'checkout.html';
+      e.preventDefault();
+
+      const card = btn.closest('.product-card');
+      const name =
+        card?.querySelector('.product-name')?.textContent ||
+        card?.querySelector('.product-title')?.textContent ||
+        btn.dataset.name || 'Unknown';
+
+      const sku = btn.dataset.sku || card?.dataset.sku || 'sku-unknown';
+      const grams = parseFloat(btn.dataset.grams || '0') || 0;     // у mg
+      const price = parseFloat(btn.dataset.price || '0') || 0;
+      const display = btn.dataset.display || '';
+
+      addToCart(name, sku, grams, price, display);
+      updateCartBadge?.();                    // оновлюємо бейдж у хедері
+      showToast('Added to cart');             // ✅ тост замість редиректу
+
+      // НІЯКИХ редиректів: рядок типу window.location.href = 'checkout.html' — видалений
+      window.trackEvent?.('add_to_cart_click', { name, sku, grams, price, display });
     });
   });
 }
+
 
 function renderCheckoutCart() {
   const wrap = document.getElementById('cartList');
@@ -619,3 +633,26 @@ window.addEventListener('load', () => {
     }).observe({ entryTypes: ['layout-shift'] });
   } catch {}
 });
+// ===================== TOAST (small notification) =====================
+function showToast(message = 'Done', type = 'info') {
+  // створюємо контейнер один раз
+  let host = document.getElementById('toastHost');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'toastHost';
+    host.setAttribute('role', 'status');
+    host.setAttribute('aria-live', 'polite');
+    document.body.appendChild(host);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+
+  host.appendChild(toast);
+
+  // анімація авто‑закриття
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => toast.classList.add('hide'), 2200);
+  setTimeout(() => toast.remove(), 2800);
+}
