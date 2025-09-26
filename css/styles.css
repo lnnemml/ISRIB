@@ -21,91 +21,77 @@ body {
     padding: 0 20px;
 }
 
-/* Header */
-.header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    transition: all 0.3s ease;
+/* === Slim Header === */
+.header-slim {
+  background: #ffffff;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
+.header-slim .header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    max-height: none;
-    padding: 0.5rem 1rem;
+.logo-image-slim {
+  height: 36px;
+  max-height: 36px;
+  display: block;
 }
 
-.logo-image {
-    height: 60px;
-    width: auto;
-    object-fit: contain;
+.nav-slim {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
-.nav {
-    display: flex;
-    gap: 30px;
-    align-items: center;
+.nav-slim a {
+  color: #0f172a;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.nav a {
-    text-decoration: none;
-    color: #374151;
-    font-weight: 500;
-    transition: color 0.3s ease;
-    position: relative;
+.nav-slim a:hover {
+  color: #1e40af;
 }
 
-.nav a:hover {
-    color: #1e40af;
+.cart-btn-slim {
+  background: #1e40af;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
 }
 
-.nav a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #1e40af;
-    transition: width 0.3s ease;
+.badge-slim {
+  background: #ffffff;
+  color: #1e40af;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 
-.nav a:hover::after {
-    width: 100%;
-}
+@media (max-width: 720px) {
+  .nav-slim {
+    gap: 16px;
+    font-size: 0.85rem;
+  }
 
-/* Updated Cart Button (now Contact to Order) */
-.cart-btn {
-    background: linear-gradient(135deg, #059669, #047857);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-}
+  .logo-image-slim {
+    height: 30px;
+  }
 
-.cart-btn:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #047857, #065f46);
-    box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+  .cart-btn-slim {
+    padding: 4px 10px;
+  }
 }
 
 /* Hero Section */
