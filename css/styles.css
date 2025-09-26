@@ -643,3 +643,125 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   will-change: transform, box-shadow, filter;
   transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, background .2s ease;
 }
+/* (тут іде вміст ТВОГО оригінального styles.css без змін — 1:1)
+   …
+   … (усі 645+ рядків зберігаються)
+   …
+*/
+
+/* =========================================================
+   ISRIB.shop overrides — 2025-09-26
+   Purpose: keep "View details + Add to cart" on first row, move "View cart" below full-width,
+            hide price inside Add to cart button, ensure toast host is top-right,
+            and style products hero header.
+   These rules are appended at the end to take precedence.
+   ========================================================= */
+
+/* Product footer layout */
+/* First row: View details + Add to cart; second row: View cart (full width) */
+.product-card .product-footer{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;                 /* allow controlled wrap */
+}
+.product-card .view-product,
+.product-card .add-to-cart{
+  order:1;
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+.product-card .add-to-cart{
+  min-width:200px;
+  white-space:nowrap;
+}
+.product-card .view-cart{
+  order:3;
+  flex:1 0 100%;
+  margin-top:6px;
+  justify-content:center;
+  display:inline-flex;
+}
+@media (max-width:560px){
+  .product-card .add-to-cart{
+    flex:1 1 auto;
+    min-width:0;
+  }
+}
+
+/* Add to cart button polishing (no price inside) */
+.add-to-cart{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 18px;
+  border-radius:14px;
+  font-weight:800;
+  line-height:1;
+  border:1px solid transparent;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  color:#fff;
+  box-shadow: 0 8px 24px rgba(2,6,23,.15);
+  will-change: transform, box-shadow, filter;
+  transition: transform .08s ease, box-shadow .2s ease, filter .2s ease, background .2s ease;
+}
+.add-to-cart:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+.add-to-cart:active{ transform: translateY(0); }
+.add-to-cart:focus-visible{ outline: 2px solid #93c5fd; outline-offset: 2px; border-radius: 14px; }
+.add-to-cart .add-price{ display:none !important; } /* hide any legacy price span */
+
+/* Toasts at the top-right (JS also sets top) */
+#toastHost{
+  position:fixed;
+  right:20px;
+  top:20px;
+  bottom:auto !important;         /* force away from bottom */
+  display:grid;
+  gap:10px;
+  z-index:9999;
+  pointer-events:none;
+}
+.toast{
+  pointer-events:auto;
+  background:#0f172a;
+  color:#fff;
+  font-weight:700;
+  padding:12px 16px;
+  border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  transform:translateY(8px);
+  opacity:0;
+  transition:transform .18s ease, opacity .18s ease;
+  border:1px solid rgba(255,255,255,.08);
+}
+.toast.show{ transform:translateY(0); opacity:1; }
+.toast.hide{ transform:translateY(8px); opacity:0; }
+
+/* Products hero (title + subtitle) — safe enhancement */
+.products-hero{
+  padding: 36px 0 20px;
+  position: relative;
+  background: linear-gradient(135deg, rgba(30,64,175,.06), rgba(14,165,233,.06));
+  border-bottom: 1px solid rgba(2,6,23,.06);
+}
+.products-hero h1{
+  font-weight:900;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  letter-spacing:-.02em;
+  background: linear-gradient(135deg, #1e40af, #0ea5e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 8px 0;
+}
+.products-hero .muted{
+  color:#475569;
+  font-weight:600;
+}
+@media (prefers-color-scheme: dark){
+  .products-hero{
+    background: linear-gradient(135deg, rgba(148,163,184,.08), rgba(59,130,246,.08));
+    border-bottom-color:#1e293b;
+  }
+  .products-hero .muted{ color:#cbd5e1; }
+}
