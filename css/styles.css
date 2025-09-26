@@ -868,3 +868,5 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .faq-button{ padding:18px }
   .faq-answer{ padding:0 18px 18px }
 }
+/* Ensure hidden answers are really hidden */
+.faq-answer[hidden] { display: none !important; }
