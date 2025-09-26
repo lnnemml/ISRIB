@@ -47,32 +47,25 @@
   <link rel="stylesheet" href="css/styles.css">
 
   <style>
-    /* --- Hero molecule SVG styles (replaces old gif) --- */
-    .hero-visual {
-      display:flex; align-items:center; justify-content:center;
-      min-height:320px;
+    /* Hero right-side: benefit card (replaces previous animation) */
+    .benefit-card{
+      display:grid; grid-template-columns:1fr 1fr; gap:18px;
+      background:linear-gradient(180deg,#f8fafc, #eef2ff); border:1px solid #e2e8f0;
+      border-radius:18px; padding:22px; max-width:560px; width:100%;
+      box-shadow:0 20px 50px rgba(2,6,23,.08);
     }
-    .molecule-svg {
-      width:min(520px, 90%);
-      height:auto;
-      filter: drop-shadow(0 10px 30px rgba(0,0,0,.12));
-    }
-    .mol-rotor { transform-origin: 50% 50%; animation: spin 28s linear infinite; }
-    .mol-pulse { animation: pulse 3.2s ease-in-out infinite; }
-    .bond { stroke:#60a5fa; stroke-width:2; opacity:.9 }
-    .node { fill:#1e40af; }
-    .node.core { fill:#0ea5e9; }
-    .ring { stroke:#93c5fd; stroke-dasharray:6 6; opacity:.6; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pulse {
-      0%,100% { transform: scale(1); }
-      50% { transform: scale(1.06); }
-    }
-    @media (prefers-reduced-motion: reduce){
-      .mol-rotor, .mol-pulse { animation:none; }
+    .b-row{ display:flex; gap:12px; align-items:flex-start; padding:12px; background:#fff; border:1px solid #e5e7eb; border-radius:14px; }
+    .b-row span{ font-size:22px; line-height:1; }
+    .b-row b{ color:#0f172a; }
+    .b-row small{ color:#64748b; }
+    @media (max-width: 720px){ .benefit-card{ grid-template-columns:1fr; } }
+    @media (prefers-color-scheme: dark){
+      .benefit-card{ background:linear-gradient(180deg,#0b1220,#0f172a); border-color:#1e293b; }
+      .b-row{ background:#0b1220; border-color:#1e293b; }
+      .b-row b{ color:#e5e7eb; } .b-row small{ color:#94a3b8; }
     }
 
-    /* Make cards clickable cursor hint */
+    /* Cursor hint for clickable product cards */
     .clickable-card { cursor:pointer; }
   </style>
 </head>
@@ -107,10 +100,7 @@
           <p>Access cutting-edge compounds like ISRIB, ZZL-7, and MPEP with guaranteed purity and worldwide shipping. Trusted by researchers globally.</p>
 
           <div class="hero-stats">
-            <div class="stat">
-              <span class="stat-number">98%+</span>
-              <span class="stat-label">Purity</span>
-            </div>
+            <!-- removed "98%+ Purity" as requested -->
             <div class="stat">
               <span class="stat-number">500+</span>
               <span class="stat-label">Researchers</span>
@@ -123,91 +113,19 @@
 
           <div class="cta-buttons">
             <a href="products.html" class="btn-primary" onclick="trackCTA('hero', 'browse_products')">🧬 Browse Products</a>
-            <a href="contact.html?inquiry=order" class="btn-secondary" onclick="trackCTA('hero', 'contact_order')">Contact to Order</a>
+            <!-- removed Contact to Order button in hero as requested -->
           </div>
         </div>
 
-        <!-- ISRIB stylized structural SVG -->
-<div class="hero-visual" aria-label="Molecular structure of ISRIB (stylized)">
-  <svg viewBox="0 0 1200 420" role="img" class="isrib-svg" aria-labelledby="isribTitle isribDesc">
-    <title id="isribTitle">ISRIB – stylized molecular structure</title>
-    <desc id="isribDesc">Two para-chloro phenyl rings connected via carbamate linkers to a central cyclohexane with amide bridges. Decorative, not for cheminformatics.</desc>
-
-    <defs>
-      <!-- base styles -->
-      <style>
-        .bond { stroke:#0b111f; stroke-width:6; stroke-linecap:round; fill:none }
-        .thin { stroke-width:4 }
-        .ring { stroke:#0b111f; stroke-width:6; fill:none }
-        .ring-dash { stroke:#0b111f; stroke-width:5; fill:none; stroke-dasharray:24 18; opacity:.28 }
-        .label { font: 700 28px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; fill:#0b111f }
-        .stereo-wedge { fill:#0b111f }
-        .stereo-hatch line { stroke:#0b111f; stroke-width:3 }
-        /* auto dark-on-light; you can invert for dark hero */
-        @media (prefers-color-scheme: dark){
-          .bond,.ring,.ring-dash,.stereo-hatch line{ stroke:#e6eefc }
-          .label{ fill:#e6eefc }
-          .stereo-wedge{ fill:#e6eefc }
-        }
-      </style>
-      <!-- simple hatch pattern for dashed stereobond -->
-      <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-        <line x1="0" y1="0" x2="0" y2="8" />
-      </pattern>
-    </defs>
-
-    <!-- subtle background ring for depth -->
-    <circle cx="600" cy="210" r="190" class="ring-dash" />
-
-    <!-- ==== LEFT p-CHLOROPHENYL RING ==== -->
-    <!-- hexagon -->
-    <polygon class="ring" points="120,210 165,132 250,132 295,210 250,288 165,288" />
-    <!-- para carbon to chlorine -->
-    <line class="bond" x1="120" y1="210" x2="80" y2="210"/>
-    <text class="label" x="55" y="220">Cl</text>
-
-    <!-- phenyl–O–C(=O)–NH– linkage to center -->
-    <!-- aryl–O -->
-    <line class="bond" x1="295" y1="210" x2="335" y2="210"/>
-    <!-- carbonyl -->
-    <line class="bond" x1="335" y1="210" x2="375" y2="210"/>
-    <line class="thin" x1="365" y1="195" x2="395" y2="195"/>
-    <!-- amide NH (stereo wedge toward viewer) -->
-    <polygon class="stereo-wedge" points="395,200 423,186 423,214"/>
-    <!-- into cyclohexane left vertex -->
-    <line class="bond" x1="423" y1="200" x2="470" y2="225"/>
-
-    <!-- ==== CENTRAL CYCLOHEXANE (chair-ish) ==== -->
-    <polygon class="ring" points="470,225 540,180 610,215 610,295 540,335 470,295"/>
-    <!-- from top-right carbon to NH (dashed hatch away) -->
-    <polygon fill="url(#hatch)" points="610,215 640,205 640,235"/>
-    <text class="label" x="645" y="215">H</text>
-
-    <!-- ==== RIGHT –NH–CO–O–Ar ==== -->
-    <!-- NH to carbonyl -->
-    <line class="bond" x1="640" y1="220" x2="685" y2="245"/>
-    <line class="bond" x1="685" y1="245" x2="730" y2="245"/>
-    <!-- =O -->
-    <line class="thin" x1="720" y1="230" x2="750" y2="230"/>
-    <!-- –O–CH2– to aryl -->
-    <line class="bond" x1="750" y1="245" x2="790" y2="245"/>
-    <line class="bond" x1="790" y1="245" x2="830" y2="210"/>
-
-    <!-- RIGHT p-CHLOROPHENYL RING -->
-    <polygon class="ring" points="830,210 915,132 1000,132 1045,210 1000,288 915,288"/>
-    <!-- para chlorine -->
-    <line class="bond" x1="1045" y1="210" x2="1085" y2="210"/>
-    <text class="label" x="1095" y="220">Cl</text>
-
-    <!-- small labels for heteroatoms -->
-    <text class="label" x="350" y="204">O</text>
-    <text class="label" x="385" y="188">O</text>
-    <text class="label" x="432" y="198">NH</text>
-    <text class="label" x="742" y="238">O</text>
-    <text class="label" x="698" y="238">O</text>
-  </svg>
-</div>
-
+        <!-- hero right: benefit card -->
+        <div class="hero-visual">
+          <div class="benefit-card">
+            <div class="b-row"><span>🧪</span><div><b>98%+ Purity</b><br><small>HPLC & NMR verified</small></div></div>
+            <div class="b-row"><span>📦</span><div><b>Fast Worldwide</b><br><small>Discreet packaging</small></div></div>
+            <div class="b-row"><span>📄</span><div><b>COA Included</b><br><small>MS & NMR on request</small></div></div>
+            <div class="b-row"><span>🛡️</span><div><b>QC Protocol</b><br><small>Batch‑level control</small></div></div>
+          </div>
+        </div>
         <!-- /hero-visual -->
       </div>
     </div>
@@ -319,7 +237,7 @@
           <div class="product-header">
             <div>
               <div class="product-name">MPEP Oxalate</div>
-              <div class="product-chemical">C₁₁H₁₀N₂•C₂H₂O₄</div>
+              <div class="product-chemical">C₁₁H₁₀N₂•C₂H₂О₄</div>
             </div>
           </div>
           <p class="product-description">Selective mGluR5 negative allosteric modulator with high specificity. Essential tool for glutamate receptor research.</p>
@@ -340,64 +258,63 @@
     </div>
   </section>
 
-   <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>ISRIB Shop</h3>
-                    <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality and reliability.</p>
-                    <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Products</h3>
-                    <ul>
-                        <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
-                        <li><a href="product_isrib.html">ISRIB Original</a></li>
-                        <li><a href="product_zzl_7.html">ZZL-7</a></li>
-                        <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
-                        <li><a href="products.html">All Products</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Information</h3>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="quality.html">Quality Control</a></li>
-                        <li><a href="safety.html">Safety Guidelines</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="research.html">Research Use Only</a></li>
-                        <li><a href="disclaimer.html">Disclaimer</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
-            </div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>ISRIB Shop</h3>
+          <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality and reliability.</p>
+          <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
         </div>
-    </footer>
 
-    <!-- Sticky Mobile CTA -->
-    <div class="sticky-mobile-cta">
-        <a href="contact.html?inquiry=order" onclick="trackCTA('mobile-sticky', 'contact_order')">
-            💬 Contact to Order
-        </a>
+        <div class="footer-section">
+          <h3>Products</h3>
+          <ul>
+            <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+            <li><a href="product_isrib.html">ISRIB Original</a></li>
+            <li><a href="product_zzl_7.html">ZZL-7</a></li>
+            <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+            <li><a href="products.html">All Products</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Information</h3>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="quality.html">Quality Control</a></li>
+            <li><a href="safety.html">Safety Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="research.html">Research Use Only</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+      </div>
     </div>
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
+  </footer>
 
+  <!-- Sticky Mobile CTA (залишив без змін) -->
+  <div class="sticky-mobile-cta">
+    <a href="contact.html?inquiry=order" onclick="trackCTA('mobile-sticky', 'contact_order')">
+      💬 Contact to Order
+    </a>
+  </div>
+
+  <script>
     // Make the entire product card clickable (except internal links)
     document.querySelectorAll('.products-grid .product-card').forEach(card => {
       const linkEl = card.querySelector('.view-product');
