@@ -90,46 +90,118 @@
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1>Advanced <span class="highlight">Research Chemicals</span> for Scientific Innovation</h1>
-          <p class="tagline">Home of ISRIB A15 – Pure. Tested. Effective.</p>
-          <p>Access cutting-edge compounds like ISRIB, ZZL-7, and MPEP with guaranteed purity and worldwide shipping. Trusted by researchers globally.</p>
+  <!-- HERO SECTION (updated) -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content hero-grid">
+      <!-- Title spans both columns -->
+      <h1 class="page-title">
+        Advanced <span class="highlight">Research Chemicals</span> for Scientific Innovation
+      </h1>
 
-          <div class="hero-stats">
-            <!-- removed "98%+ Purity" as requested -->
-            <div class="stat">
-              <span class="stat-number">500+</span>
-              <span class="stat-label">Researchers</span>
-            </div>
-            <div class="stat">
-              <span class="stat-number">50+</span>
-              <span class="stat-label">Countries</span>
-            </div>
+      <!-- Left column -->
+      <div class="hero-left">
+        <!-- removed tagline -->
+        <p>
+          Access cutting-edge compounds like ISRIB, ZZL‑7, and MPEP with guaranteed purity and
+          worldwide shipping. Trusted by researchers globally.
+        </p>
+
+        <div class="hero-stats">
+          <!-- removed 98%+ Purity stat (бо воно в інфокартці) -->
+          <div class="stat">
+            <span class="stat-number">500+</span>
+            <span class="stat-label">Researchers</span>
           </div>
-
-          <div class="cta-buttons">
-            <a href="products.html" class="btn-primary" onclick="trackCTA('hero', 'browse_products')">🧬 Browse Products</a>
-            <!-- removed Contact to Order button in hero as requested -->
-          </div>
-        </div>
-
-        <!-- hero right: benefit card -->
-        <div class="hero-visual">
-          <div class="benefit-card">
-            <div class="b-row"><span>🧪</span><div><b>98%+ Purity</b><br><small>HPLC & NMR verified</small></div></div>
-            <div class="b-row"><span>📦</span><div><b>Fast Worldwide</b><br><small>Discreet packaging</small></div></div>
-            <div class="b-row"><span>📄</span><div><b>COA Included</b><br><small>MS & NMR on request</small></div></div>
-            <div class="b-row"><span>🛡️</span><div><b>QC Protocol</b><br><small>Batch‑level control</small></div></div>
+          <div class="stat">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Countries</span>
           </div>
         </div>
-        <!-- /hero-visual -->
+
+        <div class="cta-buttons">
+          <a href="products.html" class="btn-primary" onclick="trackCTA?.('hero','browse_products')">
+            🧬 Browse Products
+          </a>
+        </div>
+      </div>
+
+      <!-- Right column — benefit card -->
+      <div class="hero-visual">
+        <div class="benefit-card">
+          <div class="b-row">
+            <span>🧪</span>
+            <div><b>98%+ Purity</b><br><small>HPLC &amp; NMR verified</small></div>
+          </div>
+          <div class="b-row">
+            <span>📦</span>
+            <div><b>Fast Worldwide</b><br><small>Discreet packaging</small></div>
+          </div>
+          <div class="b-row">
+            <span>📄</span>
+            <div><b>COA Included</b><br><small>MS &amp; NMR on request</small></div>
+          </div>
+          <div class="b-row">
+            <span>🛡️</span>
+            <div><b>QC Protocol</b><br><small>Batch‑level control</small></div>
+          </div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- Scoped overrides for the hero layout and larger infocard -->
+  <style>
+    /* grid: title spans full width; two columns below it */
+    .hero-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 640px; /* right column a bit wider */
+      grid-auto-rows:auto;
+      align-items:center;
+      gap:40px;
+    }
+    .page-title{
+      grid-column:1 / -1;          /* span both columns */
+      margin:0 0 8px 0;
+      line-height:1.05;
+      font-weight:900;
+      font-size:clamp(2.4rem, 4.5vw, 4rem);
+    }
+    .hero-left{ max-width: 720px; }
+    .hero-left > p{ margin:10px 0 18px; }
+
+    /* bigger benefit card */
+    .benefit-card{
+      max-width: 640px;            /* було 560px */
+      padding: 26px;               /* було 22px */
+      grid-template-columns: 1fr 1fr;
+    }
+    .b-row{ padding:14px; }
+    .b-row span{ font-size:24px; }
+
+    /* responsive */
+    @media (max-width: 1100px){
+      .hero-grid{ grid-template-columns: minmax(0,1fr) 560px; }
+    }
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .hero-visual{ order: 3; } /* інфокартка під текстом на мобільних */
+      .benefit-card{ max-width: 100%; }
+    }
+
+    /* dark-scheme adjustments for the card (зберігаємо твої попередні стилі) */
+    @media (prefers-color-scheme: dark){
+      .benefit-card{
+        background:linear-gradient(180deg,#0b1220,#0f172a);
+        border-color:#1e293b;
+      }
+      .b-row{ background:#0b1220; border-color:#1e293b; }
+      .b-row b{ color:#e5e7eb; }
+      .b-row small{ color:#94a3b8; }
+    }
+  </style>
+</section>
+
 
   <!-- Trust Indicators -->
   <section class="trust-section">
