@@ -951,40 +951,50 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!header) return;
 
     let lastY = window.scrollY;
-    const compactThreshold = 48; // px scrolled to compact header
+    // Менший поріг, щоб ефект спрацьовував швидше
+    const compactThreshold = 24;     // коли стискати header
+    const hideThreshold    = 16;     // мінімальний рух (px), щоб вважати напрямок
+    const startHideAt      = 20;     // з якого Y взагалі дозволяти приховування
+
+    let ticking = false;
 
     function onScroll() {
       const y = window.scrollY;
 
-      // add shadow when scrolled
-      header.classList.toggle('scrolled', y > 4);
+      function run() {
+        // Легка тінь, щойно зрушили
+        header.classList.toggle('scrolled', y > 1);
 
-      // compact size after some scroll
-      header.classList.toggle('compact', y > compactThreshold);
+        // Компактний режим раніше
+        header.classList.toggle('compact', y > compactThreshold);
 
-      // hide when scrolling down, show when up
-      const goingDown = y > lastY && y > 80;
-      header.classList.toggle('scrolling-down', goingDown);
+        // Визначення напрямку з “мертвою зоною”
+        const dy = y - lastY;
+        const goingDown = dy > hideThreshold && y > startHideAt;
+        const goingUp   = dy < -hideThreshold;
 
-      lastY = y;
+        if (goingDown) {
+          header.classList.add('scrolling-down');
+        } else if (goingUp) {
+          header.classList.remove('scrolling-down');
+        }
+
+        lastY = y;
+        ticking = false;
+      }
+
+      if (!ticking) {
+        window.requestAnimationFrame(run);
+        ticking = true;
+      }
     }
 
-    // run once and on scroll
+    // ініціалізація
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
   })();
 
-  // Sync cart count to mobile badge if you update #cartCount elsewhere
-  (function() {
-    const desktop = document.getElementById('cartCount');
-    const mobile  = document.getElementById('cartCountMobile');
-    if (!desktop || !mobile) return;
 
-    const sync = () => { mobile.textContent = desktop.textContent; };
-    const mo = new MutationObserver(sync);
-    mo.observe(desktop, { childList: true, characterData: true, subtree: true });
-    sync();
-  })();
 
 
 
