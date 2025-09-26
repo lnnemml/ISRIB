@@ -15,23 +15,23 @@
 <body>
      <!-- Header -->
     <header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-         🧺 Cart <span id="cartCount" class="badge">0</span>
-        </a>
-      </nav>
-    </div>
-  </div>
-</header>
+      <div class="container">
+        <div class="header-content">
+          <a href="/" class="logo">
+            <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
+          </a>
+          <nav class="nav">
+            <a href="products.html">Products</a>
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contact</a>
+            <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
+             🧺 Cart <span id="cartCount" class="badge">0</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
 
     <!-- Page Header -->
     <section class="page-header">
@@ -43,329 +43,321 @@
 
     <!-- FAQ Sections -->
     <section style="background: white; padding: 80px 0;">
-        <div class="container">
-            
-            <!-- Product Questions -->
-            <div style="margin-bottom: 60px;">
-                <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">🧬 Product Questions</h2>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
-                    
-                    <div class="faq-item" id="what-is-isrib">
-                        <div class="faq-question">What is ISRIB A15?</div>
-                        <div class="faq-answer">ISRIB A15 is an enhanced analogue of the original ISRIB compound, designed with improved bioavailability and potency. It targets the eIF2B complex to inhibit the integrated stress response (ISR), potentially restoring cognitive function that has been impaired by stress, aging, or injury. A15 is specifically optimized for oral administration and research applications.</div>
-                    </div>
+      <div class="container">
 
-                    <div class="faq-item">
-                        <div class="faq-question">How does ISRIB work?</div>
-                        <div class="faq-answer">ISRIB works by targeting the integrated stress response (ISR) in cells. When neurons are under stress, the ISR acts like a brake on protein synthesis, which is essential for memory formation. ISRIB releases this brake by enhancing eIF2B function, allowing neurons to resume normal protein production and potentially restore cognitive abilities.</div>
-                    </div>
+        <style>
+          /* FAQ specific styles + anchor helpers */
+          .faq-item {
+              background: #f8fafc;
+              border-radius: 15px;
+              padding: 25px;
+              transition: all 0.3s ease;
+              border-left: 4px solid #dc2626;
+              cursor: pointer;
+              scroll-margin-top: 120px; /* offset for anchored scroll */
+          }
+          .faq-item:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+              border-left-color: #1e40af;
+          }
+          .faq-question {
+              font-size: 1.1rem;
+              font-weight: 700;
+              color: #1e293b;
+              margin-bottom: 12px;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+          }
+          .faq-question::before { content: '🔬'; font-size: 1.2rem; }
+          .faq-answer { color: #64748b; line-height: 1.7; font-size: 1rem; }
 
-                    <div class="faq-item">
-                        <div class="faq-question">What's the difference between ISRIB and ISRIB A15?</div>
-                        <div class="faq-answer">ISRIB A15 is a more potent analog with enhanced pharmacokinetic properties. While the original ISRIB requires larger doses and has limited oral bioavailability, A15 achieves similar effects at lower doses (5-15mg vs 50+ mg) and is better suited for oral administration. A15 also has improved stability and solubility.</div>
-                    </div>
+          /* alias anchors for backward compatibility */
+          .anchor-target { display:block; height:0; visibility:hidden; scroll-margin-top:120px; }
 
-                    <div class="faq-item">
-                        <div class="faq-question">What purity levels do you guarantee?</div>
-                        <div class="faq-answer">All our compounds are ≥98% purity, verified through independent third-party testing using HPLC, NMR, and mass spectrometry. Each order includes a comprehensive Certificate of Analysis (COA) documenting the exact purity and structural confirmation.</div>
-                    </div>
+          /* Responsive adjustments */
+          @media (max-width: 768px) {
+              .faq-item { padding: 20px; }
+              .faq-question { font-size: 1rem; }
+              .faq-answer { font-size: 0.9rem; }
+          }
 
-                    <div class="faq-item">
-                        <div class="faq-question">Are these compounds safe?</div>
-                        <div class="faq-answer">These are research chemicals intended for laboratory use only. While animal studies have shown promising safety profiles, these compounds have not been approved for human consumption. All products are sold strictly for research purposes and should be handled by qualified researchers following proper safety protocols.</div>
-                    </div>
+          @media (prefers-color-scheme: dark) {
+            .faq-item { background:#1e293b; border-color:#334155; }
+            .faq-item:hover { border-left-color:#3b82f6; }
+            .faq-question { color:#e2e8f0; }
+            .faq-answer { color:#94a3b8; }
+          }
+        </style>
 
-                    <div class="faq-item">
-                        <div class="faq-question">How should I store these compounds?</div>
-                        <div class="faq-answer">Store at -20°C in a dry environment, protected from light. Use desiccant packets to prevent moisture exposure. Properly stored compounds maintain stability for 2+ years. Always allow compounds to reach room temperature before opening containers to prevent condensation.</div>
-                    </div>
+        <!-- Product Questions -->
+        <div style="margin-bottom: 60px;">
+          <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">🧬 Product Questions</h2>
 
-                </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
+
+            <!-- alias for old link -->
+            <span id="what-is-isrib" class="anchor-target"></span>
+            <div class="faq-item" id="isrib-a15">
+              <div class="faq-question">What is ISRIB A15?</div>
+              <div class="faq-answer">ISRIB A15 is an enhanced analogue of the original ISRIB compound, designed with improved bioavailability and potency. It targets the eIF2B complex to inhibit the integrated stress response (ISR), potentially restoring cognitive function that has been impaired by stress, aging, or injury. A15 is specifically optimized for oral administration and research applications.</div>
             </div>
 
-            <!-- Ordering Questions -->
-            <div style="margin-bottom: 60px;">
-                <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">🛒 Ordering & Payment</h2>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
-                    
-                    <div class="faq-item" id="how-to-order">
-                        <div class="faq-question">How do I place an order?</div>
-                        <div class="faq-answer">Contact us directly through our contact form or live chat. Specify the product, quantity, and your location. We'll provide a personalized quote including shipping costs and arrange secure payment methods that work best for your location.</div>
-                    </div>
-
-                    <div class="faq-item" id="payment-methods">
-                        <div class="faq-question">What payment methods do you accept?</div>
-                        <div class="faq-answer">We accept cryptocurrency (Bitcoin, Ethereum, USDT), bank transfers (SEPA, SWIFT), and other secure methods discussed individually. Cryptocurrency is preferred for faster processing and enhanced privacy. Payment details are arranged privately for security.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Can I get a custom quantity?</div>
-                        <div class="faq-answer">Yes! We offer custom synthesis for specific quantities or modified compounds. Minimum order quantities and pricing depend on the complexity of synthesis. Contact us with your requirements for a personalized quote and timeline.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Do you offer bulk discounts?</div>
-                        <div class="faq-answer">Yes, we provide significant discounts for bulk orders (>10g). Volume pricing is available for research institutions, universities, and labs requiring larger quantities. Contact us for institutional pricing and terms.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Is my payment information secure?</div>
-                        <div class="faq-answer">Absolutely. All payment discussions happen through encrypted communication channels. We never store payment information and arrange transactions individually with each customer to ensure maximum security and privacy.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Can I get an invoice for my institution?</div>
-                        <div class="faq-answer">Yes, we provide proper invoices and documentation for institutional purchases. We can work with university purchasing departments and provide all necessary paperwork for research funding and compliance requirements.</div>
-                    </div>
-
-                </div>
+            <div class="faq-item" id="how-does-work">
+              <div class="faq-question">How does ISRIB work?</div>
+              <div class="faq-answer">ISRIB works by targeting the integrated stress response (ISR) in cells. When neurons are under stress, the ISR acts like a brake on protein synthesis, which is essential for memory formation. ISRIB releases this brake by enhancing eIF2B function, allowing neurons to resume normal protein production and potentially restore cognitive abilities.</div>
             </div>
 
-            <!-- Shipping Questions -->
-            <div style="margin-bottom: 60px;">
-                <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">📦 Shipping & Delivery</h2>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
-                    
-                    <div class="faq-item" id="shipping-time">
-                        <div class="faq-question">How long does shipping take?</div>
-                        <div class="faq-answer">5-15 business days depending on destination. Europe: 5-10 days, North America: 7-12 days, Australia/Asia: 10-15 days. Express shipping options available for urgent orders. All shipments include tracking information.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Do you ship internationally?</div>
-                        <div class="faq-answer">Yes, we ship to 50+ countries worldwide. We handle all customs documentation and ensure compliance with local regulations for research chemicals. Some countries may have restrictions - contact us to confirm shipping to your location.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">How is my order packaged?</div>
-                        <div class="faq-answer">All orders are packaged discretely in plain packaging with no external indication of contents. Compounds are sealed in protective containers with proper labeling, safety information, and COA documentation. Temperature-sensitive items include cold packs when necessary.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">What if my package is lost or damaged?</div>
-                        <div class="faq-answer">All shipments are fully insured and tracked. If a package is lost, delayed, or arrives damaged, we'll immediately ship a replacement at no additional cost. We stand behind every order until it reaches you in perfect condition.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Can you ship to my university/institution?</div>
-                        <div class="faq-answer">Yes, we regularly ship to universities, research institutions, and commercial laboratories worldwide. We can coordinate with receiving departments and provide all necessary documentation for institutional deliveries.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Are there any shipping restrictions?</div>
-                        <div class="faq-answer">Research chemicals may be restricted in some countries. We stay current with international regulations and will inform you if any restrictions apply to your location. We can often suggest alternative compounds or shipping routes when restrictions exist.</div>
-                    </div>
-
-                </div>
+            <div class="faq-item" id="difference-a15">
+              <div class="faq-question">What's the difference between ISRIB and ISRIB A15?</div>
+              <div class="faq-answer">ISRIB A15 is a more potent analog with enhanced pharmacokinetic properties. While the original ISRIB requires larger doses and has limited oral bioavailability, A15 achieves similar effects at lower doses (5–15 mg vs 50+ mg) and is better suited for oral administration. A15 also has improved stability and solubility.</div>
             </div>
 
-            <!-- Technical Questions -->
-            <div style="margin-bottom: 60px;">
-                <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">🔬 Technical Support</h2>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
-                    
-                    <div class="faq-item">
-                        <div class="faq-question">Can you provide technical assistance?</div>
-                        <div class="faq-answer">Yes, our team includes PhD-level scientists who can provide technical guidance on compound handling, solubility, storage, and research applications. Contact our technical support team for specialized assistance with your research protocols.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Do you have solubility data?</div>
-                        <div class="faq-answer">Yes, we provide detailed solubility information for all compounds in various solvents (DMSO, ethanol, water, etc.). This information is included with each COA and can help you prepare stock solutions for your research applications.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Can you recommend dosing for research?</div>
-                        <div class="faq-answer">We can share published research data and typical concentrations used in academic studies, but we cannot provide specific dosing recommendations. All research applications should be designed by qualified researchers following institutional guidelines and ethics protocols.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Do you provide NMR or MS data?</div>
-                        <div class="faq-answer">Yes, complete analytical data including 1H NMR, 13C NMR, and mass spectrometry results are available for all compounds. This data is included in our COA and can be provided separately for research documentation needs.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Can you synthesize novel compounds?</div>
-                        <div class="faq-answer">Yes, we offer custom synthesis services for novel research compounds. Our chemistry team can work with you to synthesize specific analogs or completely new structures. Contact us with your molecular structure and requirements for feasibility assessment and pricing.</div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">Do you offer reference standards?</div>
-                        <div class="faq-answer">Yes, we can provide certified reference standards for analytical method development and validation. These are produced to even higher purity standards and come with extended analytical documentation suitable for regulatory submissions.</div>
-                    </div>
-
-                </div>
+            <div class="faq-item" id="purity">
+              <div class="faq-question">What purity levels do you guarantee?</div>
+              <div class="faq-answer">All our compounds are ≥98% purity, verified through independent third-party testing using HPLC, NMR, and mass spectrometry.</div>
             </div>
 
+            <div class="faq-item" id="safety">
+              <div class="faq-question">Are these compounds safe?</div>
+              <div class="faq-answer">These are research chemicals intended for laboratory use only. While animal studies have shown promising safety profiles, these compounds have not been approved for human consumption. All products are sold strictly for research purposes and should be handled by qualified researchers following proper safety protocols.</div>
+            </div>
+
+            <div class="faq-item" id="storage">
+              <div class="faq-question">How should I store these compounds?</div>
+              <div class="faq-answer">Store at -20°C in a dry environment, protected from light. Use desiccant packets to prevent moisture exposure. Properly stored compounds maintain stability for 2+ years. Always allow compounds to reach room temperature before opening containers to prevent condensation.</div>
+            </div>
+
+          </div>
         </div>
+
+        <!-- Ordering Questions -->
+        <div style="margin-bottom: 60px;">
+          <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">🛒 Ordering & Payment</h2>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
+
+            <div class="faq-item" id="how-to-order">
+              <div class="faq-question">How do I place an order?</div>
+              <div class="faq-answer">Add desired products to your cart and proceed to checkout — no account required. We’ll confirm shipping details and finalize payment after checkout.</div>
+            </div>
+
+            <!-- alias for old id -->
+            <span id="payment-methods" class="anchor-target"></span>
+            <div class="faq-item" id="payments">
+              <div class="faq-question">What payment methods do you accept?</div>
+              <div class="faq-answer">We accept cryptocurrency (USDT, BTC), bank transfers (SEPA/SWIFT), and Wise. Specific method is arranged per customer for speed and privacy.</div>
+            </div>
+
+            <div class="faq-item" id="custom-orders">
+              <div class="faq-question">Can I get a custom quantity?</div>
+              <div class="faq-answer">Yes! We offer custom synthesis and bulk production. Send your requirements for a quote and timeline.</div>
+            </div>
+
+            <div class="faq-item" id="bulk-discounts">
+              <div class="faq-question">Do you offer bulk discounts?</div>
+              <div class="faq-answer">Yes, significant discounts are available for bulk orders (&gt;10 g) and institutional purchases.</div>
+            </div>
+
+            <div class="faq-item" id="payment-security">
+              <div class="faq-question">Is my payment information secure?</div>
+              <div class="faq-answer">Absolutely. All payment details are handled via encrypted channels. We don’t store sensitive payment data.</div>
+            </div>
+
+            <div class="faq-item" id="invoices">
+              <div class="faq-question">Can I get an invoice for my institution?</div>
+              <div class="faq-answer">Yes, we provide invoices and required documentation for universities and research institutions.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Shipping Questions -->
+        <div style="margin-bottom: 60px;">
+          <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">📦 Shipping & Delivery</h2>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
+
+            <!-- alias for plural form -->
+            <span id="shipping-times" class="anchor-target"></span>
+            <div class="faq-item" id="shipping-time">
+              <div class="faq-question">How long does shipping take?</div>
+              <div class="faq-answer">Typically 5–15 business days depending on destination: Europe 5–10, North America 7–12, Australia/Asia 10–15. Express options available. All orders include tracking.</div>
+            </div>
+
+            <!-- add main + alias id -->
+            <span id="shipping" class="anchor-target"></span>
+            <div class="faq-item" id="international-shipping">
+              <div class="faq-question">Do you ship internationally?</div>
+              <div class="faq-answer">Yes — we ship to 50+ countries. We manage customs paperwork and ensure compliance. Packaging is discreet.</div>
+            </div>
+
+            <div class="faq-item" id="packaging">
+              <div class="faq-question">How is my order packaged?</div>
+              <div class="faq-answer">Orders are packed discreetly with proper labeling and safety info. Temperature‑sensitive items include cold packs when needed.</div>
+            </div>
+
+            <div class="faq-item" id="lost-damaged">
+              <div class="faq-question">What if my package is lost or damaged?</div>
+              <div class="faq-answer">Shipments are tracked and insured. If a package is lost or damaged, we will promptly send a replacement at no extra cost.</div>
+            </div>
+
+            <div class="faq-item" id="institution-shipping">
+              <div class="faq-question">Can you ship to my university/institution?</div>
+              <div class="faq-answer">Yes, we frequently ship to universities and labs. We can coordinate with receiving departments and provide all required documents.</div>
+            </div>
+
+            <div class="faq-item" id="restrictions">
+              <div class="faq-question">Are there any shipping restrictions?</div>
+              <div class="faq-answer">Some countries restrict certain research chemicals. We’ll advise on restrictions and alternatives for your location.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Technical Questions -->
+        <div style="margin-bottom: 60px;">
+          <h2 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center;">🔬 Technical Support</h2>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
+
+            <div class="faq-item" id="tech-support">
+              <div class="faq-question">Can you provide technical assistance?</div>
+              <div class="faq-answer">Yes, our team can advise on handling, solubility, storage, and typical research use cases.</div>
+            </div>
+
+            <div class="faq-item" id="solubility">
+              <div class="faq-question">Do you have solubility data?</div>
+              <div class="faq-answer">We provide solubility info for common solvents (DMSO, ethanol, water, etc.) in the COA or upon request.</div>
+            </div>
+
+            <div class="faq-item" id="dosing">
+              <div class="faq-question">Can you recommend dosing for research?</div>
+              <div class="faq-answer">We can share published data and common concentration ranges, but cannot provide specific dosing advice. Follow your institution’s guidelines.</div>
+            </div>
+
+            <div class="faq-item" id="nmr-ms">
+              <div class="faq-question">Do you provide NMR or MS data?</div>
+              <div class="faq-answer">Yes — ¹H/¹³C NMR and mass spectrometry data are available for all compounds. Included with COA or on request.</div>
+            </div>
+
+            <div class="faq-item" id="novel-synthesis">
+              <div class="faq-question">Can you synthesize novel compounds?</div>
+              <div class="faq-answer">Yes, we offer custom synthesis for novel research compounds and analog series. Send structure and requirements for feasibility and pricing.</div>
+            </div>
+
+            <div class="faq-item" id="reference-standards">
+              <div class="faq-question">Do you offer reference standards?</div>
+              <div class="faq-answer">Yes, certified reference standards with extended analytical documentation are available for method development and validation.</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </section>
 
     <!-- Contact CTA -->
     <section style="background: linear-gradient(135deg, #1e40af, #0ea5e9); color: white; padding: 80px 0; text-align: center;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px;">Still Have Questions?</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Our expert team is here to help with any questions about our research chemicals.</p>
-            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <a href="contact.html" class="btn-primary" style="background: white; color: #1e40af;">Contact Support</a>
-                <a href="mailto:isrib.shop@protonmail.com" class="btn-secondary" style="border-color: white; color: white;">Email Directly</a>
-            </div>
-        </div>
+      <div class="container">
+          <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px;">Still Have Questions?</h2>
+          <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Our expert team is here to help with any questions about our research chemicals.</p>
+          <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+              <a href="contact.html" class="btn-primary" style="background: white; color: #1e40af;">Contact Support</a>
+              <a href="mailto:isrib.shop@protonmail.com" class="btn-secondary" style="border-color: white; color: white;">Email Directly</a>
+          </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>ISRIB Shop</h3>
-                    <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality, reliability, and personalized service.</p>
-                    <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
-                </div>
+      <div class="container">
+          <div class="footer-content">
+              <div class="footer-section">
+                  <h3>ISRIB Shop</h3>
+                  <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality, reliability, and personalized service.</p>
+                  <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
+              </div>
 
-                <div class="footer-section">
-                    <h3>Products</h3>
-                    <ul>
-                        <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
-                        <li><a href="product_isrib.html">ISRIB Original</a></li>
-                        <li><a href="product_zzl_7.html">ZZL-7</a></li>
-                        <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
-                        <li><a href="products.html">All Products</a></li>
-                    </ul>
-                </div>
+              <div class="footer-section">
+                  <h3>Products</h3>
+                  <ul>
+                      <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+                      <li><a href="product_isrib.html">ISRIB Original</a></li>
+                      <li><a href="product_zzl_7.html">ZZL-7</a></li>
+                      <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+                      <li><a href="products.html">All Products</a></li>
+                  </ul>
+              </div>
 
-                <div class="footer-section">
-                    <h3>Information</h3>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="quality.html">Quality Control</a></li>
-                        <li><a href="safety.html">Safety Guidelines</a></li>
-                    </ul>
-                </div>
+              <div class="footer-section">
+                  <h3>Information</h3>
+                  <ul>
+                      <li><a href="about.html">About Us</a></li>
+                      <li><a href="faq.html">FAQ</a></li>
+                      <li><a href="contact.html">Contact</a></li>
+                      <li><a href="quality.html">Quality Control</a></li>
+                      <li><a href="safety.html">Safety Guidelines</a></li>
+                  </ul>
+              </div>
 
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="research.html">Research Use Only</a></li>
-                        <li><a href="disclaimer.html">Disclaimer</a></li>
-                    </ul>
-                </div>
-            </div>
+              <div class="footer-section">
+                  <h3>Legal</h3>
+                  <ul>
+                      <li><a href="terms.html">Terms of Service</a></li>
+                      <li><a href="privacy.html">Privacy Policy</a></li>
+                      <li><a href="research.html">Research Use Only</a></li>
+                      <li><a href="disclaimer.html">Disclaimer</a></li>
+                  </ul>
+              </div>
+          </div>
 
-            <div class="footer-bottom">
-                <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
-            </div>
-        </div>
+          <div class="footer-bottom">
+              <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+          </div>
+      </div>
     </footer>
 
     <script src="js/main.js"></script>
-    
-    <style>
-        /* FAQ specific styles */
-        .faq-item {
-            background: #f8fafc;
-            border-radius: 15px;
-            padding: 25px;
-            transition: all 0.3s ease;
-            border-left: 4px solid #dc2626;
-            cursor: pointer;
-        }
 
-        .faq-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border-left-color: #1e40af;
-        }
-
-        .faq-question {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .faq-question::before {
-            content: '🔬';
-            font-size: 1.2rem;
-        }
-
-        .faq-answer {
-            color: #64748b;
-            line-height: 1.7;
-            font-size: 1rem;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .faq-item {
-                padding: 20px;
-            }
-            
-            .faq-question {
-                font-size: 1rem;
-            }
-            
-            .faq-answer {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
-    
     <script>
-        // FAQ accordion functionality
-        document.querySelectorAll('.faq-item').forEach(item => {
-            item.addEventListener('click', function() {
-                // Optional: Add expand/collapse functionality
-                this.classList.toggle('active');
-                
-                // Track FAQ interaction
-                const question = this.querySelector('.faq-question').textContent;
-                if (typeof trackEvent === 'function') {
-                    trackEvent('faq_click', {
-                        question: question
-                    });
-                }
-            });
-        });
+      // FAQ accordion click tracking + (optional) open/close toggle
+      document.querySelectorAll('.faq-item').forEach(item => {
+          item.addEventListener('click', function() {
+              this.classList.toggle('active');
+              const question = this.querySelector('.faq-question')?.textContent?.trim();
+              if (typeof trackEvent === 'function') {
+                  trackEvent('faq_click', { question });
+              }
+          });
+      });
 
-        // Smooth scroll to FAQ section from URL hash
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.location.hash) {
-                const target = document.querySelector(window.location.hash);
-                if (target) {
-                    setTimeout(() => {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                        target.style.background = '#eff6ff';
-                        setTimeout(() => {
-                            target.style.background = '#f8fafc';
-                        }, 2000);
-                    }, 100);
-                }
-            }
-        });
+      // Smooth highlight on anchor navigation
+      document.addEventListener('DOMContentLoaded', function() {
+          if (window.location.hash) {
+              const target = document.querySelector(window.location.hash);
+              if (target) {
+                  target.style.background = '#eff6ff';
+                  setTimeout(() => { target.style.background = ''; }, 2000);
+                  target.scrollIntoView({ behavior: 'smooth' });
+              }
+          }
+      });
     </script>
+
     <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
 </body>
 </html>
