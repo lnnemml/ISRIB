@@ -239,7 +239,6 @@ body {
     justify-content: center;
     align-items: center;
 }
-.isrib-svg{ width:min(560px, 90%); height:auto; }
 
 .molecule-container {
     width: 400px;
