@@ -1,37 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <style id="header-hide-on-scroll">
-  /* Базовий компактний хедер */
-  .header-slim{
-    position: sticky; top:0; z-index: 1000;
-    background:#fff; border-bottom:1px solid #e5e7eb;
-    padding:12px 0;
-    transition: transform .24s ease, box-shadow .2s ease, background-color .2s ease, padding .2s ease;
-    will-change: transform;
-  }
-  /* Дозволяє альтернативний запис: <header class="header-slim is-sticky"> */
-  .header-slim.is-sticky{ position: sticky; top:0; }
-
-  .header-slim .header-content{ display:flex; align-items:center; justify-content:space-between; }
-  .logo-image-slim{ height:36px; display:block; }
-
-  /* Ховаємо при скролі вниз */
-  .header-slim.scrolling-down{ transform: translate3d(0,-100%,0); }
-
-  /* Тінь після мінімального скролу */
-  .header-slim.scrolled{ box-shadow:0 6px 18px rgba(2,6,23,.06); }
-
-  /* Ще компактніший після невеликого скролу */
-  .header-slim.compact{ padding:8px 0; }
-  .header-slim.compact .logo-image-slim{ height:30px; }
-
-  /* На випадок темної теми */
-  @media (prefers-color-scheme: dark){
-    .header-slim{ background:#0b1220; border-bottom-color:#1e293b; }
-  }
-</style>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ISRIB Shop - Advanced Research Chemicals</title>
@@ -810,53 +779,6 @@
       });
     });
   </script>
-  <script>
-(function() {
-  const header = document.getElementById('siteHeader');
-  if (!header) return;
-
-  let lastY = window.scrollY;
-  const compactThreshold = 24;  // коли стискати хедер
-  const hideThreshold    = 12;  // мінімальний рух (px), щоб вважати напрямок
-  const startHideAt      = 20;  // з якого Y взагалі дозволяти приховування
-
-  let ticking = false;
-
-  function onScroll() {
-    const y = window.scrollY;
-
-    function run() {
-      // легка тінь
-      header.classList.toggle('scrolled', y > 1);
-      // компактність
-      header.classList.toggle('compact', y > compactThreshold);
-
-      const dy = y - lastY;
-      const goingDown = dy > hideThreshold && y > startHideAt;
-      const goingUp   = dy < -hideThreshold;
-
-      if (goingDown) {
-        header.classList.add('scrolling-down');
-      } else if (goingUp) {
-        header.classList.remove('scrolling-down');
-      }
-
-      lastY = y;
-      ticking = false;
-    }
-
-    if (!ticking) {
-      requestAnimationFrame(run);
-      ticking = true;
-    }
-  }
-
-  // ініціалізація
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
-})();
-</script>
-
 
   <!-- Tawk.to chat -->
   <script type="text/javascript">
