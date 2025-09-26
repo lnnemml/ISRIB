@@ -90,12 +90,12 @@ img { max-width: 100%; height: auto; }
 /* ========== Hero ========== */
 .hero {
   background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
-  padding: 60px 0 40px; /* зверху 60px, знизу 40px */
+  padding: 28px 0 36px; /* було 60px 0 40px */
   position: relative;
   overflow: hidden;
-  min-height: auto;  /* прибираємо сувору мінімальну висоту */
+  min-height: auto;
   display: flex;
-  align-items: flex-start;  /* вирівняти зверху замість центрування */
+  align-items: flex-start;
 }
 
 .hero::before{
@@ -316,6 +316,11 @@ img { max-width: 100%; height: auto; }
   .sticky-mobile-cta{ display:block; padding:12px 15px; }
   .step-indicator{ flex-direction:column; text-align:center; gap:15px; }
   .consultation-cta{ padding:20px; margin:20px 0; }
+}
+
+/* Remove top margin from page title */
+.page-title {
+  margin-top: 0;
 }
 
 /* Tablet Portrait */
