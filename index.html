@@ -127,41 +127,87 @@
           </div>
         </div>
 
-        <!-- NEW: Clean SVG molecule visual -->
-        <div class="hero-visual" aria-label="Stylized molecular structure illustration">
-          <svg class="molecule-svg" viewBox="0 0 500 500" role="img">
-            <title>Stylized Molecular Structure</title>
-            <!-- outer rings -->
-            <circle class="ring" cx="250" cy="250" r="200" fill="none" stroke-width="1.5"/>
-            <circle class="ring" cx="250" cy="250" r="150" fill="none" stroke-width="1.2"/>
-            <!-- bonds rotor -->
-            <g class="mol-rotor">
-              <!-- hex lattice -->
-              <g opacity=".9">
-                <path class="bond" d="M150 250 L200 200 L275 200 L325 250 L275 300 L200 300 Z" fill="none"/>
-                <path class="bond" d="M200 200 L250 150 L325 150 L375 200 L325 250" fill="none"/>
-                <path class="bond" d="M200 300 L250 350 L325 350 L375 300 L325 250" fill="none"/>
-                <path class="bond" d="M150 250 L125 210 L160 170 L200 200" fill="none" opacity=".7"/>
-                <path class="bond" d="M150 250 L125 290 L160 330 L200 300" fill="none" opacity=".7"/>
-              </g>
-              <!-- nodes -->
-              <g>
-                <circle class="node" cx="150" cy="250" r="6"/>
-                <circle class="node" cx="200" cy="200" r="6"/>
-                <circle class="node" cx="275" cy="200" r="6"/>
-                <circle class="node core mol-pulse" cx="325" cy="250" r="8"/>
-                <circle class="node" cx="275" cy="300" r="6"/>
-                <circle class="node" cx="200" cy="300" r="6"/>
-                <circle class="node" cx="250" cy="150" r="5"/>
-                <circle class="node" cx="325" cy="150" r="5"/>
-                <circle class="node" cx="375" cy="200" r="5"/>
-                <circle class="node" cx="250" cy="350" r="5"/>
-                <circle class="node" cx="325" cy="350" r="5"/>
-                <circle class="node" cx="375" cy="300" r="5"/>
-              </g>
-            </g>
-          </svg>
-        </div>
+        <!-- ISRIB stylized structural SVG -->
+<div class="hero-visual" aria-label="Molecular structure of ISRIB (stylized)">
+  <svg viewBox="0 0 1200 420" role="img" class="isrib-svg" aria-labelledby="isribTitle isribDesc">
+    <title id="isribTitle">ISRIB – stylized molecular structure</title>
+    <desc id="isribDesc">Two para-chloro phenyl rings connected via carbamate linkers to a central cyclohexane with amide bridges. Decorative, not for cheminformatics.</desc>
+
+    <defs>
+      <!-- base styles -->
+      <style>
+        .bond { stroke:#0b111f; stroke-width:6; stroke-linecap:round; fill:none }
+        .thin { stroke-width:4 }
+        .ring { stroke:#0b111f; stroke-width:6; fill:none }
+        .ring-dash { stroke:#0b111f; stroke-width:5; fill:none; stroke-dasharray:24 18; opacity:.28 }
+        .label { font: 700 28px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; fill:#0b111f }
+        .stereo-wedge { fill:#0b111f }
+        .stereo-hatch line { stroke:#0b111f; stroke-width:3 }
+        /* auto dark-on-light; you can invert for dark hero */
+        @media (prefers-color-scheme: dark){
+          .bond,.ring,.ring-dash,.stereo-hatch line{ stroke:#e6eefc }
+          .label{ fill:#e6eefc }
+          .stereo-wedge{ fill:#e6eefc }
+        }
+      </style>
+      <!-- simple hatch pattern for dashed stereobond -->
+      <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+        <line x1="0" y1="0" x2="0" y2="8" />
+      </pattern>
+    </defs>
+
+    <!-- subtle background ring for depth -->
+    <circle cx="600" cy="210" r="190" class="ring-dash" />
+
+    <!-- ==== LEFT p-CHLOROPHENYL RING ==== -->
+    <!-- hexagon -->
+    <polygon class="ring" points="120,210 165,132 250,132 295,210 250,288 165,288" />
+    <!-- para carbon to chlorine -->
+    <line class="bond" x1="120" y1="210" x2="80" y2="210"/>
+    <text class="label" x="55" y="220">Cl</text>
+
+    <!-- phenyl–O–C(=O)–NH– linkage to center -->
+    <!-- aryl–O -->
+    <line class="bond" x1="295" y1="210" x2="335" y2="210"/>
+    <!-- carbonyl -->
+    <line class="bond" x1="335" y1="210" x2="375" y2="210"/>
+    <line class="thin" x1="365" y1="195" x2="395" y2="195"/>
+    <!-- amide NH (stereo wedge toward viewer) -->
+    <polygon class="stereo-wedge" points="395,200 423,186 423,214"/>
+    <!-- into cyclohexane left vertex -->
+    <line class="bond" x1="423" y1="200" x2="470" y2="225"/>
+
+    <!-- ==== CENTRAL CYCLOHEXANE (chair-ish) ==== -->
+    <polygon class="ring" points="470,225 540,180 610,215 610,295 540,335 470,295"/>
+    <!-- from top-right carbon to NH (dashed hatch away) -->
+    <polygon fill="url(#hatch)" points="610,215 640,205 640,235"/>
+    <text class="label" x="645" y="215">H</text>
+
+    <!-- ==== RIGHT –NH–CO–O–Ar ==== -->
+    <!-- NH to carbonyl -->
+    <line class="bond" x1="640" y1="220" x2="685" y2="245"/>
+    <line class="bond" x1="685" y1="245" x2="730" y2="245"/>
+    <!-- =O -->
+    <line class="thin" x1="720" y1="230" x2="750" y2="230"/>
+    <!-- –O–CH2– to aryl -->
+    <line class="bond" x1="750" y1="245" x2="790" y2="245"/>
+    <line class="bond" x1="790" y1="245" x2="830" y2="210"/>
+
+    <!-- RIGHT p-CHLOROPHENYL RING -->
+    <polygon class="ring" points="830,210 915,132 1000,132 1045,210 1000,288 915,288"/>
+    <!-- para chlorine -->
+    <line class="bond" x1="1045" y1="210" x2="1085" y2="210"/>
+    <text class="label" x="1095" y="220">Cl</text>
+
+    <!-- small labels for heteroatoms -->
+    <text class="label" x="350" y="204">O</text>
+    <text class="label" x="385" y="188">O</text>
+    <text class="label" x="432" y="198">NH</text>
+    <text class="label" x="742" y="238">O</text>
+    <text class="label" x="698" y="238">O</text>
+  </svg>
+</div>
+
         <!-- /hero-visual -->
       </div>
     </div>
