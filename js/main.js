@@ -218,12 +218,28 @@ function initQuantitySelectors() {
 
       const ppm = card.querySelector('.price-per-mg');
       if (ppm) {
-        const q = quantity.toLowerCase();
-        const isG = /\bg\b/.test(q);
-        const num = parseFloat(q.replace(/[^0-9.]/g, '')) || 0; // take numeric part
-        const mg = isG ? num * 1000 : num; // convert g → mg
-        const perMg = mg > 0 ? (priceNum / mg).toFixed(3) : '0.000';
-        ppm.textContent = `($${perMg}/mg)`;
+      const qRaw = String(quantity || '').trim().toLowerCase(); // "100mg" | "1g" | "500mg"
+      const num = parseFloat(qRaw.replace(/[^0-9.]/g, '')) || 0;
+
+      // коректна інтерпретація одиниць:
+      // - якщо є 'mg' → залишаємо як mg
+      // - інакше якщо є 'g' (НЕ частина 'mg') → переводимо в mg
+      // - інакше вважаємо, що значення вже в mg
+      let mg = 0;
+      if (qRaw.includes('mg')) {
+       mg = num;
+      } else if (qRaw.includes('g')) {
+      mg = num * 1000;
+      } else {
+       mg = num;
+      }
+
+      // формат: 2 знаки якщо >= 0.01, інакше 3 знаки
+      let perMg = 0;
+      if (mg > 0) perMg = priceNum / mg;
+      const perMgStr = perMg >= 0.01 ? perMg.toFixed(2) : perMg.toFixed(3);
+
+      ppm.textContent = `($${perMgStr}/mg)`;
       }
 
       // Sync "Add to Cart" button data + label
