@@ -154,11 +154,15 @@ function initProductInteractions() {
       }
     });
     card.addEventListener('click', function(e) {
-      if (!e.target.closest('a, button')) {
-        const name = this.querySelector('.product-name')?.textContent || 'Unknown';
-        trackEvent('product_view', { product_name: name, interaction_type: 'card_click' });
-      }
-    });
+     if (!e.target.closest('a, button')) {
+    const name = this.querySelector('.product-name')?.textContent || 'Unknown';
+    trackEvent('product_view', { product_name: name, interaction_type: 'card_click' });
+
+    const href = this.dataset.href;
+    if (href) window.location.href = href; // робимо всю картку посиланням
+  }
+});
+
   });
 }
 
