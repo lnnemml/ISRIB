@@ -478,3 +478,14 @@ img { max-width: 100%; height: auto; }
 .page-title {
   margin-top: 0;
 }
+/* === HARD OVERRIDE: make hero tight === */
+.hero{
+  padding-top: 16px !important;
+  padding-bottom: 32px !important;
+  min-height: auto !important;
+  align-items: flex-start !important;
+}
+.hero > .container{ margin-top: 0 !important; padding-top: 0 !important; }
+
+/* заголовок без дефолтного верхнього відступу */
+h1, .hero h1, .page-title{ margin-top: 0 !important; }
