@@ -684,7 +684,6 @@ function initContactUX(){
 }
 
 // === Contact form submit via serverless endpoint using Resend ===
-// Assumes you have a backend route at /api/contact that sends email via Resend.
 function initContactFormResend(){
   const form = document.getElementById('contactForm');
   const btn  = document.getElementById('submitBtn');
@@ -704,7 +703,7 @@ function initContactFormResend(){
       page: window.location.href
     };
 
-    // basic validation
+    // Basic validation
     if (!payload.name || !payload.email || !payload.subject || !payload.message || !payload.researchUse){
       showToast('Please fill all required fields', 'error');
       return;
@@ -716,21 +715,26 @@ function initContactFormResend(){
     note.textContent = '';
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch('https://isrib-api.vercel.app/api/contact', {
         method: 'POST',
         headers: { 'Content-Type':'application/json' },
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error('Failed to send');
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Error ${res.status}: ${errText}`);
+      }
 
       showToast('Message sent! We will reply shortly.', 'success');
-      trackEvent?.('contact_form_submit', { subject: payload.subject, product: payload.product || null });
+      trackEvent?.('contact_form_submit', {
+        subject: payload.subject,
+        product: payload.product || null
+      });
       form.reset();
-      // hide product section if subject reset
       document.getElementById('product-section')?.classList.add('hidden');
     } catch (err) {
-      console?.error(err);
+      console.error('[Contact Form Error]', err);
       showToast('Could not send message. Please try again or email us directly.', 'error');
       note.textContent = 'If this keeps happening, email: isrib.shop@protonmail.com';
     } finally {
