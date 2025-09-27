@@ -1,419 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - ISRIB Shop | Get Research Chemical Support</title>
-    <meta name="description" content="Contact ISRIB Shop for research chemical inquiries, orders, and technical support. Expert team ready to help with your scientific research needs.">
-    <link rel="canonical" href="https://isrib.shop/contact">
-    <meta property="og:title" content="Contact ISRIB Shop - Research Chemical Support">
-    <meta property="og:description" content="Get expert support for research chemicals. Orders, technical assistance, and scientific guidance.">
-    <meta property="og:image" content="/images/og-contact.jpg">
-    <meta property="og:url" content="https://isrib.shop/contact">
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - ISRIB Shop | Get Research Chemical Support</title>
+  <meta name="description" content="Contact ISRIB Shop for research chemical inquiries, orders, and technical support. Expert team ready to help with your scientific research needs.">
+  <link rel="canonical" href="https://isrib.shop/contact">
+  <meta property="og:title" content="Contact ISRIB Shop - Research Chemical Support">
+  <meta property="og:description" content="Get expert support for research chemicals. Orders, technical assistance, and scientific guidance.">
+  <meta property="og:image" content="/images/og-contact.jpg">
+  <meta property="og:url" content="https://isrib.shop/contact">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-     <!-- Header -->
-    <header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-         🧺 Cart <span id="cartCount" class="badge">0</span>
+
+  <!-- Slim Header -->
+  <header id="siteHeader" class="header-slim">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim">
         </a>
-      </nav>
+
+        <!-- Desktop nav -->
+        <nav class="nav-slim">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html" aria-current="page">Contact</a>
+          <a href="checkout.html" class="cart-btn-slim" onclick="trackCTA?.('header','cart')">
+            🧺 Cart <span id="cartCount" class="badge-slim">0</span>
+          </a>
+        </nav>
+
+        <!-- Burger -->
+        <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false">
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+          <span class="burger-line"></span>
+        </button>
+      </div>
     </div>
-  </div>
-</header>
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <h1>Contact Our Research Team</h1>
-            <p>Get expert support for your research chemical needs. Our scientific team is here to help.</p>
+    <!-- Mobile menu -->
+    <nav id="mobileMenu" class="mobile-menu" aria-label="Mobile">
+      <a class="mm-link" href="products.html">Products</a>
+      <a class="mm-link" href="about.html">About</a>
+      <a class="mm-link" href="faq.html">FAQ</a>
+      <a class="mm-link" href="contact.html" aria-current="page">Contact</a>
+      <a class="mm-link mm-cart" href="checkout.html">🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
+    </nav>
+  </header>
+
+  <!-- Page hero -->
+  <section class="page-hero contact-hero">
+    <div class="container">
+      <h1>Contact Our Research Team</h1>
+      <p class="subtitle">Get expert support for your research chemical needs. Our scientific team is here to help.</p>
+    </div>
+  </section>
+
+  <!-- Contact methods -->
+  <section class="contact-methods">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-emoji">📧</div>
+          <h3>Email Support</h3>
+          <p class="muted">For general inquiries and order support</p>
+          <a href="mailto:isrib.shop@protonmail.com" class="link-strong" data-append-ref>isrib.shop@protonmail.com</a>
+          <p class="muted small">Response time: 4–8 hours</p>
         </div>
-    </section>
 
-    <!-- Contact Methods -->
-    <section style="background: white; padding: 80px 0;">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-bottom: 60px;">
-                
-                <div style="text-align: center; padding: 30px; background: #f8fafc; border-radius: 15px; border: 1px solid #e2e8f0;">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">📧</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Email Support</h3>
-                    <p style="color: #64748b; margin-bottom: 15px;">For general inquiries and order support</p>
-                    <a href="mailto:isrib.shop@protonmail.com" style="color: #1e40af; font-weight: 600; text-decoration: none;">isrib.shop@protonmail.com</a>
-                    <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Response time: 4-8 hours</p>
-                </div>
-
-                <div style="text-align: center; padding: 30px; background: #f8fafc; border-radius: 15px; border: 1px solid #e2e8f0;">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">💬</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Live Chat</h3>
-                    <p style="color: #64748b; margin-bottom: 15px;">Instant support during business hours</p>
-                    <button onclick="openLiveChat()" style="background: #1e40af; color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; cursor: pointer;">Start Chat</button>
-                    <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Mon-Fri: 9AM-6PM EST</p>
-                </div>
-
-                <div style="text-align: center; padding: 30px; background: #f8fafc; border-radius: 15px; border: 1px solid #e2e8f0;">
-                    <div style="font-size: 3rem; margin-bottom: 20px;">🛒</div>
-                    <h3 style="color: #1e293b; margin-bottom: 15px; font-size: 1.3rem;">Place an Order</h3>
-                    <p style="color: #64748b; margin-bottom: 15px;">Direct ordering through personal consultation</p>
-                    <a href="#order-form" style="color: #1e40af; font-weight: 600; text-decoration: none;">Order Form Below</a>
-                    <p style="color: #64748b; font-size: 0.9rem; margin-top: 10px;">Secure payment arrangements</p>
-                </div>
-
-            </div>
+        <div class="contact-card">
+          <div class="contact-emoji">💬</div>
+          <h3>Live Chat</h3>
+          <p class="muted">Instant support during business hours</p>
+          <button class="btn btn-primary" type="button" onclick="openLiveChat()">Start Chat</button>
+          <p class="muted small">Mon–Fri: 9:00–18:00 (EST)</p>
         </div>
-    </section>
 
-    <!-- Contact Form -->
-    <section style="background: #f8fafc; padding: 80px 0;" id="order-form">
-        <div class="container">
-            <div style="max-width: 800px; margin: 0 auto;">
-                <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">Send Us a Message</h2>
-                
-                <form name="contact" method="POST" data-netlify="true" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
-                    <input type="hidden" name="form-name" value="contact" />
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <div>
-                            <label for="name" style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Name *</label>
-                            <input type="text" id="name" name="name" required style="width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;" onfocus="this.style.borderColor='#1e40af'" onblur="this.style.borderColor='#e2e8f0'">
-                        </div>
-                        <div>
-                            <label for="email" style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Email *</label>
-                            <input type="email" id="email" name="email" required style="width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease;" onfocus="this.style.borderColor='#1e40af'" onblur="this.style.borderColor='#e2e8f0'">
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <label for="subject" style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Subject *</label>
-                        <select id="subject" name="subject" required style="width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; background: white; transition: border-color 0.3s ease;" onfocus="this.style.borderColor='#1e40af'" onblur="this.style.borderColor='#e2e8f0'">
-                            <option value="">Select a topic</option>
-                            <option value="product-order">Product Order</option>
-                            <option value="product-inquiry">Product Inquiry</option>
-                            <option value="technical-support">Technical Support</option>
-                            <option value="custom-synthesis">Custom Synthesis</option>
-                            <option value="bulk-order">Bulk Order (>10g)</option>
-                            <option value="quality-question">Quality Question</option>
-                            <option value="shipping">Shipping & Delivery</option>
-                            <option value="payment-methods">Payment Methods</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-
-                    <!-- Product Selection (shown when order-related) -->
-                    <div id="product-section" style="margin-bottom: 20px; display: none;">
-                        <label for="product" style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Product</label>
-                        <select id="product" name="product" style="width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; background: white; transition: border-color 0.3s ease;" onfocus="this.style.borderColor='#1e40af'" onblur="this.style.borderColor='#e2e8f0'">
-                            <option value="">Select product</option>
-                            <option value="isrib-a15-100mg">ISRIB-A15 100mg ($50)</option>
-                            <option value="isrib-a15-500mg">ISRIB-A15 500mg ($130)</option>
-                            <option value="isrib-a15-1g">ISRIB-A15 1g ($200)</option>
-                            <option value="isrib-30mg">ISRIB 30mg ($14)</option>
-                            <option value="isrib-100mg">ISRIB 100mg ($27)</option>
-                            <option value="isrib-1g">ISRIB 1g ($100)</option>
-                            <option value="zzl7-100mg">ZZL-7 100mg ($50)</option>
-                            <option value="zzl7-500mg">ZZL-7 500mg ($130)</option>
-                            <option value="zzl7-1g">ZZL-7 1g ($200)</option>
-                            <option value="mpep-50mg">MPEP 50mg ($45)</option>
-                            <option value="mpep-100mg">MPEP 100mg ($75)</option>
-                            <option value="mpep-500mg">MPEP 500mg ($280)</option>
-                            <option value="mpep-1g">MPEP 1g ($450)</option>
-                            <option value="custom">Custom quantity/product</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <label for="message" style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Message *</label>
-                        <textarea id="message" name="message" rows="6" required style="width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; resize: vertical; transition: border-color 0.3s ease;" onfocus="this.style.borderColor='#1e40af'" onblur="this.style.borderColor='#e2e8f0'" placeholder="Please provide details about your inquiry. For orders, include: product name, quantity, shipping location, and any special requirements."></textarea>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" name="research-use" required style="width: 18px; height: 18px;">
-                            <span style="color: #374151;">I confirm these compounds are for research use only *</span>
-                        </label>
-                    </div>
-
-                    <button type="submit" style="background: linear-gradient(135deg, #dc2626, #ef4444); color: white; padding: 15px 40px; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; width: 100%;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                        Send Message
-                    </button>
-                </form>
-            </div>
+        <div class="contact-card">
+          <div class="contact-emoji">🛒</div>
+          <h3>Place an Order</h3>
+          <p class="muted">Direct ordering through personal consultation</p>
+          <a href="#order-form" class="link-strong">Order Form Below</a>
+          <p class="muted small">Secure payment arrangements</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Quick Order Section -->
-    <section style="background: white; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">Popular Products</h2>
-            <p style="text-align: center; color: #64748b; margin-bottom: 50px; font-size: 1.1rem;">Click on any product to start an order inquiry:</p>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-                
-                <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border-left: 4px solid #dc2626; cursor: pointer; transition: all 0.3s ease;" onclick="startOrder('isrib-a15', '100mg', '$50')">
-                    <h3 style="color: #dc2626; margin-bottom: 10px; font-size: 1.2rem;">🧬 ISRIB-A15 100mg</h3>
-                    <p style="color: #64748b; margin-bottom: 15px;">Most popular choice for cognitive research</p>
-                    <div style="color: #1e40af; font-weight: 600; font-size: 1.1rem;">$50 - Click to Order</div>
-                </div>
+  <!-- Contact form (Resend-powered) -->
+  <section class="contact-form-wrap" id="order-form">
+    <div class="container">
+      <div class="contact-form-card">
+        <h2 class="center">Send Us a Message</h2>
 
-                <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border-left: 4px solid #dc2626; cursor: pointer; transition: all 0.3s ease;" onclick="startOrder('isrib', '100mg', '$27')">
-                    <h3 style="color: #dc2626; margin-bottom: 10px; font-size: 1.2rem;">⚗️ ISRIB Original 100mg</h3>
-                    <p style="color: #64748b; margin-bottom: 15px;">Classic ISRIB compound for research</p>
-                    <div style="color: #1e40af; font-weight: 600; font-size: 1.1rem;">$27 - Click to Order</div>
-                </div>
-
-                <div style="background: #f8fafc; padding: 25px; border-radius: 15px; border-left: 4px solid #dc2626; cursor: pointer; transition: all 0.3s ease;" onclick="startOrder('zzl7', '100mg', '$50')">
-                    <h3 style="color: #dc2626; margin-bottom: 10px; font-size: 1.2rem;">🧪 ZZL-7 100mg</h3>
-                    <p style="color: #64748b; margin-bottom: 15px;">Fast-onset research compound</p>
-                    <div style="color: #1e40af; font-weight: 600; font-size: 1.1rem;">$50 - Click to Order</div>
-                </div>
-
+        <!-- Note:
+             This form is submitted via fetch() to your serverless route that uses Resend.
+             Replace /api/contact with your actual endpoint path. -->
+        <form id="contactForm" novalidate>
+          <div class="grid-2">
+            <div class="field">
+              <label for="name">Name *</label>
+              <input id="name" name="name" type="text" required autocomplete="name" />
             </div>
+            <div class="field">
+              <label for="email">Email *</label>
+              <input id="email" name="email" type="email" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="subject">Subject *</label>
+            <select id="subject" name="subject" required>
+              <option value="">Select a topic</option>
+              <option value="product-order">Product Order</option>
+              <option value="product-inquiry">Product Inquiry</option>
+              <option value="technical-support">Technical Support</option>
+              <option value="custom-synthesis">Custom Synthesis</option>
+              <option value="bulk-order">Bulk Order (&gt;10g)</option>
+              <option value="quality-question">Quality Question</option>
+              <option value="shipping">Shipping & Delivery</option>
+              <option value="payment-methods">Payment Methods</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div id="product-section" class="field hidden">
+            <label for="product">Product</label>
+            <select id="product" name="product">
+              <option value="">Select product</option>
+              <option value="isrib-a15-100mg">ISRIB-A15 100mg ($50)</option>
+              <option value="isrib-a15-500mg">ISRIB-A15 500mg ($130)</option>
+              <option value="isrib-a15-1g">ISRIB-A15 1g ($200)</option>
+              <option value="isrib-100mg">ISRIB 100mg ($27)</option>
+              <option value="isrib-500mg">ISRIB 500mg ($60)</option>
+              <option value="isrib-1g">ISRIB 1g ($100)</option>
+              <option value="zzl7-100mg">ZZL-7 100mg ($50)</option>
+              <option value="zzl7-500mg">ZZL-7 500mg ($130)</option>
+              <option value="zzl7-1g">ZZL-7 1g ($200)</option>
+              <option value="mpep-50mg">MPEP 50mg ($45)</option>
+              <option value="mpep-100mg">MPEP 100mg ($75)</option>
+              <option value="mpep-500mg">MPEP 500mg ($280)</option>
+              <option value="mpep-1g">MPEP 1g ($450)</option>
+              <option value="custom">Custom quantity/product</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" rows="6" required placeholder="Please provide details about your inquiry. For orders, include: product name, quantity, shipping location, and any special requirements."></textarea>
+          </div>
+
+          <label class="checkbox">
+            <input type="checkbox" name="research-use" required />
+            <span>I confirm these compounds are for research use only *</span>
+          </label>
+
+          <button id="submitBtn" class="btn btn-primary btn-wide" type="submit">Send Message</button>
+          <p id="formNote" class="muted small center" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Payment band -->
+  <section class="contact-payment">
+    <div class="container">
+      <h2 class="center light">Payment Methods</h2>
+      <div class="pay-grid">
+        <div class="pay-card">
+          <div class="pay-emoji">₿</div>
+          <h3>Cryptocurrency</h3>
+          <p class="muted">Bitcoin, Ethereum, USDT (fastest processing)</p>
         </div>
-    </section>
-
-    <!-- Payment Methods -->
-    <section style="background: #1e293b; color: white; padding: 80px 0;">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 60px;">Payment Methods</h2>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: center;">
-                
-                <div>
-                    <div style="font-size: 3rem; margin-bottom: 20px;">₿</div>
-                    <h3 style="margin-bottom: 15px; color: #f1f5f9;">Cryptocurrency</h3>
-                    <p style="color: #94a3b8;">Bitcoin, Ethereum, USDT</p>
-                    <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">Preferred method - fastest processing</p>
-                </div>
-
-                <div>
-                    <div style="font-size: 3rem; margin-bottom: 20px;">🏦</div>
-                    <h3 style="margin-bottom: 15px; color: #f1f5f9;">Bank Transfer</h3>
-                    <p style="color: #94a3b8;">SEPA, SWIFT transfers</p>
-                    <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">Secure international transfers</p>
-                </div>
-
-                <div>
-                    <div style="font-size: 3rem; margin-bottom: 20px;">💳</div>
-                    <h3 style="margin-bottom: 15px; color: #f1f5f9;">Alternative Methods</h3>
-                    <p style="color: #94a3b8;">PayPal, Wise, other options</p>
-                    <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">Discussed individually</p>
-                </div>
-
-            </div>
-
-            <div style="text-align: center; margin-top: 40px; padding: 30px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;">
-                <h3 style="margin-bottom: 15px;">🔒 Secure Transactions</h3>
-                <p style="color: #94a3b8;">All payment details are handled securely through encrypted communication. We arrange payment methods individually with each customer for maximum security and convenience.</p>
-            </div>
+        <div class="pay-card">
+          <div class="pay-emoji">🏦</div>
+          <h3>Bank Transfer</h3>
+          <p class="muted">SEPA, SWIFT (secure international transfers)</p>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>ISRIB Shop</h3>
-                    <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality, reliability, and personalized service.</p>
-                    <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Products</h3>
-                    <ul>
-                        <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
-                        <li><a href="product_isrib.html">ISRIB Original</a></li>
-                        <li><a href="product_zzl_7.html">ZZL-7</a></li>
-                        <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
-                        <li><a href="products.html">All Products</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Information</h3>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="quality.html">Quality Control</a></li>
-                        <li><a href="safety.html">Safety Guidelines</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Legal</h3>
-                    <ul>
-                        <li><a href="terms.html">Terms of Service</a></li>
-                        <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="research.html">Research Use Only</a></li>
-                        <li><a href="disclaimer.html">Disclaimer</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
-            </div>
+        <div class="pay-card">
+          <div class="pay-emoji">💳</div>
+          <h3>Alternative Methods</h3>
+          <p class="muted">Wise, others — discussed individually</p>
         </div>
-    </footer>
+      </div>
+      <div class="pay-note">
+        <h3>🔒 Secure Transactions</h3>
+        <p class="muted">All payment details handled via encrypted communication. We arrange methods individually for maximum security and convenience.</p>
+      </div>
+    </div>
+  </section>
 
-    <script src="js/main.js"></script>
-    
-    <script>
-        // Auto-fill form based on URL parameters
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            // Auto-fill subject based on inquiry type
-            const inquiry = urlParams.get('inquiry');
-            if (inquiry === 'order') {
-                document.getElementById('subject').value = 'product-order';
-                showProductSection();
-            }
-            
-            // Auto-fill product if specified
-            const product = urlParams.get('product');
-            if (product) {
-                document.getElementById('subject').value = 'product-order';
-                showProductSection();
-                
-                // Set product based on URL parameter
-                const productSelect = document.getElementById('product');
-                const options = productSelect.options;
-                for (let i = 0; i < options.length; i++) {
-                    if (options[i].value.includes(product)) {
-                        options[i].selected = true;
-                        break;
-                    }
-                }
-                
-                // Auto-fill message with product details
-                const price = urlParams.get('price');
-                if (price) {
-                    const messageField = document.getElementById('message');
-                    messageField.value = `I would like to order ${product.replace(/-/g, ' ').toUpperCase()} (${price}). Please provide payment and shipping details.`;
-                }
-            }
-            
-            // Show/hide product section based on subject
-            document.getElementById('subject').addEventListener('change', function() {
-                if (this.value === 'product-order' || this.value === 'bulk-order') {
-                    showProductSection();
-                } else {
-                    hideProductSection();
-                }
-            });
-        });
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>ISRIB Shop</h3>
+          <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality, reliability, and personalized service.</p>
+          <p><strong>Email:</strong> <a href="mailto:isrib.shop@protonmail.com" data-append-ref>isrib.shop@protonmail.com</a></p>
+        </div>
+        <div class="footer-section">
+          <h3>Products</h3>
+          <ul>
+            <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+            <li><a href="product_isrib.html">ISRIB Original</a></li>
+            <li><a href="product_zzl_7.html">ZZL-7</a></li>
+            <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+            <li><a href="products.html">All Products</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Information</h3>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html" aria-current="page">Contact</a></li>
+            <li><a href="quality.html">Quality Control</a></li>
+            <li><a href="safety.html">Safety Guidelines</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="research.html">Research Use Only</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+      </div>
+    </div>
+  </footer>
 
-        function showProductSection() {
-            document.getElementById('product-section').style.display = 'block';
-        }
+  <script src="js/main.js" defer></script>
 
-        function hideProductSection() {
-            document.getElementById('product-section').style.display = 'none';
-        }
-
-        // Quick order function
-        function startOrder(product, quantity, price) {
-            document.getElementById('subject').value = 'product-order';
-            showProductSection();
-            
-            // Find and select the product
-            const productSelect = document.getElementById('product');
-            const productValue = `${product}-${quantity.toLowerCase()}`;
-            
-            for (let option of productSelect.options) {
-                if (option.value.includes(productValue)) {
-                    option.selected = true;
-                    break;
-                }
-            }
-            
-            // Fill message
-            document.getElementById('message').value = `I would like to order ${product.replace(/-/g, ' ').toUpperCase()} ${quantity} (${price}). Please provide payment and shipping details.`;
-            
-            // Scroll to form
-            document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' });
-            
-            // Track event
-            if (typeof trackEvent === 'function') {
-                trackEvent('quick_order_start', {
-                    product: product,
-                    quantity: quantity,
-                    price: price
-                });
-            }
-        }
-
-        // Live chat function
-        function openLiveChat() {
-            if (typeof Tawk_API !== 'undefined') {
-                Tawk_API.toggle();
-            } else {
-                // Fallback to email
-                window.location.href = 'mailto:isrib.shop@protonmail.com?subject=Live Chat Request&body=Hello, I would like to chat about your research chemicals.';
-            }
-        }
-
-        // Form enhancement
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form[name="contact"]');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    submitBtn.textContent = 'Sending...';
-                    submitBtn.disabled = true;
-                    
-                    // Track form submission
-                    if (typeof trackEvent === 'function') {
-                        trackEvent('contact_form_submit', {
-                            subject: this.subject.value,
-                            product: this.product ? this.product.value : null
-                        });
-                    }
-                });
-            }
-        });
-
-        // Add hover effects to quick order cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const orderCards = document.querySelectorAll('[onclick^="startOrder"]');
-            orderCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                    this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = 'none';
-                });
-            });
-        });
-    </script>
-    <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+  <!-- Tawk.to -->
+  <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true; s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+      s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
+    })();
+  </script>
 </body>
 </html>
