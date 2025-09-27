@@ -1127,3 +1127,13 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 /* Disclaimer page helpers */
 .disclaimer-section{ padding:28px 0 70px; }
 .disclaimer-section .container{ max-width:980px; }
+/* 404 page helpers */
+.notfound-section{ padding:26px 0 70px; }
+.notfound-section .container{ max-width:880px; }
+
+.code-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:clamp(2.2rem,6vw,3rem);
+  color:#1e293b; background:#eef2ff; border:1px solid #c7d2fe;
+  padding:8px 16px; border-radius:16px; gap:10px;
+}
