@@ -977,7 +977,15 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   font-size: 1.05rem;
   transition: background 0.2s ease;
 }
+.btn-primary {
+  background: var(--brand-900);
+  color: #fff;
+}
 
+.btn-primary:hover {
+  background: var(--brand-800);  /* трішки світліший відтінок, але не білий */
+  color: #fff;
+}
 .checkout-form .form-actions .btn:hover {
   background: var(--brand-800);
 }
