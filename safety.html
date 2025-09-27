@@ -1,94 +1,188 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Safety Guidelines | isrib.shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Basic safety recommendations for handling research compounds purchased from isrib.shop.">
-  <meta name="robots" content="index,follow">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Safety Guidelines — ISRIB.shop</title>
+  <meta name="description" content="Basic safety recommendations for handling research compounds purchased from ISRIB.shop. Research use only.">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Safety Guidelines | isrib.shop">
-  <meta property="og:description" content="Understand safety precautions when working with research-use compounds.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://isrib.shop/safety.html">
-  <meta property="og:image" content="/images/og-cover.jpg">
+  <!-- Canonical / Open Graph -->
+  <link rel="canonical" href="https://isrib.shop/safety.html"/>
+  <meta property="og:title" content="Safety Guidelines — ISRIB.shop"/>
+  <meta property="og:description" content="Understand safety precautions when working with research-use compounds."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://isrib.shop/safety.html"/>
+  <meta property="og:image" content="images/og-cover.jpg"/>
 
-  <link rel="canonical" href="https://isrib.shop/safety.html">
-  <link rel="stylesheet" href="/css/main.css">
+  <!-- Unified CSS -->
+  <link rel="stylesheet" href="css/styles.css?v=13"/>
+  <style>
+    /* page-scoped cosmetics */
+    .safety-hero{
+      background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      padding: 60px 0 40px;
+      text-align:center; position:relative;
+    }
+    .safety-hero::before{
+      content:''; position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+        radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%);
+    }
+    .safety-hero .title{ position:relative; z-index:1; font-weight:900; font-size:clamp(2.1rem,4.5vw,3.2rem); color:#1e293b; margin:0 0 10px; }
+    .safety-hero .sub{ position:relative; z-index:1; color:#64748b; font-size:1.05rem; max-width:760px; margin:0 auto; }
+
+    .safety-section{ padding:28px 0 70px; }
+    .safety-section .container{ max-width:980px; }
+    .bullet{ margin:0; padding-left:22px; line-height:1.9; }
+    .notice{
+      background:#fff7ed; border:1px solid #fed7aa; color:#7c2d12;
+      border-radius:12px; padding:14px 16px; margin:14px 0 0;
+      font-size:.97rem;
+    }
+    .back-actions{ margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; }
+  </style>
 </head>
 <body>
-  <!-- Header -->
-    <header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-         🧺 Cart <span id="cartCount" class="badge">0</span>
+
+  <!-- Slim Header -->
+  <header class="header-slim" id="siteHeader">
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
         </a>
-      </nav>
-    </div>
-  </div>
-</header>
 
-  <main class="container" style="min-height: 60vh;">
-    <section class="section" style="max-width: 800px; margin: 4rem auto;">
-      <h1 style="margin-bottom: 1rem;">Safety Guidelines</h1>
+        <nav class="nav-slim" aria-label="Primary">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn-slim" id="cartBtn" onclick="trackCTA?.('header','cart')">
+            🧺 <span id="cartCount" class="badge-slim">0</span>
+          </a>
+        </nav>
 
-      <p>The compounds available at <strong>isrib.shop</strong> are strictly intended for laboratory and in vitro research use only. They are not approved for human or animal consumption, and should only be handled by trained professionals.</p>
-
-      <h2>General Laboratory Safety</h2>
-      <ul>
-        <li>Always wear appropriate <strong>PPE</strong>: lab coat, gloves, protective eyewear.</li>
-        <li>Work in a well-ventilated area or fume hood.</li>
-        <li>Store materials in clearly labeled containers, away from incompatible substances.</li>
-        <li>Follow good laboratory practices (GLP) during handling, storage, and disposal.</li>
-      </ul>
-
-      <h2>Spill & Exposure</h2>
-      <p>If a spill occurs, contain and clean it immediately using appropriate absorbents and lab safety protocols. In case of accidental exposure, rinse the affected area with water and seek professional medical assistance. Provide safety data sheets if available.</p>
-
-      <h2>Storage Conditions</h2>
-      <p>Store compounds in a cool, dry place, away from light and moisture. Use desiccators or sealed containers when necessary. Avoid repeated opening of bulk containers — aliquot smaller quantities for routine use.</p>
-
-      <h2>Responsibility</h2>
-      <p>isrib.shop is not responsible for improper handling or misuse of any compound sold. Buyers assume full responsibility for complying with all local regulations, laboratory protocols, and institutional safety requirements.</p>
-
-      <div class="actions" style="margin-top:2rem;">
-        <a class="btn" href="/products.html">← Back to Products</a>
+        <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+        </button>
       </div>
-    </section>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+      <a href="products.html" class="mm-link">Products</a>
+      <a href="about.html" class="mm-link">About</a>
+      <a href="faq.html" class="mm-link">FAQ</a>
+      <a href="contact.html" class="mm-link">Contact</a>
+      <a href="checkout.html" class="mm-link mm-cart" onclick="trackCTA?.('header','cart_mobile')">
+        🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="safety-hero">
+    <div class="container">
+      <h1 class="title">Safety Guidelines</h1>
+      <p class="sub">Compounds are intended strictly for laboratory/in vitro research use. Handle by trained personnel only.</p>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <main class="safety-section">
+    <div class="container">
+      <section class="card" id="general">
+        <div class="card-body">
+          <h2>General Laboratory Safety</h2>
+          <ul class="bullet">
+            <li>Wear appropriate <strong>PPE</strong>: lab coat, gloves, protective eyewear.</li>
+            <li>Work in a well‑ventilated area or fume hood.</li>
+            <li>Store materials in clearly labeled containers, away from incompatible substances.</li>
+            <li>Follow good laboratory practices (GLP) during handling, storage, and disposal.</li>
+          </ul>
+          <div class="notice" role="note">
+            Research use only. Not for human or animal consumption, diagnostic or therapeutic use.
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="spill">
+        <div class="card-body">
+          <h2>Spill & Exposure</h2>
+          <p>If a spill occurs, contain and clean it immediately using appropriate absorbents and lab safety protocols. In case of accidental exposure, rinse the affected area with water and seek professional medical assistance. Provide safety data sheets if available.</p>
+        </div>
+      </section>
+
+      <section class="card" id="storage">
+        <div class="card-body">
+          <h2>Storage Conditions</h2>
+          <p>Store compounds in a cool, dry place, away from light and moisture. Use desiccators or sealed containers when necessary. Avoid repeated opening of bulk containers — aliquot smaller quantities for routine use.</p>
+        </div>
+      </section>
+
+      <section class="card" id="responsibility">
+        <div class="card-body">
+          <h2>Responsibility</h2>
+          <p>ISRIB.shop is not responsible for improper handling or misuse of any compound sold. Buyers assume full responsibility for complying with all local regulations, laboratory protocols, and institutional safety requirements.</p>
+        </div>
+      </section>
+
+      <div class="back-actions">
+        <a class="btn" href="products.html" onclick="trackCTA?.('safety','back_to_products')">← Back to Products</a>
+        <a class="btn btn-secondary" href="quality.html" onclick="trackCTA?.('safety','open_quality')">Quality & CoA</a>
+        <a class="btn btn-secondary" href="disclaimer.html" onclick="trackCTA?.('safety','open_disclaimer')">Disclaimer</a>
+      </div>
+    </div>
   </main>
 
-  <footer class="site-footer">
+    <!-- Footer -->
+  <footer class="footer">
     <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>ISRIB Shop</h3>
+          <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality and reliability.</p>
+          <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
+        </div>
+        <div class="footer-section">
+          <h3>Products</h3>
+          <ul>
+            <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+            <li><a href="product_isrib.html">ISRIB Original</a></li>
+            <li><a href="product_zzl_7.html">ZZL-7</a></li>
+            <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+            <li><a href="products.html">All Products</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Information</h3>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="quality.html">Quality Control</a></li>
+            <li><a href="safety.html">Safety Guidelines</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="research.html">Research Use Only</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
       <div class="footer-bottom">
-        <p>© 2025 isrib.shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+        <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
       </div>
     </div>
   </footer>
 
-  <script src="/js/main.js"></script>
 
-  <!-- Start of Tawk.to Script -->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!-- End of Tawk.to Script -->
+  <!-- App JS -->
+  <script src="js/main.js?v=13"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>
