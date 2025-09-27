@@ -948,13 +948,17 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .checkout-form .agree-row {
   display: flex;
   gap: 10px;
-  align-items: flex-start;
+  align-items: center;
   margin: 24px 0 0;      /* Замість 10px */
   padding: 12px;
   background: #f8fafc;
   border: 1px solid var(--ring);
   border-radius: 10px;
   max-width: 760px; margin-inline: auto;
+}
+.checkout-form .agree-row input[type="checkbox"] {
+  transform: scale(1.2);
+  margin-top: 2px;
 }
 .checkout-form .form-actions{ margin-top:16px; display:flex; flex-direction:column; gap:8px; }
 .checkout-form .form-status{ min-height:20px; }
