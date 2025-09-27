@@ -1137,3 +1137,8 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   color:#1e293b; background:#eef2ff; border:1px solid #c7d2fe;
   padding:8px 16px; border-radius:16px; gap:10px;
 }
+/* Success page helpers */
+.success-section{ padding:28px 0 70px; }
+.success-section .container{ max-width:820px; }
+.lead{ opacity:.9; }
+.sep{ border:none; border-top:1px solid var(--ring); }
