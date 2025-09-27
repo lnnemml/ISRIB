@@ -22,6 +22,8 @@ function initializeApp() {
   updateCartBadge();
   mountAddToCartButtons();
   renderCheckoutCart();
+  renderCheckoutCart();
+  initCheckoutForm();
   initContactUX();        // показ/приховування product-section, автозаповнення з query string
   initContactFormResend(); // сабміт форми через ваш бекенд/серверлес із Resend
   // Back-compat helpers some code expects:
@@ -748,4 +750,191 @@ function initContactFormResend(){
 function openLiveChat(){
   if (typeof Tawk_API !== 'undefined') Tawk_API.toggle();
   else window.location.href = 'mailto:isrib.shop@protonmail.com?subject=Live Chat Request';
+}
+
+/* ===================== CHECKOUT (cart render + totals + actions) ===================== */
+
+// Формат валюти (проста)
+function fmtUSD(n){ return `$${Number(n||0).toFixed(2)}`; }
+
+// Підрахунок підсумків
+function recalcTotals(cart){
+  const sub = cart.reduce((s, it) => s + Number(it.price||0)*Number(it.count||1), 0);
+  const shipping = 0; // за замовчуванням домовляємось індивідуально
+  const total = sub + shipping;
+
+  const box = document.getElementById('summaryTotals');
+  if (!box) return;
+
+  box.innerHTML = `
+    <div class="totals-row"><span class="label">Subtotal</span><span class="value">${fmtUSD(sub)}</span></div>
+    <div class="totals-row"><span class="label">Shipping</span><span class="value">TBD</span></div>
+    <div class="totals-row total"><span class="label">Total</span><span class="value">${fmtUSD(total)}</span></div>
+  `;
+}
+
+// Навішування обробників на контролі в кошику
+function bindCheckoutCartEvents(){
+  const wrap = document.getElementById('cartList');
+  if (!wrap) return;
+
+  // зміна кількості
+  wrap.querySelectorAll('.cart-qty').forEach(input => {
+    input.addEventListener('change', () => {
+      let v = Math.max(1, parseInt(input.value,10) || 1);
+      input.value = v;
+      const idx = Number(input.dataset.idx || -1);
+      const cart = readCart();
+      if (cart[idx]) {
+        cart[idx].count = v;
+        writeCart(cart);
+        recalcTotals(cart);
+      }
+    });
+  });
+
+  // видалення позиції
+  wrap.querySelectorAll('.cart-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = Number(btn.dataset.idx || -1);
+      const cart = readCart();
+      if (idx >= 0) {
+        cart.splice(idx, 1);
+        writeCart(cart);
+        renderCheckoutCart();
+      }
+    });
+  });
+}
+
+// Рендер кошика на сторінці checkout
+function renderCheckoutCart(){
+  const wrap = document.getElementById('cartList');
+  if (!wrap) return;
+
+  const cart = readCart();
+  updateCartBadge(cart);
+
+  if (!cart.length){
+    wrap.innerHTML = `<p class="muted">Your cart is empty. Go to <a class="link" href="products.html">Products</a>.</p>`;
+    const totals = document.getElementById('summaryTotals');
+    if (totals) totals.innerHTML = '';
+    return;
+  }
+
+  wrap.innerHTML = cart.map((it, idx) => `
+    <div class="cart-row">
+      <div class="cart-title">
+        <strong>${it.name}</strong>
+        <span class="muted">(${it.display || (it.grams ? (it.grams>=1000 ? (it.grams/1000)+'g' : it.grams+'mg') : '')})</span>
+      </div>
+      <div class="cart-ctrl">
+        <span class="price">${fmtUSD(it.price)}</span>
+        ×
+        <input type="number" min="1" value="${Number(it.count||1)}" data-idx="${idx}" class="cart-qty" />
+        <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
+      </div>
+    </div>
+  `).join('');
+
+  recalcTotals(cart);
+  bindCheckoutCartEvents();
+}
+
+/* ===================== CHECKOUT FORM SUBMIT ===================== */
+
+function initCheckoutForm(){
+  const form = document.getElementById('checkoutForm');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const msg = document.getElementById('formMsg');
+    const btn = form.querySelector('button[type="submit"]');
+
+    // простенька валідація
+    if (!form.checkValidity()){
+      msg.textContent = 'Please fill all required fields.';
+      msg.style.color = '#dc2626';
+      form.reportValidity?.();
+      return;
+    }
+
+    // honeypot
+    if (form.querySelector('input[name="_gotcha"]')?.value){
+      msg.textContent = 'Bot detected.';
+      msg.style.color = '#dc2626';
+      return;
+    }
+
+    const cart = readCart();
+    if (!cart.length){
+      msg.textContent = 'Your cart is empty.';
+      msg.style.color = '#dc2626';
+      return;
+    }
+
+    const payload = {
+      type: 'checkout',
+      customer: {
+        firstName: form.firstName.value.trim(),
+        lastName:  form.lastName.value.trim(),
+        email:     form.email.value.trim(),
+        country:   form.country.value.trim(),
+        city:      form.city.value.trim(),
+        postal:    form.postal.value.trim(),
+        address:   form.address.value.trim(),
+        messenger: form.messenger.value,
+        handle:    form.handle.value.trim(),
+        notes:     form.notes.value.trim()
+      },
+      cart: cart.map(i => ({
+        name: i.name, sku: i.sku,
+        qty: Number(i.count||1),
+        display: i.display || (i.grams ? (i.grams>=1000 ? (i.grams/1000)+'g' : i.grams+'mg') : ''),
+        grams: Number(i.grams||0),
+        price: Number(i.price||0)
+      })),
+      subtotal: cart.reduce((s,i)=> s+Number(i.price||0)*Number(i.count||1),0),
+      meta: {
+        userAgent: navigator.userAgent,
+        page: location.href,
+      }
+    };
+
+    try{
+      btn.disabled = true; const old = btn.textContent; btn.textContent = 'Submitting...';
+      msg.textContent = '';
+
+      // Використовуємо ваш rewrite на бекенд (наприклад, Resend handler)
+      const res = await fetch('/api/contact', {
+        method:'POST', headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      // успіх
+      msg.textContent = 'Thank you! We will contact you shortly to confirm shipping and payment.';
+      msg.style.color = '#047857';
+
+      // очищення кошика (опційно)
+      writeCart([]);
+      renderCheckoutCart();
+
+      // м’який скрол до верху форми
+      form.scrollIntoView({ behavior:'smooth', block:'start' });
+
+      // повернути кнопку
+      btn.textContent = old; btn.disabled = false;
+
+    }catch(err){
+      console.error(err);
+      msg.textContent = 'Could not submit right now. Please try again or contact us via email/Telegram.';
+      msg.style.color = '#dc2626';
+      btn.disabled = false; btn.textContent = 'Submit Order Request';
+    }
+  });
 }
