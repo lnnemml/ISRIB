@@ -6,7 +6,7 @@
 /* ========== Reset & Base ========== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root{
-  --brand-900:#1e40af; --brand-700:#2563eb; --brand-500:#3b82f6;
+  --brand-900:#1e40af; --brand-700:#2563eb; --brand-500:#3b82f6; --brand-800:#1b399b; 
   --accent-600:#0284c7; --accent-500:#0ea5e9;
   --bg:#ffffff; --bg-soft:#f8fafc; --panel:#ffffff;
   --text:#0f172a; --muted:#64748b; --muted-strong:#475569;
@@ -1044,4 +1044,27 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .checkout-form .form-actions #submitOrderBtn:hover,
 .checkout-form .form-actions #submitOrderBtn:focus {
   background: var(--brand-800) !important;
+}
+/* Checkout submit: гарантовано темний фон і на hover */
+#submitOrderBtn,
+.btn.btn-primary {
+  background-color: var(--brand-900) !important;
+  color:#fff !important;
+  border:none !important;
+  background-image:none !important;
+  filter:none !important;
+  display:inline-flex; justify-content:center; align-items:center;
+}
+
+#submitOrderBtn:hover,
+.btn.btn-primary:hover,
+#submitOrderBtn:focus,
+.btn.btn-primary:focus,
+#submitOrderBtn:active,
+.btn.btn-primary:active {
+  background-color: var(--brand-800) !important;
+  color:#fff !important;
+  border:none !important;
+  background-image:none !important;
+  filter:none !important;
 }
