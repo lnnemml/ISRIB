@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeApp() {
+  bindBurgerMenu?.();
   initHeaderBehavior();
   initSmoothScrolling();
   initFadeInAnimations();
