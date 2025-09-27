@@ -1116,3 +1116,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   background:#f3f4f6;
   color:var(--text);
 }
+/* Privacy page helpers */
+.privacy-section{ padding:28px 0 70px; }
+.privacy-section .container{ max-width:980px; }
+.legal-meta{ color:#64748b; }
