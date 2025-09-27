@@ -601,43 +601,58 @@ document.addEventListener('click', (e) => {
     trackEvent('faq_toggle', { question: q, expanded: !wasExpanded });
   }
 });
-// === Global FAQ click delegation (no init required) ===
+// === Global FAQ click delegation (resilient) ===
 document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.faq-button');
+  const trigger = e.target.closest('.faq-button, .faq-question, .faq-item .faq-icon');
+  if (!trigger) return;
+
+  // Визначаємо саму "кнопку" (може бути <button> або <a>)
+  const btn = trigger.closest('.faq-item')?.querySelector('.faq-button') || trigger.closest('.faq-button');
   if (!btn) return;
 
-  // знайдемо відповідну панель
-  const panelId = btn.getAttribute('aria-controls');
-  const panel = panelId ? document.getElementById(panelId) : null;
+  // Якщо це посилання — не стрибаємо по сторінці
+  if (btn.tagName === 'A') e.preventDefault();
 
-  // toggle state
+  // Пошук панелі відповіді:
+  // 1) за aria-controls → id
+  // 2) або перший .faq-answer у межах тієї ж .faq-item
+  let panel = null;
+  const panelId = btn.getAttribute('aria-controls');
+  if (panelId) panel = document.getElementById(panelId);
+  if (!panel) panel = btn.closest('.faq-item')?.querySelector('.faq-answer');
+  if (!panel) return;
+
+  // Текучий стан
   const wasExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+  // Тогл стану aria
   btn.setAttribute('aria-expanded', String(!wasExpanded));
 
-  if (panel) {
-    if (wasExpanded) panel.setAttribute('hidden', '');
-    else panel.removeAttribute('hidden');
-  }
+  // Показ/приховування панелі
+  if (wasExpanded) panel.setAttribute('hidden', '');
+  else panel.removeAttribute('hidden');
 
-  // оновлюємо іконку +/–
-  const icon = btn.querySelector('.faq-icon');
+  // Оновити +/–
+  const icon = btn.querySelector('.faq-icon') || btn.closest('.faq-item')?.querySelector('.faq-icon');
   if (icon) icon.textContent = wasExpanded ? '+' : '–';
 
-  // OPTIONAL: тримати відкритим лише одне питання
+  // OPTIONAL: дозволити відкритою лише одну відповідь
   // if (!wasExpanded) {
   //   document.querySelectorAll('.faq-button[aria-expanded="true"]').forEach(other => {
   //     if (other === btn) return;
   //     other.setAttribute('aria-expanded', 'false');
-  //     const pid = other.getAttribute('aria-controls');
-  //     const p = pid ? document.getElementById(pid) : null;
-  //     if (p) p.setAttribute('hidden', '');
-  //     const ic = other.querySelector('.faq-icon'); if (ic) ic.textContent = '+';
+  //     const oid = other.getAttribute('aria-controls');
+  //     const op = oid ? document.getElementById(oid) : other.closest('.faq-item')?.querySelector('.faq-answer');
+  //     if (op) op.setAttribute('hidden', '');
+  //     const oic = other.querySelector('.faq-icon') || other.closest('.faq-item')?.querySelector('.faq-icon');
+  //     if (oic) oic.textContent = '+';
   //   });
   // }
 
-  // аналітика
+  // Аналітика (необов'язково)
   if (typeof trackEvent === 'function') {
-    const q = btn.querySelector('.faq-question')?.textContent?.trim();
+    const q = btn.querySelector('.faq-question')?.textContent?.trim()
+          || btn.closest('.faq-item')?.querySelector('.faq-question')?.textContent?.trim();
     trackEvent('faq_toggle', { question: q, expanded: !wasExpanded });
   }
-});
+}, false);
