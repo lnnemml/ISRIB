@@ -1,95 +1,182 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Quality Control | isrib.shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Our quality control process ensures high-purity compounds for research use. Every batch is tested and verified using industry-standard analytical tools.">
-  <meta name="robots" content="index,follow">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Quality Control — ISRIB.shop</title>
+  <meta name="description" content="How we ensure compound quality and purity: LC‑MS, NMR, retention samples, secure packaging. Research use only.">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Quality Control | isrib.shop">
-  <meta property="og:description" content="Learn about how we ensure compound quality and purity at isrib.shop.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://isrib.shop/quality.html">
-  <meta property="og:image" content="/images/og-cover.jpg">
-  
-  <link rel="canonical" href="https://isrib.shop/quality.html">
-  <link rel="stylesheet" href="/css/main.css">
+  <!-- Canonical / Open Graph -->
+  <link rel="canonical" href="https://isrib.shop/quality.html"/>
+  <meta property="og:title" content="Quality Control — ISRIB.shop"/>
+  <meta property="og:description" content="Our QC covers LC‑MS, NMR, retention samples, and secure packaging."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://isrib.shop/quality.html"/>
+  <meta property="og:image" content="images/og-cover.jpg"/>
+
+  <!-- Unified CSS -->
+  <link rel="stylesheet" href="css/styles.css?v=12"/>
+  <style>
+    /* page-scoped cosmetics */
+    .quality-hero{
+      background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      padding: 60px 0 40px; /* стисліше як просив */
+      text-align:center; position:relative;
+    }
+    .quality-hero::before{
+      content:''; position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+        radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%);
+    }
+    .quality-hero .title{ position:relative; z-index:1; font-weight:900; font-size:clamp(2.1rem,4.5vw,3.2rem); color:#1e293b; margin:0 0 10px; }
+    .quality-hero .sub{ position:relative; z-index:1; color:#64748b; font-size:1.05rem; max-width:760px; margin:0 auto; }
+
+    .feature-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:22px; }
+    @media (max-width:980px){ .feature-grid{ grid-template-columns:1fr; } }
+    .feature-card{ background:var(--panel); border:1px solid var(--ring); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; }
+    .feature-card h3{ margin:0 0 8px; font-size:1.15rem; }
+
+    .qc-section{ padding: 28px 0 70px; }
+    .qc-section .container{ max-width:980px; }
+
+    .bullet{ margin:0; padding-left:22px; line-height:1.9; }
+    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:#eef2ff; color:#1e40af; font-weight:700; font-size:.9rem; }
+
+    .back-actions{ margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; }
+  </style>
 </head>
 <body>
-   <!-- Header -->
-    <header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-        <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-         🧺 Cart <span id="cartCount" class="badge">0</span>
+
+  <!-- Slim Header (узгоджено з іншими сторінками) -->
+  <header class="header-slim" id="siteHeader">
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
         </a>
-      </nav>
-    </div>
-  </div>
-</header>
 
-  <main class="container" style="min-height: 60vh;">
-    <section class="section" style="max-width: 800px; margin: 4rem auto;">
-      <h1 style="margin-bottom: 1rem;">Quality Control</h1>
+        <nav class="nav-slim" aria-label="Primary">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn-slim" id="cartBtn" onclick="trackCTA?.('header','cart')">
+            🧺 <span id="cartCount" class="badge-slim">0</span>
+          </a>
+        </nav>
 
-      <p>At <strong>isrib.shop</strong>, we are committed to providing high-purity compounds intended for laboratory research only. Our internal quality control process follows best practices used in research settings and chemical production.</p>
-
-      <h2>Batch Testing</h2>
-      <p>Each batch is individually verified through analytical testing, including:</p>
-      <ul>
-        <li><strong>LC-MS</strong> (Liquid Chromatography–Mass Spectrometry)</li>
-        <li><strong>NMR</strong> (Nuclear Magnetic Resonance Spectroscopy)</li>
-        <li><strong>Melting Point Analysis</strong> (where applicable)</li>
-        <li><strong>Visual inspection</strong> under lab-grade lighting conditions</li>
-      </ul>
-
-      <h2>Retention & Documentation</h2>
-      <p>We maintain reference samples and internal batch records for traceability. Each sample is stored in climate-controlled conditions with desiccant packaging to preserve compound stability.</p>
-
-      <h2>Packaging & Handling</h2>
-      <p>Products are packaged using inert, UV-protective containers, vacuum-sealed where necessary, and shipped with clear labeling and documentation (CoA or batch ID).</p>
-
-      <h2>Disclaimer</h2>
-      <p>All materials offered by isrib.shop are strictly for laboratory research use only. We do not authorize the use of any substance for human or animal consumption, diagnostic, or therapeutic purposes.</p>
-
-      <div class="actions" style="margin-top:2rem;">
-        <a class="btn" href="/products.html">← Back to Products</a>
+        <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+        </button>
       </div>
-    </section>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+      <a href="products.html" class="mm-link">Products</a>
+      <a href="about.html" class="mm-link">About</a>
+      <a href="faq.html" class="mm-link">FAQ</a>
+      <a href="contact.html" class="mm-link">Contact</a>
+      <a href="checkout.html" class="mm-link mm-cart" onclick="trackCTA?.('header','cart_mobile')">
+        🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="quality-hero">
+    <div class="container">
+      <h1 class="title">Quality Control</h1>
+      <p class="sub">High‑purity compounds for laboratory research. Each batch is verified and traceable.</p>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <main class="qc-section">
+    <div class="container">
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>Batch Testing</h3>
+          <ul class="bullet">
+            <li><strong>LC‑MS</strong> (Liquid Chromatography–Mass Spectrometry)</li>
+            <li><strong>NMR</strong> (Nuclear Magnetic Resonance)</li>
+            <li><strong>Melting point</strong> where applicable</li>
+            <li><strong>Visual inspection</strong> under lab lighting</li>
+          </ul>
+        </article>
+
+        <article class="feature-card">
+          <h3>Retention & Documentation</h3>
+          <p style="margin:6px 0 0;">Reference samples retained per batch; internal records for traceability; climate‑controlled storage with desiccant.</p>
+        </article>
+
+        <article class="feature-card">
+          <h3>Packaging & Handling</h3>
+          <p style="margin:6px 0 0;">Inert, UV‑protective containers; vacuum‑sealed where needed; clear labels and documentation (CoA or batch ID).</p>
+        </article>
+      </div>
+
+      <hr class="sep" style="margin:26px 0"/>
+
+      <div class="pill">Research Use Only</div>
+      <p style="margin-top:10px;" class="muted">
+        We do not authorize any substance for human/animal consumption, diagnostic or therapeutic use.
+      </p>
+
+      <div class="back-actions">
+        <a class="btn" href="products.html" onclick="trackCTA?.('quality','back_to_products')">← Back to Products</a>
+        <a class="btn btn-secondary" href="contact.html" onclick="trackCTA?.('quality','request_coa')">Request CoA</a>
+      </div>
+    </div>
   </main>
 
-  <footer class="site-footer">
+ <!-- Footer -->
+  <footer class="footer">
     <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>ISRIB Shop</h3>
+          <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality and reliability.</p>
+          <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
+        </div>
+        <div class="footer-section">
+          <h3>Products</h3>
+          <ul>
+            <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+            <li><a href="product_isrib.html">ISRIB Original</a></li>
+            <li><a href="product_zzl_7.html">ZZL-7</a></li>
+            <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+            <li><a href="products.html">All Products</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Information</h3>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="quality.html">Quality Control</a></li>
+            <li><a href="safety.html">Safety Guidelines</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="research.html">Research Use Only</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
       <div class="footer-bottom">
-        <p>© 2025 isrib.shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+        <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
       </div>
     </div>
   </footer>
 
-  <script src="/js/main.js"></script>
-
-  <!-- Start of Tawk.to Script -->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!-- End of Tawk.to Script -->
+  <!-- App JS -->
+  <script src="js/main.js?v=12"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>
