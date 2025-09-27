@@ -5,146 +5,120 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Checkout — ISRIB.shop</title>
   <meta name="description" content="Complete your order request. Research use only. Worldwide shipping.">
-  <link href="css/styles.css" rel="stylesheet"/>
+
+  <!-- Unified CSS -->
+  <link rel="stylesheet" href="css/styles.css?v=7" />
+
+  <!-- Page‑scoped cosmetics (мінімум) -->
   <style>
-    /* layout */
-    body{background:#f8fafc;color:#0f172a}
-    .page-header{padding:24px 0 8px;border-bottom:1px solid #e5e7eb;background:#fff}
-    .checkout-wrap{padding:28px 0 60px}
-    .checkout-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:24px;align-items:start}
-
-    /* cards & form */
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden}
-    .card .body{padding:20px}
-    .row{display:grid;gap:12px;margin-top:12px}
-    .row-2{grid-template-columns:1fr 1fr}
-    .row-3{grid-template-columns:1fr 1fr 1fr}
-    label{display:block;font-weight:600;margin-bottom:6px}
-    input,select,textarea{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:#fff}
-    textarea{resize:vertical}
-    .btn-primary{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 18px;background:#1e40af;color:#fff;border-radius:12px;border:none;font-weight:700;cursor:pointer}
-    .btn-primary:hover{background:#1b399b}
-    .muted{color:#64748b}
-    .danger{color:#dc2626}
-    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:700;font-size:12px}
-
-    /* header */
-    .header{padding:14px 0;border-bottom:1px solid #e5e7eb;background:#fff;position:sticky;top:0;z-index:20}
-    .header .header-content{display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .logo-image{height:36px;width:auto;object-fit:contain}
-    .nav{display:flex;gap:18px;align-items:center}
-    .nav a{text-decoration:none;color:#0f172a;font-weight:600}
-    .cart-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;background:#0f766e;color:#fff;border-radius:12px;font-weight:700;text-decoration:none}
-    .cart-btn:hover{background:#0b5e57}
-    .badge{display:inline-flex;min-width:22px;height:22px;padding:0 6px;border-radius:999px;align-items:center;justify-content:center;background:#fff;color:#0f766e;font-size:12px;font-weight:800}
-
-    /* cart list */
-    .cart-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-    .cart-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa}
-    .cart-title{font-weight:600}
-    .cart-ctrl{display:flex;align-items:center;gap:8px}
-    .cart-count{width:76px}
-
-    .price-line{display:flex;align-items:center;gap:8px;color:#475569;font-size:.95rem}
-    .price-line .x{opacity:.7}
-    .price-line .eq{font-weight:700;color:#0f172a}
-
-    .link{background:none;border:none;color:#1e40af;cursor:pointer;padding:0}
-    .link.danger{color:#dc2626}
-
-    /* totals */
-    .totals{margin-top:14px}
-    .totals-row{display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:1rem}
-    .totals-row .label{color:#334155}
-    .totals-row .value{font-weight:700;color:#0f172a}
-    .totals-row.total{margin-top:10px;padding-top:10px;border-top:1px solid #e5e7eb;font-size:1.1rem}
-    .totals-row.total .value{font-size:1.2rem}
-
-    @media (max-width:980px){
-      .checkout-grid{grid-template-columns:1fr}
-      .row-2,.row-3{grid-template-columns:1fr}
+    .checkout-hero{
+      background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      padding: 110px 0 50px; text-align:center; position:relative;
     }
+    .checkout-hero::before{
+      content:''; position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+        radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%);
+    }
+    .checkout-hero .title{ position:relative; z-index:1; font-weight:900; font-size:clamp(2.2rem,4.5vw,3.4rem); color:#1e293b; margin:0 0 10px; }
+    .checkout-hero .sub{ position:relative; z-index:1; color:#64748b; font-size:1.1rem; max-width:680px; margin:0 auto; }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header">
+  <!-- Slim Header (як на головній) -->
+  <header class="header-slim" id="siteHeader">
     <div class="container">
       <div class="header-content">
-        <a href="/" class="logo">
-          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
+        <a href="/" class="logo-slim" aria-label="ISRIB.shop home">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
         </a>
-        <nav class="nav">
+
+        <nav class="nav-slim" aria-label="Primary">
           <a href="products.html">Products</a>
           <a href="about.html">About</a>
           <a href="faq.html">FAQ</a>
           <a href="contact.html">Contact</a>
-          <a href="checkout.html" class="cart-btn" id="cartBtn">🧺 Cart <span id="cartCount" class="badge">0</span></a>
+          <a href="checkout.html" class="cart-btn-slim" id="cartBtn" onclick="trackCTA?.('header','cart')">
+            🧺 <span id="cartCount" class="badge-slim">0</span>
+          </a>
         </nav>
+
+        <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+        </button>
       </div>
     </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+      <a href="products.html" class="mm-link">Products</a>
+      <a href="about.html" class="mm-link">About</a>
+      <a href="faq.html" class="mm-link">FAQ</a>
+      <a href="contact.html" class="mm-link">Contact</a>
+      <a href="checkout.html" class="mm-link mm-cart" onclick="trackCTA?.('header','cart_mobile')">
+        🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
+      </a>
+    </nav>
   </header>
 
   <!-- Page Header -->
-  <section class="page-header">
+  <section class="checkout-hero">
     <div class="container">
-      <h1>Checkout</h1>
-      <p class="muted">Fill the form below. We’ll confirm availability, shipping and payment details via email or messenger.</p>
+      <h1 class="title">Checkout</h1>
+      <p class="sub">Fill the form below. We’ll confirm availability, shipping and payment details via email or messenger.</p>
     </div>
   </section>
 
-  <!-- Content -->
+  <!-- Checkout Content -->
   <main class="checkout-wrap">
     <div class="container">
       <div class="checkout-grid">
         <!-- LEFT: Form -->
-        <form id="checkoutForm" class="card" novalidate>
-          <div class="body">
+        <form id="checkoutForm" class="card checkout-form" novalidate>
+          <div class="card-body">
             <h2>Shipping & Contact</h2>
 
-            <div class="row row-2">
-              <div>
-                <label for="firstName">First name<span class="danger">*</span></label>
+            <div class="form-two">
+              <div class="form-group">
+                <label for="firstName">First name<span class="req">*</span></label>
                 <input id="firstName" name="firstName" autocomplete="given-name" required />
               </div>
-              <div>
-                <label for="lastName">Last name<span class="danger">*</span></label>
+              <div class="form-group">
+                <label for="lastName">Last name<span class="req">*</span></label>
                 <input id="lastName" name="lastName" autocomplete="family-name" required />
               </div>
             </div>
 
-            <div class="row">
-              <div>
-                <label for="email">Email<span class="danger">*</span></label>
-                <input id="email" name="email" type="email" autocomplete="email" required />
-              </div>
+            <div class="form-group">
+              <label for="email">Email<span class="req">*</span></label>
+              <input id="email" name="email" type="email" autocomplete="email" required />
             </div>
 
-            <div class="row row-3">
-              <div>
-                <label for="country">Country<span class="danger">*</span></label>
+            <div class="form-two">
+              <div class="form-group">
+                <label for="country">Country<span class="req">*</span></label>
                 <input id="country" name="country" autocomplete="country-name" required />
               </div>
-              <div>
-                <label for="city">City<span class="danger">*</span></label>
+              <div class="form-group">
+                <label for="city">City<span class="req">*</span></label>
                 <input id="city" name="city" autocomplete="address-level2" required />
-              </div>
-              <div>
-                <label for="postal">Postal code<span class="danger">*</span></label>
-                <input id="postal" name="postal" autocomplete="postal-code" required />
               </div>
             </div>
 
-            <div class="row">
-              <div>
-                <label for="address">Address<span class="danger">*</span></label>
+            <div class="form-two">
+              <div class="form-group">
+                <label for="postal">Postal code<span class="req">*</span></label>
+                <input id="postal" name="postal" autocomplete="postal-code" required />
+              </div>
+              <div class="form-group">
+                <label for="address">Address<span class="req">*</span></label>
                 <input id="address" name="address" autocomplete="address-line1" required />
               </div>
             </div>
 
-            <div class="row row-2">
-              <div>
+            <div class="form-two">
+              <div class="form-group">
                 <label for="messenger">Preferred messenger (optional)</label>
                 <select id="messenger" name="messenger">
                   <option value="">Select…</option>
@@ -153,52 +127,49 @@
                   <option>WhatsApp</option>
                 </select>
               </div>
-              <div>
+              <div class="form-group">
                 <label for="handle">Handle / phone (optional)</label>
                 <input id="handle" name="handle" placeholder="@username or +1…" />
               </div>
             </div>
 
-            <div class="row">
-              <div>
-                <label for="notes">Notes (optional)</label>
-                <textarea id="notes" name="notes" rows="3" placeholder="Institute / lab, delivery preferences, etc."></textarea>
-              </div>
+            <div class="form-group">
+              <label for="notes">Notes (optional)</label>
+              <textarea id="notes" name="notes" rows="3" placeholder="Institute / lab, delivery preferences, etc."></textarea>
             </div>
 
             <!-- honeypot -->
             <input type="text" name="_gotcha" class="hidden" aria-hidden="true" tabindex="-1" autocomplete="off"/>
 
-            <div class="row" style="margin-top:6px">
-              <label style="display:flex; gap:10px; align-items:flex-start">
-                <input type="checkbox" id="researchOnly" required />
-                <span class="muted">
-                  I confirm the products are ordered strictly for <strong>research use only</strong>. Not for human consumption, clinical, or veterinary use. I agree to the
-                  <a href="terms.html">Terms</a>, <a href="privacy.html">Privacy Policy</a>, and <a href="disclaimer.html">Disclaimer</a>.
-                </span>
-              </label>
-            </div>
+            <label class="agree-row">
+              <input type="checkbox" id="researchOnly" required />
+              <span class="muted">
+                I confirm the products are ordered strictly for <strong>research use only</strong>. Not for human consumption, clinical, or veterinary use.
+                I agree to the <a class="link" href="terms.html">Terms</a>, <a class="link" href="privacy.html">Privacy Policy</a>, and <a class="link" href="disclaimer.html">Disclaimer</a>.
+              </span>
+            </label>
 
-            <div class="row" style="margin-top:14px">
-              <button class="btn-primary" type="submit">Submit Order Request</button>
-              <div id="formMsg" class="muted" style="margin-top:8px"></div>
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">Submit Order Request</button>
+              <div id="formMsg" class="form-status muted" role="status" aria-live="polite"></div>
             </div>
           </div>
         </form>
 
         <!-- RIGHT: Summary -->
-        <aside class="card">
-          <div class="body">
+        <aside class="card order-card">
+          <div class="card-body">
             <h2>Order Summary</h2>
 
+            <!-- список позицій -->
             <div id="cartList" class="cart-list"></div>
 
-            <!-- totals -->
+            <!-- підсумки -->
             <div id="summaryTotals" class="totals" aria-live="polite"></div>
 
-            <hr style="margin:16px 0; border:none; border-top:1px solid #e5e7eb" />
+            <hr class="sep" />
             <div class="pill">Research Use Only</div>
-            <ul class="muted" style="margin-top:12px; line-height:1.8">
+            <ul class="muted ro-list">
               <li>COA available per batch</li>
               <li>Worldwide shipping</li>
               <li>Secure packaging</li>
@@ -214,185 +185,17 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="muted" style="padding:18px 0; border-top:1px solid #e5e7eb;">
+      <div class="footer-bottom">
         © <span id="y"></span> ISRIB.shop — Research chemicals. All rights reserved.
       </div>
     </div>
   </footer>
 
-  <!-- INLINE JS: cart + submit + totals -->
+  <!-- App JS -->
+  <script src="js/main.js?v=7"></script>
   <script>
-    // Рік у футері
+    // рік у футері (без залежностей)
     document.getElementById('y').textContent = new Date().getFullYear();
-
-    (function () {
-      const $ = (s, r = document) => r.querySelector(s);
-      const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-      const CART_KEY = 'isrib_cart';
-
-      // Хелпери для читання/запису кошика (fallback, якщо немає у main.js)
-      const readCart = window.getCart || function () {
-        try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
-        catch { return []; }
-      };
-      const writeCart = window.saveCart || function (arr) {
-        localStorage.setItem(CART_KEY, JSON.stringify(arr));
-        updateBadge(arr);
-      };
-
-      function updateBadge(arr) {
-        const el = $('#cartCount');
-        if (!el) return;
-        const cart = Array.isArray(arr) ? arr : readCart();
-        const total = cart.reduce((n, i) => n + (Number(i.count) || 0), 0);
-        el.textContent = total;
-      }
-
-      function fmtSize(it) {
-        if (it.display) return it.display;
-        if (it.grams != null) {
-          return it.grams >= 1 ? `${it.grams}g` : `${Math.round(it.grams * 1000)}mg`;
-        }
-        return '';
-      }
-
-      function renderTotals(subtotal) {
-        const box = $('#summaryTotals');
-        if (!box) return;
-        box.innerHTML = `
-          <div class="totals-row">
-            <span class="label">Subtotal</span>
-            <span class="value" id="subtotalVal">$${subtotal.toFixed(2)}</span>
-          </div>
-          <div class="totals-row">
-            <span class="label">Shipping</span>
-            <span class="value">TBD</span>
-          </div>
-          <div class="totals-row total">
-            <span class="label">Total</span>
-            <span class="value" id="totalVal">$${subtotal.toFixed(2)}</span>
-          </div>
-        `;
-      }
-
-      function renderCart() {
-        const wrap = $('#cartList');
-        if (!wrap) return;
-
-        const cart = readCart().map((it) => {
-          // Міграція старого формату → нового
-          if (it && it.count == null && it.qty != null) {
-            it.grams = it.grams ?? it.qty;
-            delete it.qty;
-            it.count = 1;
-          }
-          return it;
-        });
-
-        if (!cart.length) {
-          wrap.innerHTML = '<p class="muted">Your cart is empty. Go to <a href="products.html">Products</a>.</p>';
-          renderTotals(0);
-          updateBadge(cart);
-          return;
-        }
-
-        wrap.innerHTML = cart.map((it, idx) => {
-          const count = Number(it.count) || 1;
-          const line = (Number(it.price) || 0) * count;
-          const size = fmtSize(it);
-          return `
-            <div class="cart-row">
-              <div class="cart-title">
-                <strong>${it.name || it.sku}</strong>
-                <div class="muted">${size} × $${Number(it.price).toFixed(2)}</div>
-              </div>
-              <div class="cart-ctrl">
-                <input type="number" min="1" value="${count}" data-idx="${idx}" class="cart-count">
-                <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
-              </div>
-              <div class="line-total">$${line.toFixed(2)}</div>
-            </div>
-          `;
-        }).join('');
-
-        // Кількість / видалення
-        $$('.cart-count', wrap).forEach(inp => {
-          inp.addEventListener('change', (e) => {
-            const i = +e.target.dataset.idx;
-            const cart2 = readCart();
-            cart2[i].count = Math.max(1, Number(e.target.value) || 1);
-            writeCart(cart2);
-            renderCart();
-          });
-        });
-
-        $$('.cart-remove', wrap).forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const i = +e.target.dataset.idx;
-            const cart2 = readCart();
-            cart2.splice(i, 1);
-            writeCart(cart2);
-            renderCart();
-          });
-        });
-
-        // Підсумки
-        const subtotal = cart.reduce(
-          (sum, it) => sum + (Number(it.price) || 0) * (Number(it.count) || 1), 0
-        );
-        renderTotals(subtotal);
-        updateBadge(cart);
-      }
-
-      // Сабміт → /api/checkout
-      const form = $('#checkoutForm');
-      const msg = $('#formMsg');
-      if (form) {
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          msg.textContent = '';
-          msg.className = 'muted';
-
-          if (!form.checkValidity()) {
-            msg.className = 'danger';
-            msg.textContent = 'Please fill all required fields.';
-            return;
-          }
-
-          const cart = readCart();
-          if (!cart.length) {
-            msg.className = 'danger';
-            msg.textContent = 'Your cart is empty.';
-            return;
-          }
-
-          const data = Object.fromEntries(new FormData(form).entries());
-          data.cart = cart;
-          data.timestamp = new Date().toISOString();
-
-          try {
-            const r = await fetch('/api/checkout', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            });
-            if (!r.ok) throw new Error('submit failed');
-
-            writeCart([]); // clear cart
-            const oid = Math.random().toString(36).slice(2, 8).toUpperCase();
-            window.location.href = `/success.html?order=${oid}`;
-          } catch (err) {
-            msg.className = 'danger';
-            msg.textContent = 'Submission failed. Please try again or email isrib.shop@protonmail.com';
-          }
-        });
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        updateBadge();
-        renderCart();
-      });
-    })();
   </script>
 </body>
 </html>
