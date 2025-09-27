@@ -41,7 +41,7 @@ img { max-width: 100%; height: auto; }
 .header-slim.compact{ padding: 8px 0; }
 .header-slim .header-content{ display:flex; align-items:center; justify-content:space-between; }
 
-.logo-image-slim{ height: 36px; max-height: 36px; display:block; }
+.logo-image-slim{ height: 36px; max-height: 36px; width:auto; display:block; }
 @media (min-width:721px){ .header-slim.compact .logo-image-slim{ height: 30px; } }
 
 /* Desktop nav */
