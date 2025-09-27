@@ -361,7 +361,7 @@ function mountAddToCartButtons() {
       const display = btn.dataset.display || '';
       addToCart(name, sku, grams, price, display);
       updateCartBadge?.();
-      showToast('Added to cart');
+      showToast(`Added to cart - ${(display || (grams ? (grams >= 1000 ? (grams/1000)+'g' : grams+'mg') : ''))} for ${price}$`);
       trackEvent('add_to_cart_click', { name, sku, grams, price, display });
     });
   });
