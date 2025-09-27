@@ -1,122 +1,207 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Thank you | isrib.shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Thank you — ISRIB.shop</title>
+  <meta name="robots" content="noindex,follow"/>
   <meta name="description" content="Thank you for your request. We’ll reply shortly with payment and shipping details.">
-  <meta name="robots" content="noindex,follow">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Thank you">
-  <meta property="og:description" content="We received your request and will get back to you shortly.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://isrib.shop/success.html">
-  <meta property="og:image" content="/images/og-cover.jpg">
+  <!-- Canonical / Open Graph -->
+  <link rel="canonical" href="https://isrib.shop/success.html"/>
+  <meta property="og:title" content="Thank you — ISRIB.shop"/>
+  <meta property="og:description" content="We received your request and will get back to you shortly."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://isrib.shop/success.html"/>
+  <meta property="og:image" content="images/og-cover.jpg"/>
 
-  <link rel="canonical" href="https://isrib.shop/success.html">
-  <link rel="stylesheet" href="/css/main.css">
+  <!-- Unified CSS -->
+  <link rel="stylesheet" href="css/styles.css?v=19"/>
+  <style>
+    /* page-scoped cosmetics */
+    .success-hero{
+      background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      padding: 60px 0 40px;
+      text-align:center; position:relative;
+    }
+    .success-hero::before{
+      content:''; position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+        radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%);
+    }
+    .success-hero .title{
+      position:relative; z-index:1; font-weight:900;
+      font-size:clamp(2.1rem,4.5vw,3.2rem); color:#1e293b; margin:0 0 10px;
+    }
+    .success-hero .sub{ position:relative; z-index:1; color:#64748b; font-size:1.05rem; max-width:760px; margin:0 auto; }
+
+    .success-section{ padding:28px 0 70px; }
+    .success-section .container{ max-width:820px; }
+
+    .lead{ opacity:.9; }
+    .req-summary h2{ font-size:1.1rem; margin:0 0 .75rem; }
+    .req-summary ul{ list-style:none; padding:0; margin:0; }
+    .next-steps ol{ margin:0; padding-left:1.25rem; }
+  </style>
 </head>
 <body>
-   <!-- Header -->
-    <header class="header">
-  <div class="container">
-    <div class="header-content">
-      <a href="/" class="logo">
-        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
-      </a>
-      <nav class="nav">
-        <a href="products.html">Products</a>
-        <a href="about.html">About</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contact.html">Contact</a>
-         <a href="checkout.html" class="cart-btn" id="cartBtn" onclick="trackCTA?.('header','cart')">
-         🧺 Cart <span id="cartCount" class="badge">0</span>
+
+  <!-- Slim Header -->
+  <header class="header-slim" id="siteHeader">
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
         </a>
-      </nav>
+
+        <nav class="nav-slim" aria-label="Primary">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn-slim" id="cartBtn" onclick="trackCTA?.('header','cart')">
+            🧺 <span id="cartCount" class="badge-slim">0</span>
+          </a>
+        </nav>
+
+        <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+        </button>
+      </div>
     </div>
-  </div>
-</header>
 
-  <main class="container" style="min-height:60vh">
-    <section class="section" style="max-width:720px;margin:4rem auto 3rem;">
-      <h1 style="margin-bottom:.5rem;">Thank you! 🎉</h1>
-      <p class="lead" style="opacity:.9">
-        We’ve received your request. We’ll reply shortly with payment & shipping instructions.
-      </p>
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+      <a href="products.html" class="mm-link">Products</a>
+      <a href="about.html" class="mm-link">About</a>
+      <a href="faq.html" class="mm-link">FAQ</a>
+      <a href="contact.html" class="mm-link">Contact</a>
+      <a href="checkout.html" class="mm-link mm-cart" onclick="trackCTA?.('header','cart_mobile')">
+        🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
+      </a>
+    </nav>
+  </header>
 
-      <!-- Order summary (shown if query params exist) -->
-      <div id="summary" class="card" style="margin:1.5rem 0;display:none;">
+  <!-- Hero -->
+  <section class="success-hero">
+    <div class="container">
+      <h1 class="title">Thank you! 🎉</h1>
+      <p class="sub">We’ve received your request. We’ll reply shortly with payment & shipping instructions.</p>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <main class="success-section">
+    <div class="container">
+      <section class="card">
         <div class="card-body">
-          <h2 style="font-size:1.1rem;margin:0 0 .75rem;">Request summary</h2>
-          <ul style="list-style:none;padding:0;margin:0;">
-            <li><strong>Product:</strong> <span id="s-product">—</span></li>
-            <li><strong>Pack:</strong> <span id="s-pack">—</span></li>
-            <li><strong>Price:</strong> <span id="s-price">—</span></li>
+          <!-- Request summary (shown if query params exist) -->
+          <div id="summary" class="card req-summary" style="margin:1rem 0 1.25rem; display:none;">
+            <div class="card-body">
+              <h2>Request summary</h2>
+              <ul>
+                <li><strong>Product:</strong> <span id="s-product">—</span></li>
+                <li><strong>Pack:</strong> <span id="s-pack">—</span></li>
+                <li><strong>Price:</strong> <span id="s-price">—</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="back-actions" style="display:flex; gap:.75rem; flex-wrap:wrap; margin-top:.5rem;">
+            <a class="btn" href="index.html" onclick="trackCTA?.('success','home')">Home</a>
+            <a class="btn btn-secondary" href="products.html" onclick="trackCTA?.('success','products')">Catalog</a>
+            <a class="btn btn-outline" href="contact.html" onclick="trackCTA?.('success','contact')">Send another request</a>
+          </div>
+
+          <hr class="sep" style="margin:1.5rem 0;">
+
+          <div class="next-steps">
+            <h2 style="font-size:1.05rem; margin-bottom:.5rem;">What’s next?</h2>
+            <ol>
+              <li>Check your email — you’ll get our reply soon.</li>
+              <li>For faster communication, write on Telegram: <a href="https://t.me/your_handle" target="_blank" rel="noopener">t.me/your_handle</a></li>
+              <li>If you don’t see our message, check the Spam folder or contact us again.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+    <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>ISRIB Shop</h3>
+          <p>Advanced research chemicals for scientific advancement. Trusted by researchers worldwide for quality and reliability.</p>
+          <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
+        </div>
+        <div class="footer-section">
+          <h3>Products</h3>
+          <ul>
+            <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
+            <li><a href="product_isrib.html">ISRIB Original</a></li>
+            <li><a href="product_zzl_7.html">ZZL-7</a></li>
+            <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+            <li><a href="products.html">All Products</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Information</h3>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="quality.html">Quality Control</a></li>
+            <li><a href="safety.html">Safety Guidelines</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="research.html">Research Use Only</a></li>
+            <li><a href="disclaimer.html">Disclaimer</a></li>
           </ul>
         </div>
       </div>
-
-      <div class="actions" style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.25rem;">
-        <a class="btn" href="/" aria-label="Go to home">Home</a>
-        <a class="btn btn-secondary" href="/products.html" aria-label="Back to catalog">Catalog</a>
-        <a class="btn btn-outline" href="/contact.html" aria-label="Send another request">Send another request</a>
-      </div>
-
-      <hr style="margin:2rem 0;opacity:.2">
-
-      <div class="next-steps">
-        <h2 style="font-size:1.05rem;margin-bottom:.5rem;">What’s next?</h2>
-        <ol style="margin:0;padding-left:1.25rem;">
-          <li>Check your email — we’ll reply soon.</li>
-          <li>For faster communication, write on Telegram: <a href="https://t.me/your_handle" target="_blank" rel="noopener">t.me/your_handle</a></li>
-          <li>If you don’t see our message, check the Spam folder or contact us again.</li>
-        </ol>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
       <div class="footer-bottom">
-        <p>© 2025 isrib.shop. All rights reserved. | Research chemicals for laboratory use only.</p>
+        <p>&copy; 2025 ISRIB Shop. All rights reserved. | Research chemicals for laboratory use only.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Optional: auto-redirect to home after 12s -->
-  <!-- <meta http-equiv="refresh" content="12; url=/" /> -->
-
+  <!-- App JS -->
+  <script src="js/main.js?v=19"></script>
   <script>
-    // Show summary if the form sent ?product=&pack=&price=
+    // year
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Show summary if ?product=&pack=&price= present (kept from your previous version)
     (function () {
       const q = new URLSearchParams(location.search);
       const p = q.get('product') || '';
       const pack = q.get('pack') || '';
       const price = q.get('price') || '';
       if (p || pack || price) {
-        document.getElementById('summary').style.display = 'block';
+        const box = document.getElementById('summary');
+        if (box) box.style.display = 'block';
         if (p)    document.getElementById('s-product').textContent = p;
         if (pack) document.getElementById('s-pack').textContent = pack;
         if (price)document.getElementById('s-price').textContent = price;
       }
     })();
   </script>
-
-  <script src="/js/main.js"></script>
-
-  <!-- Start of Tawk.to Script -->
+  <!-- Tawk.to chat -->
   <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  })();
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true; s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
+      s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
+    })();
   </script>
-  <!-- End of Tawk.to Script -->
 </body>
 </html>
