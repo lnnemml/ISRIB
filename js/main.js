@@ -22,7 +22,8 @@ function initializeApp() {
   updateCartBadge();
   mountAddToCartButtons();
   renderCheckoutCart();
-
+  initContactUX();        // показ/приховування product-section, автозаповнення з query string
+  initContactFormResend(); // сабміт форми через ваш бекенд/серверлес із Resend
   // Back-compat helpers some code expects:
   try { updateContactLinks(); } catch {}
 }
@@ -646,3 +647,101 @@ document.addEventListener('click', function(e) {
     trackEvent('faq_toggle', { question: q, expanded: isOpen });
   }
 }, false);
+// === Contact page UX (subject → product section; autofill from URL) ===
+function initContactUX(){
+  const subject = document.getElementById('subject');
+  const prodSec = document.getElementById('product-section');
+  if (!subject || !prodSec) return;
+
+  const toggleProd = () => {
+    const v = subject.value;
+    const show = (v === 'product-order' || v === 'bulk-order');
+    prodSec.classList.toggle('hidden', !show);
+  };
+  subject.addEventListener('change', toggleProd);
+
+  // Query-string autofill
+  const qp = new URLSearchParams(window.location.search);
+  const inquiry = qp.get('inquiry');
+  if (inquiry === 'order') subject.value = 'product-order';
+  toggleProd();
+
+  const product = qp.get('product');
+  const price = qp.get('price');
+  if (product) {
+    const productSelect = document.getElementById('product');
+    if (productSelect) {
+      [...productSelect.options].some(o => {
+        if (o.value.includes(product)) { o.selected = true; return true; }
+        return false;
+      });
+    }
+    const msg = document.getElementById('message');
+    if (msg) {
+      msg.value = `I would like to order ${String(product).replace(/-/g,' ').toUpperCase()}${price ? ` (${price})` : ''}. Please provide payment and shipping details.`;
+    }
+  }
+}
+
+// === Contact form submit via serverless endpoint using Resend ===
+// Assumes you have a backend route at /api/contact that sends email via Resend.
+function initContactFormResend(){
+  const form = document.getElementById('contactForm');
+  const btn  = document.getElementById('submitBtn');
+  const note = document.getElementById('formNote');
+  if (!form || !btn) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const payload = {
+      name:   fd.get('name')?.toString().trim(),
+      email:  fd.get('email')?.toString().trim(),
+      subject:fd.get('subject')?.toString(),
+      product:fd.get('product')?.toString() || '',
+      message:fd.get('message')?.toString(),
+      researchUse: !!fd.get('research-use'),
+      page: window.location.href
+    };
+
+    // basic validation
+    if (!payload.name || !payload.email || !payload.subject || !payload.message || !payload.researchUse){
+      showToast('Please fill all required fields', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = 'Sending...';
+    note.textContent = '';
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error('Failed to send');
+
+      showToast('Message sent! We will reply shortly.', 'success');
+      trackEvent?.('contact_form_submit', { subject: payload.subject, product: payload.product || null });
+      form.reset();
+      // hide product section if subject reset
+      document.getElementById('product-section')?.classList.add('hidden');
+    } catch (err) {
+      console?.error(err);
+      showToast('Could not send message. Please try again or email us directly.', 'error');
+      note.textContent = 'If this keeps happening, email: isrib.shop@protonmail.com';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+}
+
+// Optional: Live chat toggle (Tawk.to)
+function openLiveChat(){
+  if (typeof Tawk_API !== 'undefined') Tawk_API.toggle();
+  else window.location.href = 'mailto:isrib.shop@protonmail.com?subject=Live Chat Request';
+}
