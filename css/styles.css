@@ -1102,9 +1102,17 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 
 .back-actions .btn{ display:inline-flex; align-items:center; justify-content:center; }
 
-/* (на випадок, якщо ще не додано) */
-.btn-secondary{
-  background:#e2e8f0; color:#111827; border:1px solid var(--ring);
-}
-.btn-secondary:hover{ background:#cfd8e3; color:#111827; }
+/* Legal / Terms page helpers */
+.legal-section{ padding:28px 0 70px; }
+.legal-section .container{ max-width:980px; }
+.legal-meta{ color:#64748b; }
 
+.btn-outline{
+  background:transparent;
+  color:var(--text);
+  border:1px solid var(--ring);
+}
+.btn-outline:hover{
+  background:#f3f4f6;
+  color:var(--text);
+}
