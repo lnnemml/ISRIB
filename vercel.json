@@ -8,3 +8,8 @@
     ]}
   ]
 }
+{
+  "rewrites": [
+    { "source": "/api/contact", "destination": "https://isrib-api.vercel.app/api/contact" }
+  ]
+}
