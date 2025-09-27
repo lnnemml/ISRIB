@@ -876,3 +876,13 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 
 /* Якщо раптом .faq-item перекривався шаром/оверлеєм */
 .faq-item { position: relative; }
+/* FAQ: надійне керування видимістю через клас .open */
+.faq-answer { display: none; }
+.faq-item.open .faq-answer { display: block; }
+
+/* На випадок сторонніх !important */
+.faq-answer[hidden] { display: none !important; }
+
+/* Курсор та шар кліку */
+.faq-item { position: relative; }
+.faq-button { cursor: pointer; }
