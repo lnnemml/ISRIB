@@ -962,7 +962,25 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 .checkout-form .form-actions{ margin-top:16px; display:flex; flex-direction:column; gap:8px; }
 .checkout-form .form-status{ min-height:20px; }
+.checkout-form .form-actions .btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 20px;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  background: var(--brand-900);
+  color: #fff;
+  font-size: 1.05rem;
+  transition: background 0.2s ease;
+}
 
+.checkout-form .form-actions .btn:hover {
+  background: var(--brand-800);
+}
 .order-card .sep{ margin:16px 0; border:none; border-top:1px solid var(--ring); }
 .ro-list {
   margin-top: 10px;
