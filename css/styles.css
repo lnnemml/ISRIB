@@ -1068,12 +1068,4 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   background-image:none !important;
   filter:none !important;
 }
-.logo-image-slim{
-  height:36px;
-  max-height:36px;
-  width:auto;            /* ← додати */
-  display:block;
-}
-@media (min-width:721px){
-  .header-slim.compact .logo-image-slim{ height:30px; }
-}
+
