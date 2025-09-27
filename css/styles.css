@@ -868,9 +868,11 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .faq-button{ padding:18px }
   .faq-answer{ padding:0 18px 18px }
 }
-/* Ensure hidden answers are really hidden */
+/* Гарантуємо, що приховане — справді приховане */
 .faq-answer[hidden] { display: none !important; }
-/* Забезпечує приховування відповіді FAQ */
-.faq-answer[hidden] {
-  display: none !important;
-}
+
+/* На всяк випадок: клікабельність кнопки */
+.faq-button { cursor: pointer; }
+
+/* Якщо раптом .faq-item перекривався шаром/оверлеєм */
+.faq-item { position: relative; }
