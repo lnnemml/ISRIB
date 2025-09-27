@@ -1031,3 +1031,17 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   color: #fff !important;
   border: none !important;
 }
+/* === Checkout submit button: force stable hover === */
+.checkout-form .form-actions #submitOrderBtn,
+.checkout-form .form-actions #submitOrderBtn:hover,
+.checkout-form .form-actions #submitOrderBtn:focus,
+.checkout-form .form-actions #submitOrderBtn:active {
+  background: var(--brand-900) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.checkout-form .form-actions #submitOrderBtn:hover,
+.checkout-form .form-actions #submitOrderBtn:focus {
+  background: var(--brand-800) !important;
+}
