@@ -1089,4 +1089,22 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   background:#e2e8f0; color:#111827; border:1px solid var(--ring);
 }
 .btn-secondary:hover{ background:#cfd8e3; color:#111827; }
+/* Safety page helpers */
+.safety-section{ padding:28px 0 70px; }
+.safety-section .container{ max-width:980px; }
+.bullet{ margin:0; padding-left:22px; line-height:1.9; }
+
+.notice{
+  background:#fff7ed; border:1px solid #fed7aa; color:#7c2d12;
+  border-radius:12px; padding:14px 16px; margin-top:14px;
+  font-size:.97rem;
+}
+
+.back-actions .btn{ display:inline-flex; align-items:center; justify-content:center; }
+
+/* (на випадок, якщо ще не додано) */
+.btn-secondary{
+  background:#e2e8f0; color:#111827; border:1px solid var(--ring);
+}
+.btn-secondary:hover{ background:#cfd8e3; color:#111827; }
 
