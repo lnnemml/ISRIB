@@ -1014,3 +1014,20 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .totals-row .value{ font-weight:800; color:var(--text); }
 .totals-row.total{ margin-top:10px; padding-top:10px; border-top:1px solid var(--ring); font-size:1.1rem; }
 .totals-row.total .value{ font-size:1.2rem; }
+/* Force styles for the checkout submit button */
+#submitOrderBtn {
+  background: var(--brand-900) !important;
+  color: #fff !important;
+  border: none !important;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#submitOrderBtn:hover,
+#submitOrderBtn:focus,
+#submitOrderBtn:active {
+  background: var(--brand-800) !important;
+  color: #fff !important;
+  border: none !important;
+}
