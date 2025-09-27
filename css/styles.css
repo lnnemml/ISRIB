@@ -870,3 +870,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 /* Ensure hidden answers are really hidden */
 .faq-answer[hidden] { display: none !important; }
+/* Забезпечує приховування відповіді FAQ */
+.faq-answer[hidden] {
+  display: none !important;
+}
