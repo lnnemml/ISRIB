@@ -978,13 +978,17 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   transition: background 0.2s ease;
 }
 .btn-primary {
-  background: var(--brand-900);
-  color: #fff;
+  background: var(--brand-900) !important;
+  color: #fff !important;
+  border: none;
 }
 
-.btn-primary:hover {
-  background: var(--brand-800);  /* трішки світліший відтінок, але не білий */
-  color: #fff;
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background: var(--brand-800) !important;
+  color: #fff !important;
+  border: none !important;
 }
 .checkout-form .form-actions .btn:hover {
   background: var(--brand-800);
