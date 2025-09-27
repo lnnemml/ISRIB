@@ -945,13 +945,27 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .checkout-form .form-two{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 @media (max-width:768px){ .checkout-form .form-two{ grid-template-columns:1fr; } }
 .checkout-form .req{ color:#dc2626; margin-left:4px; }
-.checkout-form .agree-row{ display:flex; gap:10px; align-items:flex-start; margin:10px 0 0; }
+.checkout-form .agree-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 24px 0 0;      /* Замість 10px */
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid var(--ring);
+  border-radius: 10px;
+  max-width: 760px; margin-inline: auto;
+}
 .checkout-form .form-actions{ margin-top:16px; display:flex; flex-direction:column; gap:8px; }
 .checkout-form .form-status{ min-height:20px; }
 
 .order-card .sep{ margin:16px 0; border:none; border-top:1px solid var(--ring); }
-.ro-list{ margin-top:10px; line-height:1.8; }
-
+.ro-list {
+  margin-top: 10px;
+  padding-left: 18px;     /* новий відступ від лівого краю */
+  padding-right: 18px;    /* трішки повітря справа */
+  line-height: 1.8;
+}
 .cart-list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
 .cart-row{ display:grid; grid-template-columns:1fr auto; gap:12px; padding:10px 12px; border:1px solid var(--ring); border-radius:12px; background:var(--bg-soft); }
 .cart-title{ font-weight:700; color:var(--text); }
