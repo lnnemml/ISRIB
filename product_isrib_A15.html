@@ -22,8 +22,37 @@
 </style>
 </head>
 <body class="page-product-a15">
-  <!-- header як на інших сторінках -->
-  <header class="header-slim" id="siteHeader">…</header>
+  <!-- Slim header -->
+  <header class="header-slim" id="siteHeader">
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
+        </a>
+
+        <nav class="nav-slim" aria-label="Primary">
+          <a href="products.html">Products</a>
+          <a href="about.html">About</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+          <a href="checkout.html" class="cart-btn-slim" id="cartBtn">🧺 <span id="cartCount" class="badge-slim">0</span></a>
+        </nav>
+
+        <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+      <a class="mm-link" href="products.html">Products</a>
+      <a class="mm-link" href="about.html">About</a>
+      <a class="mm-link" href="faq.html">FAQ</a>
+      <a class="mm-link" href="contact.html">Contact</a>
+      <a class="mm-link mm-cart" href="checkout.html">🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
+    </nav>
+  </header>
+
 
   <!-- HERO -->
   <section class="a15-hero">
