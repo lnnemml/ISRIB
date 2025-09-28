@@ -999,3 +999,123 @@ function initA15OrderCard() {
     }
   });
 }
+/* =========================
+   Drop‑in fix: quantity + add‑to‑cart (delegated)
+   ========================= */
+(function FixCartV2(){
+  if (window.__FixCartV2Bound) return; // щоб не дублювати
+  window.__FixCartV2Bound = true;
+
+  // --- storage helpers ---
+  const CART_KEY = 'isrib_cart';
+  const getCart = () => {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+    catch { return []; }
+  };
+  const setCart = (arr) => localStorage.setItem(CART_KEY, JSON.stringify(arr || []));
+
+  function updateCartBadge() {
+    const cart = getCart();
+    const count = cart.reduce((n, i) => n + (i.count || 1), 0);
+    const els = [document.getElementById('cartCount'), document.getElementById('cartCountMobile')].filter(Boolean);
+    els.forEach(el => el.textContent = String(count));
+  }
+
+  // Форматуємо $/mg (без зайвих нулів після крапки)
+  const fmtNum = (x) => (Math.round(x * 100) / 100).toFixed(2).replace(/\.00$/,'');
+  const toMg = (grams) => grams >= 1 ? grams * 1000 : grams; // якщо прийде у грамах
+
+  // --- render helpers на картці ---
+  function setActiveOption(card, opt) {
+    card.querySelectorAll('.quantity-option').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+
+    const qStr  = (opt.dataset.quantity || '').trim();  // "100mg" / "500mg" / "1g"
+    const grams = Number(opt.dataset.grams || 0);
+    const price = Number(opt.dataset.price || 0);
+
+    // Оновлюємо ціну та $/mg
+    const cur = card.querySelector('.current-price');
+    if (cur) cur.textContent = `$${fmtNum(price)}`;
+    const ppm = card.querySelector('.price-per-mg');
+    if (ppm && grams) ppm.textContent = `($${fmtNum(price / toMg(grams))}/mg)`;
+
+    // Текст на кнопці
+    const selQ = card.querySelector('.selected-quantity');
+    if (selQ) selQ.textContent = qStr;
+
+    // dataset на кнопці
+    const btn = card.querySelector('.add-to-cart');
+    if (btn) {
+      btn.dataset.price   = String(price);
+      btn.dataset.grams   = String(grams);
+      btn.dataset.display = qStr;
+    }
+  }
+
+  // --- add to cart ---
+  function addItemFromButton(btn) {
+    // шукаємо батьківську картку
+    const card = btn.closest('.product-card, .product-card--order') || document;
+    const name = (card.querySelector('.product-name, .product-title')?.textContent || btn.dataset.name || 'Product').trim();
+    const sku  = btn.dataset.sku || card.dataset.sku || name.toLowerCase().replace(/\s+/g,'-');
+
+    let grams   = Number(btn.dataset.grams || 0);
+    let display = btn.dataset.display || '';
+    let price   = Number(btn.dataset.price || 0);
+
+    // fallback з активної опції, якщо на кнопці не оновилися дані
+    if (!grams || !price || !display) {
+      const opt = card.querySelector('.quantity-option.active') || card.querySelector('.quantity-option');
+      if (opt) {
+        display = display || (opt.dataset.quantity || '');
+        grams   = grams   || Number(opt.dataset.grams || 0);
+        price   = price   || Number(opt.dataset.price || 0);
+      }
+    }
+
+    const cart = getCart();
+    // Мерджимо однакові позиції по sku + grams + price
+    const idx = cart.findIndex(i => i.sku === sku && i.grams === grams && i.price === price);
+    if (idx >= 0) cart[idx].count = (cart[idx].count || 1) + 1;
+    else cart.push({ name, sku, grams, price, display, count: 1, unit: 'pack' });
+    setCart(cart);
+    updateCartBadge();
+  }
+
+  // --- делеговані події ---
+  document.addEventListener('click', (e) => {
+    // 1) перемикання кількості
+    const opt = e.target.closest('.quantity-option');
+    if (opt) {
+      const card = opt.closest('.product-card, .product-card--order');
+      if (card) setActiveOption(card, opt);
+      return;
+    }
+
+    // 2) додавання в кошик
+    const btn = e.target.closest('.add-to-cart');
+    if (btn) {
+      e.preventDefault();
+      addItemFromButton(btn);
+      return;
+    }
+
+    // 3) клік по картці (порожнє місце) => навігація
+    const card = e.target.closest('.product-card');
+    if (card && !e.target.closest('a, button, .quantity-wrap, .quantity-option, .product-footer, .price-line')) {
+      const href = card.dataset.href || card.querySelector('.stretched-link')?.getAttribute('href');
+      if (href) window.location.href = href;
+    }
+  }, { passive: false });
+
+  // --- ініціалізація при завантаженні ---
+  document.addEventListener('DOMContentLoaded', () => {
+    // Для кожної картки ініціалізуємо UI від активної опції
+    document.querySelectorAll('.product-card, .product-card--order').forEach((card) => {
+      const active = card.querySelector('.quantity-option.active') || card.querySelector('.quantity-option');
+      if (active) setActiveOption(card, active);
+    });
+    updateCartBadge();
+  });
+})();
