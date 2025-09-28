@@ -12,7 +12,8 @@ function initializeApp() {
   initFadeInAnimations();
   initProductInteractions();
   initQuantitySelectors();     // calculates price + $/mg + syncs dataset
-  bindQtyLabelUpdates();       // keeps "Add to cart 1g/100mg" label in sync
+  bindQtyLabelUpdates(); // keeps "Add to cart 1g/100mg" label in sync
+  initA15OrderCard();
   initProductFilters();
   initMobileOptimizations();
   initAnalytics();
@@ -936,6 +937,66 @@ function initCheckoutForm(){
       msg.textContent = 'Could not submit right now. Please try again or contact us via email/Telegram.';
       msg.style.color = '#dc2626';
       btn.disabled = false; btn.textContent = 'Submit Order Request';
+    }
+  });
+}
+
+/* ---- A15: robust bindings for quantity + add-to-cart ---- */
+function initA15OrderCard() {
+  document.querySelectorAll('.product-card--order').forEach((card) => {
+    // вибір кількості
+    card.querySelectorAll('.quantity-option').forEach((opt) => {
+      opt.addEventListener('click', () => {
+        // активний стан
+        card.querySelectorAll('.quantity-option').forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+
+        const qStr   = String(opt.dataset.quantity || '').trim();   // "100mg" | "1g"
+        const grams  = Number(opt.dataset.grams || 0);              // 100 | 500 | 1000
+        const price  = Number(opt.dataset.price || 0);
+
+        // оновити візуальну частину
+        card.querySelector('.selected-quantity')?.replaceWith(
+          (() => { const s=document.createElement('span'); s.className='selected-quantity'; s.textContent=qStr; return s; })()
+        );
+        const cur = card.querySelector('.current-price');
+        if (cur) cur.textContent = `$${price.toFixed(2)}`;
+        const ppm = card.querySelector('.price-per-mg');
+        if (ppm) ppm.textContent = grams ? `($${(price/grams).toFixed(2)}/mg)` : '';
+
+        // підготувати кнопку
+        const btn = card.querySelector('.add-to-cart');
+        if (btn) {
+          btn.dataset.price   = String(price);
+          btn.dataset.grams   = String(grams);
+          btn.dataset.display = qStr;
+        }
+      });
+    });
+
+    // кнопка "Add to cart"
+    const btn = card.querySelector('.add-to-cart');
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const name    = card.querySelector('.product-name, .product-title')?.textContent?.trim() || btn.dataset.name || 'Product';
+        const sku     = btn.dataset.sku || card.dataset.sku || '';
+        const grams   = Number(btn.dataset.grams || 0);
+        const price   = Number(btn.dataset.price || 0);
+        const display = btn.dataset.display || '';
+
+        if (typeof addToCart === 'function') {
+          addToCart(name, sku, grams, price, display);
+          updateCartBadge?.();
+          showToast?.(`Added to cart — ${display || (grams ? (grams>=1000 ? (grams/1000)+'g' : grams+'mg') : '')} for $${price}`);
+          trackEvent?.('add_to_cart_click', { name, sku, grams, price, display });
+        } else {
+          // мінімальний запасний варіант
+          const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
+          cart.push({ name, sku, grams, price, display, count: 1, unit: 'pack' });
+          localStorage.setItem('isrib_cart', JSON.stringify(cart));
+        }
+      }, { passive:false });
     }
   });
 }
