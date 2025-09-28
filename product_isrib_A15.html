@@ -7,73 +7,36 @@
   <meta name="description" content="ISRIB A15: next‑generation ISRIB analogue for research use only. ≥98% purity, COA per batch, worldwide shipping.">
   <link rel="canonical" href="https://isrib.shop/product_isrib_A15.html"/>
 
-  <!-- Open Graph -->
   <meta property="og:title" content="ISRIB A15 — Ultra Potent Analog"/>
   <meta property="og:description" content="Research‑grade compound (≥98% HPLC). COA per batch. Research use only."/>
   <meta property="og:type" content="product"/>
   <meta property="og:image" content="images/isrib-a15-og.jpg"/>
   <meta property="og:url" content="https://isrib.shop/product_isrib_A15.html"/>
 
-  <!-- Unified CSS -->
-  <link rel="stylesheet" href="css/styles.css?v=20"/>
+  <link rel="stylesheet" href="css/styles.css?v=21"/>
   <style>
-    /* Page-scoped cosmetics kept minimal; core styles внизу у styles.css (див. секцію “Що додати”) */
-    .a15-hero { background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%); padding: 60px 0 40px; position:relative; }
+    /* лише легка косметика тут — вся логіка у styles.css */
+    .a15-hero { background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%); padding: 52px 0 38px; position:relative; }
     .a15-hero::before{ content:''; position:absolute; inset:0;
       background: radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
                   radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%); }
   </style>
 </head>
-<body>
+<body class="page-product-a15">
+  <!-- header як на інших сторінках -->
+  <header class="header-slim" id="siteHeader">…</header>
 
-  <!-- Slim header -->
-  <header class="header-slim" id="siteHeader">
-    <div class="container">
-      <div class="header-content">
-        <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
-          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
-        </a>
-
-        <nav class="nav-slim" aria-label="Primary">
-          <a href="products.html">Products</a>
-          <a href="about.html">About</a>
-          <a href="faq.html">FAQ</a>
-          <a href="contact.html">Contact</a>
-          <a href="checkout.html" class="cart-btn-slim" id="cartBtn">🧺 <span id="cartCount" class="badge-slim">0</span></a>
-        </nav>
-
-        <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-          <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
-        </button>
-      </div>
-    </div>
-
-    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-      <a class="mm-link" href="products.html">Products</a>
-      <a class="mm-link" href="about.html">About</a>
-      <a class="mm-link" href="faq.html">FAQ</a>
-      <a class="mm-link" href="contact.html">Contact</a>
-      <a class="mm-link mm-cart" href="checkout.html">🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
-    </nav>
-  </header>
-
-  <!-- HERO (перший блок) -->
+  <!-- HERO -->
   <section class="a15-hero">
     <div class="container">
-      <div class="product-hero">
-        <!-- LEFT: Product Visual + formula -->
-        <div class="product-visual">
-          <!-- Формула A15 — підставте свій файл у /images -->
+      <div class="a15-hero-grid">
+        <!-- LEFT: формула -->
+        <div class="a15-visual">
           <figure class="formula">
-            <img
-              src="images/isrib-a15-formula.svg"
-              alt="Chemical formula of ISRIB A15"
-              class="formula-img"
-              width="520" height="360"
-              loading="eager" />
-            <figcaption class="muted">Molecular formula: C₂₂H₂₂Cl₄N₂O₄</figcaption>
+            <img src="images/isrib-a15-formula.svg" alt="Chemical structure of ISRIB A15"
+                 class="formula-img" width="700" height="430" loading="eager"/>
+            <figcaption class="muted formula-cap">Molecular formula: <span class="mono">C₂₂H₂₂Cl₄N₂O₄</span></figcaption>
           </figure>
-
           <div class="mini-stats">
             <div><div class="num">98%+</div><div class="cap">Purity</div></div>
             <div><div class="num">COA</div><div class="cap">Per batch</div></div>
@@ -81,19 +44,18 @@
           </div>
         </div>
 
-        <!-- RIGHT: Headline & copy -->
-        <div class="hero-copy">
+        <!-- RIGHT: текст -->
+        <div class="a15-copy">
           <div class="row">
             <span class="product-badge most-popular">Most Popular</span>
             <span class="pill in-stock">✓ In stock</span>
           </div>
-          <h1 class="product-title">ISRIB A15</h1>
-          <p class="product-chemical mono">C₂₂H₂₂Cl₄N₂O₄</p>
-          <p class="lead muted-strong">
+          <h1 class="a15-title">ISRIB A15</h1>
+          <p class="a15-chem mono">C₂₂H₂₂Cl₄N₂O₄</p>
+          <p class="a15-lead muted-strong">
             Ultra‑potent ISRIB analogue with enhanced bioavailability. Targets eIF2B.
             Research use only.
           </p>
-
           <div class="cta-buttons">
             <a href="#order" class="btn btn-primary">🧬 Order ISRIB A15</a>
             <a href="#science" class="btn btn-ghost">📖 The Science</a>
@@ -103,12 +65,11 @@
     </div>
   </section>
 
-  <!-- ORDER (перенесено одразу після першого блоку) -->
+  <!-- ORDER — одразу після hero -->
   <section id="order" class="order-section">
     <div class="container">
       <h2 class="section-title">Order ISRIB A15</h2>
 
-      <!-- Один product-card: повністю сумісний із initQuantitySelectors() + mountAddToCartButtons() -->
       <article class="product-card product-card--order" data-sku="isrib-a15">
         <div class="product-header">
           <h3 class="product-title product-name">ISRIB A15</h3>
@@ -120,7 +81,6 @@
           <div class="spec-row"><span class="spec-label">COA:</span><span class="spec-value">Included</span></div>
         </div>
 
-        <!-- quantity selector (існуючі глобальні класи) -->
         <div class="quantity-wrap">
           <div class="quantity-title">Select Quantity</div>
           <div class="quantity-row">
@@ -136,13 +96,9 @@
         </div>
 
         <div class="product-footer">
-          <button
-            class="btn btn-primary add-to-cart"
-            data-name="ISRIB A15"
-            data-sku="isrib-a15"
-            data-grams="100"
-            data-display="100mg"
-            data-price="50">
+          <button class="btn btn-primary add-to-cart"
+                  data-name="ISRIB A15" data-sku="isrib-a15"
+                  data-grams="100" data-display="100mg" data-price="50">
             ➕ Add to cart <span class="selected-quantity">100mg</span>
           </button>
           <a class="view-cart" href="checkout.html">View Cart</a>
@@ -159,7 +115,7 @@
     </div>
   </section>
 
-  <!-- SCIENCE (переміщено після покупки) -->
+   <!-- SCIENCE (переміщено після покупки) -->
   <section id="science" class="science-section">
     <div class="container">
       <h2 class="section-title">The Science behind ISRIB A15</h2>
