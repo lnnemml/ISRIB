@@ -30,11 +30,12 @@ img { max-width: 100%; height: auto; }
 .btn-ghost:hover{background:#f1f5f9}
 
 /* ========== Slim Sticky Header (hide-on-scroll + burger) ========== */
-.header-slim{
-  position: sticky; top: 0; z-index: 60;
-  background: #ffffff; padding: 12px 0; border-bottom: 1px solid #e5e7eb;
-  transition: transform .24s ease, box-shadow .2s ease, background-color .2s ease, padding .2s ease;
-  will-change: transform;
+.header-slim {
+  background:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+  position:sticky;
+  top:0;
+  z-index:50;
 }
 .header-slim.scrolling-down{ transform: translate3d(0,-100%,0); }
 .header-slim.scrolled{ box-shadow: 0 6px 18px rgba(2,6,23,.06); }
