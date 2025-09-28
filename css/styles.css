@@ -1143,8 +1143,8 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .lead{ opacity:.9; }
 .sep{ border:none; border-top:1px solid var(--ring); }
 
-/* ===== A15 page (scoped, header-safe) ===== */
-/* ВАЖЛИВО: не стилізуємо .a15-hero взагалі, щоб не впливати на хедер */
+/* ===== A15 page (scoped, header‑safe) ===== */
+/* герой не чіпаємо зайвими шарами — фон задається або inline як #fff, або тут, якщо треба */
 
 .page-product-a15 .a15-hero-grid{
   display:grid;
@@ -1155,7 +1155,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 
 /* left visual */
 .page-product-a15 .a15-visual{
-  background:#fff;                 /* білий блок під зображенням формули */
+  background:#fff;                 /* чисто білий блок під PNG формули */
   border:1px solid var(--ring);
   border-radius:20px;
   padding:22px;
