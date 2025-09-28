@@ -1238,3 +1238,18 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .product-card .add-to-cart{
   position:relative; z-index:2;
 }
+/* Products: make whole-card link sit behind controls */
+.product-card { position: relative; }
+.product-card .stretched-link{
+  position: absolute; inset: 0;
+  z-index: 0;
+  /* без outline/фонів — лише «клікабельний» шар */
+}
+.product-card .price-line,
+.product-card .quantity-wrap,
+.product-card .product-footer,
+.product-card .quantity-option,
+.product-card .add-to-cart{
+  position: relative;
+  z-index: 2;      /* керування завжди вище за stretched-link */
+}
