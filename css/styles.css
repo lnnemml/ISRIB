@@ -1144,22 +1144,29 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .sep{ border:none; border-top:1px solid var(--ring); }
 
 /* ===== A15 page (scoped) ===== */
+.page-product-a15 .a15-hero{
+  background:#fff;            /* повністю білий фон секції */
+  padding:52px 0 38px;
+  position:relative;
+}
+.page-product-a15 .a15-hero::before{ display:none; } /* прибрати декоративні градієнти */
+
 .page-product-a15 .a15-hero-grid{
   display:grid; grid-template-columns:1.12fr 1fr; gap:48px; align-items:center;
 }
 
 /* left visual */
 .page-product-a15 .a15-visual {
-  background: #fff; /* було: градієнт або #f8fafc */
-  border: 1px solid var(--ring);
-  border-radius: 20px;
-  padding: 22px;
-  box-shadow: var(--shadow); /* або можеш забрати для більш “плоского” вигляду */
+  background:#fff;            /* білий блок під зображенням формули */
+  border:1px solid var(--ring);
+  border-radius:20px;
+  padding:22px;
+  box-shadow:var(--shadow);
 }
 .page-product-a15 .formula{ margin:0; text-align:center; }
 .page-product-a15 .formula-img{
   max-width:100%; height:auto; display:block; margin:0 auto 10px;
-  filter: drop-shadow(0 8px 24px rgba(2,6,23,.08));
+  filter:drop-shadow(0 8px 24px rgba(2,6,23,.08));
 }
 .page-product-a15 .mini-stats{ display:flex; gap:28px; justify-content:center; margin-top:10px; }
 .page-product-a15 .mini-stats .num{ font-size:1.25rem; font-weight:800; color:#1e40af; text-align:center; }
@@ -1215,6 +1222,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .page-product-a15 .science-grid{ grid-template-columns:1fr; gap:28px; }
   .page-product-a15 .steps{ grid-template-columns:1fr; }
 }
+
 .product-card{ position:relative; }
 .stretched-link{
   position:absolute; inset:0; z-index:1;
