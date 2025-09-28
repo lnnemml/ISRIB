@@ -10,12 +10,11 @@
 </head>
 <body>
 
-  <!-- Header (уніфікований, slim, hide-on-scroll) -->
+  <!-- Header -->
   <header class="header-slim is-sticky" id="siteHeader">
     <div class="container header-content">
       <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
-         <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo"
-           class="logo-image-slim"/>
+        <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
       </a>
       <nav class="nav-slim">
         <a href="products.html" aria-current="page">Products</a>
@@ -27,24 +26,22 @@
         </a>
       </nav>
 
-      <!-- burger (можна прибрати, якщо не потрібен) -->
       <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false">
         <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
       </button>
     </div>
 
-    <!-- mobile menu -->
-    <div id="mobileMenu" class="mobile-menu" hidden>
+    <nav id="mobileMenu" class="mobile-menu" hidden>
       <a class="mm-link" href="products.html" aria-current="page">Products</a>
       <a class="mm-link" href="about.html">About</a>
       <a class="mm-link" href="faq.html">FAQ</a>
       <a class="mm-link" href="contact.html">Contact</a>
       <a class="mm-link mm-cart" href="checkout.html">🛒 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
-    </div>
+    </nav>
   </header>
 
   <main>
-    <!-- легкий page-hero -->
+    <!-- hero -->
     <section class="products-hero">
       <div class="container">
         <h1>ISRIB Shop Products</h1>
@@ -52,13 +49,16 @@
       </div>
     </section>
 
-    <!-- каталог -->
+    <!-- catalog -->
     <section class="products-section">
       <div class="container">
         <div class="products-grid">
 
           <!-- A15 -->
-          <article class="product-card" data-href="product_isrib_A15.html" data-sku="isrib-a15">
+          <article class="product-card" data-sku="isrib-a15">
+            <!-- stretched link covers the whole card but sits below controls -->
+            <a class="stretched-link" href="product_isrib_A15.html" aria-label="Open ISRIB A15"></a>
+
             <div class="product-header">
               <h2 class="product-title product-name">ISRIB A15</h2>
               <span class="product-sub muted">Ultra Potent Analog</span>
@@ -99,7 +99,9 @@
           </article>
 
           <!-- ISRIB Original -->
-          <article class="product-card" data-href="product_isrib.html" data-sku="isrib">
+          <article class="product-card" data-sku="isrib">
+            <a class="stretched-link" href="product_isrib.html" aria-label="Open ISRIB (Original)"></a>
+
             <div class="product-header">
               <h2 class="product-title product-name">ISRIB (Original)</h2>
               <span class="product-sub muted">Original Compound</span>
@@ -113,9 +115,9 @@
             <div class="quantity-wrap">
               <div class="quantity-title">Select Quantity</div>
               <div class="quantity-row">
-               <div class="quantity-option active" data-quantity="100mg" data-price="27"><span class="tag">100mg</span><span class="price">$27</span></div>
-               <div class="quantity-option" data-quantity="500mg" data-price="60"><span class="tag">500mg</span><span class="price">$60</span></div>
-               <div class="quantity-option" data-quantity="1g" data-price="100"><span class="tag">1000mg</span><span class="price">$100</span></div>
+                <div class="quantity-option active" data-quantity="100mg" data-price="27"><span class="tag">100mg</span><span class="price">$27</span></div>
+                <div class="quantity-option" data-quantity="500mg" data-price="60"><span class="tag">500mg</span><span class="price">$60</span></div>
+                <div class="quantity-option" data-quantity="1g" data-price="100"><span class="tag">1000mg</span><span class="price">$100</span></div>
               </div>
             </div>
 
@@ -133,15 +135,16 @@
                 data-grams="100"
                 data-display="100mg"
                 data-price="27">
-               ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$27</span>
+                ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$27</span>
               </button>
-
               <a class="view-cart" href="checkout.html">View Cart</a>
             </div>
           </article>
 
           <!-- ZZL-7 -->
-          <article class="product-card" data-href="product_zzl_7.html" data-sku="zzl7">
+          <article class="product-card" data-sku="zzl7">
+            <a class="stretched-link" href="product_zzl_7.html" aria-label="Open ZZL‑7"></a>
+
             <div class="product-header">
               <h2 class="product-title product-name">ZZL‑7</h2>
               <span class="product-sub muted">Fast-Onset Antidepressant</span>
@@ -182,7 +185,9 @@
           </article>
 
           <!-- MPEP Oxalate -->
-          <article class="product-card" data-href="product_MPEP.html" data-sku="mpep">
+          <article class="product-card" data-sku="mpep">
+            <a class="stretched-link" href="product_MPEP.html" aria-label="Open MPEP Oxalate"></a>
+
             <div class="product-header">
               <h2 class="product-title product-name">MPEP Oxalate</h2>
               <span class="product-sub muted">mGluR5 Negative Allosteric Modulator</span>
@@ -227,7 +232,7 @@
     </section>
   </main>
 
-   <!-- Footer -->
+  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -273,8 +278,9 @@
   </footer>
 
   <script src="js/main.js?v=6"></script>
-  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-   <!-- Tawk.to chat -->
+  <script>document.getElementById('y')?.textContent = new Date().getFullYear();</script>
+
+  <!-- Tawk.to chat -->
   <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
