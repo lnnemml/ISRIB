@@ -1,194 +1,204 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>ISRIB A15 - Ultra Potent Cognitive Enhancement | ISRIB Shop</title>
-  <meta name="description" content="ISRIB A15: Next-generation cognitive enhancer with enhanced bioavailability. Targets eIF2B for memory restoration and mental clarity. 98%+ purity, COA included.">
-  <link rel="canonical" href="https://isrib.shop/isrib-a15">
-  <meta property="og:title" content="ISRIB A15 - Ultra Potent Cognitive Enhancement">
-  <meta property="og:description" content="Advanced ISRIB analog with superior bioavailability and potency. Restore cognitive function at the cellular level.">
-  <meta property="og:image" content="/images/isrib-a15-og.jpg">
-  <meta property="og:url" content="https://isrib.shop/isrib-a15">
-  <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ISRIB A15 — Ultra Potent Analog | ISRIB.shop</title>
+  <meta name="description" content="ISRIB A15: next‑generation ISRIB analogue for research use only. ≥98% purity, COA per batch, worldwide shipping.">
+  <link rel="canonical" href="https://isrib.shop/product_isrib_A15.html"/>
 
+  <!-- Open Graph -->
+  <meta property="og:title" content="ISRIB A15 — Ultra Potent Analog"/>
+  <meta property="og:description" content="Research‑grade compound (≥98% HPLC). COA per batch. Research use only."/>
+  <meta property="og:type" content="product"/>
+  <meta property="og:image" content="images/isrib-a15-og.jpg"/>
+  <meta property="og:url" content="https://isrib.shop/product_isrib_A15.html"/>
+
+  <!-- Unified CSS -->
+  <link rel="stylesheet" href="css/styles.css?v=20"/>
   <style>
-    /* quantity cards */
-    .quantity-card:hover{
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,.15);
-      border-color:#1e40af;
-    }
-    .quantity-card.selected{
-      border-color:#1e40af;
-      background:linear-gradient(135deg, rgba(30,64,175,.05), rgba(14,165,233,.05));
-      transform: translateY(-5px);
-      box-shadow:0 10px 25px rgba(30,64,175,.2);
-    }
-    @media (max-width:768px){ .quantity-card{ padding:20px; } }
-
-    /* --- cart badge pop‑in --- */
-    .cart-btn{ position:relative; display:inline-flex; align-items:center; gap:6px; }
-    .badge{
-      display:inline-flex; align-items:center; justify-content:center;
-      min-width:22px; height:22px; padding:0 6px;
-      background:#1e40af; color:#fff; border-radius:12px; font-size:12px; font-weight:800;
-      transform-origin:center; line-height:1; border:1px solid rgba(0,0,0,.06);
-    }
-    @keyframes pop {
-      0%   { transform:scale(1); }
-      40%  { transform:scale(1.22); }
-      100% { transform:scale(1); }
-    }
-    .badge.pop { animation: pop .35s cubic-bezier(.2,.8,.2,1); }
-
-    /* --- shake for cart icon/button --- */
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20% { transform: translateX(-2px); }
-      40% { transform: translateX(2px); }
-      60% { transform: translateX(-1px); }
-      80% { transform: translateX(1px); }
-    }
-    .shake { animation: shake .45s ease; }
-
-    /* --- toast (top-right) --- */
-    .toast-wrap{
-      position:fixed; top:16px; right:16px; z-index:9999;
-      display:flex; flex-direction:column; gap:10px; pointer-events:none;
-    }
-    .toast{
-      background:#0b1220; color:#e7eefc; border:1px solid #1f2a44;
-      border-radius:12px; padding:12px 14px; font-weight:600; min-width: 240px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      display:flex; align-items:center; gap:10px; opacity:0; transform: translateY(-8px);
-      animation: toast-in .22s ease forwards, toast-out .22s ease forwards 1.5s;
-    }
-    .toast svg{ flex:0 0 auto }
-    @keyframes toast-in { to { opacity:1; transform: translateY(0); } }
-    @keyframes toast-out { to { opacity:0; transform: translateY(-8px); } }
+    /* Page-scoped cosmetics kept minimal; core styles внизу у styles.css (див. секцію “Що додати”) */
+    .a15-hero { background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%); padding: 60px 0 40px; position:relative; }
+    .a15-hero::before{ content:''; position:absolute; inset:0;
+      background: radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+                  radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%); }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
+
+  <!-- Slim header -->
+  <header class="header-slim" id="siteHeader">
     <div class="container">
       <div class="header-content">
-        <a href="/" class="logo">
-          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image">
+        <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
+          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
         </a>
-        <nav class="nav">
+
+        <nav class="nav-slim" aria-label="Primary">
           <a href="products.html">Products</a>
           <a href="about.html">About</a>
           <a href="faq.html">FAQ</a>
           <a href="contact.html">Contact</a>
-          <a href="checkout.html" class="cart-btn" id="cartBtn">
-            🧺 Cart <span id="cartCount" class="badge">0</span>
-          </a>
+          <a href="checkout.html" class="cart-btn-slim" id="cartBtn">🧺 <span id="cartCount" class="badge-slim">0</span></a>
         </nav>
+
+        <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
+        </button>
       </div>
     </div>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+      <a class="mm-link" href="products.html">Products</a>
+      <a class="mm-link" href="about.html">About</a>
+      <a class="mm-link" href="faq.html">FAQ</a>
+      <a class="mm-link" href="contact.html">Contact</a>
+      <a class="mm-link mm-cart" href="checkout.html">🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
+    </nav>
   </header>
 
-  <!-- Breadcrumbs -->
-  <nav style="background:#f8fafc; padding:100px 0 20px; border-bottom:1px solid #e5e7eb;">
-    <div class="container" style="color:#64748b; font-size:0.9rem;">
-      <a href="/" style="color:#64748b; text-decoration:none;">Home</a>
-      <span style="margin:0 8px;">›</span>
-      <a href="products.html" style="color:#64748b; text-decoration:none;">Products</a>
-      <span style="margin:0 8px;">›</span>
-      <span style="color:#1e40af; font-weight:600;">ISRIB A15</span>
-    </div>
-  </nav>
-
-  <!-- Product Hero -->
-  <section style="background: #f8fafc; padding: 60px 0;">
+  <!-- HERO (перший блок) -->
+  <section class="a15-hero">
     <div class="container">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
-        <!-- Product Info -->
+      <div class="product-hero">
+        <!-- LEFT: Product Visual + formula -->
+        <div class="product-visual">
+          <!-- Формула A15 — підставте свій файл у /images -->
+          <figure class="formula">
+            <img
+              src="images/isrib-a15-formula.svg"
+              alt="Chemical formula of ISRIB A15"
+              class="formula-img"
+              width="520" height="360"
+              loading="eager" />
+            <figcaption class="muted">Molecular formula: C₂₂H₂₂Cl₄N₂O₄</figcaption>
+          </figure>
+
+          <div class="mini-stats">
+            <div><div class="num">98%+</div><div class="cap">Purity</div></div>
+            <div><div class="num">COA</div><div class="cap">Per batch</div></div>
+            <div><div class="num">50+</div><div class="cap">Countries</div></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Headline & copy -->
+        <div class="hero-copy">
+          <div class="row">
+            <span class="product-badge most-popular">Most Popular</span>
+            <span class="pill in-stock">✓ In stock</span>
+          </div>
+          <h1 class="product-title">ISRIB A15</h1>
+          <p class="product-chemical mono">C₂₂H₂₂Cl₄N₂O₄</p>
+          <p class="lead muted-strong">
+            Ultra‑potent ISRIB analogue with enhanced bioavailability. Targets eIF2B.
+            Research use only.
+          </p>
+
+          <div class="cta-buttons">
+            <a href="#order" class="btn btn-primary">🧬 Order ISRIB A15</a>
+            <a href="#science" class="btn btn-ghost">📖 The Science</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDER (перенесено одразу після першого блоку) -->
+  <section id="order" class="order-section">
+    <div class="container">
+      <h2 class="section-title">Order ISRIB A15</h2>
+
+      <!-- Один product-card: повністю сумісний із initQuantitySelectors() + mountAddToCartButtons() -->
+      <article class="product-card product-card--order" data-sku="isrib-a15">
+        <div class="product-header">
+          <h3 class="product-title product-name">ISRIB A15</h3>
+          <span class="product-sub muted">Ultra Potent Analog</span>
+        </div>
+
+        <div class="product-specs">
+          <div class="spec-row"><span class="spec-label">Purity:</span><span class="spec-value">≥98% HPLC</span></div>
+          <div class="spec-row"><span class="spec-label">COA:</span><span class="spec-value">Included</span></div>
+        </div>
+
+        <!-- quantity selector (існуючі глобальні класи) -->
+        <div class="quantity-wrap">
+          <div class="quantity-title">Select Quantity</div>
+          <div class="quantity-row">
+            <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
+            <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
+            <div class="quantity-option" data-quantity="1g" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
+          </div>
+        </div>
+
+        <div class="price-line">
+          <span class="current-price">$50.00</span>
+          <small class="price-per-mg">($0.50/mg)</small>
+        </div>
+
+        <div class="product-footer">
+          <button
+            class="btn btn-primary add-to-cart"
+            data-name="ISRIB A15"
+            data-sku="isrib-a15"
+            data-grams="100"
+            data-display="100mg"
+            data-price="50">
+            ➕ Add to cart <span class="selected-quantity">100mg</span>
+          </button>
+          <a class="view-cart" href="checkout.html">View Cart</a>
+        </div>
+
+        <ul class="order-perks">
+          <li>COA available per batch</li>
+          <li>Worldwide shipping</li>
+          <li>Secure packaging</li>
+          <li>Support via Email/Telegram/Signal</li>
+          <li>Payments arranged individually</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- SCIENCE (переміщено після покупки) -->
+  <section id="science" class="science-section">
+    <div class="container">
+      <h2 class="section-title">The Science behind ISRIB A15</h2>
+
+      <div class="science-grid">
         <div>
-          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-            <div class="product-badge most-popular">Most Popular</div>
-            <div style="background: #dcfdf7; color: #059669; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600;">✓ In Stock</div>
-          </div>
-          <h1 style="font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; color: #1e293b; margin-bottom: 15px;">ISRIB A15</h1>
-          <p style="font-size: 1.1rem; color: #1e40af; font-weight: 600; margin-bottom: 25px; font-family: 'Courier New', monospace;">C₂₂H₂₂Cl₄N₂O₄</p>
-          <p style="font-size: 1.2rem; color: #64748b; line-height: 1.7; margin-bottom: 30px;">Ultra potent ISRIB analogue designed for enhanced bioavailability and cognitive performance. Targets the eIF2B complex to unlock your brain's full potential by releasing the integrated stress response brake.</p>
-
-          <!-- CTAs -->
-          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-            <a href="#order-section" class="btn-primary" style="flex: 1; min-width: 200px; justify-content: center;">
-              🧬 Order ISRIB A15
-            </a>
-            <a href="#mechanism" class="btn-secondary" style="flex: 1; min-width: 200px; justify-content: center;">
-              📖 How It Works
-            </a>
-          </div>
+          <h3 class="science-h3">🔬 Discovery at UCSF</h3>
+          <p class="muted">Originally discovered by Peter Walter’s team at UCSF, ISRIB restored learning & memory in brain‑injured and elderly mice. A15 is an optimized analog with improved potency and PK, tuned for oral bioavailability.</p>
         </div>
+        <div class="science-card">
+          <div class="icon">🧬</div>
+          <h4>Published Research</h4>
+          <p class="muted">Featured across peer‑reviewed literature (Science, eLife, Nature).</p>
+        </div>
+      </div>
 
-        <!-- Product Visual -->
-        <div style="text-align: center;">
-          <div style="background: linear-gradient(135deg, rgba(30, 64, 175, 0.1), rgba(14, 165, 233, 0.1)); border-radius: 20px; padding: 40px; margin-bottom: 20px;">
-            <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #1e40af, #0ea5e9); border-radius: 20px; margin: 0 auto; display: flex; align-items: center; justify-content: center; position: relative; animation: pulse 3s ease-in-out infinite;">
-              <div style="color: white; font-size: 3rem; font-weight: 800;">A15</div>
-              <div style="position: absolute; top: -10px; right: -10px; background: #10b981; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🧬</div>
-            </div>
+      <div class="how-works">
+        <h3>How A15 Works</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="bubble">1</div>
+            <h4>ISR Activation</h4>
+            <p class="muted">Stress/aging triggers the Integrated Stress Response.</p>
           </div>
-          <div style="display: flex; justify-content: center; gap: 30px; text-align: center;">
-            <div><div style="font-size: 1.5rem; font-weight: 800; color: #1e40af;">98%+</div><div style="font-size: 0.85rem; color: #64748b;">Purity</div></div>
-            <div><div style="font-size: 1.5rem; font-weight: 800; color: #1e40af;">COA</div><div style="font-size: 0.85rem; color: #64748b;">Included</div></div>
-            <div><div style="font-size: 1.5rem; font-weight: 800; color: #1e40af;">50+</div><div style="font-size: 0.85rem; color: #64748b;">Countries</div></div>
+          <div class="step">
+            <div class="bubble">2</div>
+            <h4>eIF2B Enhancement</h4>
+            <p class="muted">A15 binds eIF2B, stabilizing translation despite stress signals.</p>
+          </div>
+          <div class="step">
+            <div class="bubble">3</div>
+            <h4>Cognitive Restoration</h4>
+            <p class="muted">Neurons resume protein synthesis required for memory & plasticity.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- Scientific Background -->
-  <section style="background: white; padding: 80px 0;" id="mechanism">
-    <div class="container">
-      <div style="max-width: 1000px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">The Science Behind ISRIB A15</h2>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 60px;">
-          <div>
-            <h3 style="color: #dc2626; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">🔬 Discovery at UCSF</h3>
-            <p style="color: #64748b; line-height: 1.7; margin-bottom: 20px;">Originally discovered by Dr. Peter Walter's team at UCSF, ISRIB stunned researchers by restoring memory and learning in brain-injured and elderly mice.</p>
-            <p style="color: #64748b; line-height: 1.7;">ISRIB A15 represents the next evolution - an optimized analog with enhanced potency and improved pharmacokinetic properties, specifically designed for oral bioavailability.</p>
-          </div>
-          <div style="background: #f8fafc; padding: 30px; border-radius: 15px; text-align: center;">
-            <div style="font-size: 4rem; margin-bottom: 15px;">🧬</div>
-            <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 10px;">Published Research</h4>
-            <p style="color: #64748b; font-size: 0.95rem;">Featured in Science, eLife, and Nature journals</p>
-          </div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border-radius: 20px; padding: 40px; margin-bottom: 60px;">
-          <h3 style="color: #1e293b; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">How ISRIB A15 Works</h3>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-            <div style="text-align: center; padding: 20px;">
-              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
-              <h4 style="color: #1e293b; margin-bottom: 10px;">Stress Response Activation</h4>
-              <p style="color: #64748b; font-size: 0.9rem;">Under chronic stress, aging, or injury, cells activate the Integrated Stress Response (ISR).</p>
-            </div>
-            <div style="text-align: center; padding: 20px;">
-              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
-              <h4 style="color: #1e293b; margin-bottom: 10px;">eIF2B Enhancement</h4>
-              <p style="color: #64748b; font-size: 0.9rem;">ISRIB A15 binds to eIF2B, stabilizing it and allowing protein synthesis despite stress signals.</p>
-            </div>
-            <div style="text-align: center; padding: 20px;">
-              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
-              <h4 style="color: #1e293b; margin-bottom: 10px;">Cognitive Restoration</h4>
-              <p style="color: #64748b; font-size: 0.9rem;">Neurons resume protein production required for memory formation and synaptic plasticity.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Why A15 vs Original ISRIB -->
+<!-- Why A15 vs Original ISRIB -->
   <section style="background: #f8fafc; padding: 80px 0;">
     <div class="container">
       <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">Why ISRIB A15 Over Original ISRIB?</h2>
@@ -277,55 +287,8 @@
       </div>
     </div>
   </section>
-
-  <!-- Ordering Section -->
-  <section id="order-section" style="background:#f8fafc; padding:80px 0;">
-    <div class="container">
-      <h2 style="font-size:2.5rem; font-weight:800; color:#1e293b; text-align:center; margin-bottom:60px;">Order ISRIB A15</h2>
-      <div style="max-width:800px; margin:0 auto;">
-        <!-- Quantity Options -->
-        <div style="background:#fff; border-radius:20px; padding:40px; box-shadow:0 10px 30px rgba(0,0,0,.1); margin-bottom:40px;">
-          <h3 style="color:#1e293b; font-size:1.5rem; font-weight:700; margin-bottom:30px; text-align:center;">Select Your Quantity</h3>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px;">
-            <!-- 100mg -->
-            <div class="quantity-card" data-quantity="100mg" data-price="50" style="border:2px solid #e2e8f0; border-radius:15px; padding:25px; text-align:center; cursor:pointer; transition:.3s; position:relative;">
-              <div style="font-size:1.5rem; font-weight:800; color:#1e293b; margin-bottom:8px;">100mg</div>
-              <div style="font-size:2rem; font-weight:800; color:#1e40af; margin-bottom:15px;">$50</div>
-              <div style="color:#64748b; font-size:.9rem; margin-bottom:15px;">$0.50 per mg</div>
-              <div style="background:#f8fafc; color:#64748b; padding:8px 12px; border-radius:20px; font-size:.8rem; font-weight:600;">Starter Amount</div>
-            </div>
-            <!-- 500mg -->
-            <div class="quantity-card" data-quantity="500mg" data-price="130" style="border:2px solid #e2e8f0; border-radius:15px; padding:25px; text-align:center; cursor:pointer; transition:.3s; position:relative;">
-              <div style="position:absolute; top:-10px; right:-10px; background:#10b981; color:#fff; padding:5px 10px; border-radius:15px; font-size:.75rem; font-weight:700;">SAVE $120</div>
-              <div style="font-size:1.5rem; font-weight:800; color:#1e293b; margin-bottom:8px;">500mg</div>
-              <div style="font-size:2rem; font-weight:800; color:#1e40af; margin-bottom:15px;">$130</div>
-              <div style="color:#64748b; font-size:.9rem; margin-bottom:15px;">$0.26 per mg</div>
-              <div style="background:#f8fafc; color:#64748b; padding:8px 12px; border-radius:20px; font-size:.8rem; font-weight:600;">Great Value</div>
-            </div>
-            <!-- 1g -->
-            <div class="quantity-card" data-quantity="1g" data-price="200" style="border:2px solid #1e40af; border-radius:15px; padding:25px; text-align:center; cursor:pointer; transition:.3s; position:relative; background:linear-gradient(135deg, rgba(30,64,175,.05), rgba(14,165,233,.05));">
-              <div style="position:absolute; top:-10px; right:-10px; background:#dc2626; color:#fff; padding:5px 10px; border-radius:15px; font-size:.75rem; font-weight:700;">SAVE $300</div>
-              <div style="font-size:1.5rem; font-weight:800; color:#1e293b; margin-bottom:8px;">1000mg</div>
-              <div style="font-size:2rem; font-weight:800; color:#1e40af; margin-bottom:15px;">$200</div>
-              <div style="color:#64748b; font-size:.9rem; margin-bottom:15px;">$0.20 per mg</div>
-              <div style="background:#1e40af; color:#fff; padding:8px 12px; border-radius:20px; font-size:.8rem; font-weight:600;">Most Popular</div>
-            </div>
-          </div>
-          <!-- Dynamic CTA will be injected here -->
-          <div id="cartActions" style="text-align:center; margin-top:40px;"></div>
-        </div>
-
-        <div style="background:#eff6ff; border:1px solid #3b82f6; border-radius:15px; padding:25px; margin-bottom:40px;">
-          <h3 style="color:#1e40af; font-size:1.2rem; font-weight:700; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
-            <span style="font-size:1.3rem;">📚</span> Research Protocol Information
-          </h3>
-          <p style="color:#1e40af; margin:0; line-height:1.6;">We can provide literature references and methodological guidance for your applications.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
+  
+ <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-content">
@@ -370,129 +333,10 @@
     </div>
   </footer>
 
-  <!-- Toast container -->
-  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
 
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
-
-  <!-- === CART + DYNAMIC CTA (A15) === -->
-  <script>
-    // --- utils ---
-    function qtyToGrams(q){
-      if(!q) return 1;
-      const s = q.toString().trim().toLowerCase();
-      if(s.endsWith('mg')) return parseFloat(s)/1000;
-      if(s.endsWith('g'))  return parseFloat(s);
-      return parseFloat(s)||1;
-    }
-
-    // --- cart helpers (packs model) ---
-    const CART_KEY='isrib_cart';
-    const badge = document.getElementById('cartCount');
-    const cartBtn = document.getElementById('cartBtn');
-
-    function getCart(){ try{return JSON.parse(localStorage.getItem(CART_KEY))||[]}catch{return[]} }
-    function saveCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); updateCartCount(); }
-
-    function updateCartCount(){
-      if(!badge) return;
-      let cart = getCart();
-      // migrate legacy shapes if needed
-      cart = cart.map(i => (i && i.count == null && i.qty != null)
-        ? ({...i, grams: i.grams ?? i.qty, count: 1, qty: undefined})
-        : i);
-      const total = cart.reduce((n,i)=> n + (Number(i.count)||0), 0);
-      badge.textContent = total;
-    }
-
-    function popBadge(){
-      if(!badge) return;
-      badge.classList.remove('pop'); void badge.offsetWidth; // restart animation
-      badge.classList.add('pop');
-    }
-
-    function shakeCart(){
-      if(!cartBtn) return;
-      cartBtn.classList.remove('shake'); void cartBtn.offsetWidth;
-      cartBtn.classList.add('shake');
-      setTimeout(()=>cartBtn.classList.remove('shake'), 500);
-    }
-
-    function showToast(message){
-      const wrap = document.getElementById('toastWrap');
-      if(!wrap) return;
-      const el = document.createElement('div');
-      el.className = 'toast';
-      el.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M9 12l2 2 4-4" stroke="#31c48d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="12" cy="12" r="9" stroke="#31c48d" stroke-width="2" fill="none"/>
-        </svg>
-        <span>${message}</span>
-      `;
-      wrap.appendChild(el);
-      // remove after animation completes (~1.72s)
-      setTimeout(()=> wrap.removeChild(el), 1750);
-    }
-
-    function addToCart(name, sku, grams, price, display){
-      let cart = getCart();
-      cart.push({ name, sku, grams, display, price:Number(price)||0, count:1, unit:'pack' });
-      saveCart(cart);
-      popBadge();
-      shakeCart();
-      showToast(`Added to cart: ${name} — ${display} ($${price})`);
-    }
-
-    // --- dynamic CTA render ---
-    function renderAddToCartBtn(qtyLabel, price){
-      const grams = qtyToGrams(qtyLabel);
-      const wrap  = document.getElementById('cartActions');
-      if(!wrap) return;
-      wrap.innerHTML = `
-        <button id="addA15" class="btn-primary"
-          style="font-size:1.2rem; padding:18px 40px; margin-right:12px;">
-          ➕ Add to Cart — ${qtyLabel} for $${price}
-        </button>
-        <a href="checkout.html" class="btn-secondary"
-          style="display:inline-block; font-weight:700; padding:16px 24px; border:1px solid #cbd5e1; border-radius:12px; color:#0f172a; text-decoration:none;">
-          🧺 View Cart →
-        </a>
-        <p style="color:#64748b; margin-top:15px; font-size:.95rem;">Secure payment arrangements discussed individually</p>
-      `;
-      const btn = document.getElementById('addA15');
-      if(btn){
-        btn.addEventListener('click', ()=>{
-          addToCart('ISRIB A15','isrib-a15',grams,Number(price),qtyLabel);
-          // quick button feedback
-          const old = btn.textContent;
-          btn.disabled = true;
-          btn.textContent = '✔️ Added!';
-          setTimeout(()=>{ btn.disabled = false; btn.textContent = old; }, 1200);
-        });
-      }
-    }
-
-    // init
-    document.addEventListener('DOMContentLoaded', ()=>{
-      updateCartCount();
-      const cards = document.querySelectorAll('.quantity-card');
-      cards.forEach(card=>{
-        card.addEventListener('click', function(){
-          cards.forEach(c=>c.classList.remove('selected'));
-          this.classList.add('selected');
-          const qty   = this.dataset.quantity; // "100mg" | "500mg" | "1g"
-          const price = this.dataset.price;    // "50" | "130" | "200"
-          renderAddToCartBtn(qty, price);
-        });
-      });
-      const def = document.querySelector('.quantity-card[data-quantity="1g"]') || cards[0];
-      if(def) def.click();
-    });
-  </script>
-
+  <!-- App JS -->
+  <script src="js/main.js?v=20"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
   <!-- Chat -->
   <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
