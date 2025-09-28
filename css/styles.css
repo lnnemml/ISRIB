@@ -1149,9 +1149,12 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 
 /* left visual */
-.page-product-a15 .a15-visual{
-  background:#fff; border:1px solid var(--ring);
-  border-radius:20px; padding:22px; box-shadow:var(--shadow);
+.page-product-a15 .a15-visual {
+  background: #fff; /* було: градієнт або #f8fafc */
+  border: 1px solid var(--ring);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: var(--shadow); /* або можеш забрати для більш “плоского” вигляду */
 }
 .page-product-a15 .formula{ margin:0; text-align:center; }
 .page-product-a15 .formula-img{
