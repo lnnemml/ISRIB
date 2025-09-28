@@ -13,7 +13,7 @@ function initializeApp() {
   initProductInteractions();
   initQuantitySelectors();     // calculates price + $/mg + syncs dataset
   bindQtyLabelUpdates(); // keeps "Add to cart 1g/100mg" label in sync
-  initA15OrderCard();
+  if (typeof initA15OrderCard === 'function') { initA15OrderCard(); }
   initProductFilters();
   initMobileOptimizations();
   initAnalytics();
@@ -136,26 +136,25 @@ function initFadeInAnimations() {
 /* ===================== PRODUCT INTERACTIONS ===================== */
 function initProductInteractions() {
   document.querySelectorAll('.product-card').forEach((card) => {
+    // Клік по «фону» картки -> перехід
     card.addEventListener('click', (e) => {
-      if (e.target.closest('a, button, .quantity-option')) return;
-      const header = document.getElementById('siteHeader');
-      if (header) {
-        const hb = header.getBoundingClientRect();
-        if (e.clientY <= hb.bottom) return;
-      }
-      if (e.target.closest('#siteHeader, .header-slim, .nav-slim')) return;
-      const href = card.dataset.href;
+      // не чіпаємо кліки по кнопках/лінках/кількостях
+      if (e.target.closest('a, button, .quantity-option, .quantity-wrap, .product-footer')) return;
+
+      const href =
+        card.dataset.href ||
+        card.querySelector('.stretched-link')?.getAttribute('href');
+
       if (href) window.location.href = href;
     });
-    if (card.dataset.href) {
+
+    // доступність з клавіатури
+    const href = card.dataset.href || card.querySelector('.stretched-link')?.getAttribute('href');
+    if (href) {
       card.setAttribute('role', 'link');
       card.setAttribute('tabindex', '0');
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          const href = card.dataset.href;
-          if (href) window.location.href = href;
-        }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.location.href = href; }
       });
     }
   });
