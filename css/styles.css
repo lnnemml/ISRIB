@@ -1143,8 +1143,13 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .lead{ opacity:.9; }
 .sep{ border:none; border-top:1px solid var(--ring); }
 
-/* ===== A15 page (scoped, header‑safe) ===== */
-/* герой не чіпаємо зайвими шарами — фон задається або inline як #fff, або тут, якщо треба */
+/* ===== A15 page (scoped) ===== */
+.page-product-a15 .a15-hero {
+  background:#f8fafc;          /* світлий фон секції, хедер добре читається */
+  padding:52px 0 38px;
+  position:relative;
+}
+.page-product-a15 .a15-hero::before { display:none; }
 
 .page-product-a15 .a15-hero-grid{
   display:grid;
@@ -1221,6 +1226,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .page-product-a15 .steps{ grid-template-columns:1fr; }
 }
 
+
 .product-card{ position:relative; }
 .stretched-link{
   position:absolute; inset:0; z-index:1;
@@ -1231,90 +1237,4 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .product-card .quantity-option,
 .product-card .add-to-cart{
   position:relative; z-index:2;
-}
-/* ===== FIX A15 header/hero once and for all ===== */
-
-/* 1) Хедер поверх усього ТІЛЬКИ на A15 */
-.page-product-a15 .header-slim{
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 9999 !important;
-  background: #fff !important;
-  border-bottom: 1px solid #e5e7eb !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,.04) !important;
-  padding: 12px 0 !important; /* залишаємо попередню висоту */
-}
-
-/* 2) Hero не перекриває хедер і має потрібний фон */
-.page-product-a15 .a15-hero{
-  background: #f8fafc !important;  /* світлий фон секції, щоб хедер читався */
-  padding: 52px 0 38px !important;
-  position: relative !important;
-  z-index: 0 !important;           /* гарантовано нижче за header */
-}
-.page-product-a15 .a15-hero::before{ display: none !important; } /* прибрати плями/градієнти */
-
-/* 3) Лівий блок з формулою — чисто білий щоб не було контрасту з PNG */
-.page-product-a15 .a15-visual{
-  background: #fff !important;
-  border: 1px solid var(--ring) !important;
-  border-radius: 20px !important;
-  padding: 22px !important;
-  box-shadow: var(--shadow) !important;
-}
-
-/* 4) Решта стилів сторінки — як було (не впливає на хедер) */
-.page-product-a15 .a15-hero-grid{
-  display:grid; grid-template-columns:1.12fr 1fr; gap:48px; align-items:center;
-}
-.page-product-a15 .formula{ margin:0; text-align:center; }
-.page-product-a15 .formula-img{
-  max-width:100%; height:auto; display:block; margin:0 auto 10px;
-  filter:drop-shadow(0 8px 24px rgba(2,6,23,.08));
-}
-.page-product-a15 .mini-stats{ display:flex; gap:28px; justify-content:center; margin-top:10px; }
-.page-product-a15 .mini-stats .num{ font-size:1.25rem; font-weight:800; color:#1e40af; text-align:center; }
-.page-product-a15 .mini-stats .cap{ font-size:.85rem; color:#64748b; text-align:center; }
-.page-product-a15 .row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-.page-product-a15 .pill.in-stock{
-  background:#dcfdf7; color:#059669; border:1px solid #10b981;
-  padding:4px 10px; border-radius:999px; font-weight:700; font-size:.8rem;
-}
-.page-product-a15 .a15-title{
-  font-size:clamp(2rem,4.2vw,3rem); font-weight:900; color:#1e293b; margin:6px 0;
-}
-.page-product-a15 .a15-chem.mono{
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  color:#1e40af; font-weight:700; margin-bottom:12px;
-}
-.page-product-a15 .a15-lead{ font-size:1.05rem; color:var(--muted-strong); }
-.page-product-a15 .order-section{ background:#f8fafc; padding:52px 0; }
-.page-product-a15 .product-card--order{ cursor:default; }
-.page-product-a15 .order-section .order-perks{
-  margin-top:16px; padding-left:22px; line-height:1.9; color:var(--muted);
-}
-.page-product-a15 .science-section{ background:#fff; padding:64px 0; }
-.page-product-a15 .science-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center; margin-bottom:44px;
-}
-.page-product-a15 .science-card{
-  background:#f8fafc; border:1px solid var(--ring); border-radius:15px; padding:22px; text-align:center;
-}
-.page-product-a15 .science-card .icon{ font-size:2rem; margin-bottom:10px; }
-.page-product-a15 .how-works{
-  background:linear-gradient(135deg,#f8fafc,#e2e8f0); border-radius:18px; padding:28px;
-}
-.page-product-a15 .how-works h3{ text-align:center; margin-bottom:18px; color:#1e293b; }
-.page-product-a15 .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-.page-product-a15 .step{ text-align:center; padding:10px; }
-.page-product-a15 .bubble{
-  width:70px; height:70px; border-radius:50%;
-  background:linear-gradient(135deg,#dc2626,#ef4444); color:#fff;
-  margin:0 auto 12px; display:flex; align-items:center; justify-content:center;
-  font-weight:800; font-size:1.2rem;
-}
-@media (max-width:900px){
-  .page-product-a15 .a15-hero-grid{ grid-template-columns:1fr; gap:28px; }
-  .page-product-a15 .science-grid{ grid-template-columns:1fr; gap:28px; }
-  .page-product-a15 .steps{ grid-template-columns:1fr; }
 }
