@@ -1396,3 +1396,9 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 /* 5) права колонка — з верху (не посередині) */
 .page-product-a15 .a15-hero-grid{ align-items: start; }
 .page-product-a15 .a15-copy{ align-self: start; padding-top: 0; }
+/* Hide $/mg everywhere */
+.price-per-mg { display: none !important; }
+
+/* tighten the price line spacing when $/mg is hidden */
+.price-line { gap: 0; }
+.price-line .current-price { margin-right: 0; }
