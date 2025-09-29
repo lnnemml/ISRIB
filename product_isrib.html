@@ -4,23 +4,26 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>ISRIB — Original Molecule | ISRIB.shop</title>
-  <meta name="description" content="ISRIB: the original Integrated Stress Response Inhibitor for research. ≥96% purity, COA per batch."/>
-  <link rel="canonical" href="https://isrib.shop/isrib.html"/>
+  <meta name="description" content="ISRIB: the original ISR inhibitor for research. ≥96% purity, COA per batch."/>
+  <link rel="canonical" href="https://isrib.shop/product_isrib.html"/>
 
   <meta property="og:title" content="ISRIB — Original Molecule"/>
-  <meta property="og:description" content="Research‑grade ISRIB. COA per batch. Research use only."/>
+  <meta property="og:description" content="Research‑grade ISRIB (≥96% HPLC). COA per batch. Research use only."/>
   <meta property="og:type" content="product"/>
   <meta property="og:image" content="images/isrib-og.jpg"/>
-  <meta property="og:url" content="https://isrib.shop/isrib.html"/>
+  <meta property="og:url" content="https://isrib.shop/product_isrib.html"/>
 
   <link rel="stylesheet" href="css/styles.css?v=21"/>
+  <!-- той самий inline-градієнт, що й на A15 -->
   <style>
-    /* невеликі локальні відмінності кольору бейджа для ISRIB */
-    .product-badge.original { background: linear-gradient(135deg,#f59e0b,#d97706); }
+    .a15-hero { background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%); padding: 52px 0 38px; position:relative; }
+    .a15-hero::before{ content:''; position:absolute; inset:0;
+      background: radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+                  radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%); }
   </style>
 </head>
-<body class="page-product-isrib">
-  <!-- Slim header (той самий, що на A15) -->
+<body class="page-product-a15"><!-- важливо: той самий клас що й у A15 -->
+  <!-- Slim header (ідентичний A15) -->
   <header class="header-slim" id="siteHeader">
     <div class="container">
       <div class="header-content">
@@ -51,8 +54,8 @@
     </nav>
   </header>
 
-  <!-- HERO (аналогічно A15, тільки своя SVG формула і тексти) -->
-  <section class="isrib-hero">
+  <!-- HERO (ідентичний каркас A15) -->
+  <section class="a15-hero">
     <div class="container">
       <div class="a15-hero-grid">
         <!-- LEFT: формула -->
@@ -78,13 +81,15 @@
         <!-- RIGHT: текст -->
         <div class="a15-copy">
           <div class="row">
-            <span class="product-badge original">Original Formula</span>
+            <!-- використовуємо ті ж класи бейджа, що й у A15, щоб вигляд збігався -->
+            <span class="product-badge most-popular">Original Formula</span>
             <span class="pill in-stock">✓ In stock</span>
           </div>
           <h1 class="a15-title">ISRIB</h1>
           <p class="a15-chem mono">C₂₂H₂₄Cl₂N₂O₄</p>
           <p class="a15-lead muted-strong">
-            The foundational ISRIB molecule discovered at UCSF. Selectively targets the ISR pathway via eIF2B modulation. Research use only.
+            The foundational ISRIB molecule discovered at UCSF. Selectively targets the ISR pathway via eIF2B modulation.
+            Research use only.
           </p>
           <div class="cta-buttons">
             <a href="#order" class="btn btn-primary">🧬 Order ISRIB</a>
@@ -145,7 +150,7 @@
     </div>
   </section>
 
-  <!-- SCIENCE (аналог секції з A15) -->
+    <!-- SCIENCE (ідентичний блок як у A15, тексти під ISRIB) -->
   <section id="science" class="science-section">
     <div class="container">
       <h2 class="section-title">The Science behind ISRIB</h2>
@@ -153,12 +158,12 @@
       <div class="science-grid">
         <div>
           <h3 class="science-h3">🔬 Discovery at UCSF</h3>
-          <p class="muted">Originally reported by Peter Walter’s group, ISRIB restored learning & memory in brain‑injured and elderly mice. It modulates the Integrated Stress Response through eIF2B.</p>
+          <p class="muted">ISRIB was reported by Peter Walter’s group at UCSF to restore learning & memory in brain‑injured and elderly mice by modulating the Integrated Stress Response via eIF2B.</p>
         </div>
         <div class="science-card">
           <div class="icon">🧪</div>
           <h4>Published Research</h4>
-          <p class="muted">Featured in high‑impact journals (Science, eLife, Nature).</p>
+          <p class="muted">Featured in peer‑reviewed journals (Science, eLife, Nature).</p>
         </div>
       </div>
 
@@ -168,7 +173,7 @@
           <div class="step">
             <div class="bubble">1</div>
             <h4>ISR Activation</h4>
-            <p class="muted">Stress triggers eIF2α phosphorylation and translation shutdown.</p>
+            <p class="muted">Stress triggers eIF2α phosphorylation and translation shut‑down.</p>
           </div>
           <div class="step">
             <div class="bubble">2</div>
