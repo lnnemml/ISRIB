@@ -1397,7 +1397,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 /* tighten the price line spacing when $/mg is hidden */
 .price-line { gap: 0; }
 .price-line .current-price { margin-right: 0; }
-.view-cart-link {
+.view-cart {
   font-size: 0.95rem;
   font-weight: 500;
   padding: 10px 16px;
@@ -1409,7 +1409,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.view-cart-link:hover {
+.view-cart:hover {
   background-color: #e0e7ff;
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
