@@ -199,10 +199,15 @@ function setActiveOption(card, opt) {
   if (current) current.textContent = fmtUSD(price);
 
   const ppm = card.querySelector('.price-per-mg');
-  if (ppm && mg) {
-    const perMg = price / mg; // вже $/mg
+if (ppm) {
+  const mg = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr); // mg завжди в міліграмах
+  if (mg > 0) {
+    const perMg = price / mg;
     ppm.textContent = `($${(perMg >= 0.1 ? perMg.toFixed(2) : perMg.toFixed(4))}/mg)`;
+  } else {
+    ppm.textContent = '';
   }
+}
 
   const label = card.querySelector('.selected-quantity');
   if (label) label.textContent = qStr;
