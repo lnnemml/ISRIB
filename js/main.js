@@ -190,15 +190,19 @@ function setActiveOption(card, opt) {
   card.querySelectorAll('.quantity-option').forEach(o => o.classList.remove('active'));
   opt.classList.add('active');
 
-  const qStr = (opt.dataset.quantity || '').trim();                  // "100mg" | "500mg" | "1g"
-  const grams = parseFloat(opt.dataset.grams || '0') || parseQtyToMg(qStr);
-  const price = parseFloat(opt.dataset.price || '0') || 0;
+  const qStr = (opt.dataset.quantity || '').trim();     // "100mg" | "500mg" | "1g"
+  // mg завжди в міліграмах: або беремо з data-grams, або парсимо з qStr
+  const mg = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr);
+  const price = Number(opt.dataset.price || 0) || 0;
 
   const current = card.querySelector('.current-price');
   if (current) current.textContent = fmtUSD(price);
 
   const ppm = card.querySelector('.price-per-mg');
-  if (ppm && grams) ppm.textContent = `($${(price / toMg(grams)).toFixed(4)}/mg)`;
+  if (ppm && mg) {
+    const perMg = price / mg; // вже $/mg
+    ppm.textContent = `($${(perMg >= 0.1 ? perMg.toFixed(2) : perMg.toFixed(4))}/mg)`;
+  }
 
   const label = card.querySelector('.selected-quantity');
   if (label) label.textContent = qStr;
@@ -206,7 +210,7 @@ function setActiveOption(card, opt) {
   const btn = card.querySelector('.add-to-cart');
   if (btn) {
     btn.dataset.price = String(price);
-    btn.dataset.grams = String(grams);
+    btn.dataset.grams = String(mg);   // у кошику теж зберігаємо mg
     btn.dataset.display = qStr;
   }
 }
