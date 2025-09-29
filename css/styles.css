@@ -1469,3 +1469,15 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .product-footer .add-to-cart{ order:1 !important; }
 .product-footer .view-cart  { order:2 !important; }
 .product-footer .view-product{ order:3 !important; }
+
+/* HERO фон для ZZL-7 (аналог a15-hero) */
+.zzl-hero { position: relative; padding: 52px 0 38px; }
+.zzl-hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 18% 82%, rgba(139,92,246,.10) 0%, transparent 50%),
+    radial-gradient(circle at 84% 18%, rgba(168,85,247,.10) 0%, transparent 50%);
+}
+
+
