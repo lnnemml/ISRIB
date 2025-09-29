@@ -1413,3 +1413,32 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   background-color: #e0e7ff;
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
+.product-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.product-footer .top-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.product-footer .view-product {
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #1e40af;
+  transition: 0.2s ease;
+}
+
+.product-footer .view-product:hover {
+  background: #e0e7ff;
+  border-color: #c7d2fe;
+}
