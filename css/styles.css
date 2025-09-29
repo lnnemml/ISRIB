@@ -1253,3 +1253,20 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   position: relative;
   z-index: 2;      /* керування завжди вище за stretched-link */
 }
+
+/* ---- ISRIB page aliases reusing A15 hero grid ---- */
+.isrib-hero{ background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%); padding: 52px 0 38px; position:relative; }
+.isrib-hero::before{ content:''; position:absolute; inset:0;
+  background: radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+              radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%);
+}
+/* використовуємо ті ж самі блоки, що на A15 */
+.page-product-isrib .a15-hero-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:40px; align-items:center; }
+.page-product-isrib .a15-visual .formula-img{ display:block; border-radius:16px; }
+.page-product-isrib .mini-stats{ display:flex; gap:30px; margin-top:10px; justify-content:center; }
+.page-product-isrib .mini-stats .num{ font-size:1.8rem; font-weight:800; color:#1e40af; text-align:center; }
+.page-product-isrib .mini-stats .cap{ font-size:.85rem; color:#64748b; text-align:center; }
+.page-product-isrib .a15-copy .a15-title{ font-size: clamp(2.2rem,4.6vw,3.2rem); font-weight:900; color:#1e293b; margin-bottom:10px; }
+.page-product-isrib .a15-copy .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+
