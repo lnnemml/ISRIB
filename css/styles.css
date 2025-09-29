@@ -657,37 +657,32 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
    These rules are appended at the end to take precedence.
    ========================================================= */
 
-/* Product footer layout */
+
 /* First row: View details + Add to cart; second row: View cart (full width) */
-.product-card .product-footer{
+/* product footer layout (настільні та мобільні) */
+.product-footer{
   display:flex;
   align-items:center;
   gap:12px;
-  flex-wrap:wrap;                 /* allow controlled wrap */
+  flex-wrap:wrap;
+  justify-content:flex-start; /* важливо: більше не space-between */
 }
-.product-card .view-product,
-.product-card .add-to-cart{
-  order:1;
-  flex:0 0 auto;
-  white-space:nowrap;
-}
-.product-card .add-to-cart{
-  min-width:200px;
-  white-space:nowrap;
-}
-.product-card .view-cart{
-  order:3;
-  flex:1 0 100%;
-  margin-top:6px;
-  justify-content:center;
-  display:inline-flex;
-}
+
+/* порядок елементів */
+.product-footer .add-to-cart{ order:1; }
+.product-footer .view-cart{ order:2; }
+.product-footer .view-product{ order:3; margin-left:auto; } /* щоб "View Details" був справа */
+
+/* мобільне: НЕ міняємо порядок на 3 */
 @media (max-width:560px){
-  .product-card .add-to-cart{
+  .product-footer{ flex-wrap:wrap; }
+  .product-footer .add-to-cart{
+    order:1;           /* було 3 — прибираємо */
     flex:1 1 auto;
     min-width:0;
   }
 }
+
 
 /* Add to cart button polishing (no price inside) */
 .add-to-cart{
