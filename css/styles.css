@@ -1442,3 +1442,30 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   background: #e0e7ff;
   border-color: #c7d2fe;
 }
+/* Product footer layout: кнопки зверху, "View Details" зліва знизу */
+.product-footer{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+}
+
+.product-footer .top-buttons{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+/* Примусово лишаємо "View Details" зліва */
+.product-footer .view-product{
+  align-self:flex-start;
+  margin-left:0 !important;   /* знімає старе margin-left:auto */
+  text-align:left !important;
+}
+
+/* На випадок старих правил, що міняли порядок або розкидали елементи */
+.product-footer { justify-content:flex-start !important; }
+.product-footer .add-to-cart{ order:1 !important; }
+.product-footer .view-cart  { order:2 !important; }
+.product-footer .view-product{ order:3 !important; }
