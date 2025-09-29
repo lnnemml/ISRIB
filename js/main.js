@@ -187,38 +187,43 @@ function initQuantitySelectors() {
 }
 
 function setActiveOption(card, opt) {
+  // 1. Візуально активуємо обрану опцію
   card.querySelectorAll('.quantity-option').forEach(o => o.classList.remove('active'));
   opt.classList.add('active');
 
-  const qStr = (opt.dataset.quantity || '').trim();     // "100mg" | "500mg" | "1g"
-  // mg завжди в міліграмах: або беремо з data-grams, або парсимо з qStr
-  const mg = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr);
+  // 2. Читаємо дані з data-атрибутів
+  const qStr = (opt.dataset.quantity || '').trim();     // "100mg", "1g", тощо
+  const mg = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr); // завжди в міліграмах
   const price = Number(opt.dataset.price || 0) || 0;
 
+  // 3. Оновлюємо ціну
   const current = card.querySelector('.current-price');
   if (current) current.textContent = fmtUSD(price);
 
+  // 4. Розраховуємо $ / mg
   const ppm = card.querySelector('.price-per-mg');
-if (ppm) {
-  const mg = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr); // mg завжди в міліграмах
-  if (mg > 0) {
-    const perMg = price / mg;
-    ppm.textContent = `($${(perMg >= 0.1 ? perMg.toFixed(2) : perMg.toFixed(4))}/mg)`;
-  } else {
-    ppm.textContent = '';
+  if (ppm) {
+    if (mg > 0) {
+      const perMg = price / mg;
+      ppm.textContent = `($${(perMg >= 0.1 ? perMg.toFixed(2) : perMg.toFixed(4))}/mg)`;
+    } else {
+      ppm.textContent = '';
+    }
   }
-}
 
+  // 5. Оновлюємо label над кнопкою (наприклад, "Add to cart — 100mg")
   const label = card.querySelector('.selected-quantity');
   if (label) label.textContent = qStr;
 
+  // 6. Привʼязуємо дані до кнопки Add to cart
   const btn = card.querySelector('.add-to-cart');
   if (btn) {
     btn.dataset.price = String(price);
-    btn.dataset.grams = String(mg);   // у кошику теж зберігаємо mg
+    btn.dataset.grams = String(mg);
     btn.dataset.display = qStr;
   }
 }
+
 
 function parseQtyToMg(s) {
   if (!s) return 0;
