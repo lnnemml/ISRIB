@@ -323,74 +323,8 @@
 
 
   <!-- App JS -->
-  <script src="js/main.js?v=20"></script>
+  <script src="js/main.js?v=21"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-  <script>
-(function EMERGENCY_CART_FIX(){
-  if (window.__EMERGENCY_CART_FIX__) return; window.__EMERGENCY_CART_FIX__ = true;
-
-  const CART_KEY = 'isrib_cart';
-  const getCart = () => { try { return JSON.parse(localStorage.getItem(CART_KEY)||'[]'); } catch { return []; } };
-  const setCart = (arr) => localStorage.setItem(CART_KEY, JSON.stringify(arr||[]));
-  const toMg = (g) => g >= 1 ? g*1000 : g;
-  const num = (x)=> (Math.round(x*100)/100).toFixed(2).replace(/\.00$/,'');
-  const badge = ()=> {
-    const c = getCart().reduce((n,i)=>n+(i.count||1),0);
-    const ids = ['cartCount','cartCountMobile']; ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=String(c); });
-  };
-
-  function setActive(card,opt){
-    card.querySelectorAll('.quantity-option').forEach(o=>o.classList.remove('active'));
-    opt.classList.add('active');
-    const q = (opt.dataset.quantity||'').trim();
-    const g = Number(opt.dataset.grams||0);
-    const p = Number(opt.dataset.price||0);
-    const cur = card.querySelector('.current-price'); if (cur) cur.textContent = `$${num(p)}`;
-    const ppm = card.querySelector('.price-per-mg'); if (ppm && g) ppm.textContent = `($${num(p/toMg(g))}/mg)`;
-    const sq = card.querySelector('.selected-quantity'); if (sq) sq.textContent = q;
-    const btn = card.querySelector('.add-to-cart');
-    if (btn){ btn.dataset.price=String(p); btn.dataset.grams=String(g); btn.dataset.display=q; }
-  }
-
-  function add(btn){
-    const card = btn.closest('.product-card, .product-card--order') || document;
-    const name = (card.querySelector('.product-name, .product-title')?.textContent || btn.dataset.name || 'Product').trim();
-    const sku  = btn.dataset.sku || card.dataset.sku || name.toLowerCase().replace(/\s+/g,'-');
-    let g = Number(btn.dataset.grams||0), p = Number(btn.dataset.price||0), d = btn.dataset.display||'';
-    if (!g || !p || !d){
-      const opt = card.querySelector('.quantity-option.active') || card.querySelector('.quantity-option');
-      if (opt){ d=d||(opt.dataset.quantity||''); g=g||Number(opt.dataset.grams||0); p=p||Number(opt.dataset.price||0); }
-    }
-    const cart = getCart();
-    const i = cart.findIndex(x=>x.sku===sku && x.grams===g && x.price===p);
-    if (i>=0) cart[i].count=(cart[i].count||1)+1; else cart.push({name,sku,grams:g,price:p,display:d,count:1,unit:'pack'});
-    setCart(cart); badge();
-  }
-
-  document.addEventListener('click',(e)=>{
-    const opt = e.target.closest('.quantity-option');
-    if (opt){ const card=opt.closest('.product-card, .product-card--order'); if(card) setActive(card,opt); return; }
-
-    const btn = e.target.closest('.add-to-cart');
-    if (btn){ e.preventDefault(); add(btn); return; }
-
-    const card = e.target.closest('.product-card');
-    if (card && !e.target.closest('a,button,.quantity-wrap,.quantity-option,.product-footer,.price-line')){
-      const href = card.dataset.href || card.querySelector('.stretched-link')?.getAttribute('href');
-      if (href) location.href = href;
-    }
-  }, {passive:false});
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    document.querySelectorAll('.product-card, .product-card--order').forEach(card=>{
-      const active = card.querySelector('.quantity-option.active') || card.querySelector('.quantity-option');
-      if (active) setActive(card,active);
-    });
-    badge();
-  });
-})();
-</script>
-
   <!-- Chat -->
   <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
