@@ -85,6 +85,41 @@ function initFadeInAnimations() {
 }
 
 function initFAQAccordion() {
+  // НОВИЙ FAQ: .faq-item > .faq-button + .faq-answer
+  const faqItems = document.querySelectorAll('.faq-item');
+  if (faqItems.length) {
+    faqItems.forEach(item => {
+      const btn = item.querySelector('.faq-button');
+      const ans = item.querySelector('.faq-answer');
+      const icon = item.querySelector('.faq-icon');
+      if (!btn || !ans) return;
+
+      // початковий стан
+      btn.setAttribute('aria-expanded', 'false');
+      ans.hidden = true;
+
+      btn.addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+        // Якщо треба, зробити акумулятивне відкриття — прибери цикл нижче
+        document.querySelectorAll('.faq-item.open').forEach(i => {
+          if (i !== item) {
+            i.classList.remove('open');
+            const a = i.querySelector('.faq-answer'); if (a) a.hidden = true;
+            const b = i.querySelector('.faq-button'); if (b) b.setAttribute('aria-expanded', 'false');
+            const ic = i.querySelector('.faq-icon'); if (ic) ic.textContent = '+';
+          }
+        });
+
+        item.classList.toggle('open', !isOpen);
+        ans.hidden = isOpen;
+        btn.setAttribute('aria-expanded', String(!isOpen));
+        if (icon) icon.textContent = isOpen ? '+' : '–';
+      });
+    });
+    return; // не чіпаємо старий акордеон, якщо використовуємо новий
+  }
+
+  // СТАРИЙ FAQ: .accordion .accordion-item > .accordion-head/.accordion-body (беккомпат)
   document.querySelectorAll('.accordion .accordion-item').forEach(item => {
     const head = item.querySelector('.accordion-head');
     const body = item.querySelector('.accordion-body');
@@ -96,6 +131,7 @@ function initFAQAccordion() {
     });
   });
 }
+
 
 function initAnchorHighlight() {
   function flash() {
