@@ -1481,20 +1481,46 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 
 /* === FAQ accordion (scoped для .faq-*) === */
-.faq-button{
-  width:100%; display:flex; align-items:center; justify-content:space-between;
-  gap:12px; background:none; border:0; padding:0; cursor:pointer; text-align:left;
-  font: inherit; color: inherit;
+.faq-button {
+  all: unset;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-radius: 18px;
+  background: #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  transition: background 0.2s, box-shadow 0.2s;
+  width: 100%;
+  cursor: pointer;
 }
-.faq-button:focus-visible{ outline:2px solid var(--brand-700); outline-offset:3px; border-radius:8px; }
 
-.faq-icon{
-  flex-shrink:0; width:28px; height:28px; border-radius:8px;
-  display:inline-flex; align-items:center; justify-content:center;
-  font-weight:900; color:#1e293b; background:#fff; border:1px solid var(--ring);
-  transition: transform .12s ease;
+.faq-button:hover {
+  background: #e2e8f0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
-.faq-item.open .faq-icon{ transform: rotate(90deg); } /* візуальна підказка відкриття */
+
+.faq-icon {
+  font-size: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  transition: transform 0.2s ease;
+}
+
+.faq-item.open .faq-icon {
+  transform: rotate(90deg);
+}
 
 .faq-answer[hidden]{ display:none !important; } /* про всяк випадок */
 .faq-item.open .faq-answer{ display:block; }
