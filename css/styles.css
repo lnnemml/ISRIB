@@ -174,7 +174,7 @@ img { max-width: 100%; height: auto; }
 }
 
 .product-formula img {
-  max-height: 120px;   /* ⬅️ збільшено з 80px */
+  max-height: 200px;   /* ⬅️ збільшено з 80px */
   max-width: 100%;
   object-fit: contain;
   display: inline-block;
