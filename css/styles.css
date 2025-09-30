@@ -1525,4 +1525,10 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .faq-answer[hidden]{ display:none !important; } /* про всяк випадок */
 .faq-item.open .faq-answer{ display:block; }
 
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px 32px;
+  margin-top: 32px;
+}
 
