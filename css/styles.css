@@ -1532,3 +1532,62 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   margin-top: 32px;
 }
 
+/* === FAQ grid hard-fix === */
+.faq-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(320px, 1fr)); /* 3 колонки на десктопі */
+  gap:24px 32px;                                      /* вертикальний і горизонтальний відступи */
+  align-items:stretch;                                 /* однакова висота рядка */
+}
+
+@media (max-width: 1024px){
+  .faq-grid{ grid-template-columns: repeat(2, minmax(280px, 1fr)); }
+}
+@media (max-width: 640px){
+  .faq-grid{ grid-template-columns: 1fr; }
+}
+
+/* картка не повинна зсуватись, все всередині */
+.faq-item{
+  position:relative;
+  margin:0;
+}
+
+/* велика “кнопка” як на головній, але без підстрибування */
+.faq-button{
+  all:unset;
+  display:flex; justify-content:space-between; align-items:center;
+  width:100%;
+  padding:22px 24px;
+  min-height:88px;            /* однакова мінімальна висота */
+  border-radius:18px;
+  background:#f1f5f9;
+  box-shadow:0 4px 12px rgba(0,0,0,.04);
+  font-size:1.125rem; font-weight:700; color:#1e293b;
+  transition:background .2s, box-shadow .2s;
+  cursor:pointer;
+  overflow:hidden;            /* щоб декоративні елементи не “вилазили” */
+}
+.faq-button:hover{
+  background:#e2e8f0;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  transform:none;             /* прибираємо зсув, що давав накладання */
+}
+
+/* іконка “+” справа — стабільні розміри */
+.faq-icon{
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:1.1rem;
+  background:#fff; color:#0f172a; border:1px solid #cbd5e1;
+  transition:transform .2s ease;
+}
+.faq-item.open .faq-icon{ transform:rotate(90deg); }
+
+/* лівий червоний “штрих” робимо псевдоелементом, щоб він не впливав на розмітку */
+.faq-item::before{
+  content:"";
+  position:absolute; left:0; top:10px; bottom:10px;
+  width:6px; background:#ef4444; border-radius:10px;
+  pointer-events:none;
+}
