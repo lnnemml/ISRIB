@@ -1480,4 +1480,23 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     radial-gradient(circle at 84% 18%, rgba(168,85,247,.10) 0%, transparent 50%);
 }
 
+/* === FAQ accordion (scoped для .faq-*) === */
+.faq-button{
+  width:100%; display:flex; align-items:center; justify-content:space-between;
+  gap:12px; background:none; border:0; padding:0; cursor:pointer; text-align:left;
+  font: inherit; color: inherit;
+}
+.faq-button:focus-visible{ outline:2px solid var(--brand-700); outline-offset:3px; border-radius:8px; }
+
+.faq-icon{
+  flex-shrink:0; width:28px; height:28px; border-radius:8px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:900; color:#1e293b; background:#fff; border:1px solid var(--ring);
+  transition: transform .12s ease;
+}
+.faq-item.open .faq-icon{ transform: rotate(90deg); } /* візуальна підказка відкриття */
+
+.faq-answer[hidden]{ display:none !important; } /* про всяк випадок */
+.faq-item.open .faq-answer{ display:block; }
+
 
