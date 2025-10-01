@@ -1630,3 +1630,72 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   color: #1e40af;
   font-weight: 700;
 }
+
+/* ======== FORCE LIGHT THEME ON MOBILE ======== */
+
+/* Білий хедер на мобілках (і загалом) */
+.header-slim,
+.site-header {
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(15,23,42,.06);
+}
+
+/* Мобільне меню теж світле */
+.mobile-menu {
+  background: #ffffff !important;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Логотип без затемнення */
+.logo-image-slim {
+  filter: none !important;
+}
+
+/* HERO: прибираємо затемнюючі накладки та робимо тексти як на ПК */
+@media (max-width: 768px) {
+  .hero::before,
+  .hero::after {
+    display: none !important; /* якщо були напівпрозорі оверлеї */
+  }
+
+  /* заголовок/підзаголовок — світлі, як на десктопі */
+  .hero .page-title,
+  .hero h1,
+  .hero .hero-title {
+    color: #0f172a !important;
+  }
+
+  .hero .hero-subtext,
+  .hero p {
+    color: #334155 !important; /* slate-600 */
+  }
+}
+
+/* FAQ секція світла (фон секції та карток) */
+.faq-section,
+.faq {
+  background: #f8fafc !important; /* світло-сірий фон секції */
+}
+
+.faq-item,
+.faq-button {
+  background: #f1f5f9 !important;  /* світлі “кнопки‑питання” */
+  color: #0f172a !important;
+}
+
+.faq-answer {
+  background: #ffffff !important;  /* світла відповідь */
+  color: #334155 !important;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+/* На випадок автотеми браузера — завжди світла колірна схема */
+:root { color-scheme: light; }
+@media (prefers-color-scheme: dark) {
+  body, .header-slim, .mobile-menu, .hero, .faq-section, .faq, .faq-item, .faq-button, .faq-answer {
+    background-color: initial;
+    color: initial;
+  }
+}
