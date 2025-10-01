@@ -276,12 +276,13 @@ img { max-width: 100%; height: auto; }
 /* ========== FAQ ========== */
 .faq-section{ background:#fff; padding:80px 0; border-top:1px solid #e5e7eb; }
 .faq-section h2{ font-size:clamp(2rem,4vw,3rem); font-weight:800; color:#1e293b; text-align:center; margin-bottom:60px; }
-.faq-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:30px; max-width:1100px; margin:0 auto; }
+.faq-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:30px; max-width:1100px; margin:0 auto; align-items:start;}
 .faq-item{ background:#f8fafc; border-radius:15px; padding:25px; transition:.3s; border-left:4px solid #dc2626; cursor:pointer; }
-.faq-item:hover{ transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,.1); border-left-color:#1e40af; }
+.faq-item:hover{ transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,0.10); border-left-color:#1e40af; }
 .faq-question{ font-size:1.1rem; font-weight:700; color:#1e293b; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
 .faq-question::before{ content:'🔬'; font-size:1.2rem; }
 .faq-answer{ color:#64748b; line-height:1.7; font-size:1rem; }
+
 
 /* ========== How-to steps / Value cards / CTAs ========== */
 .value-card{ transition:.3s; } .value-card:hover{ transform:translateY(-5px); box-shadow:0 10px 30px rgba(0,0,0,.1); }
@@ -886,7 +887,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .faq-section .section-subtitle{ text-align:center; margin:0 auto 30px; max-width:820px }
 
 .faq-item{ position:relative; background:#f8fafc; border-radius:15px; padding:0; transition:.3s; border-left:4px solid #dc2626; cursor:pointer; scroll-margin-top:120px }
-.faq-item:hover{ transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,.1); border-left-color:#1e40af }
+
 
 /* Button + answer panel */
 .faq-button{ all:unset; display:flex; align-items:center; justify-content:space-between; width:100%; padding:20px 24px; cursor:pointer }
@@ -1775,6 +1776,8 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     border-radius: 14px;
     opacity: 1 !important;
   }
+.faq-item, .faq-button, .faq-question, .faq-answer { min-width:0; }
+.faq-question, .faq-answer { overflow-wrap:anywhere; }
 }
 
 /* Примусово залишаємо світлу тему */
