@@ -1671,16 +1671,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
 }
 
-
-/* На випадок автотеми браузера — завжди світла колірна схема */
-:root { color-scheme: light; }
-@media (prefers-color-scheme: dark) {
-  body, .header-slim, .mobile-menu, .hero, .faq-section, .faq, .faq-item, .faq-button, .faq-answer {
-    background-color: initial;
-    color: initial;
-  }
-}
-/* ====== Burger (новий стиль) ====== */
+/* ====== Burger (оновлений стиль + SVG) ====== */
 .burger {
   display: none;
   width: 40px;
@@ -1692,7 +1683,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   justify-content: center;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
-  color: #0f172a; /* текст/іконка всередині */
+  color: #0f172a; /* для currentColor у SVG */
 }
 @media (max-width: 768px) {
   .burger {
@@ -1715,19 +1706,43 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 .burger.open .burger-icon {
   transform: rotate(90deg);
-  color: #1d4ed8; /* синій акцент при відкритті */
+  color: #1d4ed8;
 }
 
-/* ====== Мобільний хедер — повністю світлий, текст чорний */
-@media (max-width:768px){
-  .header-slim, .site-header {
+/* ====== Mobile menu visibility ====== */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  padding: 12px;
+}
+.mobile-menu.open {
+  display: grid;
+  gap: 12px;
+}
+.mobile-menu .mm-link,
+.mobile-menu .mm-cart {
+  color: #0f172a !important;
+}
+
+/* ====== Хедер на мобілках — білий фон, чорний текст ====== */
+@media (max-width: 768px) {
+  .header-slim,
+  .site-header {
     background: #ffffff !important;
     color: #0f172a !important;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   }
+
   .logo-image-slim {
     filter: none !important;
   }
+
   .nav-slim a,
   .cart-btn-slim,
   .mobile-menu .mm-link,
@@ -1735,17 +1750,19 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     color: #0f172a !important;
     opacity: 1 !important;
   }
+
   .mobile-menu {
     background: #ffffff !important;
     border-top: 1px solid #e5e7eb;
   }
 }
 
-/* ====== FAQ на мобілці — теж світлий */
-@media (max-width:768px){
+/* ====== FAQ на мобілках — чорний текст, світлі блоки ====== */
+@media (max-width: 768px) {
   .faq-section {
     background: #ffffff !important;
   }
+
   .faq-button,
   .faq-item,
   .faq-button .faq-title,
@@ -1753,22 +1770,37 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     color: #0f172a !important;
     background: #f8fafc !important;
   }
-  .faq-answer {
-    color: #334155 !important;
+
+  .faq-answer,
+  .faq-answer *,
+  .faq-answer .muted {
+    color: #0f172a !important;
     background: #ffffff !important;
     border: 1px solid #e2e8f0;
     border-radius: 14px;
+    opacity: 1 !important;
   }
 }
 
-/* Примусово залишаємо світлу тему, навіть якщо браузер хоче темну */
-:root { color-scheme: light; }
+/* Примусово залишаємо світлу тему */
+:root {
+  color-scheme: light;
+}
 @media (prefers-color-scheme: dark) {
-  body, .header-slim, .mobile-menu, .hero, .faq-section, .faq, .faq-item, .faq-button, .faq-answer {
+  body,
+  .header-slim,
+  .mobile-menu,
+  .hero,
+  .faq-section,
+  .faq,
+  .faq-item,
+  .faq-button,
+  .faq-answer {
     background-color: initial;
     color: initial;
   }
 }
+
 
 
 
