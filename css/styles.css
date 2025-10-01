@@ -993,7 +993,8 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .checkout-form .agree-row {
   display: flex;
   gap: 10px;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;   
   margin: 24px 0 0;      /* Замість 10px */
   padding: 12px;
   background: #f8fafc;
@@ -1001,9 +1002,18 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   border-radius: 10px;
   max-width: 760px; margin-inline: auto;
 }
-.checkout-form .agree-row input[type="checkbox"] {
-  transform: scale(1.2);
-  margin-top: 2px;
+.checkout-form .agree-row input[type="checkbox"]{
+  -webkit-appearance: auto;
+  appearance: auto;           /* стандартний системний чекбокс */
+  transform: none;            /* прибираємо scale, що зсував вліво */
+  margin: 4px 8px 0 2px;      /* акуратне вирівнювання з текстом */
+  flex: 0 0 auto;             /* не розтягується */
+}
+.checkout-form .agree-row .muted{
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: break-word;
+  line-height: 1.6;
 }
 .checkout-form .form-actions{ margin-top:16px; display:flex; flex-direction:column; gap:8px; }
 .checkout-form .form-status{ min-height:20px; }
