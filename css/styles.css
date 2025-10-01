@@ -1699,3 +1699,52 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     color: initial;
   }
 }
+/* ====== New burger icon (SVG) ====== */
+.burger{
+  display:none;
+  width:40px; height:40px;
+  border:1px solid #e5e7eb; border-radius:10px;
+  background:#fff; align-items:center; justify-content:center;
+  cursor:pointer; transition:background .15s, border-color .15s;
+}
+@media (max-width:768px){ .burger{ display:inline-flex; } }
+.burger:hover{ background:#f8fafc; }
+
+.burger-icon{
+  width:22px; height:22px;
+  stroke:#0f172a; stroke-width:2.4; fill:none;
+  stroke-linecap:round; stroke-linejoin:round;
+  transition: transform .2s ease, stroke .2s ease;
+}
+.burger.open .burger-icon{ transform:rotate(90deg); stroke:#1d4ed8; } /* легкий акцент при відкритті */
+
+/* ====== Header: чорний текст на мобілках, як на ПК ====== */
+@media (max-width:768px){
+  .header-slim, .site-header{ background:#fff !important; }
+  .nav-slim a,
+  .cart-btn-slim,
+  .mobile-menu .mm-link,
+  .mobile-menu .mm-cart{
+    color:#0f172a !important;
+    opacity:1 !important;
+  }
+  .mobile-menu{ background:#fff !important; border-top:1px solid #e5e7eb; }
+}
+
+/* ====== FAQ: чорні заголовки/текст на мобілках ====== */
+@media (max-width:768px){
+  .faq-button, .faq-item, .faq-button .faq-title, .faq-icon{
+    color:#0f172a !important;
+  }
+  .faq-answer{
+    color:#0f172a !important;
+    background:#ffffff !important;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+  }
+}
+
+/* На випадок, якщо десь задається “сірий” через змінні/темні теми */
+:root{ color-scheme: light; }
+
+
