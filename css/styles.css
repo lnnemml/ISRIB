@@ -1800,6 +1800,18 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     color: initial;
   }
 }
+/* Lock FAQ to light look on all devices */
+.faq-section{ background:#fff !important; }
+.faq-item{ background:#f8fafc !important; border-color:#e2e8f0 !important; }
+.faq-question{ color:#0f172a !important; }       /* чіткий чорний текст запитання */
+.faq-answer{ color:#334155 !important; }         /* читабельна відповідь */
+
+@media (prefers-color-scheme: dark){
+  .faq-section{ background:#fff !important; }
+  .faq-item{ background:#f8fafc !important; border-color:#e2e8f0 !important; }
+  .faq-question{ color:#0f172a !important; }
+  .faq-answer{ color:#334155 !important; }
+}
 
 
 
