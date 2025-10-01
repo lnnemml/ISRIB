@@ -41,6 +41,23 @@
       font-size:.97rem;
     }
     .back-actions{ margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; }
+    /* Force white cards on Safety page (mobile) */
+@media (max-width: 768px){
+  .safety-section{
+    --bg:#fff;
+    --panel:#fff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --ring:#e5e7eb;
+  }
+  .safety-section .card{
+    background:#fff !important;          /* головне – білий фон карток */
+    border:1px solid var(--ring);
+    color:var(--text);
+  }
+  .safety-section .card h2{ color:#0f172a; }
+}
+
   </style>
 </head>
 <body>
