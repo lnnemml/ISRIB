@@ -10,14 +10,17 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header-slim is-sticky" id="siteHeader">
-    <div class="container header-content">
-      <a href="index.html" class="logo-slim" aria-label="ISRIB.shop home">
+  <!-- Header (slim + sticky + burger) -->
+<header class="header-slim site-header" id="siteHeader">
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo-slim" aria-label="ISRIB.shop home">
         <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
       </a>
-      <nav class="nav-slim">
-        <a href="products.html" aria-current="page">Products</a>
+
+      <!-- Desktop nav -->
+      <nav class="nav-slim" aria-label="Primary">
+        <a href="products.html">Products</a>
         <a href="about.html">About</a>
         <a href="faq.html">FAQ</a>
         <a href="contact.html">Contact</a>
@@ -26,19 +29,28 @@
         </a>
       </nav>
 
-      <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false">
-        <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
-      </button>
-    </div>
+     <!-- Burger (mobile) -->
+<button class="burger" id="burgerBtn"
+        aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+  <svg class="burger-icon" width="22" height="22" viewBox="0 0 24 24"
+       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M4 7h16M4 12h16M10 17h10"/>
+  </svg>
+</button>
 
-    <nav id="mobileMenu" class="mobile-menu" hidden>
-      <a class="mm-link" href="products.html" aria-current="page">Products</a>
-      <a class="mm-link" href="about.html">About</a>
-      <a class="mm-link" href="faq.html">FAQ</a>
-      <a class="mm-link" href="contact.html">Contact</a>
-      <a class="mm-link mm-cart" href="checkout.html">🛒 Cart <span id="cartCountMobile" class="mm-badge">0</span></a>
-    </nav>
-  </header>
+
+
+  <!-- Mobile menu -->
+  <nav class="mobile-menu" id="mobileMenu" data-nav aria-label="Mobile">
+    <a href="products.html" class="mm-link">Products</a>
+    <a href="about.html" class="mm-link">About</a>
+    <a href="faq.html" class="mm-link">FAQ</a>
+    <a href="contact.html" class="mm-link">Contact</a>
+    <a href="checkout.html" class="mm-link mm-cart">
+      🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
+    </a>
+  </nav>
+</header>
 
   <main>
     <!-- hero -->
