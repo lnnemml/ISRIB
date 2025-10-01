@@ -35,6 +35,21 @@
     .privacy-section{ padding:28px 0 70px; }
     .privacy-section .container{ max-width:980px; }
     .legal-meta{ margin:.5rem 0 2rem; color:#64748b; }
+    /* Privacy: робимо картки білими на мобільних */
+@media (max-width: 820px){
+  .privacy-section{
+    --panel:#fff;
+    --ring:#e5e7eb;
+    --text:#0f172a;
+    --muted:#475569;
+    background:#fff;
+  }
+  .privacy-section .card{
+    background:#fff !important;
+    border:1px solid var(--ring);
+    color:var(--text);
+  }
+}
   </style>
 </head>
 <body>
