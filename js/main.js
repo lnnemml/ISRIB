@@ -498,3 +498,44 @@ function trackEvent(name, data){
   if (window.gtag) window.gtag('event', name, data || {});
   if (window.fbq) window.fbq('trackCustom', name, data || {});
 }
+
+// --- Mobile burger/menu wiring (robust) ---
+(function () {
+  const btn  = document.getElementById('burgerBtn') || document.querySelector('[data-nav-toggle]');
+  const menu = document.getElementById('mobileMenu') || document.querySelector('[data-nav]');
+  if (!btn || !menu) return;
+
+  const toggle = () => {
+    const open = !menu.classList.contains('open');
+    menu.classList.toggle('open', open);
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    document.documentElement.classList.toggle('nav-open', open);
+    document.body.style.overflow = open ? 'hidden' : ''; // блокуємо скрол під меню
+  };
+
+  btn.addEventListener('click', toggle);
+
+  // Закривати меню при кліку по пункту меню
+  menu.addEventListener('click', (e) => {
+    if (e.target.closest('a')) {
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('nav-open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Підстраховка: закривати при ресайзі в десктоп
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && menu.classList.contains('open')) {
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('nav-open');
+      document.body.style.overflow = '';
+    }
+  });
+})();
+
