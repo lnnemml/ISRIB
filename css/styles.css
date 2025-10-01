@@ -1533,6 +1533,28 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 
 /* === FAQ accordion (стабільний) === */
+.faq-button {
+  all: unset;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 24px;
+  border-radius: 18px;
+  background: #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  transition: background 0.2s, box-shadow 0.2s;
+  width: 100%;
+  cursor: pointer;
+  min-height: 100px;
+  overflow: hidden;
+}
+.faq-button:hover {
+  background: #e2e8f0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
 
 .faq-item.open .faq-icon {
   transform: rotate(90deg);
