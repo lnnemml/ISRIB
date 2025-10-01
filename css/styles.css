@@ -1803,4 +1803,28 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .faq-answer { min-width:0; }
 .faq-question, .faq-answer { overflow-wrap:anywhere; }
 
+/* Checkout: force light scheme (mobile & desktop) */
+.checkout-wrap{
+  --bg:#ffffff;
+  --text:#0f172a;
+  --muted-strong:#334155;
+  --panel:#ffffff;      /* панелі й картки */
+  --bg-soft:#f8fafc;    /* світлий фон елементів списків */
+  --ring:#e5e7eb;
+}
+.checkout-wrap .card{ background:#ffffff !important; } /* підстраховка */
+
+/* Checkout: wrap long legal line next to checkbox */
+.checkout-form .agree-row{
+  align-items: flex-start; /* текст починається зверху, поруч із чекбоксом */
+  flex-wrap: wrap;         /* дозволяємо перенос */
+}
+.checkout-form .agree-row .muted{
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: break-word;  /* підстраховка для довгих фраз/посилань */
+  line-height: 1.6;
+}
+.checkout-form .agree-row input[type="checkbox"]{ flex:0 0 auto; }
+
 
