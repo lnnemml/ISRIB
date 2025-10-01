@@ -276,7 +276,7 @@ img { max-width: 100%; height: auto; }
 /* ========== FAQ ========== */
 .faq-section{ background:#fff; padding:80px 0; border-top:1px solid #e5e7eb; }
 .faq-section h2{ font-size:clamp(2rem,4vw,3rem); font-weight:800; color:#1e293b; text-align:center; margin-bottom:60px; }
-.faq-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(500px,1fr)); gap:30px; max-width:1100px; margin:0 auto; }
+.faq-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:30px; max-width:1100px; margin:0 auto; }
 .faq-item{ background:#f8fafc; border-radius:15px; padding:25px; transition:.3s; border-left:4px solid #dc2626; cursor:pointer; }
 .faq-item:hover{ transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,.1); border-left-color:#1e40af; }
 .faq-question{ font-size:1.1rem; font-weight:700; color:#1e293b; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
@@ -885,7 +885,6 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .faq-section .section-title{ text-align:center; margin-bottom:10px }
 .faq-section .section-subtitle{ text-align:center; margin:0 auto 30px; max-width:820px }
 
-.faq-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(500px,1fr)); gap:30px; max-width:1100px; margin:0 auto; align-items:start }
 .faq-item{ position:relative; background:#f8fafc; border-radius:15px; padding:0; transition:.3s; border-left:4px solid #dc2626; cursor:pointer; scroll-margin-top:120px }
 .faq-item:hover{ transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,.1); border-left-color:#1e40af }
 
@@ -1589,14 +1588,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 
 /* === FAQ grid layout (чіткий) === */
-.faq-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(320px, 1fr));
-  column-gap: 32px;
-  row-gap: 40px;
-  align-items: start;
-  margin-top: 32px;
-}
+
 
 @media (max-width: 1024px) {
   .faq-grid {
@@ -1763,7 +1755,9 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .faq-section {
     background: #ffffff !important;
   }
-
+   .faq-grid {
+    grid-template-columns: 1fr;
+  }
   .faq-button,
   .faq-item,
   .faq-button .faq-title,
