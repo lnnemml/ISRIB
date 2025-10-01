@@ -54,16 +54,58 @@ img { max-width: 100%; height: auto; }
 .badge-slim{ background:#fff; color:#1e40af; font-size:.75rem; font-weight:800; padding:2px 6px; border-radius:6px; }
 
 /* Burger */
-.burger{ display:none; width:40px; height:40px; border:1px solid #e5e7eb; border-radius:10px; background:#fff; align-items:center; justify-content:center; gap:5px; cursor:pointer; transition: background .15s ease, border-color .15s ease; }
-.burger:hover{ background:#f8fafc; }
-.burger-line{ display:block; width:18px; height:2px; background:#0f172a; border-radius:2px; transition: transform .2s ease, opacity .2s ease; }
-.burger.is-open .burger-line:nth-child(1){ transform: translateY(6px) rotate(45deg); }
-.burger.is-open .burger-line:nth-child(2){ opacity:0; }
-.burger.is-open .burger-line:nth-child(3){ transform: translateY(-6px) rotate(-45deg); }
+.burger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+@media (max-width: 768px) {
+  .burger {
+    display: inline-flex;
+  }
+}
+
+.burger:hover {
+  background: #f8fafc;
+}
+
+.burger-line {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #0f172a;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.burger.open .burger-line:nth-child(1),
+.burger.is-open .burger-line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.burger.open .burger-line:nth-child(2),
+.burger.is-open .burger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.burger.open .burger-line:nth-child(3),
+.burger.is-open .burger-line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
 
 /* Mobile menu */
 .mobile-menu{ display:none; position:fixed; inset:60px 0 auto 0; background:#ffffff; border-bottom:1px solid #e5e7eb; box-shadow:0 20px 40px rgba(2,6,23,.08); padding:12px 18px; z-index:59; }
-.mobile-menu.is-open{ display:grid; gap:6px; }
+.mobile-menu.is-open,
+.mobile-menu.open{ display:grid; gap:6px; }
 .mm-link{ padding:12px 10px; border-radius:10px; text-decoration:none; color:#0f172a; font-weight:700; }
 .mm-link:hover{ background:#f8fafc; }
 .mm-cart{ display:inline-flex; align-items:center; gap:8px; }
