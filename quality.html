@@ -44,6 +44,28 @@
     .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:#eef2ff; color:#1e40af; font-weight:700; font-size:.9rem; }
 
     .back-actions{ margin-top:22px; display:flex; gap:10px; flex-wrap:wrap; }
+    /* Force light cards on Quality page (mobile & dark mode) */
+.qc-section{
+  --bg:#ffffff;
+  --panel:#ffffff;   /* картки всередині .qc-section */
+  --text:#0f172a;
+  --muted:#64748b;
+  --ring:#e2e8f0;
+  background:#fff;   /* фон секції теж світлий */
+  color:var(--text);
+}
+@media (prefers-color-scheme: dark){
+  .qc-section{
+    /* лишаємо ті ж самі СВІТЛІ значення і в dark-mode */
+    --bg:#ffffff;
+    --panel:#ffffff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --ring:#e2e8f0;
+    background:#fff;
+    color:var(--text);
+  }
+}
   </style>
 </head>
 <body>
