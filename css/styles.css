@@ -1671,25 +1671,6 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
 }
 
-/* FAQ секція світла (фон секції та карток) */
-.faq-section,
-.faq {
-  background: #f8fafc !important; /* світло-сірий фон секції */
-}
-
-.faq-item,
-.faq-button {
-  background: #f1f5f9 !important;  /* світлі “кнопки‑питання” */
-  color: #0f172a !important;
-}
-
-.faq-answer {
-  background: #ffffff !important;  /* світла відповідь */
-  color: #334155 !important;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 14px;
-}
 
 /* На випадок автотеми браузера — завжди світла колірна схема */
 :root { color-scheme: light; }
@@ -1699,52 +1680,95 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     color: initial;
   }
 }
-/* ====== New burger icon (SVG) ====== */
-.burger{
-  display:none;
-  width:40px; height:40px;
-  border:1px solid #e5e7eb; border-radius:10px;
-  background:#fff; align-items:center; justify-content:center;
-  cursor:pointer; transition:background .15s, border-color .15s;
+/* ====== Burger (новий стиль) ====== */
+.burger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  color: #0f172a; /* текст/іконка всередині */
 }
-@media (max-width:768px){ .burger{ display:inline-flex; } }
-.burger:hover{ background:#f8fafc; }
-
-.burger-icon{
-  width:22px; height:22px;
-  stroke:#0f172a; stroke-width:2.4; fill:none;
-  stroke-linecap:round; stroke-linejoin:round;
-  transition: transform .2s ease, stroke .2s ease;
+@media (max-width: 768px) {
+  .burger {
+    display: inline-flex;
+  }
 }
-.burger.open .burger-icon{ transform:rotate(90deg); stroke:#1d4ed8; } /* легкий акцент при відкритті */
+.burger:hover {
+  background: #f8fafc;
+}
+.burger-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+.burger.open .burger-icon {
+  transform: rotate(90deg);
+  color: #1d4ed8; /* синій акцент при відкритті */
+}
 
-/* ====== Header: чорний текст на мобілках, як на ПК ====== */
+/* ====== Мобільний хедер — повністю світлий, текст чорний */
 @media (max-width:768px){
-  .header-slim, .site-header{ background:#fff !important; }
+  .header-slim, .site-header {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+  .logo-image-slim {
+    filter: none !important;
+  }
   .nav-slim a,
   .cart-btn-slim,
   .mobile-menu .mm-link,
-  .mobile-menu .mm-cart{
-    color:#0f172a !important;
-    opacity:1 !important;
+  .mobile-menu .mm-cart {
+    color: #0f172a !important;
+    opacity: 1 !important;
   }
-  .mobile-menu{ background:#fff !important; border-top:1px solid #e5e7eb; }
+  .mobile-menu {
+    background: #ffffff !important;
+    border-top: 1px solid #e5e7eb;
+  }
 }
 
-/* ====== FAQ: чорні заголовки/текст на мобілках ====== */
+/* ====== FAQ на мобілці — теж світлий */
 @media (max-width:768px){
-  .faq-button, .faq-item, .faq-button .faq-title, .faq-icon{
-    color:#0f172a !important;
+  .faq-section {
+    background: #ffffff !important;
   }
-  .faq-answer{
-    color:#0f172a !important;
-    background:#ffffff !important;
-    border:1px solid #e5e7eb;
-    border-radius:14px;
+  .faq-button,
+  .faq-item,
+  .faq-button .faq-title,
+  .faq-icon {
+    color: #0f172a !important;
+    background: #f8fafc !important;
+  }
+  .faq-answer {
+    color: #334155 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
   }
 }
 
-/* На випадок, якщо десь задається “сірий” через змінні/темні теми */
-:root{ color-scheme: light; }
+/* Примусово залишаємо світлу тему, навіть якщо браузер хоче темну */
+:root { color-scheme: light; }
+@media (prefers-color-scheme: dark) {
+  body, .header-slim, .mobile-menu, .hero, .faq-section, .faq, .faq-item, .faq-button, .faq-answer {
+    background-color: initial;
+    color: initial;
+  }
+}
+
 
 
