@@ -1884,15 +1884,38 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .page-product-a15 .a15-visual{ grid-area: visual; }
 .page-product-a15 .a15-copy{ grid-area: copy; }
 
+/* --- Product A15: move CTA below image on mobile --- */
 @media (max-width: 900px){
   .page-product-a15 .a15-hero-grid{
+    display: grid;
     grid-template-columns: 1fr;
     grid-template-areas:
       "copy"
-      "visual";
+      "visual"
+      "cta";          /* окрема зона під кнопки */
     gap: 28px;
+    align-items: start;
+  }
+
+  /* робимо так, щоб діти .a15-copy стали прямими елементами гріда */
+  .page-product-a15 .a15-copy{ display: contents; }
+
+  /* усі елементи текстового блоку лишаються у зоні copy */
+  .page-product-a15 .a15-copy > :not(.cta-buttons){ grid-area: copy; }
+
+  /* картинка – у зоні visual */
+  .page-product-a15 .a15-visual{ grid-area: visual; }
+
+  /* самі кнопки під зображенням */
+  .page-product-a15 .cta-buttons{
+    grid-area: cta;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;  /* по центру */
   }
 }
+
 
 /* --- Product A15: comparison table fits mobile width --- */
 .a15-compare table{ width:100%; table-layout:fixed; }
