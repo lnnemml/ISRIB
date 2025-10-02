@@ -1896,12 +1896,8 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .page-product-a15 .a15-visual{ grid-row: 2; }
 
   /* центримо кнопки, але НЕ задаємо їм grid-row */
-  .page-product-a15 .cta-buttons{
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 8px;
+  page-product-a15 .cta-buttons{
+    display: none !important;
   }
 
   /* щоб бейджі не налазили */
