@@ -1873,4 +1873,41 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .success-section, .notfound-section{ --panel:#ffffff; }
 }
 
+/* --- Product A15: reorder hero on mobile --- */
+.page-product-a15 .a15-hero-grid{
+  display: grid;
+  grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+  grid-template-areas: "visual copy";
+  gap: 40px;
+  align-items: center;
+}
+.page-product-a15 .a15-visual{ grid-area: visual; }
+.page-product-a15 .a15-copy{ grid-area: copy; }
+
+@media (max-width: 900px){
+  .page-product-a15 .a15-hero-grid{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "copy"
+      "visual";
+    gap: 28px;
+  }
+}
+
+/* --- Product A15: comparison table fits mobile width --- */
+.a15-compare table{ width:100%; table-layout:fixed; }
+.a15-compare th, .a15-compare td{ padding:18px; }
+
+@media (max-width: 768px){
+  .a15-compare{ padding:24px !important; }            /* картка трохи вузькіша */
+  .a15-compare th, .a15-compare td{ padding:12px; font-size:.95rem; }
+  .a15-compare th:nth-child(1),
+  .a15-compare td:nth-child(1){ width:44%; }           /* «Feature» ширше */
+  .a15-compare th:nth-child(2),
+  .a15-compare td:nth-child(2),
+  .a15-compare th:nth-child(3),
+  .a15-compare td:nth-child(3){ width:28%; }           /* обидві праві колонки */
+  .a15-compare th, .a15-compare td{ white-space:normal; word-wrap:break-word; }
+}
+
 
