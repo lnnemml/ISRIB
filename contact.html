@@ -105,6 +105,8 @@
              This form is submitted via fetch() to your serverless route that uses Resend.
              Replace /api/contact with your actual endpoint path. -->
         <form id="contactForm" novalidate>
+          <!-- honeypot (антиспам) -->
+<input type="text" name="website" tabindex="-1" autocomplete="off" style="display:none">
           <div class="grid-2">
             <div class="field">
               <label for="name">Name *</label>
@@ -244,6 +246,71 @@
   </footer>
 
   <script src="js/main.js" defer></script>
+      <script>
+(function () {
+  const form = document.getElementById('contactForm');
+  const subjectEl = document.getElementById('subject');
+  const productBlock = document.getElementById('product-section');
+  const note = document.getElementById('formNote');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Показувати блок "Product" лише для замовлень/опту
+  const toggleProduct = () => {
+    const v = subjectEl.value;
+    const need = v === 'product-order' || v === 'bulk-order';
+    productBlock.classList.toggle('hidden', !need);
+    if (!need) document.getElementById('product').value = '';
+  };
+  subjectEl.addEventListener('change', toggleProduct);
+  toggleProduct();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    note.textContent = '';
+    submitBtn.disabled = true;
+
+    const fd = new FormData(form);
+    // антиспам (honeypot)
+    if (fd.get('website')) { submitBtn.disabled = false; return; }
+
+    // проста валідація
+    if (!fd.get('name') || !fd.get('email') || !fd.get('message') || !fd.get('subject')) {
+      note.textContent = 'Please fill in all required fields.'; 
+      submitBtn.disabled = false; 
+      return;
+    }
+
+    const payload = {
+      name: fd.get('name'),
+      email: fd.get('email'),
+      subject: fd.get('subject'),
+      product: fd.get('product') || '',
+      message: fd.get('message')
+    };
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        note.textContent = 'Thank you! Your message has been sent.';
+        form.reset();
+        toggleProduct();
+      } else {
+        note.textContent = 'Error: ' + (data.error || 'Failed to send.');
+      }
+    } catch (err) {
+      note.textContent = 'Network error. Please try again.';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+})();
+</script>
+
 
   <!-- Tawk.to -->
   <script type="text/javascript">
