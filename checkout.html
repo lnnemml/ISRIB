@@ -237,6 +237,115 @@
 
   <!-- App JS -->
   <script src="js/main.js?v=8"></script>
+      
+      <script>
+(function () {
+  const form = document.getElementById('checkoutForm');
+  const msgEl = document.getElementById('formMsg');
+  const btn = document.getElementById('submitOrderBtn');
+
+  function setMsg(text, type='') {
+    msgEl.textContent = text;
+    msgEl.classList.remove('error','success');
+    if (type) msgEl.classList.add(type);
+  }
+
+  function getCartItems() {
+    // Підлаштовуємось під різні ключі/структури
+    const keys = ['cart', 'cartItems', 'isrib_cart'];
+    for (const k of keys) {
+      try {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        const val = JSON.parse(raw);
+        if (Array.isArray(val) && val.length) return val;
+        if (val && Array.isArray(val.items)) return val.items;
+      } catch(_) {}
+    }
+    // fallback: спроба зібрати з DOM, якщо main.js вже намалював список
+    const list = document.querySelectorAll('#cartList [data-item]');
+    if (list.length) {
+      return Array.from(list).map(node => ({
+        id:    node.getAttribute('data-id') || '',
+        name:  node.getAttribute('data-name') || node.querySelector('.title')?.textContent?.trim() || 'item',
+        qty:   Number(node.getAttribute('data-qty') || node.querySelector('[data-qty]')?.textContent || 1),
+        price: Number(node.getAttribute('data-price') || node.querySelector('[data-price]')?.textContent || 0)
+      }));
+    }
+    return [];
+  }
+
+  function calcTotal(items){
+    return items.reduce((s, it) => {
+      const qty = Number(it.qty ?? it.quantity ?? 1);
+      const price = Number(it.price ?? 0);
+      return s + qty * price;
+    }, 0);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setMsg('', '');
+    btn.disabled = true;
+
+    const fd = new FormData(form);
+
+    // honeypot: _gotcha у формі
+    if (fd.get('_gotcha')) { btn.disabled = false; return; }
+
+    // валідація мінімум
+    const required = ['firstName','lastName','email','country','city','postal','address'];
+    for (const r of required) {
+      if (!fd.get(r)) {
+        setMsg('Please fill all required fields.', 'error');
+        btn.disabled = false;
+        return;
+      }
+    }
+
+    const items = getCartItems();
+    const total = calcTotal(items);
+
+    const payload = {
+      firstName: fd.get('firstName') || '',
+      lastName:  fd.get('lastName')  || '',
+      email:     fd.get('email')     || '',
+      country:   fd.get('country')   || '',
+      city:      fd.get('city')      || '',
+      postal:    fd.get('postal')    || '',
+      address:   fd.get('address')   || '',
+      messenger: fd.get('messenger') || '',
+      handle:    fd.get('handle')    || '',
+      notes:     fd.get('notes')     || '',
+      _gotcha:   fd.get('_gotcha')   || '',
+      items,
+      total
+    };
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMsg('Thanks! Your order request was sent. We\'ll contact you soon.', 'success');
+        form.reset();
+        // за бажанням: localStorage.removeItem('cart');
+      } else {
+        setMsg('Error: ' + (data.error || 'Failed to send request.'), 'error');
+      }
+    } catch (err) {
+      setMsg('Network error. Please try again.', 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+
   <script>
     // рік у футері (без залежностей)
     document.getElementById('y').textContent = new Date().getFullYear();
