@@ -1,6 +1,9 @@
 {
-  "name": "isrib-site",
+  "name": "isrib-shop",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": "22.x" }
+  "dependencies": {
+    "@resend/resend": "^4.0.0"
+  }
 }
