@@ -1873,57 +1873,50 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .success-section, .notfound-section{ --panel:#ffffff; }
 }
 
-/* --- Product A15: reorder hero on mobile --- */
-.page-product-a15 .a15-hero-grid{
-  display: grid;
-  grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
-  grid-template-areas: "visual copy";
-  gap: 40px;
-  align-items: center;
-}
-.page-product-a15 .a15-visual{ grid-area: visual; }
-.page-product-a15 .a15-copy{ grid-area: copy; }
-
-/* --- Product A15: move CTA below image on mobile --- */
+/* === A15 • Mobile fix: 1 колонка + порядок елементів === */
 @media (max-width: 900px){
+  /* одна колонка, елементи стають зверху-вниз */
   .page-product-a15 .a15-hero-grid{
-    display: grid;
     grid-template-columns: 1fr;
-    grid-auto-flow: row;      /* без іменованих зон: елементи стають послідовно */
+    grid-auto-flow: row;
     gap: 28px;
     align-items: start;
   }
 
-  /* робимо так, щоб .cta-buttons могла стати окремим елементом гріда */
-  .page-product-a15 .a15-copy{ display: contents; }
+  /* дозволяємо бейджам ставати на новий рядок */
+  .page-product-a15 .row{ flex-wrap: wrap; }
 
-  /* картинка під текстом */
-  .page-product-a15 .a15-visual{ grid-row: 2; }
-
-  /* кнопки під картинкою, по центру */
+  /* кнопки мають бути після картинки — робимо їх окремим елементом гріда */
+  .page-product-a15 .a15-copy{ display: contents; } /* лишає DOM-порядок, але прибирає зайву обгортку */
+  .page-product-a15 .a15-visual{ grid-row: 2; }      /* картинка під текстом */
   .page-product-a15 .cta-buttons{
-    grid-row: 3;
+    grid-row: 3;                  /* кнопки під картинкою */
     display: flex;
+    justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
-    justify-content: center;
   }
+
+  /* дрібний косметичний відступ/висота рядка для текстів */
+  .page-product-a15 .a15-title{ line-height: 1.1; margin-top: 6px; }
+  .page-product-a15 .a15-chem.mono{ margin: 6px 0 12px; }
 }
 
-/* --- Product A15: comparison table fits mobile width --- */
-.a15-compare table{ width:100%; table-layout:fixed; }
+/* === A15 • Comparison table fits mobile width === */
+.a15-compare table{ width:100%; table-layout: fixed; }
 .a15-compare th, .a15-compare td{ padding:18px; }
 
 @media (max-width: 768px){
-  .a15-compare{ padding:24px !important; }            /* картка трохи вузькіша */
+  .a15-compare{ padding:24px !important; }
   .a15-compare th, .a15-compare td{ padding:12px; font-size:.95rem; }
   .a15-compare th:nth-child(1),
-  .a15-compare td:nth-child(1){ width:44%; }           /* «Feature» ширше */
+  .a15-compare td:nth-child(1){ width:44%; }   /* «Feature» ширше */
   .a15-compare th:nth-child(2),
   .a15-compare td:nth-child(2),
   .a15-compare th:nth-child(3),
-  .a15-compare td:nth-child(3){ width:28%; }           /* обидві праві колонки */
+  .a15-compare td:nth-child(3){ width:28%; }   /* обидві праві колонки */
   .a15-compare th, .a15-compare td{ white-space:normal; word-wrap:break-word; }
 }
+
 
 
