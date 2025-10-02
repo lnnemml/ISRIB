@@ -1939,5 +1939,24 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
 }
 
+/* ZZL-7: акуратна колонка кнопок на мобільних */
+@media (max-width: 560px){
+  .product-footer .action-buttons{
+    display:flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .product-footer .action-buttons .add-to-cart,
+  .product-footer .action-buttons .view-cart{
+    width: 100%;
+  }
+}
+
+/* Ховаємо інформаційний блок Rapid Action на мобільних */
+@media (max-width: 600px){
+  .rapid-card{ display:none !important; }
+}
+
 
 
