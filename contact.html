@@ -134,27 +134,6 @@
             </select>
           </div>
 
-          <div id="product-section" class="field hidden">
-            <label for="product">Product</label>
-            <select id="product" name="product">
-              <option value="">Select product</option>
-              <option value="isrib-a15-100mg">ISRIB-A15 100mg ($50)</option>
-              <option value="isrib-a15-500mg">ISRIB-A15 500mg ($130)</option>
-              <option value="isrib-a15-1g">ISRIB-A15 1g ($200)</option>
-              <option value="isrib-100mg">ISRIB 100mg ($27)</option>
-              <option value="isrib-500mg">ISRIB 500mg ($60)</option>
-              <option value="isrib-1g">ISRIB 1g ($100)</option>
-              <option value="zzl7-100mg">ZZL-7 100mg ($50)</option>
-              <option value="zzl7-500mg">ZZL-7 500mg ($130)</option>
-              <option value="zzl7-1g">ZZL-7 1g ($200)</option>
-              <option value="mpep-50mg">MPEP 50mg ($45)</option>
-              <option value="mpep-100mg">MPEP 100mg ($75)</option>
-              <option value="mpep-500mg">MPEP 500mg ($280)</option>
-              <option value="mpep-1g">MPEP 1g ($450)</option>
-              <option value="custom">Custom quantity/product</option>
-            </select>
-          </div>
-
           <div class="field">
             <label for="message">Message *</label>
             <textarea id="message" name="message" rows="6" required placeholder="Please provide details about your inquiry. For orders, include: product name, quantity, shipping location, and any special requirements."></textarea>
@@ -249,20 +228,8 @@
       <script>
 (function () {
   const form = document.getElementById('contactForm');
-  const subjectEl = document.getElementById('subject');
-  const productBlock = document.getElementById('product-section');
   const note = document.getElementById('formNote');
   const submitBtn = document.getElementById('submitBtn');
-
-  // Показувати блок "Product" лише для замовлень/опту
-  const toggleProduct = () => {
-    const v = subjectEl.value;
-    const need = v === 'product-order' || v === 'bulk-order';
-    productBlock.classList.toggle('hidden', !need);
-    if (!need) document.getElementById('product').value = '';
-  };
-  subjectEl.addEventListener('change', toggleProduct);
-  toggleProduct();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -270,13 +237,17 @@
     submitBtn.disabled = true;
 
     const fd = new FormData(form);
+
     // антиспам (honeypot)
-    if (fd.get('website')) { submitBtn.disabled = false; return; }
+    if (fd.get('website')) {
+      submitBtn.disabled = false;
+      return;
+    }
 
     // проста валідація
     if (!fd.get('name') || !fd.get('email') || !fd.get('message') || !fd.get('subject')) {
-      note.textContent = 'Please fill in all required fields.'; 
-      submitBtn.disabled = false; 
+      note.textContent = 'Please fill in all required fields.';
+      submitBtn.disabled = false;
       return;
     }
 
@@ -284,21 +255,20 @@
       name: fd.get('name'),
       email: fd.get('email'),
       subject: fd.get('subject'),
-      product: fd.get('product') || '',
       message: fd.get('message')
     };
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       const data = await res.json();
+
       if (res.ok) {
         note.textContent = 'Thank you! Your message has been sent.';
         form.reset();
-        toggleProduct();
       } else {
         note.textContent = 'Error: ' + (data.error || 'Failed to send.');
       }
@@ -310,6 +280,7 @@
   });
 })();
 </script>
+
 
 
   <!-- Tawk.to -->
