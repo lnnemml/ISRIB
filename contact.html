@@ -232,25 +232,47 @@
   const note = document.getElementById('formNote');
   const submitBtn = document.getElementById('submitBtn');
 
+  function showToast(msg, type = 'success') {
+    let host = document.getElementById('toastHost');
+    if (!host) {
+      host = document.createElement('div');
+      host.id = 'toastHost';
+      document.body.appendChild(host);
+    }
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`;
+    t.textContent = msg;
+    host.appendChild(t);
+    // анімація появи
+    requestAnimationFrame(() => t.classList.add('show'));
+    // авто‑закриття
+    setTimeout(() => {
+      t.classList.remove('show');
+      t.classList.add('hide');
+      setTimeout(() => t.remove(), 300);
+    }, 4000);
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // підготовка ноти
     note.textContent = '';
-    note.className = '';
+    note.classList.remove('error','success');      // не чіпаємо muted/small/center
+    note.style.display = 'block';
     submitBtn.disabled = true;
 
     const fd = new FormData(form);
 
-    // антиспам (honeypot)
-    if (fd.get('website')) {
-      submitBtn.disabled = false;
-      return;
-    }
+    // антиспам
+    if (fd.get('website')) { submitBtn.disabled = false; return; }
 
-    // проста валідація
+    // валідація
     if (!fd.get('name') || !fd.get('email') || !fd.get('message') || !fd.get('subject')) {
       note.textContent = 'Please fill in all required fields.';
-      note.className = 'error';
+      note.classList.add('error');
       submitBtn.disabled = false;
+      note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       return;
     }
 
@@ -271,23 +293,25 @@
 
       if (res.ok) {
         note.textContent = 'Thank you! Your message has been sent.';
-        note.className = 'success';
+        note.classList.add('success');
+        note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        showToast('Message sent ✅', 'success');
         form.reset();
       } else {
         note.textContent = 'Error: ' + (data.error || 'Failed to send.');
-        note.className = 'error';
+        note.classList.add('error');
+        note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        showToast('Send failed ❌', 'error');
       }
     } catch (err) {
       note.textContent = 'Network error. Please try again.';
-      note.className = 'error';
+      note.classList.add('error');
+      note.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showToast('Network error ❌', 'error');
     } finally {
       submitBtn.disabled = false;
-
-      // Автоочистка повідомлення через 5 секунд
-      setTimeout(() => {
-        note.textContent = '';
-        note.className = '';
-      }, 5000);
+      // якщо хочеш — можеш прибрати таймер, щоб повідомлення залишалося
+      // setTimeout(() => { note.textContent = ''; note.classList.remove('success','error'); }, 7000);
     }
   });
 })();
