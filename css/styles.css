@@ -1988,4 +1988,30 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .zzl-compare thead th{ font-size: 0.9rem; }
 }
 
+/* Products → hero subtitle: на телефонах робимо чорним */
+@media (max-width: 540px){
+  .products-hero .muted{
+    color: #0f172a;  /* такий самий тон, як на ПК */
+  }
+}
+@media (max-width: 400px){
+  .product-formula img{ max-height: 160px; }
+}
+@media (max-width: 560px){
+  .product-footer{ flex-direction: column; align-items: stretch; }
+  .product-footer .add-to-cart,
+  .product-footer .view-cart,
+  .product-footer .view-product{ width: 100%; text-align: center; }
+}
+/* Глобально: акуратні перенесення заголовків */
+.products-hero h1,
+.product-title{
+  text-wrap: balance;
+}
 
+/* Тільки мобілка: підрізаємо горизонтальний скрол у гріді */
+@media (max-width: 560px){
+  .products-grid{
+    overflow-x: hidden;
+  }
+}
