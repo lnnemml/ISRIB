@@ -1958,5 +1958,34 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .rapid-card{ display:none !important; }
 }
 
+/* Базова сітка для МОА */
+.moa-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+/* Мобільний вигляд — одна колонка */
+@media (max-width: 700px){
+  .moa-grid{ grid-template-columns: 1fr; row-gap: 20px; }
+}
+/* Таблиця порівняння — адаптація під мобільні */
+@media (max-width: 700px){
+  .zzl-compare table{
+    table-layout: fixed;
+    width: 100%;
+  }
+  .zzl-compare th,
+  .zzl-compare td{
+    padding: 12px 8px;
+    font-size: 0.95rem;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    text-align: left; /* щоб не розпирало по центру на довгих рядках */
+  }
+  .zzl-compare thead th{ font-size: 0.9rem; }
+}
 
 
