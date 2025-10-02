@@ -1,4 +1,3 @@
-// /api/contact.js  (саме в папці "api" в корені репо)
 import { Resend } from 'resend';
 
 export default async function handler(req, res) {
@@ -16,6 +15,7 @@ export default async function handler(req, res) {
     const name = String(data.name || '').trim();
     const email = String(data.email || '').trim();
     const message = String(data.message || '').trim();
+    const subject = String(data.subject || '').trim();
     const honeypot = String(data.website || '').trim(); // антиспам
 
     if (honeypot) return res.status(200).json({ ok: true }); // бота ігноруємо
@@ -25,28 +25,27 @@ export default async function handler(req, res) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // лист тобі
     const sent = await resend.emails.send({
       from: process.env.RESEND_FROM,
       to: [process.env.RESEND_TO],
       reply_to: email,
-      subject: `New contact form: ${name || 'No name'}`,
-      text: `Name: ${name || '-'}\nEmail: ${email}\n\nMessage:\n${message}`,
-      html: `<h2>New contact form</h2>
+      subject: `New contact: ${subject || 'General'} — ${name || 'No name'}`,
+      text:
+`Name: ${name}
+Email: ${email}
+Subject: ${subject}
+
+Message:
+${message}`,
+      html: `<h2>New contact</h2>
              <p><b>Name:</b> ${name || '-'}</p>
              <p><b>Email:</b> ${email}</p>
+             <p><b>Subject:</b> ${subject || '-'}</p>
              <p><b>Message:</b><br>${message.replace(/\n/g,'<br>')}</p>`
     });
 
-    // (необов’язково) авто-відповідь користувачу — розкоментуй за бажанням
-    // await resend.emails.send({
-    //   from: process.env.RESEND_FROM,
-    //   to: [email],
-    //   subject: 'We received your message',
-    //   text: 'Thanks! We will get back to you shortly.',
-    // });
-
     return res.status(200).json({ ok: true, id: sent?.id || null });
+
   } catch (e) {
     return res.status(500).json({ error: e?.message || 'Internal Error' });
   }
