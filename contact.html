@@ -225,7 +225,9 @@
   </footer>
 
   <script src="js/main.js" defer></script>
-      <script>
+
+      <script src="js/main.js" defer></script>
+<script>
 (function () {
   const form = document.getElementById('contactForm');
   const note = document.getElementById('formNote');
@@ -234,6 +236,7 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     note.textContent = '';
+    note.className = '';
     submitBtn.disabled = true;
 
     const fd = new FormData(form);
@@ -247,6 +250,7 @@
     // проста валідація
     if (!fd.get('name') || !fd.get('email') || !fd.get('message') || !fd.get('subject')) {
       note.textContent = 'Please fill in all required fields.';
+      note.className = 'error';
       submitBtn.disabled = false;
       return;
     }
@@ -268,20 +272,27 @@
 
       if (res.ok) {
         note.textContent = 'Thank you! Your message has been sent.';
+        note.className = 'success';
         form.reset();
       } else {
         note.textContent = 'Error: ' + (data.error || 'Failed to send.');
+        note.className = 'error';
       }
     } catch (err) {
       note.textContent = 'Network error. Please try again.';
+      note.className = 'error';
     } finally {
       submitBtn.disabled = false;
+
+      // Автоочистка повідомлення через 5 секунд
+      setTimeout(() => {
+        note.textContent = '';
+        note.className = '';
+      }, 5000);
     }
   });
 })();
 </script>
-
-
 
   <!-- Tawk.to -->
   <script type="text/javascript">
