@@ -2015,3 +2015,18 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     overflow-x: hidden;
   }
 }
+
+#formNote {
+  margin-top: 1rem;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: opacity 0.3s ease;
+}
+
+#formNote.success {
+  color: #16a34a; /* зелений */
+}
+
+#formNote.error {
+  color: #dc2626; /* червоний */
+}
