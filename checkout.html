@@ -331,10 +331,9 @@
       const data = await res.json();
 
       if (res.ok) {
-        setMsg('Thanks! Your order request was sent. We\'ll contact you soon.', 'success');
-        form.reset();
-        // за бажанням: localStorage.removeItem('cart');
-      } else {
+  window.location.href = '/success.html';
+      }
+      else {
         setMsg('Error: ' + (data.error || 'Failed to send request.'), 'error');
       }
     } catch (err) {
