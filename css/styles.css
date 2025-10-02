@@ -1925,5 +1925,19 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   .a15-compare th, .a15-compare td{ white-space:normal; word-wrap:break-word; }
 }
 
+/* === A15 | mobile: hide CTA buttons below the hero === */
+@media (max-width: 900px){
+  body.page-product-a15 .a15-copy .cta-buttons{ 
+    display: none !important;   /* перекриває глобальні .cta-buttons */
+  }
+}
+
+/* === A15 | mobile: darker lead text === */
+@media (max-width: 900px){
+  body.page-product-a15 .a15-lead{
+    color: #334155;  /* slate-700 — краще читається на світлому градієнті */
+  }
+}
+
 
 
