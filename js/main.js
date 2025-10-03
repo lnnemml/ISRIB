@@ -360,15 +360,22 @@ function renderCheckoutCart(){
   bindCheckoutCartEvents();
 }
 
-function recalcTotals(cart){
-  const subtotal = cart.reduce((s, it) => s + Number(it.price||0) * Number(it.count||1), 0);
+function recalcTotals(cart) {
+  const subtotal = cart.reduce((s, it) => s + Number(it.price || 0) * Number(it.count || 1), 0);
+  const shipping = cart.length ? 10 : 0;
+  const total = subtotal + shipping;
+
   const totals = document.getElementById('summaryTotals');
   if (!totals) return;
+
   totals.innerHTML = `
     <div class="sum-line"><span>Subtotal</span><b>${fmtUSD(subtotal)}</b></div>
-    <!-- delivery/taxes place-holders -->
+    <div class="sum-line"><span>Shipping</span><b>${fmtUSD(shipping)}</b></div>
+    <div class="sum-line grand"><span>Total</span><b>${fmtUSD(total)}</b></div>
+    <div class="sum-note">* Flat shipping fee of $10 is added on top of the subtotal.</div>
   `;
 }
+
 
 function bindCheckoutCartEvents(){
   const wrap = document.getElementById('cartList');
@@ -396,7 +403,7 @@ function bindCheckoutCartEvents(){
 
 /* ===================== CHECKOUT FORM SUBMIT ===================== */
 
-function initCheckoutForm(){
+function initCheckoutForm() {
   const form = document.getElementById('checkoutForm');
   if (!form) return;
 
@@ -415,51 +422,69 @@ function initCheckoutForm(){
     const lastName  = form.lastName.value.trim();
     const email     = form.email.value.trim();
     const country   = form.country.value.trim();
+    const region    = form.region?.value.trim() || '';  // ✅ нове поле
     const city      = form.city.value.trim();
-    const postal    = form.postal.value.trim();   // ВАЖЛИВО: у формі поле "postal", не "zip"
+    const postal    = form.postal.value.trim();
     const address   = form.address.value.trim();
     const messenger = form.messenger?.value || '';
     const handle    = form.handle?.value || '';
     const notes     = form.notes?.value || '';
 
-    // валідація мінімум
+    // валідація
     if (!firstName || !lastName || !email || !country || !city || !postal || !address) {
-      if (msg) { msg.textContent = 'Please fill all required fields.'; msg.style.color = '#dc2626'; }
+      if (msg) {
+        msg.textContent = 'Please fill all required fields.';
+        msg.style.color = '#dc2626';
+      }
       return;
     }
 
-    // зчитуємо кошик і рахуємо total
-    const cart = readCart(); // [{name, sku, grams, price, display, count}]
-    const items = cart.map(i => ({ name: i.name, qty: Number(i.count||1), price: Number(i.price||0) }));
-    const total = items.reduce((s,it)=> s + it.qty*it.price, 0);
+    // зчитуємо кошик
+    const cart = readCart(); // [{name, price, count}]
+    const items = cart.map(i => ({
+      name: i.name,
+      qty: Number(i.count || 1),
+      price: Number(i.price || 0)
+    }));
 
-    // формуємо payload як очікує /api/checkout
+    // розрахунок сум
+    const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0);
+    const shipping = items.length ? 10 : 0;
+    const total = subtotal + shipping;
+
+    // payload для бекенду
     const payload = {
-      firstName, lastName, email, country, city, postal, address,
+      firstName, lastName, email, country, region, city, postal, address,
       messenger, handle, notes,
       _gotcha: gotcha,
-      items, total
+      items, subtotal, shipping, total
     };
 
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'Content-Type':'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('Request failed');
 
-      // УСПІХ: очищаємо всі можливі ключі кошика і редиректимо
-      writeCart([]);                            // наш основний ключ
-      try { localStorage.removeItem('cart'); localStorage.removeItem('cartItems'); } catch {}
-      updateCartBadge([]);                      // 0 на бейджі
-      // renderCheckoutCart();                  // вже не потрібно перед редиректом
+      // Успіх: очищаємо кошик + редирект
+      writeCart([]);
+      try {
+        localStorage.removeItem('cart');
+        localStorage.removeItem('cartItems');
+      } catch {}
+      updateCartBadge([]);
       window.location.href = '/success.html';
     } catch (err) {
-      if (msg) { msg.textContent = 'Error. Try again later.'; msg.style.color = '#ef4444'; }
+      if (msg) {
+        msg.textContent = 'Error. Try again later.';
+        msg.style.color = '#ef4444';
+      }
     }
   });
 }
+
 /* ============================ CONTACT ============================ */
 
 function initContactForms() {
