@@ -9,6 +9,19 @@
   gtag('js', new Date());
 
   gtag('config', 'G-SMCGZ6BPDC');
+
+  // 🔻 Page View (опціонально)
+  gtag('event', 'page_view', {
+    page_title: 'Success — Order Received',
+    page_location: window.location.href,
+    page_path: window.location.pathname
+  });
+
+  // 🔻 Success Event — кастомна подія завершення оформлення
+  gtag('event', 'purchase_complete', {
+    event_category: 'checkout',
+    event_label: 'Checkout Success Page Viewed'
+  });
 </script>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
