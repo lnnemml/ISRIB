@@ -318,6 +318,13 @@ function mountAddToCartButtons() {
       const price = parseFloat(btn.dataset.price || '0') || 0;
       const display = btn.dataset.display || '';
       addToCart(name, sku, grams, price, display);
+      // 🔻 GA4 подія
+      gtag('event', 'add_to_cart', {
+        event_category: 'ecommerce',
+        event_label: name,
+        value: price,
+        currency: 'USD'
+      });
       updateCartBadge?.();
       showToast(`Added to cart - ${(display || (grams ? (grams >= 1000 ? (grams/1000)+'g' : grams+'mg') : ''))} for ${price}$`);
       trackEvent('add_to_cart_click', { name, sku, grams, price, display });
@@ -468,6 +475,14 @@ function initCheckoutForm() {
       });
       if (!res.ok) throw new Error('Request failed');
 
+      // 🔻 КАСТОМНА ПОДІЯ ДЛЯ GOOGLE ANALYTICS
+  gtag('event', 'purchase_intent', {
+    event_category: 'checkout',
+    event_label: 'checkout form submitted',
+    value: total,
+    currency: 'USD'
+  });
+
       // Успіх: очищаємо кошик + редирект
       writeCart([]);
       try {
@@ -502,7 +517,14 @@ function initContactForms() {
       body: JSON.stringify(data)
     }).catch(()=>null);
 
-    if (res && res.ok) { showToast('Message sent. We will reply soon.', 'success'); form.reset(); }
+    if (res && res.ok) {
+      // 🔻 КАСТОМНА ПОДІЯ ДЛЯ GOOGLE ANALYTICS
+          gtag('event', 'contact_form_sent', {
+           event_category: 'lead',
+           event_label: 'contact form submitted'
+         });
+      
+      showToast('Message sent. We will reply soon.', 'success'); form.reset(); }
     else { showToast('Error. Try later.', 'error'); }
   });
 }
