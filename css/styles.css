@@ -2034,3 +2034,16 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .form-status { margin-left: 12px; font-weight: 500; }
 .form-status.success { color: #16a34a; }
 .form-status.error { color: #dc2626; }
+
+.sum-line{ display:flex; justify-content:space-between; align-items:center; gap:16px; padding:6px 0; }
+.sum-line.grand {
+  border-top: 1px solid var(--ring);
+  padding-top: 10px;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.sum-note {
+  font-size: .92rem;
+  color: var(--muted);
+}
