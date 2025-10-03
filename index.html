@@ -9,6 +9,12 @@
   gtag('js', new Date());
 
   gtag('config', 'G-SMCGZ6BPDC');
+  // 🔻 Кастомний page_view з параметрами
+  gtag('event', 'page_view', {
+    page_title: document.title,
+    page_location: window.location.href,
+    page_path: window.location.pathname
+  });
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
