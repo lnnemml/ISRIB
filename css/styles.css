@@ -2047,3 +2047,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   font-size: .92rem;
   color: var(--muted);
 }
+
+.checkout-form .form-two .form-group.full {
+  grid-column: 1 / -1;
+}
