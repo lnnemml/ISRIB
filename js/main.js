@@ -429,7 +429,7 @@ function initCheckoutForm() {
     const lastName  = form.lastName.value.trim();
     const email     = form.email.value.trim();
     const country   = form.country.value.trim();
-    const region    = form.region?.value.trim() || '';  // ✅ нове поле
+    const region    = form.region?.value.trim() || '';
     const city      = form.city.value.trim();
     const postal    = form.postal.value.trim();
     const address   = form.address.value.trim();
@@ -439,25 +439,25 @@ function initCheckoutForm() {
 
     // валідація
     if (!firstName || !lastName || !email || !country || !city || !postal || !address) {
-      if (msg) {
-        msg.textContent = 'Please fill all required fields.';
-        msg.style.color = '#dc2626';
-      }
+      if (msg) { msg.textContent = 'Please fill all required fields.'; msg.style.color = '#dc2626'; }
       return;
     }
 
     // зчитуємо кошик
-    const cart = readCart(); // [{name, price, count}]
+    const cart = readCart(); // очікується [{name, sku, grams, display, price, count}, ...]
     const items = cart.map(i => ({
-      name: i.name,
-      qty: Number(i.count || 1),
-      price: Number(i.price || 0)
+      name:   i.name,
+      sku:    i.sku || i.id || '',
+      qty:    Number(i.count || 1),
+      price:  Number(i.price || 0),
+      grams:  Number(i.grams || 0),
+      display: i.display || ''
     }));
 
     // розрахунок сум
-    const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0);
+    const subtotal = items.reduce((sum, it) => sum + it.qty * it.price, 0);
     const shipping = items.length ? 10 : 0;
-    const total = subtotal + shipping;
+    const total    = subtotal + shipping;
 
     // payload для бекенду
     const payload = {
@@ -475,27 +475,48 @@ function initCheckoutForm() {
       });
       if (!res.ok) throw new Error('Request failed');
 
-      // 🔻 КАСТОМНА ПОДІЯ ДЛЯ GOOGLE ANALYTICS
-  gtag('event', 'purchase_intent', {
-    event_category: 'checkout',
-    event_label: 'checkout form submitted',
-    value: total,
-    currency: 'USD'
-  });
-
-      // Успіх: очищаємо кошик + редирект
-      writeCart([]);
+      // 🔹 подія наміру покупки (опціонально, для атрибуції)
       try {
-        localStorage.removeItem('cart');
-        localStorage.removeItem('cartItems');
+        if (typeof gtag === 'function') {
+          gtag('event', 'purchase_intent', {
+            event_category: 'checkout',
+            event_label: 'checkout form submitted',
+            value: total,
+            currency: 'USD'
+          });
+        }
       } catch {}
+
+      // 🔹 формуємо success-URL з параметрами для success.html (щоб надіслати GA4 purchase)
+      const orderId = 'ORD-' + Date.now();
+      const first   = cart[0] || {};
+      const packLabel =
+        first?.display ||
+        (first?.grams
+          ? (first.grams >= 1000 ? (first.grams / 1000) + 'g' : first.grams + 'mg')
+          : '');
+
+      const qtyTotal = cart.reduce((n, i) => n + Number(i.count || 1), 0);
+
+      const successUrl = `/success.html`
+        + `?order_id=${encodeURIComponent(orderId)}`
+        + `&product=${encodeURIComponent(first?.name || 'ISRIB A15')}`
+        + `&sku=${encodeURIComponent(first?.sku || first?.id || 'isrib-a15')}`
+        + `&pack=${encodeURIComponent(packLabel || '')}`
+        + `&price=${encodeURIComponent(first?.price || 0)}`
+        + `&qty=${encodeURIComponent(qtyTotal)}`
+        + `&currency=USD`
+        + `&total=${encodeURIComponent(total.toFixed(2))}`;
+
+      // 🔹 очищаємо кошик і редиректимо
+      writeCart([]);
+      try { localStorage.removeItem('cart'); localStorage.removeItem('cartItems'); } catch {}
       updateCartBadge([]);
-      window.location.href = '/success.html';
+      window.location.href = successUrl;
+
     } catch (err) {
-      if (msg) {
-        msg.textContent = 'Error. Try again later.';
-        msg.style.color = '#ef4444';
-      }
+      if (msg) { msg.textContent = 'Error. Try again later.'; msg.style.color = '#ef4444'; }
+      console.error('[CHECKOUT_ERROR]', err);
     }
   });
 }
