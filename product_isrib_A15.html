@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="//www.googletagmanager.com">
+<link rel="preconnect" href="https://embed.tawk.to">
+<link rel="dns-prefetch" href="//embed.tawk.to">
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SMCGZ6BPDC"></script>
 <script>
@@ -359,18 +363,32 @@
   <!-- App JS -->
   <script src="js/main.js?v=27"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
-  <!-- Chat -->
-  <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-      s1.async=true;
-      s1.src='https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj';
-      s1.charset='UTF-8';
-      s1.setAttribute('crossorigin','*');
-      s0.parentNode.insertBefore(s1,s0);
-    })();
-  </script>
+  <!-- Tawk.to chat (lazy load on interaction or shortly after load) -->
+<script>
+  (function () {
+    var loaded = false;
+    function loadTawk(){
+      if (loaded) return; loaded = true;
+      var s1 = document.createElement("script"),
+          s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      // ⬇️ залиш той самий src, що був у тебе в коді чату
+      s1.src = "https://embed.tawk.to/ВАШ_ID/ВАШ_WIDGET_ID";
+      s1.charset = "UTF-8";
+      s1.setAttribute("crossorigin","*");
+      s0.parentNode.insertBefore(s1, s0);
+    }
+    // мягко підвантажуємо після повного завантаження сторінки
+    window.addEventListener("load", function(){
+      setTimeout(loadTawk, 1500); // 1.5 c після load
+    });
+    // або миттєво при першій взаємодії (швидше, якщо юзер активний)
+    ["mousemove","scroll","keydown","touchstart"].forEach(function(evt){
+      window.addEventListener(evt, loadTawk, { once:true, passive:true });
+    });
+  })();
+</script>
+
       
       <script>
   gtag('event', 'view_item', {
