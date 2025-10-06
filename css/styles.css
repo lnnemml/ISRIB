@@ -2051,3 +2051,25 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .checkout-form .form-two .form-group.full {
   grid-column: 1 / -1;
 }
+
+/* Make "View Details" identical to "View Cart" */
+.product-footer .view-cart,
+.product-footer .view-product {
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: #f3f4f6;   /* same as View Cart */
+  color: #1e40af;              /* blue text */
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border: 0;                   /* override previous border */
+}
+
+.product-footer .view-cart:hover,
+.product-footer .view-product:hover {
+  background-color: #e0e7ff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
