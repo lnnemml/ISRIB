@@ -109,7 +109,7 @@
         <!-- ПРАВО: копірайт -->
         <div class="a15-copy">
           <div class="row">
-            <span class="pill in-stock">✓ In stock</span>
+            <span class="pill out-of-stock">⛔ Out of stock</span>
           </div>
           <h1 class="a15-title">MPEP Oxalate</h1>
           <p class="a15-chem mono">2‑Methyl‑6‑(phenylethynyl)pyridine · Oxalate</p>
@@ -117,7 +117,7 @@
             Selective negative allosteric modulator of mGluR5. High specificity and potency.
           </p>
           <div class="cta-buttons">
-            <a href="#order" class="btn btn-primary">🧬 Order MPEP</a>
+            <a href="#order" class="btn btn-primary" aria-disabled="true" style="pointer-events:none;opacity:.6;">Out of stock</a>
           </div>
         </div>
       </div>
@@ -157,13 +157,8 @@
 
         <div class="product-footer">
           <div class="action-buttons" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-primary add-to-cart"
-                    data-name="MPEP Oxalate"
-                    data-sku="mpep-oxalate"
-                    data-grams="100"
-                    data-display="100mg"
-                    data-price="50">
-              ➕ Add to cart <span class="selected-quantity">100mg</span>
+            <button class="btn btn-primary add-to-cart" disabled aria-disabled="true">
+              Out of stock
             </button>
             <a class="view-cart" href="checkout.html">View Cart</a>
           </div>
