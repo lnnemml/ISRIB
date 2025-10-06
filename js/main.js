@@ -23,6 +23,7 @@ function initializeApp() {
   initAnchorHighlight();    // підсвічування при переході за якорями
   updateCartBadge();
   mountAddToCartButtons();
+  prepareAddToCartButtons();
   renderCheckoutCart();
   initCheckoutForm();
   initContactUX();        // показ/приховування product-section, автозаповнення з query string
@@ -227,42 +228,44 @@ function setActiveOption(card, opt) {
   card.querySelectorAll('.quantity-option').forEach(o => o.classList.remove('active'));
   opt.classList.add('active');
 
-  // 2) Читаємо значення
-  const qStr  = (opt.dataset.quantity || '').trim();                // "100mg" | "500mg" | "1g"
+  // 2) Зчитуємо значення
+  const qStr  = (opt.dataset.quantity || '').trim();          // "100mg" | "500mg" | "1g"
   const mg    = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr);
   const price = Number(opt.dataset.price || 0) || 0;
 
-  // 3) Оновлюємо поточну ціну
+  // 3) Оновлюємо відображення ціни
   const current = card.querySelector('.current-price');
   if (current) current.textContent = fmtUSD(price);
 
-  // 4) Оновлюємо підпис (якщо є окремий елемент поруч із кнопкою)
+  // 4) Оновлюємо підпис, якщо є
   const label = card.querySelector('.selected-quantity');
   if (label) label.textContent = qStr;
 
-  // 5) Оновлюємо dataset для кнопки
+  // 5) Оновлюємо кнопку
   const btn = card.querySelector('.add-to-cart');
   if (btn) {
+    // datasets для кошика
     btn.dataset.price   = String(price);
     btn.dataset.grams   = String(mg);
     btn.dataset.display = qStr;
 
-    // 6) ОНОВЛЮЄМО НАПИС КНОПКИ
-    //    Беремо базову частину з data-base-label або з наявного тексту (до " — ")
-    const base = btn.dataset.baseLabel
-      || (btn.textContent.split(' — ')[0] || 'Add to Cart').trim();
-
-    btn.dataset.baseLabel = base; // запам'ятати на майбутнє
-
-    // Якщо в кнопці є внутрішній <span class="btn-text"> — оновлюємо його,
-    // інакше — підміняємо весь текст.
-    const btnTextSpan = btn.querySelector('.btn-text');
-    const newText = `${base} — ${qStr}`;
-    if (btnTextSpan) {
-      btnTextSpan.textContent = newText;
-    } else {
-      btn.textContent = newText;
+    // базовий напис фіксуємо в data-base-label (без кількості)
+    if (!btn.dataset.baseLabel) {
+      const raw  = (btn.querySelector('.btn-text')?.textContent || btn.textContent || 'Add to Cart').trim();
+      const base = raw
+        .replace(/\s*[–—-]\s*.*$/, '')              // прибрати все після " — "
+        .replace(/\s*\d+(\.\d+)?\s*(mg|g).*$/i, '') // прибрати "100mg/1g" в кінці
+        .trim() || 'Add to Cart';
+      btn.dataset.baseLabel = base;
     }
+
+    const base = (btn.dataset.baseLabel || 'Add to Cart').trim();
+    const newText = `${base} — ${qStr}`;
+
+    // якщо є внутрішній .btn-text — оновлюємо його, інакше весь текст
+    const span = btn.querySelector('.btn-text');
+    if (span) span.textContent = newText;
+    else btn.textContent = newText;
   }
 }
 
@@ -358,6 +361,31 @@ function mountAddToCartButtons() {
       // 3) Лог внутрішнього трекера (якщо є)
       try { trackEvent?.('add_to_cart_click', { name, sku, grams, price, display }); } catch(_) {}
     }, { passive: false });
+  });
+}
+
+function prepareAddToCartButtons() {
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    // якщо немає внутрішнього контейнера — створюємо
+    let span = btn.querySelector('.btn-text');
+    if (!span) {
+      span = document.createElement('span');
+      span.className = 'btn-text';
+      // переносимо лише текстову частину, не чіпаємо іконки
+      span.textContent = btn.textContent.trim();
+      btn.innerHTML = btn.innerHTML.replace(btn.textContent, '');
+      btn.appendChild(span);
+    }
+    // зберігаємо базовий напис без кількостей
+    if (!btn.dataset.baseLabel) {
+      const raw = span.textContent.trim();
+      const base = raw
+        .replace(/\s*[–—-]\s*.*$/, '')         // обрізати все після " — "
+        .replace(/\s*\d+(\.\d+)?\s*(mg|g).*$/i, '') // і будь-які "100mg/1g" в кінці
+        .trim() || 'Add to Cart';
+      btn.dataset.baseLabel = base;
+      span.textContent = base;
+    }
   });
 }
 
