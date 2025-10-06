@@ -228,26 +228,44 @@ function setActiveOption(card, opt) {
   opt.classList.add('active');
 
   // 2) Читаємо значення
-  const qStr  = (opt.dataset.quantity || '').trim();              // "100mg" | "500mg" | "1g"
-  const mg    = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr); // завжди у міліграмах
+  const qStr  = (opt.dataset.quantity || '').trim();                // "100mg" | "500mg" | "1g"
+  const mg    = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr);
   const price = Number(opt.dataset.price || 0) || 0;
 
   // 3) Оновлюємо поточну ціну
   const current = card.querySelector('.current-price');
   if (current) current.textContent = fmtUSD(price);
 
-  // 4) Оновлюємо підпис ліворуч/на кнопці
+  // 4) Оновлюємо підпис (якщо є окремий елемент поруч із кнопкою)
   const label = card.querySelector('.selected-quantity');
   if (label) label.textContent = qStr;
 
-  // 5) Оновлюємо dataset для кнопки Add to cart
+  // 5) Оновлюємо dataset для кнопки
   const btn = card.querySelector('.add-to-cart');
   if (btn) {
     btn.dataset.price   = String(price);
     btn.dataset.grams   = String(mg);
     btn.dataset.display = qStr;
+
+    // 6) ОНОВЛЮЄМО НАПИС КНОПКИ
+    //    Беремо базову частину з data-base-label або з наявного тексту (до " — ")
+    const base = btn.dataset.baseLabel
+      || (btn.textContent.split(' — ')[0] || 'Add to Cart').trim();
+
+    btn.dataset.baseLabel = base; // запам'ятати на майбутнє
+
+    // Якщо в кнопці є внутрішній <span class="btn-text"> — оновлюємо його,
+    // інакше — підміняємо весь текст.
+    const btnTextSpan = btn.querySelector('.btn-text');
+    const newText = `${base} — ${qStr}`;
+    if (btnTextSpan) {
+      btnTextSpan.textContent = newText;
+    } else {
+      btn.textContent = newText;
+    }
   }
 }
+
 
 
 
