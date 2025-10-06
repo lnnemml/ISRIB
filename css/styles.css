@@ -2089,3 +2089,21 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   padding-left: 16px;
   padding-right: 16px;
 }
+
+/* Out-of-stock badge / button */
+.pill { display:inline-block; padding:6px 12px; border-radius:9999px; font-weight:700; }
+.pill.out-of-stock { background:#fee2e2; color:#b91c1c; }
+.pill.in-stock { background:#ecfdf5; color:#059669; } /* (опційно для узгодженості) */
+
+.add-to-cart[disabled], .btn[disabled]{
+  opacity:.55; cursor:not-allowed; pointer-events:none; filter:grayscale(.2);
+}
+
+/* Якщо хочеш помітку на самій картці в каталозі */
+.product-card.out-of-stock::after{
+  content:"Out of stock";
+  position:absolute; top:10px; right:12px;
+  background:#fee2e2; color:#b91c1c; font-weight:700;
+  padding:6px 10px; border-radius:10px;
+}
+.product-card.out-of-stock .add-to-cart{ pointer-events:none; }
