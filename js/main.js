@@ -304,7 +304,7 @@ function addToCart(name, sku, grams, price, display) {
 }
 
 function mountAddToCartButtons() {
-  document.querySelectorAll('.add-to-cart').forEach(btn => {
+  document.querySelectorAll('.add-to-cart:not([disabled])').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation(); // важливо: щоб клік по кнопці не запускав перехід по картці
