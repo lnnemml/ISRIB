@@ -305,9 +305,11 @@ function addToCart(name, sku, grams, price, display) {
 
 function mountAddToCartButtons() {
   document.querySelectorAll('.add-to-cart:not([disabled])').forEach(btn => {
+    if (btn._bound) return; btn._bound = true; // захист від дубль-прив'язки
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      e.stopPropagation(); // важливо: щоб клік по кнопці не запускав перехід по картці
+      e.stopPropagation(); // щоб клік не «проколювався» до картки
+
       const card = btn.closest('.product-card');
       const name =
         card?.querySelector('.product-name')?.textContent ||
@@ -317,18 +319,27 @@ function mountAddToCartButtons() {
       const grams = parseFloat(btn.dataset.grams || '0') || 0;
       const price = parseFloat(btn.dataset.price || '0') || 0;
       const display = btn.dataset.display || '';
+
+      // 1) Логіка кошика + UI — спочатку (щоб навіть без GA працювало)
       addToCart(name, sku, grams, price, display);
-      // 🔻 GA4 подія
-      gtag('event', 'add_to_cart', {
-        event_category: 'ecommerce',
-        event_label: name,
-        value: price,
-        currency: 'USD'
-      });
       updateCartBadge?.();
-      showToast(`Added to cart - ${(display || (grams ? (grams >= 1000 ? (grams/1000)+'g' : grams+'mg') : ''))} for ${price}$`);
-      trackEvent('add_to_cart_click', { name, sku, grams, price, display });
-    });
+      showToast?.(`Added to cart — ${(display || (grams ? (grams >= 1000 ? (grams/1000)+'g' : grams+'mg') : ''))} for $${price}`);
+
+      // 2) Аналітика — безпечно
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'add_to_cart', {
+            event_category: 'ecommerce',
+            event_label: name,
+            value: price,
+            currency: 'USD'
+          });
+        }
+      } catch(_) {}
+
+      // 3) Лог внутрішнього трекера (якщо є)
+      try { trackEvent?.('add_to_cart_click', { name, sku, grams, price, display }); } catch(_) {}
+    }, { passive: false });
   });
 }
 
