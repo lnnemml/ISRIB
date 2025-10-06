@@ -2158,3 +2158,28 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
 }
 
+/* Mobile: make Add to Cart full-width (як View Cart/Details) */
+@media (max-width: 560px){
+  /* замість рядка робимо стовпчик з повною шириною */
+  .product-footer .top-buttons{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* усі елементи в .top-buttons на 100% */
+  .product-footer .top-buttons > *{
+    width: 100%;
+  }
+
+  /* саме для кнопки — гарантія 100% ширини */
+  .product-footer .add-to-cart{
+    display: flex;
+    justify-content: center;
+    flex: 1 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
