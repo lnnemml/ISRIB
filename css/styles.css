@@ -2107,3 +2107,30 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   padding:6px 10px; border-radius:10px;
 }
 .product-card.out-of-stock .add-to-cart{ pointer-events:none; }
+
+/* Make "View Details" identical to "View Cart" */
+.product-footer .view-cart,
+.product-footer .view-product {
+  display: flex;              /* центруємо текст */
+  align-items: center;
+  justify-content: center;
+  width: 100%;                /* повна ширина як у View Cart */
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: #f3f4f6;  /* той самий фон, що й у View Cart */
+  color: #1e40af;
+  text-decoration: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border: 0;                  /* прибираємо тонку сіру рамку */
+  text-align: center;
+}
+
+.product-footer .view-cart:hover,
+.product-footer .view-product:hover {
+  background-color: #e0e7ff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+/* На випадок спадкових відступів — нівелюємо */
+.product-footer .view-product { margin: 0; }
+
