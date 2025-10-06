@@ -2108,29 +2108,42 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 }
 .product-card.out-of-stock .add-to-cart{ pointer-events:none; }
 
-/* Make "View Details" identical to "View Cart" */
+/* Однаковий «широкий» стиль для View Cart
+   і для View Details ТІЛЬКИ якщо у неї теж є клас .view-cart */
 .product-footer .view-cart,
-.product-footer .view-product {
-  display: flex;              /* центруємо текст */
+.product-footer .view-product.view-cart {
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;                /* повна ширина як у View Cart */
+  width: 100%;
   padding: 10px 16px;
   border-radius: 8px;
-  background-color: #f3f4f6;  /* той самий фон, що й у View Cart */
+  background-color: #f3f4f6;
   color: #1e40af;
   text-decoration: none;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  border: 0;                  /* прибираємо тонку сіру рамку */
+  border: 0;
   text-align: center;
 }
 
 .product-footer .view-cart:hover,
-.product-footer .view-product:hover {
+.product-footer .view-product.view-cart:hover {
   background-color: #e0e7ff;
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
-/* На випадок спадкових відступів — нівелюємо */
-.product-footer .view-product { margin: 0; }
+/* Якщо десь лишається старий «чіп»-стиль для View Details — 
+   нехай він працює тільки коли НЕНАВМИСНЕ не додали .view-cart */
+.product-footer .view-product:not(.view-cart) {
+  /* тут можуть лишитися твої попередні легкі стилі «чіпа», або прибери блок зовсім */
+  /* приклад:
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 6px; */
+}
+.product-footer .view-product:not(.view-cart):hover {
+  /* ховер для «чіпа», якщо потрібен */
+}
+
 
