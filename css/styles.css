@@ -2146,4 +2146,15 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   /* ховер для «чіпа», якщо потрібен */
 }
 
+/* Mobile: make Add to Cart full-width like View Cart/Details */
+@media (max-width: 560px){
+  .product-footer { flex-wrap: wrap; }         /* дозволяємо перенос рядків */
+  .product-footer .top-buttons { width: 100%; } /* контейнер з кнопкою — на всю ширину */
+  .product-footer .add-to-cart {
+    flex: 0 0 100%;   /* ключове: займає весь ряд */
+    width: 100%;
+    justify-content: center;
+    min-width: 0;
+  }
+}
 
