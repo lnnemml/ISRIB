@@ -2073,3 +2073,19 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
+/* Центруємо текст у обох кнопках і розтягуємо на всю ширину */
+.product-footer .view-cart,
+.product-footer .view-product {
+  display: flex;              /* дає ідеальне центрування */
+  align-items: center;        /* по вертикалі */
+  justify-content: center;    /* по горизонталі */
+  width: 100%;
+  text-align: center;
+}
+
+/* На випадок, якщо десь успадковується інший відступ/вирівнювання */
+.product-footer .view-product {
+  margin: 0;
+  padding-left: 16px;
+  padding-right: 16px;
+}
