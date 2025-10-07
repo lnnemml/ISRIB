@@ -2211,3 +2211,24 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
 }
 
+.free-shipping-banner-container {
+  background: linear-gradient(90deg, #059669, #10b981);
+  padding: 10px 0;
+  border-radius: 0;
+}
+
+.free-shipping-banner {
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 4px 0;
+}
+
+.free-shipping-banner .emoji {
+  font-size: 1.2rem;
+}
