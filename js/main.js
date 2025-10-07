@@ -498,25 +498,28 @@ function initCheckoutForm() {
 
     // валідація
     if (!firstName || !lastName || !email || !country || !city || !postal || !address) {
-      if (msg) { msg.textContent = 'Please fill all required fields.'; msg.style.color = '#dc2626'; }
+      if (msg) {
+        msg.textContent = 'Please fill all required fields.';
+        msg.style.color = '#dc2626';
+      }
       return;
     }
 
     // зчитуємо кошик
-    const cart = readCart(); // очікується [{name, sku, grams, display, price, count}, ...]
+    const cart = readCart(); // [{name, sku, grams, display, price, count}, ...]
     const items = cart.map(i => ({
-      name:   i.name,
-      sku:    i.sku || i.id || '',
-      qty:    Number(i.count || 1),
-      price:  Number(i.price || 0),
-      grams:  Number(i.grams || 0),
+      name:    i.name,
+      sku:     i.sku || i.id || '',
+      qty:     Number(i.count || 1),
+      price:   Number(i.price || 0),
+      grams:   Number(i.grams || 0),
       display: i.display || ''
     }));
 
-    // розрахунок сум
+    // розрахунок сум — 🔸 FREE SHIPPING
     const subtotal = items.reduce((sum, it) => sum + it.qty * it.price, 0);
-    const shipping = items.length ? 10 : 0;
-    const total    = subtotal + shipping;
+    const shipping = 0;
+    const total    = subtotal;
 
     // payload для бекенду
     const payload = {
@@ -534,7 +537,7 @@ function initCheckoutForm() {
       });
       if (!res.ok) throw new Error('Request failed');
 
-      // 🔹 подія наміру покупки (опціонально, для атрибуції)
+      // 🔹 GA подія "purchase intent"
       try {
         if (typeof gtag === 'function') {
           gtag('event', 'purchase_intent', {
@@ -546,14 +549,14 @@ function initCheckoutForm() {
         }
       } catch {}
 
-      // 🔹 формуємо success-URL з параметрами для success.html (щоб надіслати GA4 purchase)
+      // 🔹 success-URL з параметрами (для GA4 purchase)
       const orderId = 'ORD-' + Date.now();
-      const first   = cart[0] || {};
-      const packLabel =
-        first?.display ||
-        (first?.grams
+      const first = cart[0] || {};
+      const packLabel = first?.display || (
+        first?.grams
           ? (first.grams >= 1000 ? (first.grams / 1000) + 'g' : first.grams + 'mg')
-          : '');
+          : ''
+      );
 
       const qtyTotal = cart.reduce((n, i) => n + Number(i.count || 1), 0);
 
@@ -567,18 +570,25 @@ function initCheckoutForm() {
         + `&currency=USD`
         + `&total=${encodeURIComponent(total.toFixed(2))}`;
 
-      // 🔹 очищаємо кошик і редиректимо
+      // 🔹 очищаємо кошик + перенаправлення
       writeCart([]);
-      try { localStorage.removeItem('cart'); localStorage.removeItem('cartItems'); } catch {}
+      try {
+        localStorage.removeItem('cart');
+        localStorage.removeItem('cartItems');
+      } catch {}
       updateCartBadge([]);
       window.location.href = successUrl;
 
     } catch (err) {
-      if (msg) { msg.textContent = 'Error. Try again later.'; msg.style.color = '#ef4444'; }
+      if (msg) {
+        msg.textContent = 'Error. Try again later.';
+        msg.style.color = '#ef4444';
+      }
       console.error('[CHECKOUT_ERROR]', err);
     }
   });
 }
+
 
 /* ============================ CONTACT ============================ */
 
