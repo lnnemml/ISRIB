@@ -75,15 +75,23 @@
     <section class="card">
       <div class="card-body">
         <div id="summary" class="card req-summary" style="margin:1rem 0 1.25rem; display:none;">
-          <div class="card-body">
-            <h2>Request summary</h2>
-            <ul>
-              <li><strong>Product:</strong> <span id="s-product">—</span></li>
-              <li><strong>Pack:</strong> <span id="s-pack">—</span></li>
-              <li><strong>Price:</strong> <span id="s-price">—</span></li>
-            </ul>
-          </div>
-        </div>
+  <div class="card-body">
+    <h2>Request summary</h2>
+    <ul>
+      <li><strong>Product:</strong> <span id="s-product">—</span></li>
+      <li><strong>Pack:</strong> <span id="s-pack">—</span></li>
+      <li><strong>Qty:</strong> <span id="s-qty">—</span></li>
+      <li><strong>Price (per unit):</strong> <span id="s-price">—</span></li>
+    </ul>
+
+    <hr class="sep" style="margin:0.85rem 0;">
+    <div class="sum-line"><span>Subtotal</span> <b id="s-subtotal">—</b></div>
+    <div class="sum-line"><span>Shipping</span> <b>FREE</b></div>
+    <div class="sum-line grand"><span>Total</span> <b id="s-total">—</b></div>
+    <div class="sum-note" style="color:#64748b;margin-top:.35rem;">* Free shipping — limited-time launch offer.</div>
+  </div>
+</div>
+
 
         <div class="back-actions" style="display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;margin-top:.5rem;">
           <a class="btn" href="index.html" onclick="trackCTA?.('success','home')">Home</a>
