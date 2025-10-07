@@ -2183,8 +2183,9 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
 }
 
-.free-shipping-banner {
-  display: flex;
+/* Free shipping banner */
+.free-shipping-banner{
+  display: inline-flex;          /* <-- ключ до «не на всю ширину» */
   align-items: center;
   gap: 12px;
   background: linear-gradient(135deg, #10b981, #059669);
@@ -2192,43 +2193,17 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   padding: 14px 20px;
   border-radius: 14px;
   font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 25px;
-  box-shadow: 0 8px 20px rgba(16,185,129,0.25);
-}
-.free-shipping-banner .emoji {
-  font-size: 1.4rem;
-}
-.free-shipping-banner span {
-  font-weight: 400;
-  font-size: 0.95rem;
-}
-@media (max-width: 768px) {
-  .free-shipping-banner {
-    flex-direction: column;
-    text-align: center;
-    gap: 6px;
-  }
-}
-
-.free-shipping-banner-container {
-  background: linear-gradient(90deg, #059669, #10b981);
-  padding: 10px 0;
-  border-radius: 0;
-}
-
-.free-shipping-banner {
-  color: white;
   font-weight: 700;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 4px 0;
+  margin: 8px 0 24px;
+  box-shadow: 0 8px 20px rgba(16,185,129,.25);
+}
+.free-shipping-banner .emoji{ font-size: 1.4rem; }
+.free-shipping-banner span{ font-weight: 400; font-size: .95rem; }
+
+@media (max-width:768px){
+  .free-shipping-banner{ flex-direction: column; text-align: center; gap: 6px; }
 }
 
-.free-shipping-banner .emoji {
-  font-size: 1.2rem;
-}
+/* Забороняємо «зовнішню смугу» */
+.free-shipping-banner-container{ background: transparent !important; padding: 0 !important; border: 0 !important; }
+
