@@ -200,64 +200,37 @@
     });
   })();
 </script>
-  <script>
-(function () {
-  const qp  = new URLSearchParams(location.search);
+ <script>
+  (function () {
+    const q = new URLSearchParams(location.search);
+    const product = q.get('product') || '';
+    const pack = q.get('pack') || '';
+    const price = parseFloat(q.get('price') || '0');
+    const qty = parseInt(q.get('qty') || '1', 10);
+    const totalQS = parseFloat(q.get('total') || '0');
 
-  const orderId  = qp.get('order_id') || ('ORD-' + Date.now());
-  const product  = qp.get('product')  || 'ISRIB A15';
-  const sku      = qp.get('sku')      || 'isrib-a15';
-  const variant  = qp.get('pack')     || '100mg';
-  const price    = parseFloat(qp.get('price') || '0');
-  const qty      = parseInt(qp.get('qty') || '1', 10);
-  const currency = (qp.get('currency') || 'USD').toUpperCase();
-  const totalUrl = parseFloat(qp.get('total') || '0');
+    const subtotal = (qty * price) || 0;
+    const total = (totalQS && !isNaN(totalQS)) ? totalQS : subtotal;
 
-  const guardKey = 'purchase-' + orderId;
-  if (sessionStorage.getItem(guardKey)) return;
-  sessionStorage.setItem(guardKey, '1');
+    if (product || pack || price || qty) {
+      const box = document.getElementById('summary');
+      if (box) box.style.display = 'block';
 
-  let items = [];
-  try {
-    const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
-    if (Array.isArray(cart) && cart.length) {
-      items = cart.map(i => ({
-        item_id:     i.sku || sku,
-        item_name:   i.name || product,
-        item_variant: i.display || variant,
-        price:       Number(i.price) || 0,
-        quantity:    Number(i.count) || 1
-      }));
+      const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      set('s-product', product || '—');
+      set('s-pack', pack || '—');
+      set('s-qty', qty || 1);
+      set('s-price', `$${price.toFixed(2)}`);
+      set('s-subtotal', `$${subtotal.toFixed(2)}`);
+      set('s-total', `$${total.toFixed(2)}`);
     }
-  } catch(_) {}
-
-  if (!items.length) {
-    items = [{
-      item_id: sku,
-      item_name: product,
-      item_variant: variant,
-      price: price,
-      quantity: qty
-    }];
-  }
-
-  let value = Number(totalUrl || 0);
-  if (!value) {
-    value = Number(items.reduce((s, it) => s + (Number(it.price) * (Number(it.quantity)||1)), 0).toFixed(2));
-  }
-
-  if (typeof gtag === 'function') {
-    gtag('event', 'purchase', {
-      transaction_id: orderId,
-      value: value,
-      currency: currency,
-      tax: 0,
-      shipping: 0,
-      items: items
-    });
-  }
-})();
+  })();
 </script>
+
 
 </body>
 </html>
