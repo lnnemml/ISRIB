@@ -426,7 +426,9 @@ function renderCheckoutCart(){
 
 function recalcTotals(cart) {
   const subtotal = cart.reduce((s, it) => s + Number(it.price || 0) * Number(it.count || 1), 0);
-  const shipping = cart.length ? 10 : 0;
+
+  // 🔸 FREE SHIPPING
+  const shipping = 0;
   const total = subtotal + shipping;
 
   const totals = document.getElementById('summaryTotals');
@@ -434,9 +436,9 @@ function recalcTotals(cart) {
 
   totals.innerHTML = `
     <div class="sum-line"><span>Subtotal</span><b>${fmtUSD(subtotal)}</b></div>
-    <div class="sum-line"><span>Shipping</span><b>${fmtUSD(shipping)}</b></div>
+    <div class="sum-line"><span>Shipping</span><b>FREE</b></div>
     <div class="sum-line grand"><span>Total</span><b>${fmtUSD(total)}</b></div>
-    <div class="sum-note">* Flat shipping fee of $10 is added on top of the subtotal.</div>
+    <div class="sum-note">* Free shipping — limited-time launch offer.</div>
   `;
 }
 
