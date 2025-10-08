@@ -690,3 +690,90 @@ function trackEvent(name, data){
   });
 })();
 
+(function () {
+  const MEASUREMENT_ID = 'G-6FXL7YXBM0';
+  const API_SECRET = '3M-EAt53Q9uAtyM35gx8Xg';
+  const cidKey = '_ga4_cid';
+
+  // простий client_id, збережений у localStorage
+  function getCid(){
+    let cid = localStorage.getItem(cidKey);
+    if(!cid){
+      cid = (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+'-'+Math.random());
+      localStorage.setItem(cidKey, cid);
+    }
+    return cid;
+  }
+
+  // якщо gtag не відпрацював — шлемо MP
+  function mpPageView(){
+    const url = 'https://www.google-analytics.com/mp/collect?measurement_id='
+      + MEASUREMENT_ID + '&api_secret=' + API_SECRET;
+
+    const payload = {
+      client_id: getCid(),
+      events: [{
+        name: 'page_view',
+        params: {
+          page_location: location.href,
+          page_title: document.title,
+          page_path: location.pathname + location.search
+        }
+      }]
+    };
+
+    navigator.sendBeacon(url, JSON.stringify(payload));
+  }
+
+  // чекаємо 1500 мс: якщо немає dataLayer push від gtag — шлемо фолбек
+  setTimeout(() => {
+    const dl = window.dataLayer || [];
+    const seenConfig = dl.some(e => Array.isArray(e) && e[0]==='config' && e[1]===MEASUREMENT_ID);
+    const seenPV = dl.some(e => Array.isArray(e) && e[0]==='event' && e[1]==='page_view');
+    if(!seenConfig && !seenPV) { mpPageView(); }
+  }, 1500);
+})();
+(function () {
+  const MEASUREMENT_ID = 'G-6FXL7YXBM0';
+  const API_SECRET = 'PASTE_YOUR_API_SECRET';
+  const cidKey = '_ga4_cid';
+
+  // простий client_id, збережений у localStorage
+  function getCid(){
+    let cid = localStorage.getItem(cidKey);
+    if(!cid){
+      cid = (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+'-'+Math.random());
+      localStorage.setItem(cidKey, cid);
+    }
+    return cid;
+  }
+
+  // якщо gtag не відпрацював — шлемо MP
+  function mpPageView(){
+    const url = 'https://www.google-analytics.com/mp/collect?measurement_id='
+      + MEASUREMENT_ID + '&api_secret=' + API_SECRET;
+
+    const payload = {
+      client_id: getCid(),
+      events: [{
+        name: 'page_view',
+        params: {
+          page_location: location.href,
+          page_title: document.title,
+          page_path: location.pathname + location.search
+        }
+      }]
+    };
+
+    navigator.sendBeacon(url, JSON.stringify(payload));
+  }
+
+  // чекаємо 1500 мс: якщо немає dataLayer push від gtag — шлемо фолбек
+  setTimeout(() => {
+    const dl = window.dataLayer || [];
+    const seenConfig = dl.some(e => Array.isArray(e) && e[0]==='config' && e[1]===MEASUREMENT_ID);
+    const seenPV = dl.some(e => Array.isArray(e) && e[0]==='event' && e[1]==='page_view');
+    if(!seenConfig && !seenPV) { mpPageView(); }
+  }, 1500);
+})();
+

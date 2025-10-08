@@ -7,10 +7,19 @@ function gtag(){ dataLayer.push(arguments); }
 // Відмітити час запуску
 gtag('js', new Date());
 
-// Основна конфігурація GA4
-gtag('config', 'G-6FXL7YXBM0', {
-  linker: {
-    domains: ['isrib.shop', 'www.isrib.shop', 'isrib-landing.vercel.app']
-  }
+// Тимчасовий default consent: аналітика дозволена, реклама — ні
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'granted',
+  functionality_storage: 'granted',
+  security_storage: 'granted',
+  wait_for_update: 500
 });
 
+// Основна конфігурація GA4
+gtag('config', 'G-6FXL7YXBM0', {
+  debug_mode: true, // додай, щоб бачити все у DebugView
+  linker: { domains: ['isrib.shop','www.isrib.shop','isrib-landing.vercel.app'] }
+});
