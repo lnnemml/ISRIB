@@ -838,21 +838,4 @@ function trackEvent(name, data){
   }, 1500);
 })();
 
-// === TEST GOOGLE ANALYTICS EVENT ===
-window.addEventListener('load', () => {
-  // чекаємо поки сторінка і GA завантажаться
-  setTimeout(() => {
-    if (typeof gtag === 'function') {
-      gtag('event', 'test_event', {
-        event_category: 'debug',
-        event_label: 'manual check (auto)',
-        value: 1,
-        debug_mode: true
-      });
-      console.log('✅ Test GA event sent');
-    } else {
-      console.warn('⚠️ gtag not found — check if GA script is loaded properly.');
-    }
-  }, 3000); // 3 секунди після повного завантаження сторінки
-});
 
