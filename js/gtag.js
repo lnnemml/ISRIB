@@ -19,7 +19,7 @@ gtag('consent', 'default', {
 });
 
 // Основна конфігурація GA4
-gtag('config', 'G-6FXL7YXBM0', {
+gtag('config', 'G-XGMHXZNME9', {
   debug_mode: true, // додай, щоб бачити все у DebugView
   linker: { domains: ['isrib.shop','www.isrib.shop','isrib-landing.vercel.app'] }
 });
