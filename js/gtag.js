@@ -1,6 +1,4 @@
-<!-- Google tag (gtag.js) — завантажуємо по робочому ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-SMCGZ6BPDC"></script>
-<script>
+
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
   gtag('js', new Date());
@@ -22,4 +20,4 @@
     debug_mode:true,
     linker:{ domains:['isrib.shop','www.isrib.shop','isrib-landing.vercel.app'] }
   });
-</script>
+
