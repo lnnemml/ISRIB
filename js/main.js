@@ -493,6 +493,8 @@ function initCheckoutForm() {
   const form = document.getElementById('checkoutForm');
   if (!form) return;
 
+  const submitBtn = document.getElementById('submitOrderBtn');
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -502,7 +504,8 @@ function initCheckoutForm() {
     // honeypot
     const gotcha = form.querySelector('input[name="_gotcha"]')?.value || '';
     if (gotcha) return;
-     // 🔒 Заборона сабміту з пустим кошиком
+
+    // 🔒 Заборона сабміту з пустим кошиком
     const cartNow = readCart();
     if (!cartNow.length) {
       if (msg) {
@@ -511,7 +514,7 @@ function initCheckoutForm() {
       }
       try { showToast?.('Cart is empty', 'error'); } catch {}
       document.querySelector('.order-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      updateCheckoutSubmitState();
+      updateCheckoutSubmitState?.();
       return;
     }
 
@@ -561,13 +564,34 @@ function initCheckoutForm() {
       items, subtotal, shipping, total
     };
 
+    // UI: заблокуємо кнопку на час відправки
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.setAttribute('aria-disabled', 'true');
+    }
+
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error('Request failed');
+
+      // ⛑️ Обробка помилок бекенду (422/400/500…)
+      if (!res.ok) {
+        let errMsg = 'Could not submit. Please check your cart.';
+        try {
+          const j = await res.json();
+          if (j?.error) errMsg = j.error;
+          if (j?.code === 'EMPTY_CART') errMsg = 'Your cart is empty. Add at least one product before submitting.';
+          if (j?.code === 'INVALID_CART_ITEM') errMsg = 'One of items in your cart is invalid.';
+          if (j?.code === 'INVALID_SUBTOTAL') errMsg = 'Cart total invalid.';
+        } catch {}
+        if (msg) { msg.textContent = errMsg; msg.style.color = '#dc2626'; }
+        try { showToast?.(errMsg, 'error'); } catch {}
+        updateCheckoutSubmitState?.();
+        return; // ❗не редіректимо
+      }
 
       // 🔹 GA подія "purchase intent"
       try {
@@ -589,7 +613,6 @@ function initCheckoutForm() {
           ? (first.grams >= 1000 ? (first.grams / 1000) + 'g' : first.grams + 'mg')
           : ''
       );
-
       const qtyTotal = cart.reduce((n, i) => n + Number(i.count || 1), 0);
 
       const successUrl = `/success.html`
@@ -612,14 +635,20 @@ function initCheckoutForm() {
       window.location.href = successUrl;
 
     } catch (err) {
-      if (msg) {
-        msg.textContent = 'Error. Try again later.';
-        msg.style.color = '#ef4444';
-      }
+      const human = 'Error. Try again later.';
+      if (msg) { msg.textContent = human; msg.style.color = '#ef4444'; }
+      try { showToast?.(human, 'error'); } catch {}
       console.error('[CHECKOUT_ERROR]', err);
+    } finally {
+      // повертаємо кнопку до нормального стану
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.setAttribute('aria-disabled', 'false');
+      }
     }
   });
 }
+
 
 
 /* ============================ CONTACT ============================ */
