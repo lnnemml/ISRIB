@@ -402,6 +402,7 @@ function renderCheckoutCart(){
     wrap.innerHTML = `<p class="muted">Your cart is empty. Go to <a class="link" href="products.html">Products</a>.</p>`;
     const totals = document.getElementById('summaryTotals');
     if (totals) totals.innerHTML = '';
+    updateCheckoutSubmitState();
     return;
   }
 
@@ -422,7 +423,24 @@ function renderCheckoutCart(){
 
   recalcTotals(cart);
   bindCheckoutCartEvents();
+  updateCheckoutSubmitState();
 }
+
+function updateCheckoutSubmitState() {
+  const btn = document.getElementById('submitOrderBtn');
+  const msg = document.getElementById('formMsg') || document.querySelector('#checkoutForm .form-status');
+  const empty = readCart().length === 0;
+
+  if (btn) {
+    btn.disabled = empty;
+    btn.setAttribute('aria-disabled', String(empty));
+  }
+  if (msg) {
+    msg.textContent = empty ? 'Your cart is empty. Add at least one product before submitting.' : '';
+    msg.style.color = empty ? '#dc2626' : '';
+  }
+}
+
 
 function recalcTotals(cart) {
   const subtotal = cart.reduce((s, it) => s + Number(it.price || 0) * Number(it.count || 1), 0);
@@ -454,6 +472,7 @@ function bindCheckoutCartEvents(){
       writeCart(arr);
       updateCartBadge(arr);
       renderCheckoutCart();
+      updateCheckoutSubmitState();
     });
   });
   wrap.querySelectorAll('.cart-remove').forEach(btn => {
@@ -463,6 +482,7 @@ function bindCheckoutCartEvents(){
       writeCart(arr);
       updateCartBadge(arr);
       renderCheckoutCart();
+      updateCheckoutSubmitState();
     });
   });
 }
@@ -482,6 +502,18 @@ function initCheckoutForm() {
     // honeypot
     const gotcha = form.querySelector('input[name="_gotcha"]')?.value || '';
     if (gotcha) return;
+     // 🔒 Заборона сабміту з пустим кошиком
+    const cartNow = readCart();
+    if (!cartNow.length) {
+      if (msg) {
+        msg.textContent = 'Your cart is empty. Add at least one product before submitting.';
+        msg.style.color = '#dc2626';
+      }
+      try { showToast?.('Cart is empty', 'error'); } catch {}
+      document.querySelector('.order-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      updateCheckoutSubmitState();
+      return;
+    }
 
     // дані з форми
     const firstName = form.firstName.value.trim();
