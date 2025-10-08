@@ -39,14 +39,33 @@ export default async function handler(req, res) {
     // кошик
     const items = Array.isArray(data.items) ? data.items : [];
 
-    // ---- ПЕРЕОБЧИСЛЕННЯ СУМ НА СЕРВЕРІ (FREE SHIPPING) ----
+    // ===== 🔒 ВАЛІДАЦІЯ КОШИКА =====
+    if (items.length === 0) {
+      return res.status(422).json({ code: 'EMPTY_CART', error: 'Cart is empty.' });
+    }
+
     const toNum = (v) => (typeof v === 'number' ? v : Number(v || 0));
+    const norm = (s) => String(s || '').trim();
+
+    for (const it of items) {
+      const name = norm(it.name ?? it.title ?? it.id);
+      const qty = toNum(it.qty ?? it.quantity ?? 0);
+      const price = toNum(it.price);
+      if (!name || !Number.isFinite(qty) || qty < 1 || !Number.isFinite(price) || price < 0) {
+        return res.status(422).json({ code: 'INVALID_CART_ITEM', error: 'Invalid cart item.' });
+      }
+    }
+
+    // ---- ПЕРЕОБЧИСЛЕННЯ СУМ НА СЕРВЕРІ (FREE SHIPPING) ----
     const getQty = (it) => toNum(it.qty ?? it.quantity ?? 1);
     const getPrice = (it) => toNum(it.price);
     const subtotal = items.reduce((s, it) => s + getQty(it) * getPrice(it), 0);
+    if (subtotal <= 0) {
+      return res.status(422).json({ code: 'INVALID_SUBTOTAL', error: 'Cart total invalid.' });
+    }
+
     const shipping = 0;
     const total    = subtotal;
-
     const fmtUSD = (n) => `$${Number(n || 0).toFixed(2)}`;
 
     // HTML-табличка з товарами (unit price)
@@ -107,9 +126,9 @@ export default async function handler(req, res) {
     `;
 
     await resend.emails.send({
-      from: process.env.RESEND_FROM,         // наприклад: orders@isrib.shop (після валідації домену)
-      to:   [process.env.RESEND_TO],         // твоя скринька для замовлень
-      reply_to: email,                       // щоб відповісти клієнту
+      from: process.env.RESEND_FROM,
+      to:   [process.env.RESEND_TO],
+      reply_to: email,
       subject: adminSubject,
       html: adminHtml,
       text:
@@ -165,6 +184,7 @@ For research use only. Not for human consumption.`
 
     return res.status(200).json({ ok: true });
   } catch (e) {
+    console.error('Checkout error:', e);
     return res.status(500).json({ error: e?.message || 'Internal Error' });
   }
 }
