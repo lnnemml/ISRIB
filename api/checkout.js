@@ -9,9 +9,15 @@ const fmtAmount = (mg) => (mg >= 1000 ? `${(mg / 1000)} g` : `${mg} mg`);
 // "100mg" | "500 mg" | "1g" -> mg (number)
 const parseQtyToMg = (s) => {
   if (!s) return 0;
-  const t = String(s).toLowerCase();
+  const t = String(s).toLowerCase().trim();
   const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
-  return t.includes('g') ? Math.round(n * 1000) : Math.round(n);
+  
+  // "1g" або "1000mg" → перевіряємо, чи є "g" БЕЗ "mg"
+  if (t.includes('g') && !t.includes('mg')) {
+    return Math.round(n * 1000); // грами → міліграми
+  }
+  
+  return Math.round(n); // вже в міліграмах
 };
 
 // Нормалізуємо одиниці для item: приводимо grams строго до mg.
