@@ -557,14 +557,25 @@ function initCheckoutForm() {
 
     // зчитуємо кошик
     const cart = normalizeCartUnits(readCart()); // [{name, sku, grams, display, price, count}, ...]
-    const items = cart.map(i => ({
-      name:    i.name,
-      sku:     i.sku || i.id || '',
-      qty:     Number(i.count || 1),
-      price:   Number(i.price || 0),
-      grams:   Number(i.grams || 0),
-      display: i.display || ''
-    }));
+    function parseQtyToMgLabel(s){
+  const t = String(s||'').toLowerCase();
+  const n = parseFloat(t.replace(/[^0-9.]/g,'')) || 0;
+  return t.includes('g') ? Math.round(n*1000) : Math.round(n);
+}
+
+const items = cart.map(i => {
+  const mgFromLabel = parseQtyToMgLabel(i.display);
+  // якщо чомусь лейбла нема — підстрахуємось старим полем
+  const mgPerPack = mgFromLabel || Number(i.grams || 0);
+  return {
+    name:    i.name,
+    sku:     i.sku || i.id || '',
+    qty:     Number(i.count || 1),
+    price:   Number(i.price || 0),
+    grams:   mgPerPack,       // <-- тепер це точно mg за пачку
+    display: i.display || (mgPerPack ? (mgPerPack>=1000 ? (mgPerPack/1000)+'g' : mgPerPack+'mg') : '')
+  };
+});
 
     // розрахунок сум — 🔸 FREE SHIPPING
     const subtotal = items.reduce((sum, it) => sum + it.qty * it.price, 0);
