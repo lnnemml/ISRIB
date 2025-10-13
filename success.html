@@ -172,55 +172,43 @@
   (function () {
     const q = new URLSearchParams(location.search);
     
-    // Парсимо всі товари з URL (якщо є multiple items у query string)
-    // Але зараз у вас тільки перший товар, тому покажемо його
+    // Зчитуємо весь масив товарів
+    let items = [];
+    try {
+      items = JSON.parse(q.get('items') || '[]');
+    } catch (e) {
+      console.error('Failed to parse items', e);
+    }
     
-    const product = q.get('product') || '';
-    const pack    = q.get('pack') || '';
-    const price   = parseFloat(q.get('price') || '0');
-    const packs   = parseInt(q.get('packs') || '1', 10);
-    let amountMg  = parseFloat(q.get('qty') || '0');
     const totalQS = parseFloat(q.get('total') || '0');
 
-    const fmtUSD    = (n) => '$' + (Number(n || 0)).toFixed(2);
-    const fmtAmount = (mg) => {
-      const n = Number(mg || 0);
-      return n >= 1000 ? (n/1000) + ' g' : n + ' mg';
-    };
-    const parseQtyToMgLabel = (s) => {
-      const t = String(s || '').toLowerCase().trim();
-      const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
-      return (t.includes('g') && !t.includes('mg')) ? Math.round(n * 1000) : Math.round(n);
-    };
-
-    const mgPerPack = parseQtyToMgLabel(pack);
-    if (!amountMg || !isFinite(amountMg) || (mgPerPack && amountMg > mgPerPack * Math.max(packs,1) * 10)) {
-      amountMg = mgPerPack * Math.max(packs,1);
-    }
-
-    const subtotal = (isFinite(totalQS) && totalQS > 0) ? totalQS : (price * Math.max(packs,1));
-    const total    = subtotal;
-
-    if (product && pack) {
+    const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
+    
+    if (items.length > 0) {
       const box = document.getElementById('summary');
       if (box) box.style.display = 'block';
       
-      // Заповнюємо таблицю
+      // Заповнюємо таблицю ВСІМА товарами
       const tbody = document.getElementById('s-items-tbody');
       if (tbody) {
-        tbody.innerHTML = `
+        tbody.innerHTML = items.map(item => `
           <tr style="border-bottom:1px solid #f3f4f6;">
-            <td style="padding:0.5rem;">${product}</td>
-            <td style="text-align:center; padding:0.5rem;">${pack}</td>
-            <td style="text-align:center; padding:0.5rem;">${packs}</td>
-            <td style="text-align:right; padding:0.5rem;">${fmtUSD(price)}</td>
+            <td style="padding:0.5rem;">${item.name}</td>
+            <td style="text-align:center; padding:0.5rem;">${item.display || ''}</td>
+            <td style="text-align:center; padding:0.5rem;">${item.qty}</td>
+            <td style="text-align:right; padding:0.5rem;">${fmtUSD(item.price)}</td>
           </tr>
-        `;
+        `).join('');
       }
       
-      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      // Підсумки
+      const subtotal = items.reduce((sum, it) => sum + (it.qty * it.price), 0);
+      const set = (id, val) => { 
+        const el = document.getElementById(id); 
+        if (el) el.textContent = val; 
+      };
       set('s-subtotal', fmtUSD(subtotal));
-      set('s-total', fmtUSD(total));
+      set('s-total', fmtUSD(totalQS || subtotal));
     }
   })();
 </script>
