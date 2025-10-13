@@ -1,5 +1,39 @@
 import { Resend } from 'resend';
 
+// ---------- helpers ----------
+const toNum = (v) => (typeof v === 'number' ? v : Number(v || 0));
+const norm  = (s) => String(s || '').trim();
+const fmtUSD = (n) => `$${Number(n || 0).toFixed(2)}`;
+const fmtAmount = (mg) => (mg >= 1000 ? `${(mg / 1000)} g` : `${mg} mg`);
+
+// "100mg" | "500 mg" | "1g" -> mg (number)
+const parseQtyToMg = (s) => {
+  if (!s) return 0;
+  const t = String(s).toLowerCase();
+  const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
+  return t.includes('g') ? Math.round(n * 1000) : Math.round(n);
+};
+
+// Нормалізуємо одиниці для item: приводимо grams строго до mg.
+// Працює навіть якщо прилетів "старий" формат або тільки display.
+function normalizeItem(it) {
+  let grams = toNum(it.grams || 0);          // очікуємо mg у 1 упаковці
+  const display = it.display || it.quantity || it.qtyLabel || ''; // будь-яка людська мітка
+
+  if (display) {
+    const mg = parseQtyToMg(display);
+    if (mg) grams = mg;
+  } else {
+    // fallback: якщо явно бачимо "мільйонні" значення (старий формат) — ділимо на 1000
+    if (grams >= 100000) grams = Math.round(grams / 1000);
+  }
+  return {
+    ...it,
+    grams,                                  // mg у 1 упаковці
+    display: it.display || fmtAmount(grams) // гарантуємо наявність лейбла
+  };
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -7,80 +41,73 @@ export default async function handler(req, res) {
   }
 
   try {
-    // --- raw body (без фреймворку) ---
+    // ---- читаємо raw body (щоб не залежати від фреймворку) ----
     let raw = '';
     for await (const chunk of req) raw += chunk;
     const data = JSON.parse(raw || '{}');
 
-    // --- антиспам (honeypot) ---
+    // ---- антиспам (honeypot) ----
     if (String(data._gotcha || '').trim()) {
-      return res.status(200).json({ ok: true }); // тихо ігноруємо
+      return res.status(200).json({ ok: true });
     }
 
-    // --- обов’язкові поля (мінімум) ---
-    const firstName = (data.firstName || '').trim();
-    const lastName  = (data.lastName  || '').trim();
-    const email     = (data.email     || '').trim();
-    const country   = (data.country   || '').trim();
-    const city      = (data.city      || '').trim();
-    const postal    = (data.postal    || '').trim();
-    const address   = (data.address   || '').trim();
+    // ---- обов'язкові поля ----
+    const firstName = norm(data.firstName);
+    const lastName  = norm(data.lastName);
+    const email     = norm(data.email);
+    const country   = norm(data.country);
+    const city      = norm(data.city);
+    const postal    = norm(data.postal);
+    const address   = norm(data.address);
 
     if (!firstName || !lastName || !email || !country || !city || !postal || !address) {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
 
     // додатково
-    const region    = (data.region    || '').trim();
-    const messenger = (data.messenger || '').trim();
-    const handle    = (data.handle    || '').trim();
-    const notes     = (data.notes     || '').trim();
+    const region    = norm(data.region);
+    const messenger = norm(data.messenger);
+    const handle    = norm(data.handle);
+    const notes     = norm(data.notes);
 
-    // кошик
-    const items = Array.isArray(data.items) ? data.items : [];
-
-    // ===== 🔒 ВАЛІДАЦІЯ КОШИКА =====
-    if (items.length === 0) {
+    // ---- кошик ----
+    const itemsInput = Array.isArray(data.items) ? data.items : [];
+    if (itemsInput.length === 0) {
       return res.status(422).json({ code: 'EMPTY_CART', error: 'Cart is empty.' });
     }
 
-    const toNum = (v) => (typeof v === 'number' ? v : Number(v || 0));
-    const norm  = (s) => String(s || '').trim();
-
-    for (const it of items) {
+    // валідація базових полів та нормалізація одиниць
+    const items = itemsInput.map((it) => {
       const name  = norm(it.name ?? it.title ?? it.id);
       const qty   = toNum(it.qty ?? it.quantity ?? 0);
       const price = toNum(it.price);
       if (!name || !Number.isFinite(qty) || qty < 1 || !Number.isFinite(price) || price < 0) {
-        return res.status(422).json({ code: 'INVALID_CART_ITEM', error: 'Invalid cart item.' });
+        throw new Error('INVALID_CART_ITEM');
       }
-    }
+      return normalizeItem({ ...it, name, qty, price });
+    });
 
-    // ---- ПЕРЕОБЧИСЛЕННЯ СУМ НА СЕРВЕРІ (FREE SHIPPING) ----
+    // ---- суми (FREE SHIPPING) ----
     const getQty   = (it) => toNum(it.qty ?? it.quantity ?? 1);   // кількість упаковок
     const getPrice = (it) => toNum(it.price);
-    const getGrams = (it) => toNum(it.grams || 0);                // mg у 1 упаковці (у твоєму payload це mg)
-    const fmtUSD   = (n) => `$${Number(n || 0).toFixed(2)}`;
-    const fmtAmount = (mg) => (mg >= 1000 ? `${(mg / 1000)} g` : `${mg} mg`);
+    const getMgPerPack = (it) => toNum(it.grams || 0);            // mg у 1 упаковці (вже нормалізовано)
 
     const subtotal = items.reduce((s, it) => s + getQty(it) * getPrice(it), 0);
     if (subtotal <= 0) {
       return res.status(422).json({ code: 'INVALID_SUBTOTAL', error: 'Cart total invalid.' });
     }
-
     const shipping = 0;
     const total    = subtotal;
 
-    // ====== HTML-таблиця (з відображенням ваги) ======
+    // ---- рендер таблиці ----
     const itemsRows = items.map(it => {
-      const name     = it.name ?? it.title ?? it.id ?? 'item';
-      const packs    = getQty(it);        // кількість упаковок
-      const mg       = getGrams(it);      // mg у 1 упаковці
-      const packSize = it.display || fmtAmount(mg);
+      const packs    = getQty(it);
+      const mg       = getMgPerPack(it);
       const totalMg  = mg * packs;
+      const packSize = it.display || fmtAmount(mg);
 
       return `<tr>
-        <td style="padding:6px 10px;border:1px solid #e5e7eb">${name}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb">${it.name}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packSize}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packs}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${fmtAmount(totalMg)}</td>
@@ -102,7 +129,6 @@ export default async function handler(req, res) {
         <tbody>${itemsRows || `<tr><td colspan="5" style="padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280">No items provided</td></tr>`}</tbody>
       </table>`;
 
-    // Блок підсумків із FREE SHIPPING
     const totalsBlockHtml = `
       <div style="margin-top:10px">
         <div style="display:flex;justify-content:space-between"><span>Subtotal</span><b>${fmtUSD(subtotal)}</b></div>
@@ -112,13 +138,13 @@ export default async function handler(req, res) {
       </div>`;
 
     const fullName = `${firstName} ${lastName}`.trim();
-    const totalMgAll = items.reduce((s, it) => s + getGrams(it) * getQty(it), 0);
+    const totalMgAll = items.reduce((s, it) => s + getMgPerPack(it) * getQty(it), 0);
 
     const adminSubject = `Order Request — ${fullName} (${items.length} items, ${fmtAmount(totalMgAll)} total, total ${fmtUSD(total)})`;
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // 1) Лист адміну (тобі)
+    // ---- лист адміну ----
     const adminHtml = `
       <h2>New Checkout Request</h2>
       <p><b>Name:</b> ${fullName}<br>
@@ -161,10 +187,9 @@ ${notes || '-'}
 Items:
 ${items.map(it => {
   const packs = getQty(it);
-  const mg = getGrams(it);
+  const mg = getMgPerPack(it);
   const totalMg = mg * packs;
-  const name = it.name || it.title || it.id || 'item';
-  return `- ${name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+  return `- ${it.name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
 }).join('\n')}
 
 Subtotal: ${fmtUSD(subtotal)}
@@ -173,7 +198,7 @@ Total: ${fmtUSD(total)}
 * Free shipping — limited-time launch offer.`
     });
 
-    // 2) Підтвердження клієнту
+    // ---- підтвердження клієнту ----
     await resend.emails.send({
       from: process.env.RESEND_FROM,
       to:   [email],
@@ -192,10 +217,9 @@ Thanks for your order request. We’ll get back to you shortly.
 Summary:
 ${items.map(it => {
   const packs = getQty(it);
-  const mg = getGrams(it);
+  const mg = getMgPerPack(it);
   const totalMg = mg * packs;
-  const name = it.name || it.title || it.id || 'item';
-  return `- ${name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+  return `- ${it.name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
 }).join('\n')}
 
 Subtotal: ${fmtUSD(subtotal)}
@@ -212,3 +236,6 @@ For research use only. Not for human consumption.`
     return res.status(500).json({ error: e?.message || 'Internal Error' });
   }
 }
+
+// Використовуємо raw-body вище
+export const config = { api: { bodyParser: false } };
