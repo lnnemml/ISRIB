@@ -283,10 +283,15 @@ function setActiveOption(card, opt) {
 
 function parseQtyToMg(s) {
   if (!s) return 0;
-  const t = String(s).toLowerCase();
+  const t = String(s).toLowerCase().trim();
   const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
-  if (t.includes('g')) return n * 1000;
-  return n;
+  
+  // "1g" або "1000mg" → перевіряємо, чи є "g" БЕЗ "mg"
+  if (t.includes('g') && !t.includes('mg')) {
+    return Math.round(n * 1000); // грами → міліграми
+  }
+  
+  return Math.round(n); // вже в міліграмах
 }
 
 function toMg(v) {
