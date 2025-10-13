@@ -699,16 +699,10 @@ function initCheckoutForm() {
       const qtyTotal = items.reduce((n, it) => n + (it.grams * it.qty), 0);
       const packsSum = items.reduce((n, it) => n + it.qty, 0);
 
-      const successUrl = `/success.html`
-        + `?order_id=${encodeURIComponent(orderId)}`
-        + `&product=${encodeURIComponent(firstItem.name || 'ISRIB A15')}`
-        + `&sku=${encodeURIComponent(firstItem.sku || 'isrib-a15')}`
-        + `&pack=${encodeURIComponent(packLabel || '')}`
-        + `&price=${encodeURIComponent(firstItem.price || 0)}`
-        + `&packs=${encodeURIComponent(packsSum)}`
-        + `&qty=${encodeURIComponent(qtyTotal)}`
-        + `&currency=USD`
-        + `&total=${encodeURIComponent(total.toFixed(2))}`;
+     const successUrl = `/success.html`
+  + `?order_id=${encodeURIComponent(orderId)}`
+  + `&items=${encodeURIComponent(JSON.stringify(items))}`
+  + `&total=${encodeURIComponent(total.toFixed(2))}`;
 
       // очистка кошика + редірект
       writeCart([]);
