@@ -75,25 +75,31 @@
     <section class="card">
       <div class="card-body">
         <div id="summary" class="card req-summary" style="margin:1rem 0 1.25rem; display:none;">
-  <div class="card-body">
-    <h2>Request summary</h2>
-    <ul>
-      <li><strong>Product:</strong> <span id="s-product">—</span></li>
-      <li><strong>Pack:</strong> <span id="s-pack">—</span></li>
-      <li><strong>Packs:</strong> <span id="s-packs">—</span></li>
-      <li><strong>Total amount:</strong> <span id="s-amount">—</span></li>
-      <li><strong>Price (per unit):</strong> <span id="s-price">—</span></li>
-   </ul>
+          <div class="card-body">
+            <h2>Request summary</h2>
+            
+            <!-- Таблиця товарів -->
+            <table style="width:100%; border-collapse:collapse; margin-bottom:1rem;">
+              <thead>
+                <tr style="border-bottom:1px solid #e5e7eb;">
+                  <th style="text-align:left; padding:0.5rem;">Product</th>
+                  <th style="text-align:center; padding:0.5rem;">Pack</th>
+                  <th style="text-align:center; padding:0.5rem;">Packs</th>
+                  <th style="text-align:right; padding:0.5rem;">Price</th>
+                </tr>
+              </thead>
+              <tbody id="s-items-tbody">
+                <!-- Буде заповнено JS -->
+              </tbody>
+            </table>
 
-
-    <hr class="sep" style="margin:0.85rem 0;">
-    <div class="sum-line"><span>Subtotal</span> <b id="s-subtotal">—</b></div>
-    <div class="sum-line"><span>Shipping</span> <b>FREE</b></div>
-    <div class="sum-line grand"><span>Total</span> <b id="s-total">—</b></div>
-    <div class="sum-note" style="color:#64748b;margin-top:.35rem;">* Free shipping — limited-time launch offer.</div>
-  </div>
-</div>
-
+            <hr class="sep" style="margin:0.85rem 0;">
+            <div class="sum-line"><span>Subtotal</span> <b id="s-subtotal">—</b></div>
+            <div class="sum-line"><span>Shipping</span> <b>FREE</b></div>
+            <div class="sum-line grand"><span>Total</span> <b id="s-total">—</b></div>
+            <div class="sum-note" style="color:#64748b;margin-top:.35rem;">* Free shipping — limited-time launch offer.</div>
+          </div>
+        </div>
 
         <div class="back-actions" style="display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;margin-top:.5rem;">
           <a class="btn" href="index.html" onclick="trackCTA?.('success','home')">Home</a>
@@ -104,11 +110,10 @@
         <hr class="sep" style="margin:1.5rem 0;">
 
         <div class="next-steps">
-          <h2 style="font-size:1.05rem;margin-bottom:.5rem;">What’s next?</h2>
+          <h2 style="font-size:1.05rem;margin-bottom:.5rem;">What's next?</h2>
           <ol>
-            <li>Check your email — you’ll get our reply soon.</li>
-            
-            <li>If you don’t see our message, check the Spam folder or contact us again.</li>
+            <li>Check your email — you'll get our reply soon.</li>
+            <li>If you don't see our message, check the Spam folder or contact us again.</li>
           </ol>
         </div>
       </div>
@@ -166,12 +171,15 @@
 <script>
   (function () {
     const q = new URLSearchParams(location.search);
-
+    
+    // Парсимо всі товари з URL (якщо є multiple items у query string)
+    // Але зараз у вас тільки перший товар, тому покажемо його
+    
     const product = q.get('product') || '';
-    const pack    = q.get('pack') || '';                 // "100mg" | "500mg" | "1g"
-    const price   = parseFloat(q.get('price') || '0');   // ціна за 1 pack
-    const packs   = parseInt(q.get('packs') || '1', 10); // кількість pack'ів
-    let amountMg  = parseFloat(q.get('qty')   || '0');   // total mg (може бути «битим»)
+    const pack    = q.get('pack') || '';
+    const price   = parseFloat(q.get('price') || '0');
+    const packs   = parseInt(q.get('packs') || '1', 10);
+    let amountMg  = parseFloat(q.get('qty') || '0');
     const totalQS = parseFloat(q.get('total') || '0');
 
     const fmtUSD    = (n) => '$' + (Number(n || 0)).toFixed(2);
@@ -180,32 +188,39 @@
       return n >= 1000 ? (n/1000) + ' g' : n + ' mg';
     };
     const parseQtyToMgLabel = (s) => {
-      const t = String(s || '').toLowerCase();
+      const t = String(s || '').toLowerCase().trim();
       const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
-      return t.includes('g') ? Math.round(n * 1000) : Math.round(n);
+      return (t.includes('g') && !t.includes('mg')) ? Math.round(n * 1000) : Math.round(n);
     };
 
-    // Якщо qty підозрілий — рахуємо від pack × packs
-    const mgPerPack = parseQtyToMgLabel(pack); // mg в одній пачці
+    const mgPerPack = parseQtyToMgLabel(pack);
     if (!amountMg || !isFinite(amountMg) || (mgPerPack && amountMg > mgPerPack * Math.max(packs,1) * 10)) {
       amountMg = mgPerPack * Math.max(packs,1);
     }
 
     const subtotal = (isFinite(totalQS) && totalQS > 0) ? totalQS : (price * Math.max(packs,1));
-    const total    = subtotal; // FREE shipping
+    const total    = subtotal;
 
-    if (product || pack || price || packs || amountMg) {
+    if (product && pack) {
       const box = document.getElementById('summary');
       if (box) box.style.display = 'block';
+      
+      // Заповнюємо таблицю
+      const tbody = document.getElementById('s-items-tbody');
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr style="border-bottom:1px solid #f3f4f6;">
+            <td style="padding:0.5rem;">${product}</td>
+            <td style="text-align:center; padding:0.5rem;">${pack}</td>
+            <td style="text-align:center; padding:0.5rem;">${packs}</td>
+            <td style="text-align:right; padding:0.5rem;">${fmtUSD(price)}</td>
+          </tr>
+        `;
+      }
+      
       const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-
-      set('s-product',  product || '—');
-      set('s-pack',     pack    || '—');
-      set('s-packs',    isFinite(packs) ? packs : 1);
-      set('s-amount',   fmtAmount(amountMg));
-      set('s-price',    fmtUSD(price));
       set('s-subtotal', fmtUSD(subtotal));
-      set('s-total',    fmtUSD(total));
+      set('s-total', fmtUSD(total));
     }
   })();
 </script>
