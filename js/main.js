@@ -229,8 +229,8 @@ function setActiveOption(card, opt) {
   opt.classList.add('active');
 
   // 2) Зчитуємо значення
-  const qStr  = (opt.dataset.quantity || '').trim();          // "100mg" | "500mg" | "1g"
-  const mg    = Number(opt.dataset.grams || 0) || parseQtyToMg(qStr);
+  const qStr  = (opt.dataset.quantity || '').trim(); // "100mg" | "500mg" | "1g"
+  const mg    = parseQtyToMg(qStr) || Number(opt.dataset.grams || 0);
   const price = Number(opt.dataset.price || 0) || 0;
 
   // 3) Оновлюємо відображення ціни
