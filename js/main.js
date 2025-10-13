@@ -621,6 +621,7 @@ function initCheckoutForm() {
         + `&sku=${encodeURIComponent(first?.sku || first?.id || 'isrib-a15')}`
         + `&pack=${encodeURIComponent(packLabel || '')}`
         + `&price=${encodeURIComponent(first?.price || 0)}`
+        + `&packs=${encodeURIComponent(packsSum)}`             // ← ДОДАНО
         + `&qty=${encodeURIComponent(qtyTotal)}`
         + `&currency=USD`
         + `&total=${encodeURIComponent(total.toFixed(2))}`;
