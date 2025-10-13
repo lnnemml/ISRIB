@@ -238,8 +238,9 @@ function setActiveOption(card, opt) {
   // 2) Зчитуємо значення
   const qStr  = (opt.dataset.quantity || '').trim(); // "100mg" | "500mg" | "1g"
   const mg    = parseQtyToMg(qStr) || Number(opt.dataset.grams || 0);
-  console.log('🔍 setActiveOption:', { qStr, mg, price }); // ← DEBUG
   const price = Number(opt.dataset.price || 0) || 0;
+
+  console.log('🔍 setActiveOption:', { qStr, mg, price }); // ← DEBUG
 
   // 3) Оновлюємо відображення ціни
   const current = card.querySelector('.current-price');
