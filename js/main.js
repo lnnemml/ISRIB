@@ -390,12 +390,27 @@ function prepareAddToCartButtons() {
 }
 
 /* ============================ CHECKOUT ============================ */
+function normalizeCartUnits(arr) {
+  return (arr || []).map((i) => {
+    let grams = Number(i.grams || 0);
+    // якщо є людський лейбл "100mg/1g" — він найнадійніший
+    if (i.display) {
+      const mgFromLabel = parseQtyToMg(i.display);
+      if (mgFromLabel) grams = mgFromLabel;
+    } else {
+      // fallback: якщо явно бачимо "1000×" — це старий формат, ділимо на 1000
+      if (grams >= 100000) grams = Math.round(grams / 1000);
+    }
+    return { ...i, grams };
+  });
+}
 
 function renderCheckoutCart(){
   const wrap = document.getElementById('cartList');
   if (!wrap) return;
 
   const cart = readCart();
+  const cart = normalizeCartUnits(readCart());
   updateCartBadge(cart);
 
   if (!cart.length){
@@ -541,7 +556,7 @@ function initCheckoutForm() {
     }
 
     // зчитуємо кошик
-    const cart = readCart(); // [{name, sku, grams, display, price, count}, ...]
+    const cart = normalizeCartUnits(readCart()); // [{name, sku, grams, display, price, count}, ...]
     const items = cart.map(i => ({
       name:    i.name,
       sku:     i.sku || i.id || '',
