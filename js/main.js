@@ -240,7 +240,6 @@ function setActiveOption(card, opt) {
   const mg    = parseQtyToMg(qStr) || Number(opt.dataset.grams || 0);
   const price = Number(opt.dataset.price || 0) || 0;
 
-  console.log('🔍 setActiveOption:', { qStr, mg, price }); // ← DEBUG
 
   // 3) Оновлюємо відображення ціни
   const current = card.querySelector('.current-price');
@@ -410,7 +409,6 @@ function mountAddToCartButtons() {
         const mgFromDisplay = parseQtyToMg(display);
         if (mgFromDisplay) grams = mgFromDisplay;
       }
-      console.log('🛒 Adding to cart:', { grams, display }); // ← DEBUG
       
       const price = parseFloat(btn.dataset.price || '0') || 0;
 
