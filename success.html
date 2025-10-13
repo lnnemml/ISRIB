@@ -80,9 +80,11 @@
     <ul>
       <li><strong>Product:</strong> <span id="s-product">—</span></li>
       <li><strong>Pack:</strong> <span id="s-pack">—</span></li>
-      <li><strong>Qty:</strong> <span id="s-qty">—</span></li>
+      <li><strong>Packs:</strong> <span id="s-packs">—</span></li>
+      <li><strong>Total amount:</strong> <span id="s-amount">—</span></li>
       <li><strong>Price (per unit):</strong> <span id="s-price">—</span></li>
-    </ul>
+   </ul>
+
 
     <hr class="sep" style="margin:0.85rem 0;">
     <div class="sum-line"><span>Subtotal</span> <b id="s-subtotal">—</b></div>
@@ -162,24 +164,44 @@
 <!-- App JS -->
 <script src="js/main.js?v=19"></script>
 <script>
-  // year guard
-  (function(){ var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear(); })();
-
-  // Показ підсумків із query string (як і раніше)
   (function () {
     const q = new URLSearchParams(location.search);
-    const p = q.get('product') || '';
-    const pack = q.get('pack') || '';
-    const price = q.get('price') || '';
-    if (p || pack || price) {
+    const product = q.get('product') || '';
+    const pack    = q.get('pack') || '';                   
+    const price   = parseFloat(q.get('price') || '0');    
+    const packs   = parseInt(q.get('packs') || '1', 10);   
+    const amountMg= parseFloat(q.get('qty') || '0');       
+    const totalQS = parseFloat(q.get('total') || '0');
+
+    // форматер mg → "mg"/"g"
+    function fmtAmount(mg){
+      const n = Number(mg || 0);
+      return n >= 1000 ? (n/1000) + ' g' : n + ' mg';
+    }
+    const fmtUSD = (n) => '$' + Number(n || 0).toFixed(2);
+
+    // Беремо суми із query string (ми їх відправляємо з бекенду)
+    const subtotal = (totalQS && !isNaN(totalQS)) ? totalQS : (packs * price);
+    const total    = subtotal; // Shipping FREE
+
+    
+    if (product || pack || price || packs || amountMg) {
       const box = document.getElementById('summary');
       if (box) box.style.display = 'block';
-      if (p)    document.getElementById('s-product').textContent = p;
-      if (pack) document.getElementById('s-pack').textContent = pack;
-      if (price)document.getElementById('s-price').textContent = price;
+
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+      set('s-product', product || '—');
+      set('s-pack',    pack    || '—');
+      set('s-packs',   packs   || 1);
+      set('s-amount',  fmtAmount(amountMg));
+      set('s-price',   fmtUSD(price));
+      set('s-subtotal',fmtUSD(subtotal));
+      set('s-total',   fmtUSD(total));
     }
   })();
 </script>
+
 
 <!-- Tawk.to chat (lazy) -->
 <script>
