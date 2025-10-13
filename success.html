@@ -222,37 +222,6 @@
     });
   })();
 </script>
- <script>
-  (function () {
-    const q = new URLSearchParams(location.search);
-    const product = q.get('product') || '';
-    const pack = q.get('pack') || '';
-    const price = parseFloat(q.get('price') || '0');
-    const qty = parseInt(q.get('qty') || '1', 10);
-    const totalQS = parseFloat(q.get('total') || '0');
-
-    const subtotal = (qty * price) || 0;
-    const total = (totalQS && !isNaN(totalQS)) ? totalQS : subtotal;
-
-    if (product || pack || price || qty) {
-      const box = document.getElementById('summary');
-      if (box) box.style.display = 'block';
-
-      const set = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val;
-      };
-
-      set('s-product', product || '—');
-      set('s-pack', pack || '—');
-      set('s-qty', qty || 1);
-      set('s-price', `$${price.toFixed(2)}`);
-      set('s-subtotal', `$${subtotal.toFixed(2)}`);
-      set('s-total', `$${total.toFixed(2)}`);
-    }
-  })();
-</script>
-
 
 </body>
 </html>
