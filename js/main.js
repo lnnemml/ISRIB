@@ -868,4 +868,79 @@ function trackEvent(name, data){
   }, 1500);
 })();
 
+// ===== Cart storage (with legacy migration + unit normalization) =====
+const CART_KEY = 'isrib_cart';
+const LEGACY_KEYS = ['cart', 'cartItems'];
+
+// parse "500mg" / "1g" -> mg (integer)
+function parseQtyToMgLabel(s) {
+  const t = String(s || '').toLowerCase();
+  const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
+  return t.includes('g') ? Math.round(n * 1000) : Math.round(n);
+}
+
+// normalize grams from display/legacy bugs
+function normalizeFromLabel(item) {
+  if (item?.display) {
+    const mg = parseQtyToMgLabel(item.display);
+    if (mg) return mg;
+  }
+  let g = Number(item?.grams || 0);
+  // guard: старий формат міг заносити mg*1000
+  if (g >= 100000) g = Math.round(g / 1000);
+  return g;
+}
+
+function readCart() {
+  try {
+    let arr = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+
+    // якщо новий ключ порожній — спробуємо legacy
+    if (!Array.isArray(arr) || !arr.length) {
+      for (const k of LEGACY_KEYS) {
+        const legacy = JSON.parse(localStorage.getItem(k) || '[]');
+        if (Array.isArray(legacy) && legacy.length) {
+          arr = legacy;
+          break;
+        }
+      }
+    }
+
+    // нормалізуємо
+    return (arr || []).map((i) => ({
+      ...i,
+      count: Math.max(1, Number(i.count || i.qty || 1)),
+      price: Number(i.price || 0),
+      grams: normalizeFromLabel(i),
+      display: i.display || (i.grams
+        ? (Number(i.grams) >= 1000 ? (Number(i.grams) / 1000) + 'g' : Number(i.grams) + 'mg')
+        : '')
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function writeCart(arr) {
+  try {
+    localStorage.setItem(CART_KEY, JSON.stringify(arr || []));
+    // чистимо legacy, щоб не було роздвоєння
+    LEGACY_KEYS.forEach((k) => localStorage.removeItem(k));
+  } catch {}
+}
+
+// одноразова міграція при першому завантаженні
+(function migrateLegacyCartOnce() {
+  try {
+    if (localStorage.getItem(CART_KEY)) return;
+    for (const k of LEGACY_KEYS) {
+      const legacy = localStorage.getItem(k);
+      if (legacy && legacy !== '[]') {
+        localStorage.setItem(CART_KEY, legacy);
+        // не видаляю одразу — нехай writeCart() прибере
+        break;
+      }
+    }
+  } catch {}
+})();
 
