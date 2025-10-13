@@ -351,9 +351,30 @@ function updateCartBadge(arr) {
 
 function addToCart(name, sku, grams, price, display) {
   const cart = readCart();
-  const idx = cart.findIndex(i => i.sku === sku && Number(i.grams) === Number(grams) && Number(i.price) === Number(price));
-  if (idx >= 0) cart[idx].count = Number(cart[idx].count || 1) + 1;
-  else cart.push({ name, sku, grams: Number(grams) || 0, price: Number(price) || 0, display: display || null, count: 1, unit: 'pack' });
+  
+  // КРИТИЧНО: grams має бути в мг (не множити на 1000!)
+  const gramsInMg = Number(grams) || 0;
+  
+  const idx = cart.findIndex(i => 
+    i.sku === sku && 
+    Number(i.grams) === gramsInMg && 
+    Number(i.price) === Number(price)
+  );
+  
+  if (idx >= 0) {
+    cart[idx].count = Number(cart[idx].count || 1) + 1;
+  } else {
+    cart.push({ 
+      name, 
+      sku, 
+      grams: gramsInMg,  // ← вже в мг
+      price: Number(price) || 0, 
+      display: display || null, 
+      count: 1, 
+      unit: 'pack' 
+    });
+  }
+  
   writeCart(cart);
 }
 
@@ -370,7 +391,15 @@ function mountAddToCartButtons() {
         card?.querySelector('.product-title')?.textContent ||
         btn.dataset.name || 'Unknown';
       const sku = btn.dataset.sku || card?.dataset.sku || 'sku-unknown';
-      const grams = parseFloat(btn.dataset.grams || '0') || 0;
+      // btn.dataset.grams вже містить мг (100, 500, 1000)
+let grams = parseFloat(btn.dataset.grams || '0') || 0;
+
+// Якщо display є "100mg", використовуємо його як джерело правди
+const display = btn.dataset.display || '';
+if (display) {
+  const mgFromDisplay = parseQtyToMg(display);
+  if (mgFromDisplay) grams = mgFromDisplay;
+}
       const price = parseFloat(btn.dataset.price || '0') || 0;
       const display = btn.dataset.display || '';
 
