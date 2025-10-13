@@ -30,6 +30,13 @@ function initializeApp() {
   initContactFormResend(); // сабміт форми через ваш бекенд/серверлес із Resend
   // Back-compat helpers some code expects:
   try { updateContactLinks(); } catch {}
+  try {
+  const raw = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
+  if (Array.isArray(raw) && raw.some(i => Number(i.grams) > 100000)) {
+    localStorage.removeItem('isrib_cart');
+  }
+} catch {}
+
 }
 
 /* ========================= HEADER / NAV ========================= */
@@ -510,6 +517,13 @@ function initCheckoutForm() {
 
   const submitBtn = document.getElementById('submitOrderBtn');
 
+  // helper: "100mg" | "1 g" → mg (number)
+  function parseQtyToMgLabel(s) {
+    const t = String(s || '').toLowerCase();
+    const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
+    return t.includes('g') ? Math.round(n * 1000) : Math.round(n);
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -520,7 +534,7 @@ function initCheckoutForm() {
     const gotcha = form.querySelector('input[name="_gotcha"]')?.value || '';
     if (gotcha) return;
 
-    // 🔒 Заборона сабміту з пустим кошиком
+    // заборона сабміту з пустим кошиком
     const cartNow = readCart();
     if (!cartNow.length) {
       if (msg) {
@@ -555,34 +569,27 @@ function initCheckoutForm() {
       return;
     }
 
-    // зчитуємо кошик
+    // кошик → нормалізовані items (mg за пачку беремо з display)
     const cart = normalizeCartUnits(readCart()); // [{name, sku, grams, display, price, count}, ...]
-    function parseQtyToMgLabel(s){
-  const t = String(s||'').toLowerCase();
-  const n = parseFloat(t.replace(/[^0-9.]/g,'')) || 0;
-  return t.includes('g') ? Math.round(n*1000) : Math.round(n);
-}
+    const items = cart.map(i => {
+      const mgFromLabel = parseQtyToMgLabel(i.display);
+      const mgPerPack   = mgFromLabel || Number(i.grams || 0);
+      return {
+        name:    i.name,
+        sku:     i.sku || i.id || '',
+        qty:     Number(i.count || 1),
+        price:   Number(i.price || 0),
+        grams:   mgPerPack, // mg у 1 пачці — джерело правди
+        display: i.display || (mgPerPack ? (mgPerPack >= 1000 ? (mgPerPack / 1000) + 'g' : mgPerPack + 'mg') : '')
+      };
+    });
 
-const items = cart.map(i => {
-  const mgFromLabel = parseQtyToMgLabel(i.display);
-  // якщо чомусь лейбла нема — підстрахуємось старим полем
-  const mgPerPack = mgFromLabel || Number(i.grams || 0);
-  return {
-    name:    i.name,
-    sku:     i.sku || i.id || '',
-    qty:     Number(i.count || 1),
-    price:   Number(i.price || 0),
-    grams:   mgPerPack,       // <-- тепер це точно mg за пачку
-    display: i.display || (mgPerPack ? (mgPerPack>=1000 ? (mgPerPack/1000)+'g' : mgPerPack+'mg') : '')
-  };
-});
-
-    // розрахунок сум — 🔸 FREE SHIPPING
+    // суми (FREE shipping)
     const subtotal = items.reduce((sum, it) => sum + it.qty * it.price, 0);
     const shipping = 0;
     const total    = subtotal;
 
-    // payload для бекенду
+    // payload
     const payload = {
       firstName, lastName, email, country, region, city, postal, address,
       messenger, handle, notes,
@@ -590,7 +597,7 @@ const items = cart.map(i => {
       items, subtotal, shipping, total
     };
 
-    // UI: заблокуємо кнопку на час відправки
+    // блокування кнопки
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.setAttribute('aria-disabled', 'true');
@@ -603,7 +610,6 @@ const items = cart.map(i => {
         body: JSON.stringify(payload)
       });
 
-      // ⛑️ Обробка помилок бекенду (422/400/500…)
       if (!res.ok) {
         let errMsg = 'Could not submit. Please check your cart.';
         try {
@@ -616,10 +622,10 @@ const items = cart.map(i => {
         if (msg) { msg.textContent = errMsg; msg.style.color = '#dc2626'; }
         try { showToast?.(errMsg, 'error'); } catch {}
         updateCheckoutSubmitState?.();
-        return; // ❗не редіректимо
+        return;
       }
 
-      // 🔹 GA подія "purchase intent"
+      // GA intent
       try {
         if (typeof gtag === 'function') {
           gtag('event', 'purchase_intent', {
@@ -631,37 +637,26 @@ const items = cart.map(i => {
         }
       } catch {}
 
-      // 🔹 success-URL з параметрами (для GA4 purchase)
-      const orderId = 'ORD-' + Date.now();
-      const first = cart[0] || {};
-      const packLabel = first?.display || (
-        first?.grams
-          ? (first.grams >= 1000 ? (first.grams / 1000) + 'g' : first.grams + 'mg')
-          : ''
-      );
-      function parseQtyToMgLabel(s){
-  const t = String(s||'').toLowerCase();
-  const n = parseFloat(t.replace(/[^0-9.]/g,'')) || 0;
-  return t.includes('g') ? Math.round(n*1000) : Math.round(n);
-}
-const qtyTotal = cart.reduce((n, i) => {
-  const mg = parseQtyToMgLabel(i.display) || Number(i.grams || 0);
-  return n + mg * Number(i.count || 1);
-}, 0);
-const packsSum = cart.reduce((n, i) => n + Number(i.count || 1), 0);
- 
+      // success URL (qty/packs з items, не з cart)
+      const orderId   = 'ORD-' + Date.now();
+      const firstItem = items[0] || {};
+      const packLabel = firstItem.display || (firstItem.grams ? (firstItem.grams >= 1000 ? (firstItem.grams / 1000) + 'g' : firstItem.grams + 'mg') : '');
+
+      const qtyTotal = items.reduce((n, it) => n + (it.grams * it.qty), 0);
+      const packsSum = items.reduce((n, it) => n + it.qty, 0);
+
       const successUrl = `/success.html`
         + `?order_id=${encodeURIComponent(orderId)}`
-        + `&product=${encodeURIComponent(first?.name || 'ISRIB A15')}`
-        + `&sku=${encodeURIComponent(first?.sku || first?.id || 'isrib-a15')}`
+        + `&product=${encodeURIComponent(firstItem.name || 'ISRIB A15')}`
+        + `&sku=${encodeURIComponent(firstItem.sku || 'isrib-a15')}`
         + `&pack=${encodeURIComponent(packLabel || '')}`
-        + `&price=${encodeURIComponent(first?.price || 0)}`
-        + `&packs=${encodeURIComponent(packsSum)}`             // ← ДОДАНО
+        + `&price=${encodeURIComponent(firstItem.price || 0)}`
+        + `&packs=${encodeURIComponent(packsSum)}`
         + `&qty=${encodeURIComponent(qtyTotal)}`
         + `&currency=USD`
         + `&total=${encodeURIComponent(total.toFixed(2))}`;
 
-      // 🔹 очищаємо кошик + перенаправлення
+      // очистка кошика + редірект
       writeCart([]);
       try {
         localStorage.removeItem('cart');
@@ -676,7 +671,6 @@ const packsSum = cart.reduce((n, i) => n + Number(i.count || 1), 0);
       try { showToast?.(human, 'error'); } catch {}
       console.error('[CHECKOUT_ERROR]', err);
     } finally {
-      // повертаємо кнопку до нормального стану
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.setAttribute('aria-disabled', 'false');
