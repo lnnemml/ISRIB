@@ -639,9 +639,16 @@ const items = cart.map(i => {
           ? (first.grams >= 1000 ? (first.grams / 1000) + 'g' : first.grams + 'mg')
           : ''
       );
-      const qtyTotal = cart.reduce((n, i) => n + (Number(i.grams || 0) * Number(i.count || 1)), 0);
-      const packsSum = cart.reduce((n, i) => n + Number(i.count || 1), 0);
-
+      function parseQtyToMgLabel(s){
+  const t = String(s||'').toLowerCase();
+  const n = parseFloat(t.replace(/[^0-9.]/g,'')) || 0;
+  return t.includes('g') ? Math.round(n*1000) : Math.round(n);
+}
+const qtyTotal = cart.reduce((n, i) => {
+  const mg = parseQtyToMgLabel(i.display) || Number(i.grams || 0);
+  return n + mg * Number(i.count || 1);
+}, 0);
+const packsSum = cart.reduce((n, i) => n + Number(i.count || 1), 0);
  
       const successUrl = `/success.html`
         + `?order_id=${encodeURIComponent(orderId)}`
