@@ -307,15 +307,40 @@ function initMobileOptimizations() { /* no-op */ }
 
 /* ============================== CART ============================== */
 
+/* ============================== CART ============================== */
+
+// Глобальна функція нормалізації одиниць виміру
+function normalizeCartUnits(arr) {
+  return (arr || []).map((i) => {
+    let grams = Number(i.grams || 0);
+    // якщо є людський лейбл "100mg/1g" — він найнадійніший
+    if (i.display) {
+      const mgFromLabel = parseQtyToMg(i.display);
+      if (mgFromLabel) grams = mgFromLabel;
+    } else {
+      // fallback: якщо явно бачимо "1000×" — це старий формат, ділимо на 1000
+      if (grams >= 100000) grams = Math.round(grams / 1000);
+    }
+    return { 
+      ...i, 
+      grams,
+      count: Number(i.count || 1),
+      price: Number(i.price || 0)
+    };
+  });
+}
+
 function readCart() {
-  try { return JSON.parse(localStorage.getItem('isrib_cart') || '[]') || []; }
+  try { 
+    const raw = JSON.parse(localStorage.getItem('isrib_cart') || '[]') || [];
+    return normalizeCartUnits(raw); // нормалізуємо одразу при читанні
+  }
   catch { return []; }
 }
 
 function writeCart(arr) {
   localStorage.setItem('isrib_cart', JSON.stringify(arr || []));
 }
-
 function updateCartBadge(arr) {
   const cart = Array.isArray(arr) ? arr : readCart();
   const total = cart.reduce((n, i) => n + (Number(i.count) || 0), 0);
@@ -417,7 +442,7 @@ function renderCheckoutCart(){
   if (!wrap) return;
 
   
-  const cart = normalizeCartUnits(readCart());
+  const cart = readCart(); // вже нормалізовано всередині readCart()
   updateCartBadge(cart);
 
   if (!cart.length){
