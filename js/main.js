@@ -614,7 +614,9 @@ function initCheckoutForm() {
           : ''
       );
       const qtyTotal = cart.reduce((n, i) => n + (Number(i.grams || 0) * Number(i.count || 1)), 0);
+      const packsSum = cart.reduce((n, i) => n + Number(i.count || 1), 0);
 
+ 
       const successUrl = `/success.html`
         + `?order_id=${encodeURIComponent(orderId)}`
         + `&product=${encodeURIComponent(first?.name || 'ISRIB A15')}`
