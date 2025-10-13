@@ -613,7 +613,7 @@ function initCheckoutForm() {
           ? (first.grams >= 1000 ? (first.grams / 1000) + 'g' : first.grams + 'mg')
           : ''
       );
-      const qtyTotal = cart.reduce((n, i) => n + Number(i.count || 1), 0);
+      const qtyTotal = cart.reduce((n, i) => n + (Number(i.grams || 0) * Number(i.count || 1)), 0);
 
       const successUrl = `/success.html`
         + `?order_id=${encodeURIComponent(orderId)}`
