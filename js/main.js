@@ -451,7 +451,9 @@ function renderCheckoutCart(){
 function updateCheckoutSubmitState() {
   const btn = document.getElementById('submitOrderBtn');
   const msg = document.getElementById('formMsg') || document.querySelector('#checkoutForm .form-status');
-  const empty = document.querySelectorAll('#cartList .cart-row').length === 0;
+
+  // головне — читаємо з localStorage (через наш reader)
+  const empty = (readCart().length === 0);
 
   if (btn) {
     btn.disabled = empty;
@@ -462,6 +464,7 @@ function updateCheckoutSubmitState() {
     msg.style.color = empty ? '#dc2626' : '';
   }
 }
+
 
 
 
