@@ -409,7 +409,7 @@ function renderCheckoutCart(){
   const wrap = document.getElementById('cartList');
   if (!wrap) return;
 
-  const cart = readCart();
+  
   const cart = normalizeCartUnits(readCart());
   updateCartBadge(cart);
 
