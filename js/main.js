@@ -380,10 +380,12 @@ function addToCart(name, sku, grams, price, display) {
 
 function mountAddToCartButtons() {
   document.querySelectorAll('.add-to-cart:not([disabled])').forEach(btn => {
-    if (btn._bound) return; btn._bound = true; // захист від дубль-прив'язки
+    if (btn._bound) return; 
+    btn._bound = true;
+    
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      e.stopPropagation(); // щоб клік не «проколювався» до картки
+      e.stopPropagation();
 
       const card = btn.closest('.product-card');
       const name =
@@ -391,24 +393,25 @@ function mountAddToCartButtons() {
         card?.querySelector('.product-title')?.textContent ||
         btn.dataset.name || 'Unknown';
       const sku = btn.dataset.sku || card?.dataset.sku || 'sku-unknown';
-      // btn.dataset.grams вже містить мг (100, 500, 1000)
-let grams = parseFloat(btn.dataset.grams || '0') || 0;
-
-// Якщо display є "100mg", використовуємо його як джерело правди
-const display = btn.dataset.display || '';
-if (display) {
-  const mgFromDisplay = parseQtyToMg(display);
-  if (mgFromDisplay) grams = mgFromDisplay;
-}
-      const price = parseFloat(btn.dataset.price || '0') || 0;
+      
+      // Зчитуємо grams і display
+      let grams = parseFloat(btn.dataset.grams || '0') || 0;
       const display = btn.dataset.display || '';
+      
+      // Якщо display є "100mg", використовуємо його як джерело правди
+      if (display) {
+        const mgFromDisplay = parseQtyToMg(display);
+        if (mgFromDisplay) grams = mgFromDisplay;
+      }
+      
+      const price = parseFloat(btn.dataset.price || '0') || 0;
 
-      // 1) Логіка кошика + UI — спочатку (щоб навіть без GA працювало)
+      // Логіка кошика
       addToCart(name, sku, grams, price, display);
       updateCartBadge?.();
       showToast?.(`Added to cart — ${(display || (grams ? (grams >= 1000 ? (grams/1000)+'g' : grams+'mg') : ''))} for $${price}`);
 
-      // 2) Аналітика — безпечно
+      // Аналітика
       try {
         if (typeof gtag === 'function') {
           gtag('event', 'add_to_cart', {
@@ -420,7 +423,6 @@ if (display) {
         }
       } catch(_) {}
 
-      // 3) Лог внутрішнього трекера (якщо є)
       try { trackEvent?.('add_to_cart_click', { name, sku, grams, price, display }); } catch(_) {}
     }, { passive: false });
   });
