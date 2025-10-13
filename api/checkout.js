@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // без фреймворку — читаємо стрім
+    // --- raw body (без фреймворку) ---
     let raw = '';
     for await (const chunk of req) raw += chunk;
     const data = JSON.parse(raw || '{}');
@@ -45,11 +45,11 @@ export default async function handler(req, res) {
     }
 
     const toNum = (v) => (typeof v === 'number' ? v : Number(v || 0));
-    const norm = (s) => String(s || '').trim();
+    const norm  = (s) => String(s || '').trim();
 
     for (const it of items) {
-      const name = norm(it.name ?? it.title ?? it.id);
-      const qty = toNum(it.qty ?? it.quantity ?? 0);
+      const name  = norm(it.name ?? it.title ?? it.id);
+      const qty   = toNum(it.qty ?? it.quantity ?? 0);
       const price = toNum(it.price);
       if (!name || !Number.isFinite(qty) || qty < 1 || !Number.isFinite(price) || price < 0) {
         return res.status(422).json({ code: 'INVALID_CART_ITEM', error: 'Invalid cart item.' });
@@ -57,8 +57,12 @@ export default async function handler(req, res) {
     }
 
     // ---- ПЕРЕОБЧИСЛЕННЯ СУМ НА СЕРВЕРІ (FREE SHIPPING) ----
-    const getQty = (it) => toNum(it.qty ?? it.quantity ?? 1);
+    const getQty   = (it) => toNum(it.qty ?? it.quantity ?? 1);   // кількість упаковок
     const getPrice = (it) => toNum(it.price);
+    const getGrams = (it) => toNum(it.grams || 0);                // mg у 1 упаковці (у твоєму payload це mg)
+    const fmtUSD   = (n) => `$${Number(n || 0).toFixed(2)}`;
+    const fmtAmount = (mg) => (mg >= 1000 ? `${(mg / 1000)} g` : `${mg} mg`);
+
     const subtotal = items.reduce((s, it) => s + getQty(it) * getPrice(it), 0);
     if (subtotal <= 0) {
       return res.status(422).json({ code: 'INVALID_SUBTOTAL', error: 'Cart total invalid.' });
@@ -66,17 +70,21 @@ export default async function handler(req, res) {
 
     const shipping = 0;
     const total    = subtotal;
-    const fmtUSD = (n) => `$${Number(n || 0).toFixed(2)}`;
 
-    // HTML-табличка з товарами (unit price)
+    // ====== HTML-таблиця (з відображенням ваги) ======
     const itemsRows = items.map(it => {
-      const name  = it.name ?? it.title ?? it.id ?? 'item';
-      const qty   = getQty(it);
-      const price = getPrice(it);
+      const name     = it.name ?? it.title ?? it.id ?? 'item';
+      const packs    = getQty(it);        // кількість упаковок
+      const mg       = getGrams(it);      // mg у 1 упаковці
+      const packSize = it.display || fmtAmount(mg);
+      const totalMg  = mg * packs;
+
       return `<tr>
         <td style="padding:6px 10px;border:1px solid #e5e7eb">${name}</td>
-        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${qty}</td>
-        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">${fmtUSD(price)}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packSize}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packs}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${fmtAmount(totalMg)}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">${fmtUSD(getPrice(it))}</td>
       </tr>`;
     }).join('');
 
@@ -85,11 +93,13 @@ export default async function handler(req, res) {
         <thead>
           <tr>
             <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:left">Item</th>
-            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">Qty</th>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">Pack size</th>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">Packs</th>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">Total amount</th>
             <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">Unit price</th>
           </tr>
         </thead>
-        <tbody>${itemsRows || `<tr><td colspan="3" style="padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280">No items provided</td></tr>`}</tbody>
+        <tbody>${itemsRows || `<tr><td colspan="5" style="padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280">No items provided</td></tr>`}</tbody>
       </table>`;
 
     // Блок підсумків із FREE SHIPPING
@@ -102,7 +112,9 @@ export default async function handler(req, res) {
       </div>`;
 
     const fullName = `${firstName} ${lastName}`.trim();
-    const adminSubject = `Order Request — ${fullName} (${items.length} items, total ${fmtUSD(total)})`;
+    const totalMgAll = items.reduce((s, it) => s + getGrams(it) * getQty(it), 0);
+
+    const adminSubject = `Order Request — ${fullName} (${items.length} items, ${fmtAmount(totalMgAll)} total, total ${fmtUSD(total)})`;
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -147,7 +159,13 @@ Notes:
 ${notes || '-'}
 
 Items:
-${items.map(it => `- ${(it.name || it.title || it.id || 'item')} x${getQty(it)} @ ${fmtUSD(getPrice(it))}`).join('\n')}
+${items.map(it => {
+  const packs = getQty(it);
+  const mg = getGrams(it);
+  const totalMg = mg * packs;
+  const name = it.name || it.title || it.id || 'item';
+  return `- ${name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+}).join('\n')}
 
 Subtotal: ${fmtUSD(subtotal)}
 Shipping: FREE
@@ -172,7 +190,13 @@ Total: ${fmtUSD(total)}
 Thanks for your order request. We’ll get back to you shortly.
 
 Summary:
-${items.map(it => `- ${(it.name || it.title || it.id || 'item')} x${getQty(it)} @ ${fmtUSD(getPrice(it))}`).join('\n')}
+${items.map(it => {
+  const packs = getQty(it);
+  const mg = getGrams(it);
+  const totalMg = mg * packs;
+  const name = it.name || it.title || it.id || 'item';
+  return `- ${name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+}).join('\n')}
 
 Subtotal: ${fmtUSD(subtotal)}
 Shipping: FREE
