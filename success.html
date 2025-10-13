@@ -166,41 +166,57 @@
 <script>
   (function () {
     const q = new URLSearchParams(location.search);
+
     const product = q.get('product') || '';
-    const pack    = q.get('pack') || '';                   
-    const price   = parseFloat(q.get('price') || '0');    
-    const packs   = parseInt(q.get('packs') || '1', 10);   
-    const amountMg= parseFloat(q.get('qty') || '0');       
+    const pack    = q.get('pack') || '';                 // "100mg" | "500mg" | "1g"
+    const price   = parseFloat(q.get('price') || '0');   // ціна за 1 pack
+    const packs   = parseInt(q.get('packs') || '1', 10); // кількість pack'ів
+    let amountMg  = parseFloat(q.get('qty')   || '0');   // total у mg (може бути кривим)
     const totalQS = parseFloat(q.get('total') || '0');
 
-    // форматер mg → "mg"/"g"
-    function fmtAmount(mg){
+    // ---- helpers ----
+    const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
+    const fmtAmount = (mg) => {
       const n = Number(mg || 0);
-      return n >= 1000 ? (n/1000) + ' g' : n + ' mg';
+      return n >= 1000 ? (n / 1000) + ' g' : n + ' mg';
+    };
+    const parseQtyToMgLabel = (s) => {
+      const t = String(s || '').toLowerCase();
+      const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
+      return t.includes('g') ? Math.round(n * 1000) : Math.round(n);
+    };
+
+    // Перевіряємо qty: якщо воно відсутнє/підозріле — перераховуємо з pack × packs
+    const mgPerPack = parseQtyToMgLabel(pack); // mg у одній пачці
+    if (!amountMg || !isFinite(amountMg) || (mgPerPack && amountMg > mgPerPack * packs * 10)) {
+      amountMg = mgPerPack * (isFinite(packs) ? packs : 1);
     }
-    const fmtUSD = (n) => '$' + Number(n || 0).toFixed(2);
 
-    // Беремо суми із query string (ми їх відправляємо з бекенду)
-    const subtotal = (totalQS && !isNaN(totalQS)) ? totalQS : (packs * price);
-    const total    = subtotal; // Shipping FREE
+    // Суми: пріоритезуємо те, що прилетіло у query (?total=...)
+    const subtotal = (isFinite(totalQS) && totalQS > 0) ? totalQS : (price * (isFinite(packs) ? packs : 1));
+    const total    = subtotal; // Shipping = FREE
 
-    
+    // ---- render ----
     if (product || pack || price || packs || amountMg) {
       const box = document.getElementById('summary');
       if (box) box.style.display = 'block';
 
-      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
 
-      set('s-product', product || '—');
-      set('s-pack',    pack    || '—');
-      set('s-packs',   packs   || 1);
-      set('s-amount',  fmtAmount(amountMg));
-      set('s-price',   fmtUSD(price));
-      set('s-subtotal',fmtUSD(subtotal));
-      set('s-total',   fmtUSD(total));
+      set('s-product',  product || '—');
+      set('s-pack',     pack    || '—');
+      set('s-packs',    isFinite(packs) ? packs : 1);
+      set('s-amount',   fmtAmount(amountMg));
+      set('s-price',    fmtUSD(price));
+      set('s-subtotal', fmtUSD(subtotal));
+      set('s-total',    fmtUSD(total));
     }
   })();
 </script>
+
 
 
 <!-- Tawk.to chat (lazy) -->
