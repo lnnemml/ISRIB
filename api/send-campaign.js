@@ -13,7 +13,7 @@ const TEMPLATES = {
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
       <div style="font-size:20px;font-weight:700;color:#0ea5e9;letter-spacing:1px;margin-bottom:12px;">ISRIB.SHOP</div>
-      <h1 style="color:#f8fafc;font-size:28px;font-weight:900;margin:0;letter-spacing:-0.5px;">We've moved</h1>
+      <h1 style="color:#ffffff;font-size:28px;font-weight:900;margin:0;letter-spacing:-0.5px;">We've moved</h1>
     </div>
     <div style="padding:32px 24px;">
       <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
@@ -63,7 +63,7 @@ const TEMPLATES = {
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
       <div style="font-size:20px;font-weight:700;color:#0ea5e9;letter-spacing:1px;margin-bottom:12px;">ISRIB.SHOP</div>
-      <h1 style="color:#f8fafc;font-size:26px;font-weight:900;margin:0;letter-spacing:-0.5px;">Last call</h1>
+      <h1 style="color:#ffffff;font-size:26px;font-weight:900;margin:0;letter-spacing:-0.5px;">Last call</h1>
     </div>
     <div style="padding:32px 24px;">
       <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
