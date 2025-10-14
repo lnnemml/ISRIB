@@ -172,7 +172,7 @@
   (function () {
     const q = new URLSearchParams(location.search);
     
-    // Зчитуємо весь масив товарів
+    // Зчитуємо всі дані з URL
     let items = [];
     try {
       items = JSON.parse(q.get('items') || '[]');
@@ -180,6 +180,9 @@
       console.error('Failed to parse items', e);
     }
     
+    const subtotalQS = parseFloat(q.get('subtotal') || '0');
+    const discountQS = parseFloat(q.get('discount') || '0');
+    const promoQS = q.get('promo') || '';
     const totalQS = parseFloat(q.get('total') || '0');
 
     const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
@@ -188,7 +191,7 @@
       const box = document.getElementById('summary');
       if (box) box.style.display = 'block';
       
-      // Заповнюємо таблицю ВСІМА товарами
+      // Заповнюємо таблицю товарами
       const tbody = document.getElementById('s-items-tbody');
       if (tbody) {
         tbody.innerHTML = items.map(item => `
@@ -201,14 +204,23 @@
         `).join('');
       }
       
-      // Підсумки
-      const subtotal = items.reduce((sum, it) => sum + (it.qty * it.price), 0);
-      const set = (id, val) => { 
-        const el = document.getElementById(id); 
-        if (el) el.textContent = val; 
-      };
-      set('s-subtotal', fmtUSD(subtotal));
-      set('s-total', fmtUSD(totalQS || subtotal));
+      // Підсумки з знижкою
+      const summaryDiv = box.querySelector('.card-body');
+      const existingHr = summaryDiv.querySelector('hr.sep');
+      
+      // Видаляємо старі sum-line елементи
+      summaryDiv.querySelectorAll('.sum-line, .sum-note').forEach(el => el.remove());
+      
+      // Додаємо нові sum-line після <hr>
+      const summaryHTML = `
+        <div class="sum-line"><span>Subtotal</span> <b>${fmtUSD(subtotalQS)}</b></div>
+        ${discountQS > 0 ? `<div class="sum-line" style="color:#10b981;"><span>Discount (${promoQS})</span> <b>−${fmtUSD(discountQS)}</b></div>` : ''}
+        <div class="sum-line"><span>Shipping</span> <b>FREE</b></div>
+        <div class="sum-line grand"><span>Total</span> <b>${fmtUSD(totalQS)}</b></div>
+        <div class="sum-note" style="color:#64748b;margin-top:.35rem;">* Free shipping — limited-time launch offer.</div>
+      `;
+      
+      existingHr.insertAdjacentHTML('afterend', summaryHTML);
     }
   })();
 </script>
