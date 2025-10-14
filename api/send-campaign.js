@@ -12,8 +12,8 @@ const TEMPLATES = {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
-      <img src="https://isrib.shop/images/logo-dark-trimmed.png" alt="ISRIB.shop" style="height:36px;margin-bottom:8px;" />
-      <h1 style="color:#fff;font-size:28px;font-weight:900;margin:12px 0 0 0;letter-spacing:-0.5px;">We've moved</h1>
+           <div style="font-size:20px;font-weight:700;color:#0ea5e9;letter-spacing:1px;margin-bottom:12px;">ISRIB.SHOP</div>
+      <h1 style="color:#f8fafc;font-size:28px;font-weight:900;margin:0;letter-spacing:-0.5px;">We've moved</h1>
     </div>
     <div style="padding:32px 24px;">
       <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
@@ -33,7 +33,7 @@ const TEMPLATES = {
         <p style="color:#92400e;font-size:13px;margin:8px 0 0 0;">15% off — valid 72 hours</p>
       </div>
       <div style="text-align:center;margin:0 0 28px;">
-        <a href="https://isrib.shop/checkout.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email1" style="display:inline-block;background:#000;color:#fff;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Visit ISRIB.shop</a>
+        <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email1" style="display:inline-block;background:#000;color:#fff;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Visit ISRIB.shop</a>
       </div>
       <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;text-align:center;">All compounds fresh-synthesized, worldwide shipping, discreet packaging.</p>
     </div>
@@ -54,8 +54,8 @@ const TEMPLATES = {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
-      <img src="https://isrib.shop/images/logo-dark-trimmed.png" alt="ISRIB.shop" style="height:36px;margin-bottom:8px;" />
-      <h1 style="color:#fff;font-size:26px;font-weight:900;margin:12px 0 0 0;letter-spacing:-0.5px;">Last call</h1>
+      <div style="font-size:20px;font-weight:700;color:#0ea5e9;letter-spacing:1px;margin-bottom:12px;">ISRIB.SHOP</div>
+      <h1 style="color:#f8fafc;font-size:26px;font-weight:900;margin:0;letter-spacing:-0.5px;">Last call</h1>
     </div>
     <div style="padding:32px 24px;">
       <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
@@ -74,7 +74,7 @@ const TEMPLATES = {
         <p style="color:#b91c1c;font-size:13px;margin:0;font-family:Monaco,Courier,monospace;letter-spacing:1px;"><strong>RETURN15</strong> — valid until midnight GMT</p>
       </div>
       <div style="text-align:center;margin:0 0 28px;">
-        <a href="https://isrib.shop/checkout.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email2" style="display:inline-block;background:#000;color:#fff;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order now</a>
+        <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email2" style="display:inline-block;background:#000;color:#fff;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order now</a>
       </div>
       <p style="color:#94a3b8;font-size:14px;line-height:1.6;margin:0;text-align:center;font-style:italic;">If you're not ordering this round, no problem — we'll be here when you need us.</p>
     </div>
@@ -145,7 +145,7 @@ export default async function handler(req, res) {
         const personalizedHtml = personalizeEmail(template.html, customer);
 
         const result = await resend.emails.send({
-          from: 'Alex @ ISRIB Lab <alex@isrib.shop>',
+          from: 'Alex @ ISRIB Shop <alex@isrib.shop>',
           to: customer.email,
           subject: template.subject,
           html: personalizedHtml,
