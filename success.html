@@ -172,7 +172,6 @@
   (function () {
     const q = new URLSearchParams(location.search);
     
-    // Зчитуємо всі дані з URL
     let items = [];
     try {
       items = JSON.parse(q.get('items') || '[]');
@@ -191,7 +190,6 @@
       const box = document.getElementById('summary');
       if (box) box.style.display = 'block';
       
-      // Заповнюємо таблицю товарами
       const tbody = document.getElementById('s-items-tbody');
       if (tbody) {
         tbody.innerHTML = items.map(item => `
@@ -204,23 +202,26 @@
         `).join('');
       }
       
-      // Підсумки з знижкою
-      const summaryDiv = box.querySelector('.card-body');
-      const existingHr = summaryDiv.querySelector('hr.sep');
+      // Оновлюємо підсумки
+      const set = (id, val) => { 
+        const el = document.getElementById(id); 
+        if (el) el.textContent = val; 
+      };
       
-      // Видаляємо старі sum-line елементи
-      summaryDiv.querySelectorAll('.sum-line, .sum-note').forEach(el => el.remove());
+      set('s-subtotal', fmtUSD(subtotalQS));
+      set('s-total', fmtUSD(totalQS));
       
-      // Додаємо нові sum-line після <hr>
-      const summaryHTML = `
-        <div class="sum-line"><span>Subtotal</span> <b>${fmtUSD(subtotalQS)}</b></div>
-        ${discountQS > 0 ? `<div class="sum-line" style="color:#10b981;"><span>Discount (${promoQS})</span> <b>−${fmtUSD(discountQS)}</b></div>` : ''}
-        <div class="sum-line"><span>Shipping</span> <b>FREE</b></div>
-        <div class="sum-line grand"><span>Total</span> <b>${fmtUSD(totalQS)}</b></div>
-        <div class="sum-note" style="color:#64748b;margin-top:.35rem;">* Free shipping — limited-time launch offer.</div>
-      `;
-      
-      existingHr.insertAdjacentHTML('afterend', summaryHTML);
+      // Додаємо рядок зі знижкою якщо є
+      if (discountQS > 0 && promoQS) {
+        const shippingLine = box.querySelector('.sum-line:has(span:contains("Shipping"))');
+        if (shippingLine) {
+          const discountLine = document.createElement('div');
+          discountLine.className = 'sum-line';
+          discountLine.style.color = '#10b981';
+          discountLine.innerHTML = `<span>Discount (${promoQS})</span> <b>−${fmtUSD(discountQS)}</b>`;
+          shippingLine.parentNode.insertBefore(discountLine, shippingLine);
+        }
+      }
     }
   })();
 </script>
