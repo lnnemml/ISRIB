@@ -12,7 +12,7 @@ const TEMPLATES = {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
-      <img src="https://isrib.shop/images/logo-light-trimmed.png" alt="ISRIB.shop" style="height:36px;margin-bottom:8px;" />
+      <img src="https://isrib.shop/images/logo-dark-trimmed.png" alt="ISRIB.shop" style="height:36px;margin-bottom:8px;" />
       <h1 style="color:#fff;font-size:28px;font-weight:900;margin:12px 0 0 0;letter-spacing:-0.5px;">We've moved</h1>
     </div>
     <div style="padding:32px 24px;">
@@ -54,7 +54,7 @@ const TEMPLATES = {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
-      <img src="https://isrib.shop/images/logo-light-trimmed.png" alt="ISRIB.shop" style="height:36px;margin-bottom:8px;" />
+      <img src="https://isrib.shop/images/logo-dark-trimmed.png" alt="ISRIB.shop" style="height:36px;margin-bottom:8px;" />
       <h1 style="color:#fff;font-size:26px;font-weight:900;margin:12px 0 0 0;letter-spacing:-0.5px;">Last call</h1>
     </div>
     <div style="padding:32px 24px;">
