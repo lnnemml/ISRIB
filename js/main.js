@@ -26,6 +26,7 @@ function initializeApp() {
   prepareAddToCartButtons();
   renderCheckoutCart();
   initCheckoutForm();
+  initPromoCode();
   initContactUX();        // показ/приховування product-section, автозаповнення з query string
   initContactFormResend(); // сабміт форми через ваш бекенд/серверлес із Resend
   // Back-compat helpers some code expects:
@@ -565,6 +566,95 @@ function bindCheckoutCartEvents(){
 
 /* ===================== CHECKOUT FORM SUBMIT ===================== */
 
+// --- Promo code logic ---
+function initPromoCode() {
+  const input = document.getElementById('promoCode');
+  const btn = document.getElementById('applyPromoBtn');
+  const msg = document.getElementById('promoMsg');
+  
+  if (!input || !btn) return;
+
+  let appliedPromo = null;
+
+  // Список активних промокодів
+  const PROMO_CODES = {
+    'RETURN15': { discount: 0.15, label: '15% off' },
+    'WELCOME15': { discount: 0.15, label: '15% off' }
+  };
+
+  btn.addEventListener('click', () => {
+    const code = (input.value || '').trim().toUpperCase();
+    
+    if (!code) {
+      msg.textContent = 'Enter a promo code';
+      msg.style.color = '#ef4444';
+      return;
+    }
+
+    if (PROMO_CODES[code]) {
+      appliedPromo = { code, ...PROMO_CODES[code] };
+      msg.textContent = `✓ ${appliedPromo.label} applied`;
+      msg.style.color = '#10b981';
+      input.disabled = true;
+      btn.textContent = 'Applied';
+      btn.disabled = true;
+      
+      // Перераховуємо totals
+      recalcTotals(readCart(), appliedPromo);
+      
+    } else {
+      msg.textContent = 'Invalid code';
+      msg.style.color = '#ef4444';
+      appliedPromo = null;
+    }
+  });
+
+  // Auto-apply from URL parameter (якщо є ?promo=RETURN15)
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlPromo = urlParams.get('promo');
+  if (urlPromo && PROMO_CODES[urlPromo.toUpperCase()]) {
+    input.value = urlPromo.toUpperCase();
+    btn.click();
+  }
+}
+
+// Оновлена функція recalcTotals з підтримкою знижки
+function recalcTotals(cart, promo = null) {
+  const subtotal = cart.reduce((s, it) => s + Number(it.price || 0) * Number(it.count || 1), 0);
+  
+  let discount = 0;
+  if (promo && promo.discount) {
+    discount = subtotal * promo.discount;
+  }
+
+  const shipping = 0;
+  const total = subtotal - discount + shipping;
+
+  const totals = document.getElementById('summaryTotals');
+  if (!totals) return;
+
+  let html = `
+    <div class="sum-line"><span>Subtotal</span><b>${fmtUSD(subtotal)}</b></div>
+  `;
+  
+  if (discount > 0) {
+    html += `<div class="sum-line" style="color:#10b981;">
+      <span>Discount (${promo.label})</span><b>−${fmtUSD(discount)}</b>
+    </div>`;
+  }
+  
+  html += `
+    <div class="sum-line"><span>Shipping</span><b>FREE</b></div>
+    <div class="sum-line grand"><span>Total</span><b>${fmtUSD(total)}</b></div>
+    <div class="sum-note">* Free shipping — limited-time launch offer.</div>
+  `;
+
+  totals.innerHTML = html;
+}
+
+
+
+
 function initCheckoutForm() {
   const form = document.getElementById('checkoutForm');
   if (!form) return;
@@ -581,7 +671,7 @@ function initCheckoutForm() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-   const msg = document.getElementById('formMsg') || form.querySelector('.form-status');
+    const msg = document.getElementById('formMsg') || form.querySelector('.form-status');
     if (msg) { msg.textContent = ''; msg.style.color = ''; }
 
     // honeypot
@@ -623,6 +713,13 @@ function initCheckoutForm() {
       return;
     }
 
+    // зчитуємо promo code якщо застосований
+    const promoInput = form.querySelector('#promoCode');
+    const promoCode = promoInput?.value?.trim().toUpperCase() || '';
+    const promoMsg = document.getElementById('promoMsg');
+    const hasDiscount = promoMsg?.textContent.includes('applied');
+    const appliedPromoCode = hasDiscount ? promoCode : null;
+
     // кошик → нормалізовані items (mg за пачку беремо з display)
     const cart = normalizeCartUnits(readCart()); // [{name, sku, grams, display, price, count}, ...]
     const items = cart.map(i => {
@@ -638,17 +735,36 @@ function initCheckoutForm() {
       };
     });
 
-    // суми (FREE shipping)
+    // суми з урахуванням знижки
     const subtotal = items.reduce((sum, it) => sum + it.qty * it.price, 0);
-    const shipping = 0;
-    const total    = subtotal;
+    
+    let discount = 0;
+    let discountPercent = 0;
+    if (appliedPromoCode) {
+      // Список активних промокодів (синхронізувати з initPromoCode)
+      const PROMO_CODES = {
+        'RETURN15': 0.15,
+        'WELCOME15': 0.15
+      };
+      discountPercent = PROMO_CODES[appliedPromoCode] || 0;
+      discount = subtotal * discountPercent;
+    }
+
+    const shipping = 0; // FREE shipping
+    const total = subtotal - discount + shipping;
 
     // payload
     const payload = {
       firstName, lastName, email, country, region, city, postal, address,
       messenger, handle, notes,
       _gotcha: gotcha,
-      items, subtotal, shipping, total
+      items, 
+      subtotal, 
+      discount,
+      discountPercent,
+      promoCode: appliedPromoCode,
+      shipping, 
+      total
     };
 
     // блокування кнопки
@@ -686,23 +802,22 @@ function initCheckoutForm() {
             event_category: 'checkout',
             event_label: 'checkout form submitted',
             value: total,
-            currency: 'USD'
+            currency: 'USD',
+            coupon: appliedPromoCode || undefined
           });
         }
       } catch {}
 
       // success URL (qty/packs з items, не з cart)
-      const orderId   = 'ORD-' + Date.now();
-      const firstItem = items[0] || {};
-      const packLabel = firstItem.display || (firstItem.grams ? (firstItem.grams >= 1000 ? (firstItem.grams / 1000) + 'g' : firstItem.grams + 'mg') : '');
+      const orderId = 'ORD-' + Date.now();
 
-      const qtyTotal = items.reduce((n, it) => n + (it.grams * it.qty), 0);
-      const packsSum = items.reduce((n, it) => n + it.qty, 0);
-
-     const successUrl = `/success.html`
-  + `?order_id=${encodeURIComponent(orderId)}`
-  + `&items=${encodeURIComponent(JSON.stringify(items))}`
-  + `&total=${encodeURIComponent(total.toFixed(2))}`;
+      const successUrl = `/success.html`
+        + `?order_id=${encodeURIComponent(orderId)}`
+        + `&items=${encodeURIComponent(JSON.stringify(items))}`
+        + `&subtotal=${encodeURIComponent(subtotal.toFixed(2))}`
+        + `&discount=${encodeURIComponent(discount.toFixed(2))}`
+        + `&promo=${encodeURIComponent(appliedPromoCode || '')}`
+        + `&total=${encodeURIComponent(total.toFixed(2))}`;
 
       // очистка кошика + редірект
       writeCart([]);
@@ -726,7 +841,6 @@ function initCheckoutForm() {
     }
   });
 }
-
 
 
 /* ============================ CONTACT ============================ */
