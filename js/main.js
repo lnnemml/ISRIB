@@ -713,15 +713,20 @@ function initCheckoutForm() {
       return;
     }
 
-    // зчитуємо promo code якщо застосований
-    const promoInput = form.querySelector('#promoCode');
-    const promoCode = promoInput?.value?.trim().toUpperCase() || '';
+    // ⚡ КРИТИЧНО: зчитуємо promo code ПРАВИЛЬНО
+    const promoInput = document.getElementById('promoCode');
     const promoMsg = document.getElementById('promoMsg');
-    const hasDiscount = promoMsg?.textContent.includes('applied');
-    const appliedPromoCode = hasDiscount ? promoCode : null;
+    
+    // Перевіряємо, чи кнопка Apply була натиснута (disabled = true означає код застосований)
+    const applyBtn = document.getElementById('applyPromoBtn');
+    const isPromoApplied = applyBtn && applyBtn.disabled;
+    
+    const appliedPromoCode = isPromoApplied ? (promoInput?.value?.trim().toUpperCase() || '') : '';
 
-    // кошик → нормалізовані items (mg за пачку беремо з display)
-    const cart = normalizeCartUnits(readCart()); // [{name, sku, grams, display, price, count}, ...]
+    console.log('[FRONTEND DEBUG] Promo code:', appliedPromoCode, 'Applied:', isPromoApplied);
+
+    // кошик → нормалізовані items
+    const cart = normalizeCartUnits(readCart());
     const items = cart.map(i => {
       const mgFromLabel = parseQtyToMgLabel(i.display);
       const mgPerPack   = mgFromLabel || Number(i.grams || 0);
@@ -730,7 +735,7 @@ function initCheckoutForm() {
         sku:     i.sku || i.id || '',
         qty:     Number(i.count || 1),
         price:   Number(i.price || 0),
-        grams:   mgPerPack, // mg у 1 пачці — джерело правди
+        grams:   mgPerPack,
         display: i.display || (mgPerPack ? (mgPerPack >= 1000 ? (mgPerPack / 1000) + 'g' : mgPerPack + 'mg') : '')
       };
     });
@@ -741,7 +746,6 @@ function initCheckoutForm() {
     let discount = 0;
     let discountPercent = 0;
     if (appliedPromoCode) {
-      // Список активних промокодів (синхронізувати з initPromoCode)
       const PROMO_CODES = {
         'RETURN15': 0.15,
         'WELCOME15': 0.15
@@ -750,7 +754,7 @@ function initCheckoutForm() {
       discount = subtotal * discountPercent;
     }
 
-    const shipping = 0; // FREE shipping
+    const shipping = 0;
     const total = subtotal - discount + shipping;
 
     // payload
@@ -762,10 +766,12 @@ function initCheckoutForm() {
       subtotal, 
       discount,
       discountPercent,
-      promoCode: appliedPromoCode,
+      promoCode: appliedPromoCode,  // ← ТУТ МАЄ БУТИ КОД
       shipping, 
       total
     };
+
+    console.log('[FRONTEND DEBUG] Payload:', JSON.stringify(payload, null, 2));
 
     // блокування кнопки
     if (submitBtn) {
@@ -808,7 +814,7 @@ function initCheckoutForm() {
         }
       } catch {}
 
-      // success URL (qty/packs з items, не з cart)
+      // success URL
       const orderId = 'ORD-' + Date.now();
 
       const successUrl = `/success.html`
@@ -841,7 +847,6 @@ function initCheckoutForm() {
     }
   });
 }
-
 
 /* ============================ CONTACT ============================ */
 
