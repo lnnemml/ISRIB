@@ -6,6 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeApp() {
+   // ⚡ НОВИЙ КОД: Зберігаємо promo з URL в localStorage
+  (function savePromoFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const promoFromURL = urlParams.get('promo');
+    
+    if (promoFromURL) {
+      // Зберігаємо на 72 години (відповідає терміну дії промокоду)
+      const expiryTime = Date.now() + (72 * 60 * 60 * 1000);
+      localStorage.setItem('pending_promo', JSON.stringify({
+        code: promoFromURL.toUpperCase(),
+        expiry: expiryTime,
+        source: 'email_campaign'
+      }));
+      
+      console.log('[PROMO] Saved from URL:', promoFromURL);
+    }
+  })();
   bindBurgerMenu?.();
   initHeaderBehavior();
   initSmoothScrolling();
@@ -467,8 +484,7 @@ function renderCheckoutCart(){
   const wrap = document.getElementById('cartList');
   if (!wrap) return;
 
-  
-  const cart = readCart(); // вже нормалізовано всередині readCart()
+  const cart = readCart();
   updateCartBadge(cart);
 
   if (!cart.length){
@@ -494,7 +510,9 @@ function renderCheckoutCart(){
     </div>
   `).join('');
 
-  recalcTotals(cart);
+  // ⚡ Передаємо збережений promo якщо є
+  recalcTotals(cart, window._appliedPromo || null);
+  
   bindCheckoutCartEvents();
   updateCheckoutSubmitState();
 }
@@ -516,26 +534,6 @@ function updateCheckoutSubmitState() {
   }
 }
 
-
-
-
-function recalcTotals(cart) {
-  const subtotal = cart.reduce((s, it) => s + Number(it.price || 0) * Number(it.count || 1), 0);
-
-  // 🔸 FREE SHIPPING
-  const shipping = 0;
-  const total = subtotal + shipping;
-
-  const totals = document.getElementById('summaryTotals');
-  if (!totals) return;
-
-  totals.innerHTML = `
-    <div class="sum-line"><span>Subtotal</span><b>${fmtUSD(subtotal)}</b></div>
-    <div class="sum-line"><span>Shipping</span><b>FREE</b></div>
-    <div class="sum-line grand"><span>Total</span><b>${fmtUSD(total)}</b></div>
-    <div class="sum-note">* Free shipping — limited-time launch offer.</div>
-  `;
-}
 
 
 function bindCheckoutCartEvents(){
@@ -576,12 +574,61 @@ function initPromoCode() {
 
   let appliedPromo = null;
 
-  // Список активних промокодів
   const PROMO_CODES = {
     'RETURN15': { discount: 0.15, label: '15% off' },
     'WELCOME15': { discount: 0.15, label: '15% off' }
   };
 
+  // ⚡ АВТОМАТИЧНА АКТИВАЦІЯ З LOCALSTORAGE
+  (function autoApplyPromo() {
+    try {
+      const stored = localStorage.getItem('pending_promo');
+      if (!stored) return;
+      
+      const { code, expiry, source } = JSON.parse(stored);
+      
+      // Перевіряємо термін дії
+      if (Date.now() > expiry) {
+        localStorage.removeItem('pending_promo');
+        return;
+      }
+      
+      // Перевіряємо чи код валідний
+      if (PROMO_CODES[code]) {
+        input.value = code;
+        
+        // Застосовуємо автоматично
+        appliedPromo = { code, ...PROMO_CODES[code] };
+        msg.textContent = `✓ ${appliedPromo.label} applied from email`;
+        msg.style.color = '#10b981';
+        input.disabled = true;
+        btn.textContent = 'Applied';
+        btn.disabled = true;
+        
+        recalcTotals(readCart(), appliedPromo);
+        
+        // Видаляємо з localStorage після активації
+        localStorage.removeItem('pending_promo');
+        
+        // Analytics
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'promo_auto_applied', {
+              event_category: 'checkout',
+              event_label: code,
+              promo_source: source
+            });
+          }
+        } catch(e) {}
+        
+        console.log('[PROMO] Auto-applied:', code);
+      }
+    } catch(e) {
+      console.error('[PROMO] Auto-apply error:', e);
+    }
+  })();
+
+  // Решта коду для manual apply залишається без змін...
   btn.addEventListener('click', () => {
     const code = (input.value || '').trim().toUpperCase();
     
@@ -599,7 +646,6 @@ function initPromoCode() {
       btn.textContent = 'Applied';
       btn.disabled = true;
       
-      // Перераховуємо totals
       recalcTotals(readCart(), appliedPromo);
       
     } else {
@@ -609,13 +655,8 @@ function initPromoCode() {
     }
   });
 
-  // Auto-apply from URL parameter (якщо є ?promo=RETURN15)
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlPromo = urlParams.get('promo');
-  if (urlPromo && PROMO_CODES[urlPromo.toUpperCase()]) {
-    input.value = urlPromo.toUpperCase();
-    btn.click();
-  }
+  // Зберігаємо appliedPromo для використання в checkout
+  window._appliedPromo = appliedPromo;
 }
 
 // Оновлена функція recalcTotals з підтримкою знижки
@@ -713,15 +754,15 @@ function initCheckoutForm() {
       return;
     }
 
-    // ⚡ КРИТИЧНО: зчитуємо promo code ПРАВИЛЬНО
+    // ⚡ КРИТИЧНО: зчитуємо promo code (включаючи збережений з localStorage)
     const promoInput = document.getElementById('promoCode');
-    const promoMsg = document.getElementById('promoMsg');
-    
-    // Перевіряємо, чи кнопка Apply була натиснута (disabled = true означає код застосований)
     const applyBtn = document.getElementById('applyPromoBtn');
-    const isPromoApplied = applyBtn && applyBtn.disabled;
     
-    const appliedPromoCode = isPromoApplied ? (promoInput?.value?.trim().toUpperCase() || '') : '';
+    // Перевіряємо чи промокод застосований (через UI або автоматично)
+    const isPromoApplied = applyBtn && applyBtn.disabled;
+    const appliedPromoCode = isPromoApplied 
+      ? (promoInput?.value?.trim().toUpperCase() || '') 
+      : (window._appliedPromo?.code || '');
 
     console.log('[FRONTEND DEBUG] Promo code:', appliedPromoCode, 'Applied:', isPromoApplied);
 
@@ -766,7 +807,7 @@ function initCheckoutForm() {
       subtotal, 
       discount,
       discountPercent,
-      promoCode: appliedPromoCode,  // ← ТУТ МАЄ БУТИ КОД
+      promoCode: appliedPromoCode,
       shipping, 
       total
     };
@@ -830,6 +871,7 @@ function initCheckoutForm() {
       try {
         localStorage.removeItem('cart');
         localStorage.removeItem('cartItems');
+        localStorage.removeItem('pending_promo'); // ⚡ Очищаємо збережений promo
       } catch {}
       updateCartBadge([]);
       window.location.href = successUrl;
