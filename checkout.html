@@ -191,7 +191,32 @@
 
             <!-- список позицій -->
             <div id="cartList" class="cart-list"></div>
-
+            
+            <!-- Promo code -->
+<div class="promo-section" style="margin:20px 0;">
+  <div class="form-group">
+    <label for="promoCode">Promo code (optional)</label>
+    <div style="display:flex;gap:8px;">
+      <input 
+        type="text" 
+        id="promoCode" 
+        name="promoCode" 
+        placeholder="RETURN15" 
+        style="flex:1;text-transform:uppercase;"
+        autocomplete="off"
+      />
+      <button 
+        type="button" 
+        id="applyPromoBtn" 
+        class="btn btn-outline"
+        style="white-space:nowrap;"
+      >
+        Apply
+      </button>
+    </div>
+    <div id="promoMsg" style="margin-top:8px;font-size:13px;"></div>
+  </div>
+</div>
             <!-- підсумки -->
             <div id="summaryTotals" class="totals" aria-live="polite"></div>
 
