@@ -21,22 +21,20 @@ const parseQtyToMg = (s) => {
 };
 
 // Нормалізуємо одиниці для item: приводимо grams строго до mg.
-// Працює навіть якщо прилетів "старий" формат або тільки display.
 function normalizeItem(it) {
-  let grams = toNum(it.grams || 0);          // очікуємо mg у 1 упаковці
-  const display = it.display || it.quantity || it.qtyLabel || ''; // будь-яка людська мітка
+  let grams = toNum(it.grams || 0);
+  const display = it.display || it.quantity || it.qtyLabel || '';
 
   if (display) {
     const mg = parseQtyToMg(display);
     if (mg) grams = mg;
   } else {
-    // fallback: якщо явно бачимо "мільйонні" значення (старий формат) — ділимо на 1000
     if (grams >= 100000) grams = Math.round(grams / 1000);
   }
   return {
     ...it,
-    grams,                                  // mg у 1 упаковці
-    display: it.display || fmtAmount(grams) // гарантуємо наявність лейбла
+    grams,
+    display: it.display || fmtAmount(grams)
   };
 }
 
@@ -58,7 +56,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // ---- читаємо raw body (щоб не залежати від фреймворку) ----
+    // ---- читаємо raw body ----
     let raw = '';
     for await (const chunk of req) raw += chunk;
     const data = JSON.parse(raw || '{}');
@@ -92,6 +90,14 @@ export default async function handler(req, res) {
     const promoData = promoCodeInput ? validatePromoCode(promoCodeInput) : null;
     const promoCode = promoData ? promoCodeInput.toUpperCase() : null;
 
+    // DEBUG (можна видалити після тестування)
+    console.log('[CHECKOUT DEBUG]', {
+      promoCodeInput,
+      promoData,
+      promoCode,
+      hasPromo: !!promoCode
+    });
+
     // ---- кошик ----
     const itemsInput = Array.isArray(data.items) ? data.items : [];
     if (itemsInput.length === 0) {
@@ -110,19 +116,22 @@ export default async function handler(req, res) {
     });
 
     // ---- суми ----
-    const getQty   = (it) => toNum(it.qty ?? it.quantity ?? 1);   // кількість упаковок
-    const getPrice = (it) => toNum(it.price);
-    const getMgPerPack = (it) => toNum(it.grams || 0);            // mg у 1 упаковці (вже нормалізовано)
+    const getQty       = (it) => toNum(it.qty ?? it.quantity ?? 1);
+    const getPrice     = (it) => toNum(it.price);
+    const getMgPerPack = (it) => toNum(it.grams || 0);
 
     const subtotal = items.reduce((s, it) => s + getQty(it) * getPrice(it), 0);
     if (subtotal <= 0) {
       return res.status(422).json({ code: 'INVALID_SUBTOTAL', error: 'Cart total invalid.' });
     }
 
-    // знижка
+    // ⚡ КРИТИЧНО: знижка розраховується ТУТ
     const discount = promoData ? subtotal * promoData.discount : 0;
-    const shipping = 0; // FREE SHIPPING
+    const shipping = 0;
     const total = subtotal - discount + shipping;
+
+    // DEBUG
+    console.log('[CHECKOUT TOTALS]', { subtotal, discount, total });
 
     // ---- рендер таблиці ----
     const itemsRows = items.map(it => {
@@ -154,7 +163,7 @@ export default async function handler(req, res) {
         <tbody>${itemsRows || `<tr><td colspan="5" style="padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280">No items provided</td></tr>`}</tbody>
       </table>`;
 
-    // totals з знижкою
+    // ⚡ КРИТИЧНО: totalsBlockHtml формується ПІСЛЯ розрахунку discount
     const totalsBlockHtml = `
       <div style="margin-top:10px">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Subtotal</span><b>${fmtUSD(subtotal)}</b></div>
