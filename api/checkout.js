@@ -150,32 +150,38 @@ export default async function handler(req, res) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // ---- лист адміну ----
-    const adminHtml = `
-      <h2>New Checkout Request</h2>
-      <p><b>Name:</b> ${fullName}<br>
-         <b>Email:</b> ${email}<br>
-         <b>Country:</b> ${country}${region ? `, ${region}` : ''}<br>
-         <b>City:</b> ${city}<br>
-         <b>Postal:</b> ${postal}<br>
-         <b>Address:</b> ${address}
-      </p>
-      <p><b>Messenger:</b> ${messenger || '-'}<br>
-         <b>Handle/Phone:</b> ${handle || '-'}
-      </p>
-      <p><b>Notes:</b><br>${(notes || '-').replace(/\n/g,'<br>')}</p>
-      <h3>Items</h3>
-      ${itemsTable}
-      ${totalsBlockHtml}
-    `;
+// ---- лист адміну ----
+const adminHtml = `
+  <h2>New Checkout Request</h2>
+  <p><b>Name:</b> ${fullName}<br>
+     <b>Email:</b> ${email}<br>
+     <b>Country:</b> ${country}${region ? `, ${region}` : ''}<br>
+     <b>City:</b> ${city}<br>
+     <b>Postal:</b> ${postal}<br>
+     <b>Address:</b> ${address}
+  </p>
+  <p><b>Messenger:</b> ${messenger || '-'}<br>
+     <b>Handle/Phone:</b> ${handle || '-'}
+  </p>
+  <p><b>Notes:</b><br>${(notes || '-').replace(/\n/g,'<br>')}</p>
+  <h3>Items</h3>
+  ${itemsTable}
+  ${totalsBlockHtml}
+`;
 
-    await resend.emails.send({
-      from: process.env.RESEND_FROM,
-      to:    [process.env.RESEND_TO, process.env.RESEND_TO_EXTRA],
-      reply_to: email,
-      subject: adminSubject,
-      html: adminHtml,
-      text:
+// ---- надсилання на кілька адрес ----
+const recipients = [
+  process.env.RESEND_TO,
+  process.env.RESEND_TO_EXTRA
+].filter(Boolean);
+
+await resend.emails.send({
+  from: process.env.RESEND_FROM,           // ISRIB Orders <noreply@isrib.shop>
+  to: recipients,                          // Gmail + ProtonMail
+  reply_to: email,
+  subject: adminSubject,
+  html: adminHtml,
+  text:
 `New Checkout Request
 
 Name: ${fullName}
@@ -202,20 +208,20 @@ Subtotal: ${fmtUSD(subtotal)}
 Shipping: FREE
 Total: ${fmtUSD(total)}
 * Free shipping — limited-time launch offer.`
-    });
+});
 
-    // ---- підтвердження клієнту ----
-    await resend.emails.send({
-      from: process.env.RESEND_FROM,
-      to:   [email],
-      subject: `We received your order request — ISRIB.shop`,
-      html: `<p>Hi ${firstName || ''},</p>
-             <p>Thanks for your order request. We’ll review availability and payment options and get back to you via email${messenger ? ` or ${messenger}` : ''} shortly.</p>
-             <p><b>Summary:</b></p>
-             ${itemsTable}
-             ${totalsBlockHtml}
-             <p style="color:#6b7280;margin-top:10px">For research use only. Not for human consumption.</p>`,
-      text:
+   // ---- підтвердження клієнту ----
+await resend.emails.send({
+  from: process.env.RESEND_FROM,                  // ISRIB Orders <noreply@isrib.shop>
+  to: email,                                      // надсилається клієнту
+  subject: `We received your order request — ISRIB.shop`,
+  html: `<p>Hi ${firstName || ''},</p>
+         <p>Thanks for your order request. We’ll review availability and payment options and get back to you via email${messenger ? ` or ${messenger}` : ''} shortly.</p>
+         <p><b>Summary:</b></p>
+         ${itemsTable}
+         ${totalsBlockHtml}
+         <p style="color:#6b7280;margin-top:10px">For research use only. Not for human consumption.</p>`,
+  text:
 `Hi ${firstName || ''},
 
 Thanks for your order request. We’ll get back to you shortly.
@@ -225,7 +231,7 @@ ${items.map(it => {
   const packs = getQty(it);
   const mg = getMgPerPack(it);
   const totalMg = mg * packs;
-  return `- ${it.name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+  return \`- ${it.name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}\`;
 }).join('\n')}
 
 Subtotal: ${fmtUSD(subtotal)}
@@ -234,14 +240,16 @@ Total: ${fmtUSD(total)}
 * Free shipping — limited-time launch offer.
 
 For research use only. Not for human consumption.`
-    });
+});
 
-    return res.status(200).json({ ok: true });
-  } catch (e) {
-    console.error('Checkout error:', e);
-    return res.status(500).json({ error: e?.message || 'Internal Error' });
-  }
+// ---- завершення ----
+return res.status(200).json({ ok: true });
+} catch (e) {
+  console.error('Checkout error:', e);
+  return res.status(500).json({ error: e?.message || 'Internal Error' });
 }
+}
+
 
 // Використовуємо raw-body вище
 export const config = { api: { bodyParser: false } };
