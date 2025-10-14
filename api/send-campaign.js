@@ -81,6 +81,7 @@ const TEMPLATES = {
         <ul style="color:#475569;font-size:14px;line-height:1.7;margin:0;padding-left:18px;">
           <li>ISRIB A15 (most ordered)</li>
           <li>ZZL-7 + A15 stacks</li>
+          <li>MPEP for protocol work</li>
         </ul>
       </div>
       <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 24px;">If you're planning experiments this quarter, this is the window — <strong>15% off + free shipping</strong>.</p>
@@ -166,6 +167,8 @@ export default async function handler(req, res) {
           html: personalizedHtml,
           headers: {
             'List-Unsubscribe': '<mailto:isrib.shop@protonmail.com?subject=unsubscribe>',
+            'X-Priority': '1',  // ⚡ ВИСОКИЙ ПРІОРИТЕТ
+            'Importance': 'high'  // ⚡ ВАЖЛИВЕ
           }
         });
 
