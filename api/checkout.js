@@ -143,21 +143,34 @@ export default async function handler(req, res) {
         <div style="color:#6b7280;margin-top:4px;font-size:12px">* Free shipping — limited-time launch offer.</div>
       </div>`;
 
-    const fullName = `${firstName} ${lastName}`.trim();
-    const totalMgAll = items.reduce((s, it) => s + getMgPerPack(it) * getQty(it), 0);
+   const fullName = `${firstName} ${lastName}`.trim();
+const totalMgAll = items.reduce((s, it) => s + getMgPerPack(it) * getQty(it), 0);
 
-    const adminSubject = `Order Request — ${fullName} (${items.length} items, ${fmtAmount(totalMgAll)} total, total ${fmtUSD(total)})`;
+const adminSubject = `Order Request — ${fullName} (${items.length} items, ${fmtAmount(totalMgAll)} total, total ${fmtUSD(total)})`;
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ---- лист адміну на ПЕРШИЙ email ----
-await resend.emails.send({
-  from: process.env.RESEND_FROM,
-  to: process.env.RESEND_TO,
-  reply_to: email,
-  subject: adminSubject,
-  html: adminHtml,
-  text: `New Checkout Request
+// ---- HTML для листа адміну ----
+const adminHtml = `
+  <h2>New Checkout Request</h2>
+  <p><b>Name:</b> ${fullName}<br>
+     <b>Email:</b> ${email}<br>
+     <b>Country:</b> ${country}${region ? `, ${region}` : ''}<br>
+     <b>City:</b> ${city}<br>
+     <b>Postal:</b> ${postal}<br>
+     <b>Address:</b> ${address}
+  </p>
+  <p><b>Messenger:</b> ${messenger || '-'}<br>
+     <b>Handle/Phone:</b> ${handle || '-'}
+  </p>
+  <p><b>Notes:</b><br>${(notes || '-').replace(/\n/g,'<br>')}</p>
+  <h3>Items</h3>
+  ${itemsTable}
+  ${totalsBlockHtml}
+`;
+
+// ---- текстова версія для листа адміну ----
+const adminText = `New Checkout Request
 
 Name: ${fullName}
 Email: ${email}
@@ -182,7 +195,16 @@ ${items.map(it => {
 Subtotal: ${fmtUSD(subtotal)}
 Shipping: FREE
 Total: ${fmtUSD(total)}
-* Free shipping — limited-time launch offer.`
+* Free shipping — limited-time launch offer.`;
+
+// ---- лист адміну на ПЕРШИЙ email ----
+await resend.emails.send({
+  from: process.env.RESEND_FROM,
+  to: process.env.RESEND_TO,
+  reply_to: email,
+  subject: adminSubject,
+  html: adminHtml,
+  text: adminText
 });
 
 // ---- лист адміну на ДРУГИЙ email (якщо налаштований) ----
@@ -193,32 +215,7 @@ if (process.env.RESEND_TO_EXTRA) {
     reply_to: email,
     subject: adminSubject,
     html: adminHtml,
-    text: `New Checkout Request
-
-Name: ${fullName}
-Email: ${email}
-Country: ${country}${region ? `, ${region}` : ''}
-City: ${city}
-Postal: ${postal}
-Address: ${address}
-Messenger: ${messenger || '-'}
-Handle/Phone: ${handle || '-'}
-
-Notes:
-${notes || '-'}
-
-Items:
-${items.map(it => {
-  const packs = getQty(it);
-  const mg = getMgPerPack(it);
-  const totalMg = mg * packs;
-  return `- ${it.name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
-}).join('\n')}
-
-Subtotal: ${fmtUSD(subtotal)}
-Shipping: FREE
-Total: ${fmtUSD(total)}
-* Free shipping — limited-time launch offer.`
+    text: adminText
   });
 }
 
