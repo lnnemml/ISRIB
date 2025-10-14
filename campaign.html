@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Campaign Manager — ISRIB</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 800px;
+      width: 100%;
+      padding: 40px;
+    }
+    h1 { font-size: 28px; margin-bottom: 10px; color: #1e293b; }
+    .subtitle { color: #64748b; margin-bottom: 30px; }
+    .section { margin-bottom: 30px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; color: #334155; }
+    input[type="password"], select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    textarea { min-height: 200px; font-family: monospace; }
+    .btn {
+      background: #000;
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: #333; transform: translateY(-2px); }
+    .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    .progress {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      display: none;
+    }
+    .progress.show { display: block; }
+    .log { 
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+    .success { color: #10b981; font-weight: 600; }
+    .error { color: #ef4444; font-weight: 600; }
+    .warning { 
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      color: #92400e;
+    }
+    .example {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #64748b;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📧 Email Campaign Manager</h1>
+    <p class="subtitle">Send ISRIB relaunch emails to customers</p>
+
+    <div class="warning">
+      ⚠️ <strong>Free tier limit:</strong> Maximum 100 emails per batch. Split your list if needed.
+    </div>
+
+    <form id="campaignForm">
+      <!-- Secret Key -->
+      <div class="section">
+        <label for="secretKey">Secret Key</label>
+        <input type="password" id="secretKey" placeholder="Enter CAMPAIGN_SECRET from .env" required>
+      </div>
+
+      <!-- Campaign Selection -->
+      <div class="section">
+        <label for="campaignId">Select Email</label>
+        <select id="campaignId" required>
+          <option value="">— Choose —</option>
+          <option value="1">Email 1: "We've moved" (with promo code)</option>
+          <option value="2">Email 2: "Last call" (deadline)</option>
+        </select>
+      </div>
+
+      <!-- Customer List -->
+      <div class="section">
+        <label for="customerList">Customer List (JSON format)</label>
+        <textarea id="customerList" placeholder='[
+  {"email": "john@example.com", "firstName": "John"},
+  {"email": "jane@example.com", "firstName": "Jane"}
+]' required></textarea>
+        <div class="example">
+          Example format:<br>
+          [{"email": "test@example.com", "firstName": "Test"}]
+        </div>
+      </div>
+
+      <button type="submit" class="btn" id="sendBtn">Send Campaign</button>
+    </form>
+
+    <div class="progress" id="progress">
+      <h3>Progress</h3>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('campaignForm');
+    const sendBtn = document.getElementById('sendBtn');
+    const progress = document.getElementById('progress');
+    const log = document.getElementById('log');
+
+    function addLog(message, type = 'info') {
+      const entry = document.createElement('div');
+      entry.className = type;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const secretKey = document.getElementById('secretKey').value.trim();
+      const campaignId = document.getElementById('campaignId').value;
+      const customerListRaw = document.getElementById('customerList').value.trim();
+
+      // Parse customers
+      let customers;
+      try {
+        customers = JSON.parse(customerListRaw);
+      } catch (error) {
+        alert('Invalid JSON format in customer list');
+        return;
+      }
+
+      if (!Array.isArray(customers) || customers.length === 0) {
+        alert('Customer list must be a non-empty array');
+        return;
+      }
+
+      if (customers.length > 100) {
+        alert('Maximum 100 emails per batch (free tier limit)');
+        return;
+      }
+
+      // Confirm
+      if (!confirm(`Send Email ${campaignId} to ${customers.length} customers?`)) {
+        return;
+      }
+
+      // Show progress
+      progress.classList.add('show');
+      log.innerHTML = '';
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending...';
+
+      addLog(`Starting campaign ${campaignId} for ${customers.length} customers...`, 'info');
+
+      try {
+        const response = await fetch('/api/send-campaign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ secretKey, campaignId, customers })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to send campaign');
+        }
+
+        addLog(`✅ Campaign complete!`, 'success');
+        addLog(`Total: ${result.results.total}`, 'info');
+        addLog(`Sent: ${result.results.sent}`, 'success');
+        addLog(`Failed: ${result.results.failed}`, result.results.failed > 0 ? 'error' : 'info');
+
+        if (result.results.errors.length > 0) {
+          addLog(`Errors:`, 'error');
+          result.results.errors.forEach(err => {
+            addLog(`  ${err.email}: ${err.error}`, 'error');
+          });
+        }
+
+        alert(`Campaign sent! ${result.results.sent}/${result.results.total} emails delivered.`);
+
+      } catch (error) {
+        addLog(`❌ Error: ${error.message}`, 'error');
+        alert(`Error: ${error.message}`);
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send Campaign';
+      }
+    });
+  </script>
+</body>
+</html>
