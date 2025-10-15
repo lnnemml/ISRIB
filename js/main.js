@@ -43,6 +43,7 @@ function initializeApp() {
   prepareAddToCartButtons();
   renderCheckoutCart();
   initBundleWidget();
+  initCheckoutUpsell(); 
   initCheckoutForm();
   initPromoCode();
   initContactUX();        // показ/приховування product-section, автозаповнення з query string
@@ -452,6 +453,8 @@ function addToCart(name, sku, grams, price, display) {
   writeCart(cart);
 }
 
+// Оновіть існуючу функцію mountAddToCartButtons():
+
 function mountAddToCartButtons() {
   document.querySelectorAll('.add-to-cart:not([disabled])').forEach(btn => {
     if (btn._bound) return; 
@@ -462,17 +465,12 @@ function mountAddToCartButtons() {
       e.stopPropagation();
 
       const card = btn.closest('.product-card');
-      const name =
-        card?.querySelector('.product-name')?.textContent ||
-        card?.querySelector('.product-title')?.textContent ||
-        btn.dataset.name || 'Unknown';
+      const name = card?.querySelector('.product-name')?.textContent || btn.dataset.name || 'Unknown';
       const sku = btn.dataset.sku || card?.dataset.sku || 'sku-unknown';
       
-      // Зчитуємо grams і display
       let grams = parseFloat(btn.dataset.grams || '0') || 0;
       const display = btn.dataset.display || '';
       
-      // Якщо display є "100mg", використовуємо його як джерело правди
       if (display) {
         const mgFromDisplay = parseQtyToMg(display);
         if (mgFromDisplay) grams = mgFromDisplay;
@@ -480,12 +478,14 @@ function mountAddToCartButtons() {
       
       const price = parseFloat(btn.dataset.price || '0') || 0;
 
-      // Логіка кошика
       addToCart(name, sku, grams, price, display);
       updateCartBadge?.();
-      showToast?.(`Added to cart — ${(display || (grams ? (grams >= 1000 ? (grams/1000)+'g' : grams+'mg') : ''))} for $${price}`);
+      showToast?.(`Added to cart — ${display || (grams >= 1000 ? (grams/1000)+'g' : grams+'mg')} for $${price}`);
 
-      // Аналітика
+      // ⚡ НОВИЙ КОД: показуємо upsell popup
+      setTimeout(() => showUpsellPopup(sku), 800);
+
+      // Analytics
       try {
         if (typeof gtag === 'function') {
           gtag('event', 'add_to_cart', {
@@ -496,8 +496,6 @@ function mountAddToCartButtons() {
           });
         }
       } catch(_) {}
-
-      try { trackEvent?.('add_to_cart_click', { name, sku, grams, price, display }); } catch(_) {}
     }, { passive: false });
   });
 }
