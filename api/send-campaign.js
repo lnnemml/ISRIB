@@ -46,7 +46,7 @@ const TEMPLATES = {
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">If you're planning experiments this quarter, this is the window (15% off + worldwide shipping included).</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Order on isrib.shop</a></p>
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;font-style:italic;">Not ordering this round? No problem — we'll be here when you need us.</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Alex<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
     <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
       <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Worldwide shipping • Verified COA</p>
       <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="mailto:isrib.shop@protonmail.com?subject=Unsubscribe" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
@@ -132,13 +132,13 @@ export default async function handler(req, res) {
         const personalizedSubject = personalizeSubject(template.subject, customer);
 
         const result = await resend.emails.send({
-          from: 'Danylo from ISRIB <danylo@isrib.shop>',
+          from: 'Danylo from ISRIB <isrib.shop@protonmail.com>',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
           
-          // ✅ Replies приходять на danylo@isrib.shop
-          replyTo: 'danylo@isrib.shop',
+          // ✅ Replies приходять у ваш ProtonMail
+          replyTo: 'isrib.shop@protonmail.com',
           
           headers: {
             'List-Unsubscribe': '<mailto:isrib.shop@protonmail.com?subject=unsubscribe>',
