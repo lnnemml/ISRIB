@@ -460,6 +460,59 @@ function updateBundleOffer(card, mainSku) {
       updateCartBadge();
     });
   }
+
+  // ⭐ НОВИЙ КОД: Кастомний checkbox
+  const checkbox = bundleCard.querySelector('#bundle-zzl7');
+  const checkMark = bundleCard.querySelector('.bundle-item.upsell .bundle-check');
+
+  if (checkbox && checkMark) {
+    // Початковий стан
+    if (checkbox.checked) {
+      checkMark.classList.add('checked');
+    } else {
+      checkMark.classList.remove('checked');
+    }
+    
+    // Видаляємо старі listeners (clone trick)
+    const newCheckbox = checkbox.cloneNode(true);
+    checkbox.parentNode.replaceChild(newCheckbox, checkbox);
+    
+    // Оновлюємо посилання на checkMark після можливої заміни DOM
+    const freshCheckMark = bundleCard.querySelector('.bundle-item.upsell .bundle-check');
+    
+    // Event listener для toggle
+    newCheckbox.addEventListener('change', () => {
+      freshCheckMark.classList.toggle('checked', newCheckbox.checked);
+      
+      // Динамічне оновлення ціни та кнопки
+      const currentTotal = newCheckbox.checked ? bundleTotal : mainPrice;
+      const currentDiscount = newCheckbox.checked ? discount : 0;
+      
+      const freshTotalEl = document.getElementById('bundleTotal');
+      if (freshTotalEl) {
+        freshTotalEl.textContent = `$${currentTotal.toFixed(2)}`;
+      }
+      
+      const freshBtn = document.getElementById('addBundleBtn');
+      if (freshBtn) {
+        const btnText = newCheckbox.checked 
+          ? `🛒 Add Bundle to Cart — $${bundleTotal}`
+          : `🛒 Add ${getProductName(mainSku)} to Cart — $${mainPrice}`;
+        freshBtn.textContent = btnText;
+      }
+      
+      // Оновлюємо savings badge
+      const freshSavings = bundleCard.querySelector('.bundle-savings');
+      if (freshSavings) {
+        if (newCheckbox.checked) {
+          freshSavings.textContent = `Save $${discount} (15% off)`;
+          freshSavings.style.display = 'inline-block';
+        } else {
+          freshSavings.style.display = 'none';
+        }
+      }
+    });
+  }
 }
 
 function getProductName(sku) {
