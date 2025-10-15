@@ -334,50 +334,141 @@ function initMobileOptimizations() { /* no-op */ }
 
 /* ========================= BUNDLE WIDGET ========================= */
 
-function initBundleWidget() {
-  const bundleBtn = document.getElementById('addBundleBtn');
-  const checkbox = document.getElementById('bundle-zzl7');
-  
-  if (!bundleBtn) return;
+/* ========================= BUNDLE WIDGET (Dynamic) ========================= */
 
-  // Динамічне оновлення ціни при toggle checkbox
-  if (checkbox) {
-    checkbox.addEventListener('change', () => {
-      const total = checkbox.checked ? '$85.00' : '$50.00';
-      const btnText = checkbox.checked 
-        ? '🛒 Add Bundle to Cart — $85' 
-        : '🛒 Add ISRIB A15 to Cart — $50';
-      
-      document.getElementById('bundleTotal').textContent = total;
-      bundleBtn.textContent = btnText;
-    });
+function initBundleWidget() {
+  const bundleSection = document.querySelector('.bundle-section');
+  if (!bundleSection) return;
+
+  const card = bundleSection.closest('.product-card, .product-card--order') 
+    || document.querySelector('.product-card--order');
+  
+  if (!card) return;
+
+  const mainSku = card.dataset.sku; // 'isrib-a15' або 'isrib'
+  
+  // Відстежуємо зміну кількості
+  card.addEventListener('click', (e) => {
+    const opt = e.target.closest('.quantity-option');
+    if (!opt) return;
+    
+    // Короткий таймаут щоб datasets встигли оновитися
+    setTimeout(() => updateBundleOffer(card, mainSku), 50);
+  });
+
+  // Початкове відображення
+  updateBundleOffer(card, mainSku);
+}
+
+function updateBundleOffer(card, mainSku) {
+  const activeOpt = card.querySelector('.quantity-option.active');
+  if (!activeOpt) return;
+
+  const mainQty = parseFloat(activeOpt.dataset.grams) || 100;
+  const mainPrice = parseFloat(activeOpt.dataset.price) || 0;
+  const mainDisplay = activeOpt.dataset.quantity || '100mg';
+
+  // Матриця upsell-пропозицій
+  const bundleMatrix = {
+    'isrib-a15': {
+      100: { sku: 'zzl7', name: 'ZZL-7', qty: 100, price: 50, display: '100mg', img: 'images/zzl7-formula.svg' },
+      500: { sku: 'zzl7', name: 'ZZL-7', qty: 500, price: 130, display: '500mg', img: 'images/zzl7-formula.svg' },
+      1000: { sku: 'zzl7', name: 'ZZL-7', qty: 500, price: 130, display: '500mg', img: 'images/zzl7-formula.svg' }
+    },
+    'isrib': {
+      100: { sku: 'isrib-a15', name: 'ISRIB A15', qty: 100, price: 50, display: '100mg', img: 'images/isrib-a15-formula.svg' },
+      500: { sku: 'isrib-a15', name: 'ISRIB A15', qty: 500, price: 130, display: '500mg', img: 'images/isrib-a15-formula.svg' },
+      1000: { sku: 'isrib-a15', name: 'ISRIB A15', qty: 1000, price: 200, display: '1g', img: 'images/isrib-a15-formula.svg' }
+    }
+  };
+
+  const upsell = bundleMatrix[mainSku]?.[mainQty];
+  if (!upsell) return;
+
+  const regularTotal = mainPrice + upsell.price;
+  const discount = Math.round(regularTotal * 0.15);
+  const bundleTotal = regularTotal - discount;
+
+  // Оновлюємо DOM
+  const bundleCard = document.querySelector('.bundle-card');
+  if (!bundleCard) return;
+
+  // Головний продукт
+  const currentItem = bundleCard.querySelector('.bundle-item.current');
+  if (currentItem) {
+    currentItem.querySelector('strong').textContent = getProductName(mainSku);
+    currentItem.querySelector('.bundle-qty').textContent = mainDisplay;
+    currentItem.querySelector('.bundle-price').textContent = `$${mainPrice.toFixed(2)}`;
   }
 
-  bundleBtn.addEventListener('click', () => {
-    // Додаємо основний продукт
-    addToCart('ISRIB A15', 'isrib-a15', 100, 50, '100mg');
+  // Upsell продукт
+  const upsellItem = bundleCard.querySelector('.bundle-item.upsell');
+  if (upsellItem) {
+    const img = upsellItem.querySelector('img');
+    img.src = upsell.img;
+    img.alt = upsell.name;
     
-    // Додаємо upsell якщо вибрано
-    if (checkbox && checkbox.checked) {
-      addToCart('ZZL-7', 'zzl7', 100, 50, '100mg');
-      showToast('Bundle added to cart! 🎉', 'success');
+    upsellItem.querySelector('strong').textContent = upsell.name;
+    upsellItem.querySelector('.bundle-qty').textContent = upsell.display;
+    upsellItem.querySelector('.bundle-price').textContent = `$${upsell.price.toFixed(2)}`;
+  }
+
+  // Total секція
+  const totalSection = bundleCard.querySelector('.bundle-total');
+  if (totalSection) {
+    totalSection.querySelector('.strike').textContent = `$${regularTotal.toFixed(2)}`;
+    const totalEl = document.getElementById('bundleTotal');
+    if (totalEl) totalEl.textContent = `$${bundleTotal.toFixed(2)}`;
+    
+    const savingsEl = totalSection.querySelector('.bundle-savings');
+    if (savingsEl) savingsEl.textContent = `Save $${discount} (15% off)`;
+  }
+
+  // Кнопка
+  const addBtn = document.getElementById('addBundleBtn');
+  if (addBtn) {
+    addBtn.textContent = `🛒 Add Bundle to Cart — $${bundleTotal}`;
+    
+    // Оновлюємо обробник
+    const newBtn = addBtn.cloneNode(true);
+    addBtn.parentNode.replaceChild(newBtn, addBtn);
+    
+    newBtn.addEventListener('click', () => {
+      const checkbox = document.getElementById('bundle-zzl7');
       
-      // Analytics
-      try {
-        if (typeof gtag === 'function') {
-          gtag('event', 'upsell_accepted', {
-            event_category: 'ecommerce',
-            event_label: 'bundle_isrib_zzl7',
-            value: 85
-          });
-        }
-      } catch(e) {}
-    } else {
-      showToast('Added to cart! 🛒', 'success');
-    }
-    
-    updateCartBadge();
-  });
+      // Додаємо головний продукт
+      addToCart(getProductName(mainSku), mainSku, mainQty, mainPrice, mainDisplay);
+      
+      // Додаємо upsell якщо вибрано
+      if (checkbox && checkbox.checked) {
+        addToCart(upsell.name, upsell.sku, upsell.qty, upsell.price, upsell.display);
+        showToast('Bundle added to cart! 🎉', 'success');
+        
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'upsell_accepted', {
+              event_category: 'ecommerce',
+              event_label: `bundle_${mainSku}_${upsell.sku}_${mainDisplay}`,
+              value: bundleTotal
+            });
+          }
+        } catch(e) {}
+      } else {
+        showToast('Added to cart! 🛒', 'success');
+      }
+      
+      updateCartBadge();
+    });
+  }
+}
+
+function getProductName(sku) {
+  const names = {
+    'isrib-a15': 'ISRIB A15',
+    'isrib': 'ISRIB',
+    'zzl7': 'ZZL-7'
+  };
+  return names[sku] || sku;
 }
 
 
