@@ -2517,3 +2517,123 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 .upsell-item.added .add-upsell::before {
   content: '✓ ';
 }
+
+
+/* ============================================
+   POST-ADD UPSELL POPUP
+   ============================================ */
+
+.upsell-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.upsell-popup.show {
+  opacity: 1;
+}
+
+.upsell-popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.upsell-popup-content {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: popupSlideUp 0.3s ease;
+}
+
+@keyframes popupSlideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.upsell-popup-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  line-height: 1;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.upsell-popup-close:hover {
+  color: #1e293b;
+}
+
+.upsell-popup-content h3 {
+  font-size: 24px;
+  font-weight: 900;
+  color: #1e293b;
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.upsell-popup-reason {
+  color: #64748b;
+  font-size: 15px;
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.upsell-popup-product {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.upsell-popup-product strong {
+  display: block;
+  font-size: 18px;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.upsell-popup-product span {
+  color: #0ea5e9;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.upsell-popup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.upsell-popup-actions .btn {
+  width: 100%;
+  justify-content: center;
+}
