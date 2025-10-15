@@ -132,7 +132,7 @@ export default async function handler(req, res) {
         const personalizedSubject = personalizeSubject(template.subject, customer);
 
         const result = await resend.emails.send({
-          from: 'Danylo from ISRIB <orders@isrib.shop>',
+          from: 'Danylo from ISRIB <noreply@isrib.shop>',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
