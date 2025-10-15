@@ -22,7 +22,7 @@ const TEMPLATES = {
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 8px;">Available now:</p>
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• ISRIB A15 (98%+ purity)<br>• ZZL-7 (rapid acting)<br>• ISRIB (original compound)</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Thanks for being a customer,</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Alex<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
     <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
       <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Verified COA • Worldwide shipping</p>
       <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="mailto:isrib.shop@protonmail.com?subject=Unsubscribe" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
@@ -32,7 +32,7 @@ const TEMPLATES = {
 </html>`
   },
   '2': {
-    subject: '{{firstName}}, RETURN15 expires tonight',
+    subject: 'Re: {{firstName}}, we moved to ISRIB.shop',
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -42,7 +42,7 @@ const TEMPLATES = {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
   <div style="max-width:600px;margin:40px auto;padding:0 20px;">
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Just a heads up — your <strong>RETURN15</strong> code expires at midnight GMT tonight.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick reminder — your <strong>RETURN15</strong> code expires at midnight GMT tonight.</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">If you're planning experiments this quarter, this is the window (15% off + worldwide shipping included).</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Order on isrib.shop</a></p>
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;font-style:italic;">Not ordering this round? No problem — we'll be here when you need us.</p>
@@ -132,13 +132,13 @@ export default async function handler(req, res) {
         const personalizedSubject = personalizeSubject(template.subject, customer);
 
         const result = await resend.emails.send({
-          from: 'Alex from ISRIB <alex@isrib.shop>',
+          from: 'Danylo from ISRIB <danylo@isrib.shop>',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
           
-          // ✅ Optional: додайте Reply-To
-          replyTo: 'alex@isrib.shop',
+          // ✅ Replies приходять на danylo@isrib.shop
+          replyTo: 'danylo@isrib.shop',
           
           headers: {
             'List-Unsubscribe': '<mailto:isrib.shop@protonmail.com?subject=unsubscribe>',
