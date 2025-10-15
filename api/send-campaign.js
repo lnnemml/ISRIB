@@ -8,13 +8,37 @@ const TEMPLATES = {
     subject: 'New site — ISRIB.shop is live + FREE shipping',
     html: `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <style>
+    /* Force light mode */
+    :root {
+      color-scheme: light only;
+      supported-color-schemes: light;
+    }
+    /* Prevent dark mode overrides */
+    [data-ogsc] .header-title,
+    [data-ogsb] .header-title {
+      color: #ffffff !important;
+    }
+  </style>
+</head>
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
+    <!-- Header with dark mode protection -->
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
       <div style="font-size:20px;font-weight:700;color:#0ea5e9;letter-spacing:1px;margin-bottom:12px;">ISRIB.SHOP</div>
-      <h1 style="color:#fff;font-size:28px;font-weight:900;margin:0;letter-spacing:-0.5px;">We've moved</h1>
+      <!--[if !mso]><!-->
+      <h1 class="header-title" style="color:#ffffff !important;font-size:28px;font-weight:900;margin:0;letter-spacing:-0.5px;-webkit-text-fill-color:#ffffff;">We've moved</h1>
+      <!--<![endif]-->
+      <!--[if mso]>
+      <h1 style="color:#ffffff;font-size:28px;font-weight:900;margin:0;letter-spacing:-0.5px;">We've moved</h1>
+      <![endif]-->
     </div>
+    
     <div style="padding:32px 24px;">
       <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
       <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 16px;">We've moved to a new platform: <strong style="color:#1e293b;">ISRIB.shop</strong></p>
@@ -23,7 +47,7 @@ const TEMPLATES = {
       <!-- FREE SHIPPING BANNER -->
       <div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);border-radius:8px;padding:18px 20px;margin:0 0 24px;text-align:center;box-shadow:0 4px 12px rgba(16,185,129,0.2);">
         <div style="font-size:28px;line-height:1;margin-bottom:8px;">🚚</div>
-        <div style="color:#fff;font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:0.5px;">FREE WORLDWIDE SHIPPING</div>
+        <div style="color:#ffffff !important;font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:0.5px;-webkit-text-fill-color:#ffffff;">FREE WORLDWIDE SHIPPING</div>
         <div style="color:#d1fae5;font-size:13px;font-weight:500;">on all orders — limited-time launch offer</div>
       </div>
       
@@ -35,16 +59,21 @@ const TEMPLATES = {
           <li>ISRIB — original research compound</li>
         </ul>
       </div>
+      
       <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 20px;">Since you were a previous customer, here's your code:</p>
+      
       <div style="background:#fef3c7;border:2px dashed #f59e0b;padding:20px;text-align:center;border-radius:8px;margin:0 0 24px;">
         <div style="font-family:Monaco,Courier,monospace;font-size:24px;font-weight:bold;color:#92400e;letter-spacing:2px;">RETURN15</div>
         <p style="color:#92400e;font-size:13px;margin:8px 0 0 0;">15% off — valid 72 hours</p>
       </div>
+      
       <div style="text-align:center;margin:0 0 28px;">
-        <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email1" style="display:inline-block;background:#000;color:#fff;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Visit ISRIB.shop</a>
+        <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email1" style="display:inline-block;background:#000000;color:#ffffff !important;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Visit ISRIB.shop</a>
       </div>
+      
       <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;text-align:center;">All compounds fresh-synthesized, <strong>free worldwide shipping</strong>, discreet packaging.</p>
     </div>
+    
     <div style="background:#f8fafc;padding:24px;text-align:center;border-top:1px solid #e5e7eb;">
       <p style="color:#64748b;font-size:13px;margin:0 0 4px;">Research-grade compounds • Verified analysis • Free shipping worldwide</p>
       <p style="color:#94a3b8;font-size:12px;margin:8px 0 12px;">ISRIB Shop | <a href="https://isrib.shop" style="color:#64748b;text-decoration:none;">isrib.shop</a></p>
@@ -58,13 +87,37 @@ const TEMPLATES = {
     subject: 'RETURN15 + FREE shipping expires tonight',
     html: `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <style>
+    /* Force light mode */
+    :root {
+      color-scheme: light only;
+      supported-color-schemes: light;
+    }
+    /* Prevent dark mode overrides */
+    [data-ogsc] .header-title,
+    [data-ogsb] .header-title {
+      color: #ffffff !important;
+    }
+  </style>
+</head>
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;">
+    <!-- Header with dark mode protection -->
     <div style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
       <div style="font-size:20px;font-weight:700;color:#0ea5e9;letter-spacing:1px;margin-bottom:12px;">ISRIB.SHOP</div>
-      <h1 style="color:#fff;font-size:26px;font-weight:900;margin:0;letter-spacing:-0.5px;">Last call</h1>
+      <!--[if !mso]><!-->
+      <h1 class="header-title" style="color:#ffffff !important;font-size:26px;font-weight:900;margin:0;letter-spacing:-0.5px;-webkit-text-fill-color:#ffffff;">Last call</h1>
+      <!--<![endif]-->
+      <!--[if mso]>
+      <h1 style="color:#ffffff;font-size:26px;font-weight:900;margin:0;letter-spacing:-0.5px;">Last call</h1>
+      <![endif]-->
     </div>
+    
     <div style="padding:32px 24px;">
       <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
       <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 20px;">Last call — <strong style="color:#1e293b;">RETURN15</strong> closes at midnight (GMT).</p>
@@ -72,7 +125,7 @@ const TEMPLATES = {
       <!-- FREE SHIPPING BANNER -->
       <div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);border-radius:8px;padding:18px 20px;margin:0 0 24px;text-align:center;box-shadow:0 4px 12px rgba(16,185,129,0.2);">
         <div style="font-size:28px;line-height:1;margin-bottom:8px;">🚚</div>
-        <div style="color:#fff;font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:0.5px;">FREE WORLDWIDE SHIPPING</div>
+        <div style="color:#ffffff !important;font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:0.5px;-webkit-text-fill-color:#ffffff;">FREE WORLDWIDE SHIPPING</div>
         <div style="color:#d1fae5;font-size:13px;font-weight:500;">still active — limited-time launch offer</div>
       </div>
       
@@ -83,16 +136,21 @@ const TEMPLATES = {
           <li>ZZL-7 + A15 stacks</li>
         </ul>
       </div>
+      
       <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 24px;">If you're planning experiments this quarter, this is the window — <strong>15% off + free shipping</strong>.</p>
+      
       <div style="background:#fef2f2;border-left:3px solid #ef4444;padding:16px 20px;margin:0 0 24px;border-radius:6px;">
         <p style="color:#991b1b;font-size:14px;font-weight:600;margin:0 0 4px;">⏰ Code expires tonight</p>
         <p style="color:#b91c1c;font-size:13px;margin:0;font-family:Monaco,Courier,monospace;letter-spacing:1px;"><strong>RETURN15</strong> — valid until midnight GMT</p>
       </div>
+      
       <div style="text-align:center;margin:0 0 28px;">
-        <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email2" style="display:inline-block;background:#000;color:#fff;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order now</a>
+        <a href="https://isrib.shop/products.html?promo=RETURN15&utm_source=email&utm_campaign=relaunch&utm_content=email2" style="display:inline-block;background:#000000;color:#ffffff !important;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;">Order now</a>
       </div>
+      
       <p style="color:#94a3b8;font-size:14px;line-height:1.6;margin:0;text-align:center;font-style:italic;">If you're not ordering this round, no problem — we'll be here when you need us.</p>
     </div>
+    
     <div style="background:#f8fafc;padding:24px;text-align:center;border-top:1px solid #e5e7eb;">
       <p style="color:#64748b;font-size:13px;margin:0 0 4px;">Research-grade compounds • Free shipping worldwide • Verified analysis</p>
       <p style="color:#94a3b8;font-size:12px;margin:8px 0 12px;">ISRIB Shop | <a href="https://isrib.shop" style="color:#64748b;text-decoration:none;">isrib.shop</a></p>
