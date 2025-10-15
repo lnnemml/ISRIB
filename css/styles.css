@@ -2637,3 +2637,56 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   width: 100%;
   justify-content: center;
 }
+
+/* Upsell pricing with discount */
+.upsell-pricing {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.upsell-price-original {
+  text-decoration: line-through;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.upsell-price {
+  color: #10b981;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.upsell-savings {
+  background: #dcfdf7;
+  color: #059669;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.upsell-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 560px) {
+  .upsell-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .upsell-pricing {
+    justify-content: center;
+  }
+  
+  .add-upsell {
+    width: 100%;
+  }
+}
