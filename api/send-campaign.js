@@ -132,12 +132,12 @@ export default async function handler(req, res) {
         const personalizedSubject = personalizeSubject(template.subject, customer);
 
         const result = await resend.emails.send({
-          from: 'Danylo from ISRIB <isrib.shop@protonmail.com>',
+          from: 'Danylo from ISRIB <orders@isrib.shop>',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
           
-          // ✅ Replies приходять у ваш ProtonMail
+          // ✅ Replies йдуть у ваш ProtonMail
           replyTo: 'isrib.shop@protonmail.com',
           
           headers: {
