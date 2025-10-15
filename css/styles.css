@@ -2864,3 +2864,21 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     width: 100%;
   }
 }
+
+/* === Checkout mobile: Order Summary перед формою === */
+@media (max-width: 980px) {
+  .checkout-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Order card (summary) — першим */
+  .order-card {
+    order: 1;
+  }
+  
+  /* Checkout form — другим */
+  .checkout-form {
+    order: 2;
+  }
+}
