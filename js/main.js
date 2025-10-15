@@ -380,7 +380,7 @@ function initBundleWidget() {
   });
 }
 
-/* ============================== CART ============================== */
+
 
 /* ============================== CART ============================== */
 
@@ -830,6 +830,8 @@ function recalcTotals(cart, promo = null) {
 
 /* ========================= CHECKOUT UPSELL ========================= */
 
+/* ========================= CHECKOUT UPSELL ========================= */
+
 function initCheckoutUpsell() {
   const widget = document.getElementById('checkoutUpsell');
   if (!widget) return;
@@ -843,141 +845,214 @@ function initCheckoutUpsell() {
   const hasZZL7 = cartSkus.includes('zzl7');
   const hasISRIB = cartSkus.includes('isrib');
 
-  // 🎯 Матриця upsell (2 опції) залежно від кошика
+  // 🎯 Матриця upsell з ЗНИЖКОЮ 15%
+  const UPSELL_DISCOUNT = 0.15; // 15% знижка на upsell
+  
   const upsellOptions = [];
 
   // --- Логіка для ISRIB A15 в кошику ---
   if (hasA15 && !hasZZL7) {
     if (largestQty >= 1000) {
       // Купив 1g A15 → пропонуємо 500mg ZZL-7
+      const basePrice = 130;
       upsellOptions.push({
-        sku: 'zzl7', name: 'ZZL-7', grams: 500, price: 130, display: '500mg',
+        sku: 'zzl7', name: 'ZZL-7', grams: 500, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '500mg',
         desc: 'Start your ZZL-7 protocol — half-gram pack',
-        img: 'images/zzl7-formula.svg'
+        img: 'images/zzl7-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     } else if (largestQty >= 500) {
       // Купив 500mg A15 → пропонуємо 500mg ZZL-7
+      const basePrice = 130;
       upsellOptions.push({
-        sku: 'zzl7', name: 'ZZL-7', grams: 500, price: 130, display: '500mg',
+        sku: 'zzl7', name: 'ZZL-7', grams: 500, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '500mg',
         desc: 'Match your ISRIB commitment with ZZL-7',
-        img: 'images/zzl7-formula.svg'
+        img: 'images/zzl7-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     } else {
       // Купив 100mg A15 → пропонуємо 100mg ZZL-7
+      const basePrice = 50;
       upsellOptions.push({
-        sku: 'zzl7', name: 'ZZL-7', grams: 100, price: 50, display: '100mg',
+        sku: 'zzl7', name: 'ZZL-7', grams: 100, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '100mg',
         desc: 'Popular stack with ISRIB A15',
-        img: 'images/zzl7-formula.svg'
+        img: 'images/zzl7-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     }
   }
 
-  // Другий варіант: ISRIB Original (якщо його ще немає)
+  // Другий варіант: ISRIB Original (ТІЛЬКИ якщо його ще немає)
   if (hasA15 && !hasISRIB) {
     if (largestQty >= 1000) {
+      const basePrice = 60;
       upsellOptions.push({
-        sku: 'isrib', name: 'ISRIB Original', grams: 500, price: 60, display: '500mg',
+        sku: 'isrib', name: 'ISRIB Original', grams: 500, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '500mg',
         desc: 'Compare both ISRIB analogs side-by-side',
-        img: 'images/isrib-formula.svg'
+        img: 'images/isrib-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     } else if (largestQty >= 500) {
+      const basePrice = 27;
       upsellOptions.push({
-        sku: 'isrib', name: 'ISRIB Original', grams: 100, price: 27, display: '100mg',
+        sku: 'isrib', name: 'ISRIB Original', grams: 100, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '100mg',
         desc: 'Try the original ISRIB compound',
-        img: 'images/isrib-formula.svg'
+        img: 'images/isrib-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
-    } else {
-      // Для 100mg A15 не пропонуємо ISRIB (тільки ZZL-7)
     }
   }
 
   // --- Логіка для ZZL-7 в кошику ---
   if (hasZZL7 && !hasA15) {
     if (largestQty >= 1000) {
+      const basePrice = 130;
       upsellOptions.push({
-        sku: 'isrib-a15', name: 'ISRIB A15', grams: 500, price: 130, display: '500mg',
+        sku: 'isrib-a15', name: 'ISRIB A15', grams: 500, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '500mg',
         desc: 'Boost your stack with ISRIB A15',
-        img: 'images/isrib-a15-formula.svg'
+        img: 'images/isrib-a15-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     } else if (largestQty >= 500) {
+      const basePrice = 130;
       upsellOptions.push({
-        sku: 'isrib-a15', name: 'ISRIB A15', grams: 500, price: 130, display: '500mg',
+        sku: 'isrib-a15', name: 'ISRIB A15', grams: 500, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '500mg',
         desc: 'Complete your cognitive stack',
-        img: 'images/isrib-a15-formula.svg'
+        img: 'images/isrib-a15-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     } else {
+      const basePrice = 50;
       upsellOptions.push({
-        sku: 'isrib-a15', name: 'ISRIB A15', grams: 100, price: 50, display: '100mg',
+        sku: 'isrib-a15', name: 'ISRIB A15', grams: 100, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '100mg',
         desc: 'Enhance effects with ISRIB A15',
-        img: 'images/isrib-a15-formula.svg'
+        img: 'images/isrib-a15-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     }
   }
 
+  // ISRIB Original ТІЛЬКИ якщо немає ZZL7 + великі пакети
   if (hasZZL7 && !hasISRIB && largestQty >= 500) {
+    const basePrice = largestQty >= 1000 ? 60 : 27;
     upsellOptions.push({
-      sku: 'isrib', name: 'ISRIB Original', grams: largestQty >= 1000 ? 500 : 100,
-      price: largestQty >= 1000 ? 60 : 27, display: largestQty >= 1000 ? '500mg' : '100mg',
+      sku: 'isrib', name: 'ISRIB Original', 
+      grams: largestQty >= 1000 ? 500 : 100,
+      originalPrice: basePrice,
+      price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+      display: largestQty >= 1000 ? '500mg' : '100mg',
       desc: 'Add original ISRIB to your protocol',
-      img: 'images/isrib-formula.svg'
+      img: 'images/isrib-formula.svg',
+      savings: Math.round(basePrice * UPSELL_DISCOUNT)
     });
   }
 
   // --- Логіка для ISRIB Original в кошику ---
   if (hasISRIB && !hasA15) {
     if (largestQty >= 1000) {
+      const basePrice = 200;
       upsellOptions.push({
-        sku: 'isrib-a15', name: 'ISRIB A15', grams: 1000, price: 200, display: '1g',
+        sku: 'isrib-a15', name: 'ISRIB A15', grams: 1000, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '1g',
         desc: 'Full upgrade to ultra-potent A15',
-        img: 'images/isrib-a15-formula.svg'
+        img: 'images/isrib-a15-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     } else if (largestQty >= 500) {
+      const basePrice = 130;
       upsellOptions.push({
-        sku: 'isrib-a15', name: 'ISRIB A15', grams: 500, price: 130, display: '500mg',
+        sku: 'isrib-a15', name: 'ISRIB A15', grams: 500, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '500mg',
         desc: 'Upgrade to A15 — 3x more potent',
-        img: 'images/isrib-a15-formula.svg'
+        img: 'images/isrib-a15-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     } else {
+      const basePrice = 50;
       upsellOptions.push({
-        sku: 'isrib-a15', name: 'ISRIB A15', grams: 100, price: 50, display: '100mg',
+        sku: 'isrib-a15', name: 'ISRIB A15', grams: 100, 
+        originalPrice: basePrice,
+        price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+        display: '100mg',
         desc: 'Upgrade to more potent A15 analog',
-        img: 'images/isrib-a15-formula.svg'
+        img: 'images/isrib-a15-formula.svg',
+        savings: Math.round(basePrice * UPSELL_DISCOUNT)
       });
     }
   }
 
   if (hasISRIB && !hasZZL7 && largestQty >= 500) {
+    const basePrice = largestQty >= 1000 ? 130 : 50;
     upsellOptions.push({
-      sku: 'zzl7', name: 'ZZL-7', grams: largestQty >= 1000 ? 500 : 100,
-      price: largestQty >= 1000 ? 130 : 50, display: largestQty >= 1000 ? '500mg' : '100mg',
+      sku: 'zzl7', name: 'ZZL-7', 
+      grams: largestQty >= 1000 ? 500 : 100,
+      originalPrice: basePrice,
+      price: Math.round(basePrice * (1 - UPSELL_DISCOUNT)), 
+      display: largestQty >= 1000 ? '500mg' : '100mg',
       desc: largestQty >= 1000 ? 'Build a complete cognitive stack' : 'Add rapid-acting ZZL-7',
-      img: 'images/zzl7-formula.svg'
+      img: 'images/zzl7-formula.svg',
+      savings: Math.round(basePrice * UPSELL_DISCOUNT)
     });
   }
 
-  // 🚫 Фільтруємо товари, що вже в кошику
-  const filteredUpsells = upsellOptions.filter(u => 
-    !cart.some(c => c.sku === u.sku && c.grams === u.grams)
-  );
+  // 🚫 КРИТИЧНО: Фільтруємо товари що вже є в кошику + ОДИН upsell на SKU
+  const seenSkus = new Set();
+  const filteredUpsells = upsellOptions.filter(u => {
+    // Перевірка 1: чи вже є цей товар у кошику з такою ж кількістю?
+    const alreadyInCart = cart.some(c => c.sku === u.sku && c.grams === u.grams);
+    if (alreadyInCart) return false;
+    
+    // Перевірка 2: чи вже додали upsell з цього SKU?
+    if (seenSkus.has(u.sku)) return false;
+    seenSkus.add(u.sku);
+    
+    return true;
+  });
 
   // 🎨 Рендеримо тільки перші 2 опції
   const topTwo = filteredUpsells.slice(0, 2);
 
   if (topTwo.length === 0) {
-    widget.style.display = 'none'; // Ховаємо, якщо немає upsell
+    widget.style.display = 'none';
     return;
   }
 
-  // Очищаємо попередній контент
   const body = widget.querySelector('.card-body');
   if (!body) return;
 
   body.innerHTML = `
     <h3 class="upsell-title">💡 Complete your order</h3>
-    <p class="upsell-subtitle">Researchers also added:</p>
+    <p class="upsell-subtitle">Researchers also added <strong>with 15% discount:</strong></p>
   `;
 
-  // Генеруємо HTML для кожного upsell
   topTwo.forEach(u => {
     const itemHTML = `
       <div class="upsell-item" 
@@ -991,7 +1066,11 @@ function initCheckoutUpsell() {
           <strong class="upsell-name">${u.name} (${u.display})</strong>
           <p class="upsell-desc">${u.desc}</p>
           <div class="upsell-footer">
-            <span class="upsell-price">$${u.price}</span>
+            <div class="upsell-pricing">
+              <span class="upsell-price-original" style="text-decoration:line-through; color:#94a3b8; font-size:14px; margin-right:8px;">$${u.originalPrice}</span>
+              <span class="upsell-price" style="color:#10b981; font-weight:800;">$${u.price}</span>
+              <span class="upsell-savings" style="background:#dcfdf7; color:#059669; font-size:11px; padding:2px 8px; border-radius:8px; margin-left:8px; font-weight:700;">Save $${u.savings}</span>
+            </div>
             <button class="btn btn-sm btn-outline add-upsell">+ Add</button>
           </div>
         </div>
@@ -1016,28 +1095,24 @@ function initCheckoutUpsell() {
       updateCartBadge();
       renderCheckoutCart();
       
-      // UI feedback
       item.classList.add('added');
       btn.textContent = '✓ Added';
-      showToast(`${name} (${display}) added to cart!`, 'success');
+      showToast(`${name} (${display}) added with 15% discount!`, 'success');
 
-      // Analytics
       try {
         if (typeof gtag === 'function') {
           gtag('event', 'upsell_accepted', {
             event_category: 'ecommerce',
-            event_label: `checkout_upsell_${sku}_${display}`,
+            event_label: `checkout_upsell_${sku}_${display}_discount`,
             value: price
           });
         }
       } catch(e) {}
 
-      // Оновлюємо widget після додавання
       setTimeout(() => initCheckoutUpsell(), 100);
     });
   });
 
-  // Клік по всьому item
   widget.querySelectorAll('.upsell-item').forEach(item => {
     item.addEventListener('click', () => {
       const btn = item.querySelector('.add-upsell');
