@@ -527,6 +527,93 @@ function prepareAddToCartButtons() {
   });
 }
 
+
+
+/* ========================= POST-ADD UPSELL POPUP ========================= */
+
+function showUpsellPopup(justAddedSku) {
+  // Логіка: якщо додали ISRIB A15 → пропонуємо ZZL-7
+  const upsellMap = {
+    'isrib-a15': { name: 'ZZL-7', sku: 'zzl7', price: 50, grams: 100, display: '100mg', reason: 'Popular stack with ISRIB A15' },
+    'zzl7': { name: 'ISRIB A15', sku: 'isrib-a15', price: 50, grams: 100, display: '100mg', reason: 'Enhance effects with ISRIB' },
+    'isrib': { name: 'ISRIB A15', sku: 'isrib-a15', price: 50, grams: 100, display: '100mg', reason: 'Upgrade to more potent A15' }
+  };
+
+  const upsell = upsellMap[justAddedSku];
+  if (!upsell) return;
+
+  // Перевірка: чи вже є в кошику
+  const cart = readCart();
+  if (cart.some(i => i.sku === upsell.sku)) return;
+
+  // Створюємо popup
+  const popup = document.createElement('div');
+  popup.className = 'upsell-popup';
+  popup.innerHTML = `
+    <div class="upsell-popup-overlay"></div>
+    <div class="upsell-popup-content">
+      <button class="upsell-popup-close" aria-label="Close">×</button>
+      <h3>🔥 Complete your stack</h3>
+      <p class="upsell-popup-reason">${upsell.reason}</p>
+      <div class="upsell-popup-product">
+        <strong>${upsell.name}</strong>
+        <span>${upsell.display} • $${upsell.price}</span>
+      </div>
+      <div class="upsell-popup-actions">
+        <button class="btn btn-primary upsell-popup-accept">Add ${upsell.name} for $${upsell.price}</button>
+        <button class="btn btn-outline upsell-popup-decline">No thanks</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+  document.body.style.overflow = 'hidden';
+
+  // Анімація появи
+  setTimeout(() => popup.classList.add('show'), 10);
+
+  // Закриття
+  const close = () => {
+    popup.classList.remove('show');
+    document.body.style.overflow = '';
+    setTimeout(() => popup.remove(), 300);
+  };
+
+  popup.querySelector('.upsell-popup-close').addEventListener('click', close);
+  popup.querySelector('.upsell-popup-overlay').addEventListener('click', close);
+  popup.querySelector('.upsell-popup-decline').addEventListener('click', () => {
+    close();
+    
+    // Analytics
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'upsell_declined', {
+          event_category: 'ecommerce',
+          event_label: `post_add_${upsell.sku}`
+        });
+      }
+    } catch(e) {}
+  });
+
+  popup.querySelector('.upsell-popup-accept').addEventListener('click', () => {
+    addToCart(upsell.name, upsell.sku, upsell.grams, upsell.price, upsell.display);
+    updateCartBadge();
+    showToast(`${upsell.name} added to cart! 🎉`, 'success');
+    close();
+
+    // Analytics
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'upsell_accepted', {
+          event_category: 'ecommerce',
+          event_label: `post_add_${upsell.sku}`,
+          value: upsell.price
+        });
+      }
+    } catch(e) {}
+  });
+}
+
 /* ============================ CHECKOUT ============================ */
 
 
@@ -743,6 +830,74 @@ function recalcTotals(cart, promo = null) {
   totals.innerHTML = html;
 }
 
+
+
+/* ========================= CHECKOUT UPSELL ========================= */
+
+function initCheckoutUpsell() {
+  const widget = document.getElementById('checkoutUpsell');
+  if (!widget) return;
+
+  //Ховаємо товари, що вже в кошику
+  const cart = readCart();
+  const cartSkus = cart.map(i => i.sku);
+
+  widget.querySelectorAll('.upsell-item').forEach(item => {
+    const sku = item.dataset.sku;
+    
+    if (cartSkus.includes(sku)) {
+      item.classList.add('added');
+      item.querySelector('.add-upsell').textContent = 'Added';
+    }
+  });
+
+  // Додавання upsell товару
+  widget.querySelectorAll('.add-upsell').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const item = btn.closest('.upsell-item');
+      
+      const name = item.dataset.name;
+      const sku = item.dataset.sku;
+      const price = parseFloat(item.dataset.price);
+      const grams = parseFloat(item.dataset.grams);
+      const display = item.dataset.display;
+
+      addToCart(name, sku, grams, price, display);
+      updateCartBadge();
+      renderCheckoutCart();
+      
+      // UI feedback
+      item.classList.add('added');
+      btn.textContent = '✓ Added';
+      showToast(`${name} added to cart!`, 'success');
+
+      // Analytics
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'upsell_accepted', {
+            event_category: 'ecommerce',
+            event_label: `checkout_upsell_${sku}`,
+            value: price
+          });
+        }
+      } catch(e) {}
+
+      // Оновлюємо widget
+      setTimeout(() => initCheckoutUpsell(), 100);
+    });
+  });
+
+  // Клік по всьому item
+  widget.querySelectorAll('.upsell-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const btn = item.querySelector('.add-upsell');
+      if (!item.classList.contains('added')) {
+        btn.click();
+      }
+    });
+  });
+}
 
 
 
