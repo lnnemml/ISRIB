@@ -42,6 +42,7 @@ function initializeApp() {
   mountAddToCartButtons();
   prepareAddToCartButtons();
   renderCheckoutCart();
+  initBundleWidget();
   initCheckoutForm();
   initPromoCode();
   initContactUX();        // показ/приховування product-section, автозаповнення з query string
@@ -328,6 +329,55 @@ function initA15OrderCard() {
 
 function initProductFilters() { /* no-op */ }
 function initMobileOptimizations() { /* no-op */ }
+
+
+/* ========================= BUNDLE WIDGET ========================= */
+
+function initBundleWidget() {
+  const bundleBtn = document.getElementById('addBundleBtn');
+  const checkbox = document.getElementById('bundle-zzl7');
+  
+  if (!bundleBtn) return;
+
+  // Динамічне оновлення ціни при toggle checkbox
+  if (checkbox) {
+    checkbox.addEventListener('change', () => {
+      const total = checkbox.checked ? '$85.00' : '$50.00';
+      const btnText = checkbox.checked 
+        ? '🛒 Add Bundle to Cart — $85' 
+        : '🛒 Add ISRIB A15 to Cart — $50';
+      
+      document.getElementById('bundleTotal').textContent = total;
+      bundleBtn.textContent = btnText;
+    });
+  }
+
+  bundleBtn.addEventListener('click', () => {
+    // Додаємо основний продукт
+    addToCart('ISRIB A15', 'isrib-a15', 100, 50, '100mg');
+    
+    // Додаємо upsell якщо вибрано
+    if (checkbox && checkbox.checked) {
+      addToCart('ZZL-7', 'zzl7', 100, 50, '100mg');
+      showToast('Bundle added to cart! 🎉', 'success');
+      
+      // Analytics
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'upsell_accepted', {
+            event_category: 'ecommerce',
+            event_label: 'bundle_isrib_zzl7',
+            value: 85
+          });
+        }
+      } catch(e) {}
+    } else {
+      showToast('Added to cart! 🛒', 'success');
+    }
+    
+    updateCartBadge();
+  });
+}
 
 /* ============================== CART ============================== */
 
