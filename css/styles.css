@@ -2207,3 +2207,207 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 /* Забороняємо «зовнішню смугу» */
 .free-shipping-banner-container{ background: transparent !important; padding: 0 !important; border: 0 !important; }
 
+/* ============================================
+   BUNDLE WIDGET (Frequently Bought Together)
+   ============================================ */
+
+.bundle-section {
+  padding: 60px 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.bundle-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.bundle-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.bundle-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+
+.bundle-subtitle {
+  color: #64748b;
+  font-size: 15px;
+  margin: 0;
+}
+
+.bundle-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.bundle-item {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  min-width: 160px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.bundle-item.current {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+}
+
+.bundle-item.upsell:hover {
+  border-color: #10b981;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.bundle-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.bundle-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.bundle-img {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 12px;
+  display: block;
+  object-fit: contain;
+}
+
+.bundle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bundle-info strong {
+  font-size: 15px;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.bundle-qty {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.bundle-price {
+  font-size: 16px;
+  color: #0ea5e9;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.bundle-plus,
+.bundle-equals {
+  font-size: 24px;
+  font-weight: 700;
+  color: #94a3b8;
+  padding: 0 8px;
+}
+
+.bundle-total {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px dashed #f59e0b;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  min-width: 160px;
+}
+
+.bundle-total-original {
+  font-size: 13px;
+  color: #92400e;
+  margin-bottom: 4px;
+}
+
+.bundle-total-original .strike {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.bundle-total-discounted {
+  font-size: 18px;
+  color: #92400e;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.bundle-total-discounted strong {
+  font-size: 24px;
+  display: block;
+  margin-top: 4px;
+}
+
+.bundle-savings {
+  background: #10b981;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.bundle-actions {
+  text-align: center;
+}
+
+.btn-large {
+  padding: 16px 40px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.bundle-note {
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .bundle-card {
+    padding: 24px;
+  }
+  
+  .bundle-grid {
+    flex-direction: column;
+  }
+  
+  .bundle-plus,
+  .bundle-equals {
+    transform: rotate(90deg);
+  }
+}
