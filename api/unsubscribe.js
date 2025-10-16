@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import unsubscribeStore from '../lib/unsubscribe-store.js';
+import unsubscribeStore from '../lib/unsubscribe-store.js'; 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -22,19 +22,20 @@ export default async function handler(req, res) {
       email = body.email || '';
     }
 
-    email = email.trim().toLowerCase();
+  email = email.trim().toLowerCase();
 
-    if (!email || !email.includes('@')) {
-      return res.status(400).json({ 
-        error: 'Invalid email address' 
-      });
-    }
+if (!email || !email.includes('@')) {
+  return res.status(400).json({ 
+    error: 'Invalid email address' 
+  });
+}
 
-    // ⚡ Додаємо в unsubscribe list
-    unsubscribeStore.add(email);
+// ⚡ ДОДАЙТЕ В REDIS
+await unsubscribeStore.add(email);
 
-    console.log('[Unsubscribe] Total unsubscribed emails:', unsubscribeStore.size());
-
+const totalUnsubscribed = await unsubscribeStore.size();
+console.log('[Unsubscribe] Total unsubscribed emails:', totalUnsubscribed);
+     
     // Підтверджувальний email
     try {
       await resend.emails.send({
