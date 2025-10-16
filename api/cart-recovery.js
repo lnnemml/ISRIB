@@ -15,15 +15,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing data' });
     }
 
-    // ⚡ КРИТИЧНО: Перевірка чи користувач не відписався
-    if (unsubscribeStore.has(email)) {
-      console.log('[Cart Recovery] Email is unsubscribed, skipping:', email);
-      return res.status(200).json({ 
-        ok: true, 
-        skipped: true,
-        message: 'Email is unsubscribed' 
-      });
-    }
+    // ⚡ ДОДАЙТЕ ЦЕЙ БЛОК
+const isUnsubscribed = await unsubscribeStore.has(email);
+
+if (isUnsubscribed) {
+  console.log('[Cart Recovery] Email is unsubscribed, skipping:', email);
+  return res.status(200).json({ 
+    ok: true, 
+    skipped: true,
+    message: 'Email is unsubscribed' 
+  });
+}
 
     const subtotal = cartItems.reduce((s, i) => s + (i.price * i.count), 0);
 
