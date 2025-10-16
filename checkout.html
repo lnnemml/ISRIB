@@ -296,10 +296,43 @@
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
 
-      <script>
-  gtag('event', 'begin_checkout', {
-    event_category: 'checkout',
-    event_label: 'checkout page viewed'
+     // Замість існуючого коду в checkout.html (рядок ~200)
+
+<script>
+  // Чекаємо поки завантажиться кошик
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      try {
+        const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
+        
+        if (cart.length > 0) {
+          const items = cart.map(item => ({
+            item_id: item.sku || 'unknown',
+            item_name: item.name,
+            quantity: item.count || 1,
+            price: item.price || 0,
+            item_variant: item.display || ''
+          }));
+          
+          const total = cart.reduce((sum, i) => 
+            sum + (Number(i.price) * Number(i.count || 1)), 0
+          );
+
+          gtag('event', 'begin_checkout', {
+            currency: 'USD',
+            value: total,
+            items: items
+          });
+
+          console.log('[GA4] Begin checkout sent:', {
+            value: total,
+            items: items.length
+          });
+        }
+      } catch(e) {
+        console.error('[GA4] Begin checkout failed:', e);
+      }
+    }, 500);
   });
 </script>
 </body>
