@@ -25,7 +25,7 @@ const TEMPLATES = {
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
     <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
       <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Verified COA • Worldwide shipping</p>
-      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="mailto:isrib.shop@protonmail.com?subject=Unsubscribe" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="https://isrib.shop/unsubscribe?email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
     </div>
   </div>
 </body>
@@ -49,7 +49,7 @@ const TEMPLATES = {
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
     <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
       <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Worldwide shipping • Verified COA</p>
-      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="mailto:isrib.shop@protonmail.com?subject=Unsubscribe" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="https://isrib.shop/unsubscribe?email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
     </div>
   </div>
 </body>
