@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { addToUnsubscribeList } from './cart-recovery.js';
+import unsubscribeStore from '../lib/unsubscribe-store.js'; // ⚡ ДОДАЙТЕ ЦЕЙ ІМПОРТ
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -30,21 +30,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // ⚡ Додаємо в unsubscribe list (shared з cart-recovery)
-    addToUnsubscribeList(email);
+    // ⚡ Додаємо в unsubscribe list
+    unsubscribeStore.add(email);
 
-    // ⚡ Опціонально: видаляємо з Resend Audience (якщо використовуєте)
-    try {
-      const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
-      if (AUDIENCE_ID) {
-        await resend.contacts.remove({
-          email,
-          audienceId: AUDIENCE_ID
-        });
-      }
-    } catch (e) {
-      console.log('Resend contact removal skipped:', e.message);
-    }
+    console.log('[Unsubscribe] Total unsubscribed emails:', unsubscribeStore.size());
 
     // Підтверджувальний email
     try {
@@ -99,19 +88,16 @@ function generateUnsubscribeConfirmation(email) {
             
             <table role="presentation" width="500" cellpadding="0" cellspacing="0" style="max-width:500px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.05);">
               
-              <!-- Header -->
               <tr>
                 <td style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:24px;text-align:center;">
                   <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:800;">ISRIB.shop</h1>
                 </td>
               </tr>
 
-              <!-- Content -->
               <tr>
                 <td style="padding:40px 32px;text-align:center;">
                   
-                  <!-- Success icon -->
-                  <div style="width:64px;height:64px;margin:0 auto 24px;background:linear-gradient(135deg,#10b981 0%,#059669 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                  <div style="width:64px;height:64px;margin:0 auto 24px;background:linear-gradient(135deg,#10b981 0%,#059669 100%);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;">
                     <span style="font-size:32px;color:#ffffff;">✓</span>
                   </div>
 
@@ -124,7 +110,6 @@ function generateUnsubscribeConfirmation(email) {
                     You won't receive any more reminders from us.
                   </p>
 
-                  <!-- Divider -->
                   <div style="height:1px;background:#e5e7eb;margin:32px 0;"></div>
 
                   <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">
@@ -136,7 +121,6 @@ function generateUnsubscribeConfirmation(email) {
                 </td>
               </tr>
 
-              <!-- Footer -->
               <tr>
                 <td style="padding:24px;background:#f8fafc;border-top:1px solid #e5e7eb;text-align:center;">
                   <p style="margin:0;color:#94a3b8;font-size:11px;">
