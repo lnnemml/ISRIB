@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import unsubscribeStore from '../lib/unsubscribe-store.js'; // ⚡ ДОДАЙТЕ ЦЕЙ ІМПОРТ
+import unsubscribeStore from '../lib/unsubscribe-store.js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
