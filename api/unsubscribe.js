@@ -16,25 +16,32 @@ export default async function handler(req, res) {
       // З URL параметрів (one-click unsubscribe)
       const { searchParams } = new URL(req.url, `http://${req.headers.host}`);
       email = searchParams.get('email') || '';
+      
+      // ⚡ GET запити редіректимо на HTML сторінку
+      if (email) {
+        return res.redirect(302, `/unsubscribe.html?email=${encodeURIComponent(email)}`);
+      } else {
+        return res.redirect(302, `/unsubscribe.html`);
+      }
     } else {
-      // З POST body (форма)
+      // З POST body (форма з HTML сторінки)
       const body = JSON.parse(await readBody(req));
       email = body.email || '';
     }
 
-  email = email.trim().toLowerCase();
+    email = email.trim().toLowerCase();
 
-if (!email || !email.includes('@')) {
-  return res.status(400).json({ 
-    error: 'Invalid email address' 
-  });
-}
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ 
+        error: 'Invalid email address' 
+      });
+    }
 
-// ⚡ ДОДАЙТЕ В REDIS
-await unsubscribeStore.add(email);
+    // ⚡ ДОДАЄМО В REDIS
+    await unsubscribeStore.add(email);
 
-const totalUnsubscribed = await unsubscribeStore.size();
-console.log('[Unsubscribe] Total unsubscribed emails:', totalUnsubscribed);
+    const totalUnsubscribed = await unsubscribeStore.size();
+    console.log('[Unsubscribe] Total unsubscribed emails:', totalUnsubscribed);
      
     // Підтверджувальний email
     try {
@@ -50,11 +57,6 @@ console.log('[Unsubscribe] Total unsubscribed emails:', totalUnsubscribed);
     } catch (e) {
       console.error('Confirmation email failed:', e);
       // Не блокуємо unsubscribe через помилку email
-    }
-
-    // Редірект на success page (для GET requests)
-    if (req.method === 'GET') {
-      return res.redirect(302, `/unsubscribe.html?success=true&email=${encodeURIComponent(email)}`);
     }
 
     // JSON response для POST
@@ -107,8 +109,8 @@ function generateUnsubscribeConfirmation(email) {
                   </h2>
                   
                   <p style="margin:0 0 24px;color:#64748b;line-height:1.6;font-size:15px;">
-                    You've been removed from our cart recovery emails.<br>
-                    You won't receive any more reminders from us.
+                    You've been removed from our mailing list.<br>
+                    You won't receive any more emails from us.
                   </p>
 
                   <div style="height:1px;background:#e5e7eb;margin:32px 0;"></div>
