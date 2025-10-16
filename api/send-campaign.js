@@ -72,7 +72,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// ✅ ДОДАТКОВА ФУНКЦІЯ: shuffle для рандомізації порядку
 function shuffleArray(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -109,15 +108,15 @@ export default async function handler(req, res) {
     }
 
     const template = TEMPLATES[campaignId];
-    
-    // ✅ ОПЦІЯ: рандомізація порядку (ще один anti-spam сигнал)
     const customerList = shuffle ? shuffleArray(customers) : customers;
     
     const results = {
       total: customerList.length,
       sent: 0,
+      skipped: 0,
       failed: 0,
       errors: [],
+      skippedEmails: [],
       startTime: new Date().toISOString()
     };
 
@@ -128,6 +127,24 @@ export default async function handler(req, res) {
       const customer = customerList[i];
       
       try {
+        // ⚡ КРИТИЧНО: ПЕРЕВІРКА UNSUBSCRIBE ПЕРЕД ВІДПРАВКОЮ
+        const normalizedEmail = customer.email.trim().toLowerCase();
+        const isUnsubscribed = await unsubscribeStore.has(normalizedEmail);
+        
+        if (isUnsubscribed) {
+          console.log(`⊘ [${i+1}/${customerList.length}] SKIPPED (unsubscribed): ${customer.email}`);
+          results.skipped++;
+          results.skippedEmails.push({
+            email: customer.email,
+            firstName: customer.firstName,
+            reason: 'unsubscribed'
+          });
+          
+          // ⚠️ ВАЖЛИВО: пропускаємо ітерацію БЕЗ затримки
+          continue;
+        }
+
+        // Тільки якщо НЕ unsubscribed - персоналізуємо та відправляємо
         const personalizedHtml = personalizeEmail(template.html, customer);
         const personalizedSubject = personalizeSubject(template.subject, customer);
 
@@ -137,13 +154,12 @@ export default async function handler(req, res) {
           subject: personalizedSubject,
           html: personalizedHtml,
           
-          // ✅ Replies йдуть у ваш ProtonMail
           replyTo: 'isrib.shop@protonmail.com',
           
           headers: {
-            'List-Unsubscribe': '<mailto:isrib.shop@protonmail.com?subject=unsubscribe>',
+            'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(customer.email)}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
             'X-Entity-Ref-ID': `campaign-${campaignId}-${Date.now()}`,
-            // ✅ Додатковий header для уникнення спаму
             'X-Campaign-Type': 'transactional',
           },
           
@@ -156,7 +172,7 @@ export default async function handler(req, res) {
         console.log(`✓ [${i+1}/${customerList.length}] Sent to ${customer.email} (${customer.firstName}) - ID: ${result.id}`);
         results.sent++;
 
-        // ✅ КРИТИЧНО: Рандомна затримка 3-5 секунд
+        // Затримка ТІЛЬКИ для відправлених emails
         if (i < customerList.length - 1) {
           const delay = 3000 + Math.random() * 2000; // 3000-5000ms
           console.log(`   ⏱️  Waiting ${(delay/1000).toFixed(1)}s before next email...`);
@@ -172,7 +188,6 @@ export default async function handler(req, res) {
           error: error.message 
         });
         
-        // ✅ Якщо помилка - збільшуємо затримку
         if (i < customerList.length - 1) {
           console.log(`   ⚠️  Error detected, waiting 10s before retry...`);
           await sleep(10000);
@@ -186,6 +201,7 @@ export default async function handler(req, res) {
     console.log(`\n✅ Campaign complete!`);
     console.log(`   Total: ${results.total}`);
     console.log(`   Sent: ${results.sent}`);
+    console.log(`   Skipped (unsubscribed): ${results.skipped}`);
     console.log(`   Failed: ${results.failed}`);
     console.log(`   Duration: ${Math.floor(duration/60)}m ${duration%60}s\n`);
 
