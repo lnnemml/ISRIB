@@ -1,429 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SMCGZ6BPDC"></script>
-  <script src="/js/gtag.js"></script>
-
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unsubscribe — ISRIB.shop</title>
-  <meta name="description" content="Unsubscribe from cart recovery emails.">
-  <meta name="robots" content="noindex, nofollow">
-
-  <link rel="stylesheet" href="css/styles.css?v=11" />
-
   <style>
-    .unsubscribe-hero {
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      padding: 80px 0 60px;
-      text-align: center;
-      position: relative;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-
-    .unsubscribe-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 18% 82%, rgba(100,116,139,.08) 0%, transparent 50%),
-        radial-gradient(circle at 84% 18%, rgba(148,163,184,.08) 0%, transparent 50%);
-    }
-
-    .unsubscribe-container {
-      max-width: 600px;
-      margin: -40px auto 80px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .unsubscribe-card {
-      background: #ffffff;
+    .container {
+      background: white;
       border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-      padding: 48px 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px;
       text-align: center;
     }
-
-    .unsubscribe-icon {
-      width: 64px;
-      height: 64px;
+    .icon {
+      width: 80px;
+      height: 80px;
       margin: 0 auto 24px;
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      font-size: 40px;
+      color: white;
     }
-
-    .success-icon {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    .icon.loading {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      animation: pulse 1.5s ease-in-out infinite;
     }
-
-    .unsubscribe-title {
+    .icon.error {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+    h1 {
       font-size: 28px;
-      font-weight: 800;
       color: #1e293b;
-      margin: 0 0 16px;
+      margin-bottom: 12px;
     }
-
-    .unsubscribe-text {
+    p {
       color: #64748b;
-      font-size: 16px;
       line-height: 1.6;
-      margin: 0 0 32px;
-    }
-
-    .unsubscribe-form {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    .form-group-unsub {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    .form-group-unsub label {
-      display: block;
-      font-weight: 600;
-      color: #475569;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    .form-group-unsub input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 15px;
-      transition: border-color 0.2s;
-    }
-
-    .form-group-unsub input:focus {
-      outline: none;
-      border-color: #3b82f6;
-    }
-
-    .btn-unsubscribe {
-      width: 100%;
-      padding: 14px 24px;
-      background: #ef4444;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
+      margin-bottom: 16px;
       font-size: 16px;
-      cursor: pointer;
-      transition: background 0.2s;
     }
-
-    .btn-unsubscribe:hover {
-      background: #dc2626;
-    }
-
-    .btn-unsubscribe:disabled {
-      background: #94a3b8;
-      cursor: not-allowed;
-    }
-
-    .status-message {
-      margin-top: 16px;
+    .email-display {
+      background: #f1f5f9;
       padding: 12px;
       border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .status-error {
-      background: #fef2f2;
-      color: #991b1b;
-      border: 1px solid #fecaca;
-    }
-
-    .status-success {
-      background: #f0fdf4;
-      color: #166534;
-      border: 1px solid #bbf7d0;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-top: 24px;
-      color: #64748b;
-      text-decoration: none;
-      font-size: 14px;
-      transition: color 0.2s;
-    }
-
-    .back-link:hover {
+      font-family: monospace;
       color: #1e293b;
+      margin: 20px 0;
+      word-break: break-all;
     }
-
-    .success-content {
-      display: none;
+    .btn {
+      display: inline-block;
+      background: #1e293b;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 16px;
+      transition: all 0.2s;
     }
-
-    .success-content.active {
-      display: block;
+    .btn:hover {
+      background: #334155;
+      transform: translateY(-2px);
     }
-
-    .form-content.hidden {
-      display: none;
+    .footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
+      color: #94a3b8;
+      font-size: 14px;
     }
-
-    @media (max-width: 640px) {
-      .unsubscribe-card {
-        padding: 32px 24px;
-      }
-
-      .unsubscribe-title {
-        font-size: 24px;
-      }
+    .footer a {
+      color: #3b82f6;
+      text-decoration: none;
     }
+    .form-container {
+      margin-top: 24px;
+    }
+    input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .btn-submit {
+      background: #ef4444;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    .btn-submit:hover {
+      background: #dc2626;
+    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
+  <div class="container">
+    <!-- Loading State -->
+    <div id="loadingState">
+      <div class="icon loading">⏳</div>
+      <h1>Processing...</h1>
+      <p>Please wait while we process your request.</p>
+    </div>
 
-  <!-- Header -->
-  <header class="header-slim site-header" id="siteHeader">
-    <div class="container">
-      <div class="header-content">
-        <a href="/" class="logo-slim" aria-label="ISRIB.shop home">
-          <img src="images/logo-dark-trimmed.png" alt="ISRIB.shop Logo" class="logo-image-slim"/>
-        </a>
-
-        <nav class="nav-slim" aria-label="Primary">
-          <a href="products.html">Products</a>
-          <a href="about.html">About</a>
-          <a href="faq.html">FAQ</a>
-          <a href="contact.html">Contact</a>
-        </nav>
-
-        <button class="burger" id="burgerBtn"
-                aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-          <svg class="burger-icon" width="22" height="22" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M10 17h10"/>
-          </svg>
-        </button>
-
-        <nav class="mobile-menu" id="mobileMenu" data-nav aria-label="Mobile">
-          <a href="products.html" class="mm-link">Products</a>
-          <a href="about.html" class="mm-link">About</a>
-          <a href="faq.html" class="mm-link">FAQ</a>
-          <a href="contact.html" class="mm-link">Contact</a>
-        </nav>
+    <!-- Success State -->
+    <div id="successState" class="hidden">
+      <div class="icon">✓</div>
+      <h1>Unsubscribed Successfully</h1>
+      <p>You've been removed from our mailing list.</p>
+      <div class="email-display" id="emailDisplay"></div>
+      <p style="color: #475569;">You won't receive any more emails from us.</p>
+      
+      <a href="https://isrib.shop" class="btn">Return to Homepage</a>
+      
+      <div class="footer">
+        Changed your mind?<br>
+        <a href="mailto:isrib.shop@protonmail.com">Contact us</a> to resubscribe
       </div>
     </div>
-  </header>
 
-  <!-- Hero -->
-  <section class="unsubscribe-hero">
-    <div class="container">
-      <h1 class="title" style="position:relative;z-index:1;font-weight:900;font-size:clamp(2rem,4vw,3rem);color:#1e293b;margin:0;">
-        Unsubscribe from Emails
-      </h1>
+    <!-- Error State -->
+    <div id="errorState" class="hidden">
+      <div class="icon error">✗</div>
+      <h1>Something went wrong</h1>
+      <p id="errorMessage">Unable to process your request.</p>
+      <a href="https://isrib.shop" class="btn">Return to Homepage</a>
     </div>
-  </section>
 
-  <!-- Main Content -->
-  <main class="unsubscribe-container">
-    <div class="unsubscribe-card">
+    <!-- Manual Form (якщо немає email в URL) -->
+    <div id="formState" class="hidden">
+      <div class="icon">📧</div>
+      <h1>Unsubscribe from Emails</h1>
+      <p>Enter your email address to unsubscribe:</p>
       
-      <!-- Form Content (default) -->
-      <div class="form-content" id="formContent">
-        <div class="unsubscribe-icon">
-          📧
-        </div>
-
-        <h2 class="unsubscribe-title">Manage Your Preferences</h2>
-        
-        <p class="unsubscribe-text">
-          We're sorry to see you go. Enter your email below to unsubscribe from cart recovery reminders.
-        </p>
-
-        <form id="unsubscribeForm" class="unsubscribe-form">
-          <div class="form-group-unsub">
-            <label for="email">Email Address</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              placeholder="your@email.com"
-              required
-              autocomplete="email"
-            />
-          </div>
-
-          <button type="submit" class="btn-unsubscribe" id="unsubscribeBtn">
+      <div class="form-container">
+        <form id="unsubForm">
+          <input 
+            type="email" 
+            id="emailInput" 
+            placeholder="your@email.com" 
+            required
+          >
+          <button type="submit" class="btn btn-submit">
             Unsubscribe
           </button>
-
-          <div id="statusMsg" class="status-message" style="display:none;"></div>
         </form>
-
-        <a href="/" class="back-link">← Back to homepage</a>
       </div>
-
-      <!-- Success Content (hidden by default) -->
-      <div class="success-content" id="successContent">
-        <div class="unsubscribe-icon success-icon">
-          ✓
-        </div>
-
-        <h2 class="unsubscribe-title">Successfully Unsubscribed</h2>
-        
-        <p class="unsubscribe-text">
-          You've been removed from our cart recovery emails.<br>
-          You won't receive any more reminders from us.
-        </p>
-
-        <p class="unsubscribe-text" style="font-size:14px;color:#94a3b8;">
-          Changed your mind? Contact us at 
-          <a href="mailto:isrib.shop@protonmail.com" style="color:#0ea5e9;text-decoration:none;">isrib.shop@protonmail.com</a>
-        </p>
-
-        <a href="/" class="back-link">← Back to homepage</a>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>ISRIB Shop</h3>
-          <p>Advanced research chemicals for scientific advancement.</p>
-          <p><strong>Email:</strong> isrib.shop@protonmail.com</p>
-        </div>
-        <div class="footer-section">
-          <h3>Products</h3>
-          <ul>
-            <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
-            <li><a href="product_isrib.html">ISRIB Original</a></li>
-            <li><a href="product_zzl_7.html">ZZL-7</a></li>
-            <li><a href="products.html">All Products</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h3>Information</h3>
-          <ul>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h3>Legal</h3>
-          <ul>
-            <li><a href="terms.html">Terms of Service</a></li>
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="disclaimer.html">Disclaimer</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 ISRIB Shop. All rights reserved.</p>
+      
+      <div class="footer">
+        <a href="https://isrib.shop">Return to Homepage</a>
       </div>
     </div>
-  </footer>
+  </div>
 
   <script>
-    // Перевірка URL параметрів для автоматичного success state
-    (function checkURLParams() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const success = urlParams.get('success');
-      const email = urlParams.get('email');
+    const loadingState = document.getElementById('loadingState');
+    const successState = document.getElementById('successState');
+    const errorState = document.getElementById('errorState');
+    const formState = document.getElementById('formState');
+    const emailDisplay = document.getElementById('emailDisplay');
+    const errorMessage = document.getElementById('errorMessage');
 
-      if (success === 'true') {
-        document.getElementById('formContent').classList.add('hidden');
-        document.getElementById('successContent').classList.add('active');
+    // Отримуємо email з URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const emailFromURL = urlParams.get('email');
+    const successParam = urlParams.get('success');
 
-        // Analytics
-        try {
-          if (typeof gtag === 'function') {
-            gtag('event', 'unsubscribe_success', {
-              event_category: 'email',
-              event_label: 'unsubscribe completed'
-            });
-          }
-        } catch(e) {}
-      } else if (email) {
-        // Автозаповнення email з URL
-        document.getElementById('email').value = decodeURIComponent(email);
-      }
-    })();
+    // Якщо є success=true в URL (редірект з API)
+    if (successParam === 'true' && emailFromURL) {
+      showSuccess(emailFromURL);
+    }
+    // Якщо є email в URL — одразу обробляємо
+    else if (emailFromURL) {
+      processUnsubscribe(emailFromURL);
+    }
+    // Якщо немає email — показуємо форму
+    else {
+      showForm();
+    }
 
-    // Обробка форми
-    document.getElementById('unsubscribeForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const btn = document.getElementById('unsubscribeBtn');
-      const msg = document.getElementById('statusMsg');
-      const emailInput = document.getElementById('email');
-      const email = emailInput.value.trim();
-
-      if (!email || !email.includes('@')) {
-        msg.textContent = 'Please enter a valid email address';
-        msg.className = 'status-message status-error';
-        msg.style.display = 'block';
-        return;
-      }
-
-      // Disable button
-      btn.disabled = true;
-      btn.textContent = 'Processing...';
-      msg.style.display = 'none';
+    async function processUnsubscribe(email) {
+      showLoading();
 
       try {
-        const res = await fetch('/api/unsubscribe', {
+        const response = await fetch('/api/unsubscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
         });
 
-        const data = await res.json();
+        const data = await response.json();
 
-        if (res.ok) {
-          // Success - показуємо success view
-          document.getElementById('formContent').classList.add('hidden');
-          document.getElementById('successContent').classList.add('active');
-
+        if (response.ok) {
+          showSuccess(email);
+          
           // Analytics
-          try {
-            if (typeof gtag === 'function') {
-              gtag('event', 'unsubscribe_success', {
-                event_category: 'email',
-                event_label: 'unsubscribe completed'
-              });
-            }
-          } catch(e) {}
-
+          if (typeof gtag === 'function') {
+            gtag('event', 'unsubscribe', {
+              event_category: 'engagement',
+              event_label: 'email_unsubscribe'
+            });
+          }
         } else {
-          // Error
-          msg.textContent = data.error || 'Something went wrong. Please try again.';
-          msg.className = 'status-message status-error';
-          msg.style.display = 'block';
-          btn.disabled = false;
-          btn.textContent = 'Unsubscribe';
+          showError(data.error || 'Unable to unsubscribe. Please try again.');
         }
 
       } catch (error) {
         console.error('Unsubscribe error:', error);
-        msg.textContent = 'Network error. Please try again later.';
-        msg.className = 'status-message status-error';
-        msg.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Unsubscribe';
+        showError('Network error. Please check your connection and try again.');
+      }
+    }
+
+    function showLoading() {
+      loadingState.classList.remove('hidden');
+      successState.classList.add('hidden');
+      errorState.classList.add('hidden');
+      formState.classList.add('hidden');
+    }
+
+    function showSuccess(email) {
+      loadingState.classList.add('hidden');
+      successState.classList.remove('hidden');
+      errorState.classList.add('hidden');
+      formState.classList.add('hidden');
+      emailDisplay.textContent = email;
+    }
+
+    function showError(message) {
+      loadingState.classList.add('hidden');
+      successState.classList.add('hidden');
+      errorState.classList.remove('hidden');
+      formState.classList.add('hidden');
+      errorMessage.textContent = message;
+    }
+
+    function showForm() {
+      loadingState.classList.add('hidden');
+      successState.classList.add('hidden');
+      errorState.classList.add('hidden');
+      formState.classList.remove('hidden');
+    }
+
+    // Обробка форми
+    document.getElementById('unsubForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value.trim();
+      if (email) {
+        processUnsubscribe(email);
       }
     });
   </script>
-
-  <script src="js/main.js?v=34"></script>
 </body>
 </html>
