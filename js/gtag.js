@@ -16,8 +16,8 @@
 
   // 2) (опційно) додатково шлемо в новий стрім, навіть якщо його js 404
   //    бібліотека вже завантажена, це легально:
-  gtag('config', 'G-XGMHXZNME9', {
-    debug_mode:true,
-    linker:{ domains:['isrib.shop','www.isrib.shop','isrib-landing.vercel.app'] }
-  });
+ // gtag('config', 'G-XGMHXZNME9', {
+   // debug_mode:true,
+   // linker:{ domains:['isrib.shop','www.isrib.shop','isrib-landing.vercel.app'] }
+ // });
 
