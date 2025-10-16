@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resubscribe Users — ISRIB Admin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+    }
+    h1 { 
+      font-size: 32px; 
+      margin-bottom: 8px; 
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .subtitle { 
+      color: #64748b; 
+      margin-bottom: 32px; 
+      font-size: 16px;
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #475569;
+      font-size: 14px;
+    }
+    input[type="password"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    input[type="password"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    textarea {
+      min-height: 150px;
+      font-family: monospace;
+      resize: vertical;
+    }
+    .helper-text {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .btn {
+      background: #10b981;
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .btn:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .result {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 8px;
+      display: none;
+    }
+    .result.success {
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      color: #065f46;
+      display: block;
+    }
+    .result.error {
+      background: #fee2e2;
+      border: 2px solid #ef4444;
+      color: #991b1b;
+      display: block;
+    }
+    .result h3 {
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .result ul {
+      margin: 8px 0;
+      padding-left: 20px;
+    }
+    .result li {
+      margin: 4px 0;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .stat-box {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1e293b;
+    }
+    .stat-label {
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <span>🔄</span>
+      Resubscribe Users
+    </h1>
+    <p class="subtitle">Restore email addresses to active mailing list</p>
+
+    <form id="resubscribeForm">
+      <div class="form-group">
+        <label for="secretKey">Admin Secret Key</label>
+        <input 
+          type="password" 
+          id="secretKey" 
+          placeholder="Enter admin secret key"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="emails">Email Addresses</label>
+        <textarea 
+          id="emails" 
+          placeholder="user1@example.com&#10;user2@example.com&#10;user3@example.com"
+          required
+        ></textarea>
+        <p class="helper-text">
+          Enter one email per line. Supports bulk resubscribe.
+        </p>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">
+        🔄 Resubscribe Emails
+      </button>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <div class="footer">
+      <a href="admin-unsubscribe.html">← View Unsubscribe List</a> • 
+      <a href="https://isrib.shop">Homepage</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('resubscribeForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultDiv = document.getElementById('result');
+    const secretInput = document.getElementById('secretKey');
+    const emailsInput = document.getElementById('emails');
+
+    // Автозаповнення secret з sessionStorage
+    const savedSecret = sessionStorage.getItem('admin_secret');
+    if (savedSecret) {
+      secretInput.value = savedSecret;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const secret = secretInput.value.trim();
+      const emailsText = emailsInput.value.trim();
+
+      if (!secret || !emailsText) {
+        showResult('error', 'Please fill all fields');
+        return;
+      }
+
+      // Парсимо emails (по лініях)
+      const emails = emailsText
+        .split('\n')
+        .map(e => e.trim().toLowerCase())
+        .filter(e => e.includes('@'));
+
+      if (emails.length === 0) {
+        showResult('error', 'No valid email addresses found');
+        return;
+      }
+
+      // Зберігаємо secret
+      sessionStorage.setItem('admin_secret', secret);
+
+      // Блокуємо форму
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Processing...';
+      resultDiv.style.display = 'none';
+
+      // Відправляємо запити
+      const results = {
+        total: emails.length,
+        success: 0,
+        failed: 0,
+        successList: [],
+        errorList: []
+      };
+
+      for (const email of emails) {
+        try {
+          const res = await fetch('/api/resubscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, secret })
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            results.success++;
+            results.successList.push(email);
+            console.log(`✓ Resubscribed: ${email}`);
+          } else {
+            results.failed++;
+            results.errorList.push({ email, error: data.error });
+            console.error(`✗ Failed: ${email} - ${data.error}`);
+          }
+
+        } catch (error) {
+          results.failed++;
+          results.errorList.push({ email, error: error.message });
+          console.error(`✗ Network error: ${email}`);
+        }
+      }
+
+      // Показуємо результат
+      showResults(results);
+
+      // Розблоковуємо форму
+      submitBtn.disabled = false;
+      submitBtn.textContent = '🔄 Resubscribe Emails';
+    });
+
+    function showResult(type, message) {
+      resultDiv.className = `result ${type}`;
+      resultDiv.innerHTML = `<h3>${message}</h3>`;
+      resultDiv.style.display = 'block';
+    }
+
+    function showResults(results) {
+      let html = '<h3>✅ Resubscribe Complete</h3>';
+      
+      html += '<div class="stats">';
+      html += `<div class="stat-box"><div class="stat-number">${results.total}</div><div class="stat-label">Total</div></div>`;
+      html += `<div class="stat-box"><div class="stat-number" style="color:#10b981">${results.success}</div><div class="stat-label">Success</div></div>`;
+      html += `<div class="stat-box"><div class="stat-number" style="color:#ef4444">${results.failed}</div><div class="stat-label">Failed</div></div>`;
+      html += '</div>';
+
+      if (results.successList.length > 0) {
+        html += '<h4 style="margin-top:20px;color:#059669">Successfully Resubscribed:</h4>';
+        html += '<ul>';
+        results.successList.forEach(email => {
+          html += `<li>✓ ${email}</li>`;
+        });
+        html += '</ul>';
+      }
+
+      if (results.errorList.length > 0) {
+        html += '<h4 style="margin-top:20px;color:#dc2626">Errors:</h4>';
+        html += '<ul>';
+        results.errorList.forEach(item => {
+          html += `<li>✗ ${item.email} - ${item.error}</li>`;
+        });
+        html += '</ul>';
+      }
+
+      resultDiv.className = results.failed === 0 ? 'result success' : 'result error';
+      resultDiv.innerHTML = html;
+      resultDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
