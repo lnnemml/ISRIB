@@ -2,6 +2,9 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// In-memory unsubscribe list (для production використовуйте DB)
+const unsubscribeList = new Set();
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -14,9 +17,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing data' });
     }
 
+    // ⚡ КРИТИЧНО: Перевірка чи користувач не відписався
+    if (isUnsubscribed(email)) {
+      console.log('[Cart Recovery] Email is unsubscribed:', email);
+      return res.status(200).json({ 
+        ok: true, 
+        skipped: true,
+        message: 'Email is unsubscribed' 
+      });
+    }
+
     const subtotal = cartItems.reduce((s, i) => s + (i.price * i.count), 0);
 
-    // М'які, професійні subject lines
     const subjects = {
       immediate: 'Your ISRIB research order is ready',
       '2h': 'Complete your ISRIB order — Free shipping included',
@@ -34,12 +46,14 @@ export default async function handler(req, res) {
         'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
       },
-      html: generateRecoveryEmail(cartItems, subtotal, firstName, stage),
+      html: generateRecoveryEmail(cartItems, subtotal, firstName, stage, email),
       tags: [
         { name: 'category', value: 'cart_recovery' },
         { name: 'stage', value: stage }
       ]
     });
+
+    console.log('[Cart Recovery] Email sent:', email, stage);
 
     return res.status(200).json({ ok: true });
 
@@ -49,7 +63,19 @@ export default async function handler(req, res) {
   }
 }
 
-function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
+function isUnsubscribed(email) {
+  const normalized = email.trim().toLowerCase();
+  return unsubscribeList.has(normalized);
+}
+
+// Функція для додавання в unsubscribe list (викликається з /api/unsubscribe)
+export function addToUnsubscribeList(email) {
+  const normalized = email.trim().toLowerCase();
+  unsubscribeList.add(normalized);
+  console.log('[Unsubscribe] Added:', normalized, 'Total:', unsubscribeList.size);
+}
+
+function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
   const itemsHtml = cartItems.map(item => `
     <tr style="border-bottom:1px solid #e5e7eb;">
       <td style="padding:12px 8px;">
@@ -60,7 +86,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
     </tr>
   `).join('');
 
-  // Варіант 3: Subtle reminder (нейтральний, професійний)
   const urgencyBlock = stage === '24h'
     ? `<div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:16px;margin:24px 0;border-radius:4px;">
          <p style="margin:0;font-weight:600;color:#1e3a8a;font-size:15px;">📋 Order reminder</p>
@@ -94,15 +119,12 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
     </head>
     <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#f8fafc;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;">
       
-      <!-- Main container -->
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:20px 0;">
         <tr>
           <td align="center">
             
-            <!-- Email wrapper -->
             <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.05);">
               
-              <!-- Header -->
               <tr>
                 <td style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);padding:32px 24px;text-align:center;">
                   <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">ISRIB.shop</h1>
@@ -110,11 +132,9 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
                 </td>
               </tr>
 
-              <!-- Content -->
               <tr>
                 <td class="mobile-padding" style="padding:32px 24px;">
                   
-                  <!-- Greeting -->
                   <h2 style="margin:0 0 16px;color:#1e293b;font-size:22px;font-weight:700;line-height:1.3;">
                     Hi ${firstName || 'there'},
                   </h2>
@@ -124,10 +144,8 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
                     Your research chemicals are reserved and ready for shipment.
                   </p>
 
-                  <!-- Urgency block -->
                   ${urgencyBlock}
 
-                  <!-- Cart Items Table -->
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:24px 0;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
                     <thead>
                       <tr style="background:#f8fafc;">
@@ -147,7 +165,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
                     </tfoot>
                   </table>
 
-                  <!-- Promo code callout -->
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fefce8;border-radius:8px;margin:24px 0;border:1px solid #fde047;overflow:hidden;">
                     <tr>
                       <td style="padding:16px;">
@@ -159,7 +176,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
                     </tr>
                   </table>
 
-                  <!-- CTA Button -->
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                     <tr>
                       <td align="center" style="padding:32px 0;">
@@ -177,7 +193,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
                     <a href="mailto:isrib.shop@protonmail.com" style="color:#0ea5e9;text-decoration:none;font-weight:500;">isrib.shop@protonmail.com</a>
                   </p>
 
-                  <!-- Trust Signals -->
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;background:#f8fafc;border-radius:8px;overflow:hidden;">
                     <tr>
                       <td style="padding:20px;">
@@ -203,7 +218,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
                 </td>
               </tr>
 
-              <!-- Footer -->
               <tr>
                 <td style="padding:24px;background:#f8fafc;border-top:1px solid #e5e7eb;text-align:center;">
                   <p style="margin:0 0 12px;color:#64748b;font-size:13px;line-height:1.6;">
@@ -220,12 +234,10 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage) {
               </tr>
 
             </table>
-            <!-- End email wrapper -->
 
           </td>
         </tr>
       </table>
-      <!-- End main container -->
 
     </body>
     </html>
