@@ -118,7 +118,7 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
                   
                   <p style="margin:0 0 24px;color:#475569;line-height:1.6;font-size:15px;">
                     We noticed you have <strong style="color:#1e293b;">${cartItems.length} item${cartItems.length > 1 ? 's' : ''}</strong> waiting in your cart. 
-                    Your research materials are reserved and ready for shipment.
+                    Your research chemicals are reserved and ready for shipment.
                   </p>
 
                   ${urgencyBlock}
