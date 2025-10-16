@@ -1274,6 +1274,38 @@ function initCheckoutForm() {
   if (!form) return;
 
   const submitBtn = document.getElementById('submitOrderBtn');
+  const emailInput = form.querySelector('#email');
+
+  // ⚡ НОВИЙ КОД: Tracking email для cart recovery
+  if (emailInput) {
+    emailInput.addEventListener('blur', () => {
+      const email = emailInput.value.trim();
+      if (email.includes('@')) {
+        // Оновлюємо recovery state з email
+        try {
+          const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}');
+          if (state.startTime) {
+            state.email = email;
+            localStorage.setItem('cart_recovery_state', JSON.stringify(state));
+            
+            // ⚡ ВІДПРАВКА ДАНИХ НА БЕКЕНД
+            const cart = readCart();
+            if (cart.length > 0) {
+              fetch('/api/cart-recovery', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email,
+                  cartItems: cart,
+                  firstName: form.firstName?.value.trim() || ''
+                })
+              }).catch(err => console.error('[Cart Recovery] Failed:', err));
+            }
+          }
+        } catch {}
+      }
+    });
+  }
 
   // helper: "100mg" | "1 g" → mg (number)
   function parseQtyToMgLabel(s) {
@@ -1325,6 +1357,21 @@ function initCheckoutForm() {
         msg.style.color = '#dc2626';
       }
       return;
+    }
+
+    // ⚡ АВТОМАТИЧНА АКТИВАЦІЯ RETURN15 якщо прийшов з recovery email
+    const urlParams = new URLSearchParams(window.location.search);
+    const isRecovery = urlParams.get('recovery') === 'true';
+    const promoFromURL = urlParams.get('promo');
+    
+    if (isRecovery && promoFromURL === 'RETURN15') {
+      const promoInput = document.getElementById('promoCode');
+      const applyBtn = document.getElementById('applyPromoBtn');
+      
+      if (promoInput && !promoInput.value) {
+        promoInput.value = 'RETURN15';
+        applyBtn?.click(); // Auto-apply
+      }
     }
 
     // ⚡ КРИТИЧНО: зчитуємо promo code (включаючи збережений з localStorage)
@@ -1439,12 +1486,17 @@ function initCheckoutForm() {
         + `&promo=${encodeURIComponent(appliedPromoCode || '')}`
         + `&total=${encodeURIComponent(total.toFixed(2))}`;
 
+      // ⚡ КРИТИЧНО: Очистка cart recovery state після успішного checkout
+      try {
+        localStorage.removeItem('cart_recovery_state');
+        localStorage.removeItem('pending_promo');
+      } catch {}
+
       // очистка кошика + редірект
       writeCart([]);
       try {
         localStorage.removeItem('cart');
         localStorage.removeItem('cartItems');
-        localStorage.removeItem('pending_promo'); // ⚡ Очищаємо збережений promo
       } catch {}
       updateCartBadge([]);
       window.location.href = successUrl;
@@ -1607,5 +1659,152 @@ function trackEvent(name, data){
   }, 1500);
 })();
 
-  
+
+/* ===================== CART RECOVERY SYSTEM ===================== */
+
+(function initCartRecovery() {
+  const RECOVERY_KEY = 'cart_recovery_state';
+  const TWO_HOURS = 2 * 60 * 60 * 1000;
+  const TWENTYFOUR_HOURS = 24 * 60 * 60 * 1000;
+
+  // Читаємо стан recovery
+  function getRecoveryState() {
+    try {
+      const stored = localStorage.getItem(RECOVERY_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  // Зберігаємо стан
+  function setRecoveryState(state) {
+    localStorage.setItem(RECOVERY_KEY, JSON.stringify(state));
+  }
+
+  // Очищаємо стан
+  function clearRecoveryState() {
+    localStorage.removeItem(RECOVERY_KEY);
+  }
+
+  // Надсилаємо запит на бекенд
+  async function sendRecoveryEmail(email, cartItems, stage) {
+    try {
+      const res = await fetch('/api/cart-recovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, cartItems, stage })
+      });
+
+      if (res.ok) {
+        console.log(`[Cart Recovery] ${stage} email sent to ${email}`);
+        
+        // Analytics
+        try {
+          if (typeof gtag === 'function') {
+            gtag('event', 'cart_recovery_sent', {
+              event_category: 'retention',
+              event_label: stage,
+              value: cartItems.reduce((s, i) => s + (i.price * i.count), 0)
+            });
+          }
+        } catch {}
+      }
+    } catch (error) {
+      console.error('[Cart Recovery] Send failed:', error);
+    }
+  }
+
+  // Головна логіка
+  function checkCartRecovery() {
+    const cart = readCart();
+    const state = getRecoveryState();
+    const now = Date.now();
+
+    // Якщо кошик порожній — очищаємо tracking
+    if (cart.length === 0) {
+      if (state) clearRecoveryState();
+      return;
+    }
+
+    // Якщо ми на сторінці checkout — не тригеримо recovery
+    if (window.location.pathname.includes('checkout.html')) {
+      return;
+    }
+
+    // Якщо немає збереженого стану — ініціалізуємо
+    if (!state) {
+      setRecoveryState({
+        startTime: now,
+        email: null,
+        sent2h: false,
+        sent24h: false,
+        cartSnapshot: cart
+      });
+      return;
+    }
+
+    // Перевіряємо чи змінився кошик (користувач додав/видалив товари)
+    const cartChanged = JSON.stringify(cart) !== JSON.stringify(state.cartSnapshot);
+    if (cartChanged) {
+      // Скидаємо tracking якщо кошик змінився
+      setRecoveryState({
+        startTime: now,
+        email: state.email, // зберігаємо email якщо був
+        sent2h: false,
+        sent24h: false,
+        cartSnapshot: cart
+      });
+      return;
+    }
+
+    const elapsed = now - state.startTime;
+
+    // Перевірка email (шукаємо в формі checkout або зберігаємо з попереднього разу)
+    let userEmail = state.email;
+    if (!userEmail) {
+      const emailInput = document.getElementById('email');
+      if (emailInput && emailInput.value.includes('@')) {
+        userEmail = emailInput.value.trim();
+        state.email = userEmail;
+        setRecoveryState(state);
+      }
+    }
+
+    // Якщо немає email — не можемо надіслати
+    if (!userEmail) return;
+
+    // Надсилаємо 2h reminder
+    if (!state.sent2h && elapsed >= TWO_HOURS) {
+      sendRecoveryEmail(userEmail, cart, '2h');
+      state.sent2h = true;
+      setRecoveryState(state);
+    }
+
+    // Надсилаємо 24h reminder
+    if (!state.sent24h && elapsed >= TWENTYFOUR_HOURS) {
+      sendRecoveryEmail(userEmail, cart, '24h');
+      state.sent24h = true;
+      setRecoveryState(state);
+    }
+  }
+
+  // Запускаємо перевірку кожні 5 хвилин
+  setInterval(checkCartRecovery, 5 * 60 * 1000);
+
+  // Перша перевірка через 10 секунд після завантаження
+  setTimeout(checkCartRecovery, 10000);
+
+  // Перевіряємо при зміні кошика
+  const originalAddToCart = window.addToCart;
+  window.addToCart = function(...args) {
+    originalAddToCart?.apply(this, args);
+    setTimeout(checkCartRecovery, 1000);
+  };
+
+  // Очищаємо tracking після успішного checkout
+  if (window.location.pathname.includes('success.html')) {
+    clearRecoveryState();
+  }
+})();
 
