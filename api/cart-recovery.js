@@ -15,17 +15,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing data' });
     }
 
-    // ⚡ ДОДАЙТЕ ЦЕЙ БЛОК
-const isUnsubscribed = await unsubscribeStore.has(email);
-
-if (isUnsubscribed) {
-  console.log('[Cart Recovery] Email is unsubscribed, skipping:', email);
-  return res.status(200).json({ 
-    ok: true, 
-    skipped: true,
-    message: 'Email is unsubscribed' 
-  });
-}
+    // Unsubscribe guard (як у тебе)
+    const isUnsubscribed = await unsubscribeStore.has(email);
+    if (isUnsubscribed) {
+      return res.status(200).json({ ok: true, skipped: true, message: 'Email is unsubscribed' });
+    }
 
     const subtotal = cartItems.reduce((s, i) => s + (i.price * i.count), 0);
 
@@ -35,6 +29,46 @@ if (isUnsubscribed) {
       '24h': 'Your reserved research materials are waiting'
     };
 
+    // ✨ НОВЕ: якщо stage === 'schedule' → плануємо 2 листи
+    if (stage === 'schedule') {
+      const now = new Date();
+      const in2h = new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString();
+      const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+
+      // 2 години
+      await resend.emails.send({
+        from: process.env.RESEND_FROM,
+        to: email,
+        subject: subjects['2h'],
+        replyTo: 'isrib.shop@protonmail.com',
+        headers: {
+          'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
+        },
+        html: generateRecoveryEmail(cartItems, subtotal, firstName, '2h', email),
+        tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: '2h' }],
+        scheduledAt: in2h
+      });
+
+      // 24 години
+      await resend.emails.send({
+        from: process.env.RESEND_FROM,
+        to: email,
+        subject: subjects['24h'],
+        replyTo: 'isrib.shop@protonmail.com',
+        headers: {
+          'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
+        },
+        html: generateRecoveryEmail(cartItems, subtotal, firstName, '24h', email),
+        tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: '24h' }],
+        scheduledAt: in24h
+      });
+
+      return res.status(200).json({ ok: true, scheduled: true });
+    }
+
+    // ⬇️ Інакше залишаємо твою існуючу поведінку (immediate/2h/24h ручні виклики)
     const subject = subjects[stage] || subjects.immediate;
 
     await resend.emails.send({
@@ -47,16 +81,10 @@ if (isUnsubscribed) {
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
       },
       html: generateRecoveryEmail(cartItems, subtotal, firstName, stage, email),
-      tags: [
-        { name: 'category', value: 'cart_recovery' },
-        { name: 'stage', value: stage }
-      ]
+      tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: stage || 'immediate' }]
     });
 
-    console.log('[Cart Recovery] Email sent successfully:', email, stage);
-
     return res.status(200).json({ ok: true });
-
   } catch (error) {
     console.error('Cart recovery error:', error);
     return res.status(500).json({ error: error.message });
