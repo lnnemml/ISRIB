@@ -1302,32 +1302,65 @@ function initCheckoutForm() {
   // ─────────────────────────────────────────────────────────────────────────────
   // 2) Збір email для cart-recovery + відправка стану кошика (як було)
   // ─────────────────────────────────────────────────────────────────────────────
-  const emailInput = form.querySelector('input[name="email"], #email');
-  if (emailInput) {
-    emailInput.addEventListener('blur', () => {
-      const email = emailInput.value.trim();
-      if (!email) return;
+// ⬇️ Замість твого блоку cart-recovery
+const emailInput = form.querySelector('input[name="email"], #email');
+if (emailInput) {
+  let debounceTimer;
+
+  const scheduleCartRecoveryOnce = async () => {
+    const email = (emailInput.value || '').trim();
+    if (!email) return;
+
+    const cart = readCart();
+    if (!cart.length) return;
+
+    // збережемо state (як було)
+    try {
+      const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
+      state.email = email;
+      localStorage.setItem('cart_recovery_state', JSON.stringify(state));
+    } catch {}
+
+    // ключ, щоб не планувати повторно для того ж email
+    const key = `cart_recovery_scheduled:${email}`;
+    if (localStorage.getItem(key) === '1') return;
+
+    try {
+      await fetch('/api/cart-recovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stage: 'schedule',               // 🔸 головне: просимо бекенд ЗАПЛАНУВАТИ 2h і 24h
+          email,
+          cartItems: cart,
+          firstName: form.firstName?.value.trim() || ''
+        })
+      });
+      localStorage.setItem(key, '1');
+
+      // (необов'язково) GA4 трекінг
       try {
-        const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
-        if (state.email !== email) {
-          state.email = email;
-          localStorage.setItem('cart_recovery_state', JSON.stringify(state));
-          const cart = readCart();
-          if (cart.length > 0) {
-            fetch('/api/cart-recovery', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email,
-                cartItems: cart,
-                firstName: form.firstName?.value.trim() || ''
-              })
-            }).catch(err => console.error('[Cart Recovery] Failed:', err));
-          }
+        if (typeof gtag === 'function') {
+          const subtotal = cart.reduce((s,i)=>s + (Number(i.price||0)*Number(i.count||1)), 0);
+          gtag('event', 'cart_recovery_scheduled', {
+            event_category: 'checkout',
+            value: subtotal,
+            currency: 'USD',
+            items_count: cart.length
+          });
         }
       } catch {}
-    });
-  }
+    } catch (err) {
+      console.error('[Cart Recovery] schedule failed:', err);
+    }
+  };
+
+  emailInput.addEventListener('blur', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(scheduleCartRecoveryOnce, 400); // невеликий дебаунс
+  });
+}
+
 
   // ─────────────────────────────────────────────────────────────────────────────
   // 3) Хелпер для перетворення "100mg" | "1 g" → mg (number)
