@@ -1274,46 +1274,73 @@ function initCheckoutForm() {
   if (!form) return;
 
   const submitBtn = document.getElementById('submitOrderBtn');
-  const emailInput = form.querySelector('#email');
 
-  // ⚡ НОВИЙ КОД: Tracking email для cart recovery
+  // ─────────────────────────────────────────────────────────────────────────────
+  // 1) Автопідстановка промокоду з URL або localStorage у поле #promoCode
+  // ─────────────────────────────────────────────────────────────────────────────
+  try {
+    const promoEl = document.getElementById('promoCode');
+    if (promoEl && !promoEl.value) {
+      const url = new URLSearchParams(location.search);
+      const urlPromo = (url.get('promo') || '').trim().toUpperCase();
+
+      let savedCode = '';
+      try {
+        const saved = JSON.parse(localStorage.getItem('pending_promo') || '{}');
+        const valid = saved?.code && Date.now() < (saved?.expiry || 0);
+        if (valid) savedCode = String(saved.code || '').toUpperCase();
+      } catch {}
+
+      const code = urlPromo || savedCode;
+      if (code) {
+        promoEl.value = code;
+        console.log('[PROMO] prefilled:', code);
+      }
+    }
+  } catch (e) { console.warn('Promo prefill failed', e); }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // 2) Збір email для cart-recovery + відправка стану кошика (як було)
+  // ─────────────────────────────────────────────────────────────────────────────
+  const emailInput = form.querySelector('input[name="email"], #email');
   if (emailInput) {
     emailInput.addEventListener('blur', () => {
       const email = emailInput.value.trim();
-      if (email.includes('@')) {
-        // Оновлюємо recovery state з email
-        try {
-          const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}');
-          if (state.startTime) {
-            state.email = email;
-            localStorage.setItem('cart_recovery_state', JSON.stringify(state));
-            
-            // ⚡ ВІДПРАВКА ДАНИХ НА БЕКЕНД
-            const cart = readCart();
-            if (cart.length > 0) {
-              fetch('/api/cart-recovery', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  email,
-                  cartItems: cart,
-                  firstName: form.firstName?.value.trim() || ''
-                })
-              }).catch(err => console.error('[Cart Recovery] Failed:', err));
-            }
+      if (!email) return;
+      try {
+        const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
+        if (state.email !== email) {
+          state.email = email;
+          localStorage.setItem('cart_recovery_state', JSON.stringify(state));
+          const cart = readCart();
+          if (cart.length > 0) {
+            fetch('/api/cart-recovery', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email,
+                cartItems: cart,
+                firstName: form.firstName?.value.trim() || ''
+              })
+            }).catch(err => console.error('[Cart Recovery] Failed:', err));
           }
-        } catch {}
-      }
+        }
+      } catch {}
     });
   }
 
-  // helper: "100mg" | "1 g" → mg (number)
+  // ─────────────────────────────────────────────────────────────────────────────
+  // 3) Хелпер для перетворення "100mg" | "1 g" → mg (number)
+  // ─────────────────────────────────────────────────────────────────────────────
   function parseQtyToMgLabel(s) {
     const t = String(s || '').toLowerCase();
     const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
-    return t.includes('g') ? Math.round(n * 1000) : Math.round(n);
+    return t.includes('g') && !t.includes('mg') ? Math.round(n * 1000) : Math.round(n);
   }
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // 4) Сабміт форми
+  // ─────────────────────────────────────────────────────────────────────────────
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -1359,32 +1386,23 @@ function initCheckoutForm() {
       return;
     }
 
-    // ⚡ АВТОМАТИЧНА АКТИВАЦІЯ RETURN15 якщо прийшов з recovery email
+    // Автозастосування RETURN15 якщо повернувся з recovery-листа
     const urlParams = new URLSearchParams(window.location.search);
-    const isRecovery = urlParams.get('recovery') === 'true';
-    const promoFromURL = urlParams.get('promo');
-    
-    if (isRecovery && promoFromURL === 'RETURN15') {
-      const promoInput = document.getElementById('promoCode');
-      const applyBtn = document.getElementById('applyPromoBtn');
-      
-      if (promoInput && !promoInput.value) {
-        promoInput.value = 'RETURN15';
-        applyBtn?.click(); // Auto-apply
-      }
+    const isRecovery    = urlParams.get('recovery') === 'true';
+    const promoFromURL  = (urlParams.get('promo') || '').toUpperCase();
+    const promoInputEl  = document.getElementById('promoCode');
+
+    if (isRecovery && promoFromURL === 'RETURN15' && promoInputEl && !promoInputEl.value) {
+      promoInputEl.value = 'RETURN15';
+      document.getElementById('applyPromoBtn')?.click?.();
     }
 
-    // ⚡ КРИТИЧНО: зчитуємо promo code (включаючи збережений з localStorage)
-    const promoInput = document.getElementById('promoCode');
-    const applyBtn = document.getElementById('applyPromoBtn');
-    
-    // Перевіряємо чи промокод застосований (через UI або автоматично)
-    const isPromoApplied = applyBtn && applyBtn.disabled;
-    const appliedPromoCode = isPromoApplied 
-      ? (promoInput?.value?.trim().toUpperCase() || '') 
-      : (window._appliedPromo?.code || '');
-
-    console.log('[FRONTEND DEBUG] Promo code:', appliedPromoCode, 'Applied:', isPromoApplied);
+    // ───────────────────────────────────────────────────────────────────────────
+    // КРИТИЧНО: промокод беремо БЕЗПОСЕРЕДНЬО з поля і відправляємо на бекенд
+    // (бекенд валідовує і рахує знижку; фронт може порахувати для UI)
+    // ───────────────────────────────────────────────────────────────────────────
+    const appliedPromoCode = (promoInputEl?.value || '').trim().toUpperCase();
+    console.log('[FRONTEND DEBUG] Promo code (raw field):', appliedPromoCode);
 
     // кошик → нормалізовані items
     const cart = normalizeCartUnits(readCart());
@@ -1401,35 +1419,25 @@ function initCheckoutForm() {
       };
     });
 
-    // суми з урахуванням знижки
+    // Локальні суми (для Success-URL/аналітики). Бекенд рахує заново.
     const subtotal = items.reduce((sum, it) => sum + it.qty * it.price, 0);
-    
     let discount = 0;
     let discountPercent = 0;
     if (appliedPromoCode) {
-      const PROMO_CODES = {
-        'RETURN15': 0.15,
-        'WELCOME15': 0.15
-      };
+      const PROMO_CODES = { 'RETURN15': 0.15, 'WELCOME15': 0.15 };
       discountPercent = PROMO_CODES[appliedPromoCode] || 0;
       discount = subtotal * discountPercent;
     }
-
     const shipping = 0;
     const total = subtotal - discount + shipping;
 
-    // payload
+    // payload → НЕ нав’язуємо сум на сервер, відправляємо промокод окремо
     const payload = {
       firstName, lastName, email, country, region, city, postal, address,
       messenger, handle, notes,
       _gotcha: gotcha,
-      items, 
-      subtotal, 
-      discount,
-      discountPercent,
-      promoCode: appliedPromoCode,
-      shipping, 
-      total
+      items,
+      promoCode: appliedPromoCode
     };
 
     console.log('[FRONTEND DEBUG] Payload:', JSON.stringify(payload, null, 2));
@@ -1475,9 +1483,8 @@ function initCheckoutForm() {
         }
       } catch {}
 
-      // success URL
+      // Success URL (для UX). Бекенд уже надіслав листи із коректними totals.
       const orderId = 'ORD-' + Date.now();
-
       const successUrl = `/success.html`
         + `?order_id=${encodeURIComponent(orderId)}`
         + `&items=${encodeURIComponent(JSON.stringify(items))}`
@@ -1486,7 +1493,7 @@ function initCheckoutForm() {
         + `&promo=${encodeURIComponent(appliedPromoCode || '')}`
         + `&total=${encodeURIComponent(total.toFixed(2))}`;
 
-      // ⚡ КРИТИЧНО: Очистка cart recovery state після успішного checkout
+      // Очистка промо/станів після успіху
       try {
         localStorage.removeItem('cart_recovery_state');
         localStorage.removeItem('pending_promo');
@@ -1494,10 +1501,7 @@ function initCheckoutForm() {
 
       // очистка кошика + редірект
       writeCart([]);
-      try {
-        localStorage.removeItem('cart');
-        localStorage.removeItem('cartItems');
-      } catch {}
+      try { localStorage.removeItem('cart'); localStorage.removeItem('cartItems'); } catch {}
       updateCartBadge([]);
       window.location.href = successUrl;
 
@@ -1514,6 +1518,7 @@ function initCheckoutForm() {
     }
   });
 }
+
 
 /* ============================ CONTACT ============================ */
 
