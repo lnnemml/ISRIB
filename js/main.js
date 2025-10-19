@@ -212,6 +212,7 @@ function fmtUSD(x) {
 }
 // === Cart-recovery: cancel scheduled 24h email ===
 async function cancelCartRecovery(email) {
+  onst e = (email || '').trim().toLowerCase(); 
   if (!email) return;
   try {
     await fetch('/api/cart-recovery', {
@@ -1339,6 +1340,7 @@ function initCheckoutForm() {
 
     const scheduleCartRecoveryOnce = async (only24h = false) => {
       const email = (emailInput.value || '').trim();
+      const email = emailRaw.toLowerCase();  
       if (!email) return;
       const cart = readCart();
       if (!cart.length) return;
