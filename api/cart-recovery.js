@@ -12,6 +12,17 @@ export const config = { api: { bodyParser: false } };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+    
+  let body = '';
+  await new Promise((resolve) => {
+    req.on('data', (chunk) => (body += chunk));
+    req.on('end', resolve);
+  });
+  const { email, action, cartItems, firstName } = JSON.parse(body || '{}');
+
+  const rawEmail = email || '';
+  const keyEmail = String(rawEmail).trim().toLowerCase();
+
 
   try {
     const { action = 'schedule', email, cartItems = [], firstName, stage } = JSON.parse(await readBody(req));
@@ -28,12 +39,13 @@ export default async function handler(req, res) {
     // CANCEL: зняти з плану всі recovery-листи для цього email
     // ─────────────────────────────────────────────────────────────────────────
     if (action === 'cancel') {
-      const rec = await kv.get(`cart_recovery:${email}`);
-      if (rec?.twoH)  { try { await resend.emails.cancel(rec.twoH); } catch {} }
-      if (rec?.day1)  { try { await resend.emails.cancel(rec.day1); } catch {} }
-      await kv.del(`cart_recovery:${email}`);
-      return res.status(200).json({ ok: true, cancelled: !!rec });
-    }
+  const rec = await kv.get(`cart_recovery:${keyEmail}`);
+  if (rec?.twoH) { try { await resend.emails.cancel(rec.twoH); } catch {} }
+  if (rec?.day1) { try { await resend.emails.cancel(rec.day1); } catch {} }
+  await kv.del(`cart_recovery:${keyEmail}`);
+  return res.status(200).json({ ok: true, cancelled: !!rec });
+}
+
 
     // Для відправки потрібні дані про кошик (окрім immediate test)
     if (!cartItems.length && action !== 'immediate') {
@@ -79,12 +91,13 @@ export default async function handler(req, res) {
       });
 
       // 🔒 ЗБЕРЕГТИ ID у Redis (для подальшого скасування)
-      await kv.set(`cart_recovery:${email}`, {
-        twoH: resp2h?.id || null,
-        day1: resp24?.id || null,
-        createdAt: new Date().toISOString(),
-        subtotal,
-      });
+      await kv.set(`cart_recovery:${keyEmail}`, {
+       twoH: resp2h?.id || null,
+       day1: resp24?.id || null,
+       createdAt: new Date().toISOString(),
+       subtotal,
+     });
+
 
       return res.status(200).json({
         ok: true,
