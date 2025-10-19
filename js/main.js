@@ -210,6 +210,20 @@ function fmtUSD(x) {
   const n = Number(x || 0);
   return `$${n.toFixed(2)}`;
 }
+// === Cart-recovery: cancel scheduled 24h email ===
+async function cancelCartRecovery(email) {
+  if (!email) return;
+  try {
+    await fetch('/api/cart-recovery', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'cancel', email })
+    });
+    console.log('[Cart Recovery] 24h follow-up canceled for', email);
+  } catch (e) {
+    console.warn('[Cart Recovery] cancel failed', e);
+  }
+}
 
 /* ===================== PRODUCTS / QUANTITY ===================== */
 
@@ -1276,7 +1290,24 @@ function initCheckoutForm() {
   const submitBtn = document.getElementById('submitOrderBtn');
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // 1) Автопідстановка промокоду з URL або localStorage у поле #promoCode
+  // ДОДАНО: хелпер для скасування запланованих follow-up листів
+  // ─────────────────────────────────────────────────────────────────────────────
+  async function cancelCartRecovery(email) {
+    if (!email) return;
+    try {
+      await fetch('/api/cart-recovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel', email })
+      });
+      console.log('[Cart Recovery] canceled follow-ups for', email);
+    } catch (e) {
+      console.warn('[Cart Recovery] cancel failed', e);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // 1) Автопідстановка промокоду
   // ─────────────────────────────────────────────────────────────────────────────
   try {
     const promoEl = document.getElementById('promoCode');
@@ -1300,67 +1331,82 @@ function initCheckoutForm() {
   } catch (e) { console.warn('Promo prefill failed', e); }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // 2) Збір email для cart-recovery + відправка стану кошика (як було)
+  // 2) Збір email для cart-recovery + follow-up логіка
   // ─────────────────────────────────────────────────────────────────────────────
-// ⬇️ Замість твого блоку cart-recovery
-const emailInput = form.querySelector('input[name="email"], #email');
-if (emailInput) {
-  let debounceTimer;
+  const emailInput = form.querySelector('input[name="email"], #email');
+  if (emailInput) {
+    let debounceTimer;
 
-  const scheduleCartRecoveryOnce = async () => {
-    const email = (emailInput.value || '').trim();
-    if (!email) return;
+    const scheduleCartRecoveryOnce = async (only24h = false) => {
+      const email = (emailInput.value || '').trim();
+      if (!email) return;
+      const cart = readCart();
+      if (!cart.length) return;
 
-    const cart = readCart();
-    if (!cart.length) return;
-
-    // збережемо state (як було)
-    try {
-      const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
-      state.email = email;
-      localStorage.setItem('cart_recovery_state', JSON.stringify(state));
-    } catch {}
-
-    // ключ, щоб не планувати повторно для того ж email
-    const key = `cart_recovery_scheduled:${email}`;
-    if (localStorage.getItem(key) === '1') return;
-
-    try {
-      await fetch('/api/cart-recovery', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          stage: 'schedule',               // 🔸 головне: просимо бекенд ЗАПЛАНУВАТИ 2h і 24h
-          email,
-          cartItems: cart,
-          firstName: form.firstName?.value.trim() || ''
-        })
-      });
-      localStorage.setItem(key, '1');
-
-      // (необов'язково) GA4 трекінг
       try {
-        if (typeof gtag === 'function') {
-          const subtotal = cart.reduce((s,i)=>s + (Number(i.price||0)*Number(i.count||1)), 0);
-          gtag('event', 'cart_recovery_scheduled', {
-            event_category: 'checkout',
-            value: subtotal,
-            currency: 'USD',
-            items_count: cart.length
-          });
-        }
+        const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
+        state.email = email;
+        localStorage.setItem('cart_recovery_state', JSON.stringify(state));
       } catch {}
-    } catch (err) {
-      console.error('[Cart Recovery] schedule failed:', err);
-    }
-  };
 
-  emailInput.addEventListener('blur', () => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(scheduleCartRecoveryOnce, 400); // невеликий дебаунс
-  });
-}
+      const key = `cart_recovery_scheduled:${email}`;
+      if (localStorage.getItem(key) === '1') return;
 
+      try {
+        await fetch('/api/cart-recovery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'schedule',
+            email,
+            cartItems: cart,
+            firstName: form.firstName?.value.trim() || '',
+            only24h // якщо true — бекенд має запланувати лише 24h лист
+          })
+        });
+        localStorage.setItem(key, '1');
+        console.log('[Cart Recovery] scheduled', only24h ? '24h only' : '2h+24h', 'for', email);
+      } catch (err) {
+        console.error('[Cart Recovery] schedule failed:', err);
+      }
+    };
+
+    emailInput.addEventListener('blur', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => scheduleCartRecoveryOnce(false), 400);
+    });
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // якщо прийшов з follow-up ( ?recovery=true ):
+    // 1️⃣ скасувати старі листи
+    // 2️⃣ якщо не купив — запланувати тільки 24h через 30 секунд
+    // ─────────────────────────────────────────────────────────────────────────────
+    try {
+      const qs = new URLSearchParams(location.search);
+      if (qs.get('recovery') === 'true') {
+        let email = (emailInput.value || '').trim();
+        if (!email) {
+          try {
+            const st = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}');
+            if (st && st.email) email = String(st.email).trim();
+          } catch {}
+        }
+
+        if (email) {
+          // скасувати старий цикл (2h+24h)
+          cancelCartRecovery(email);
+
+          // через 30 секунд — якщо не купив — запланувати лише 24h follow-up
+          setTimeout(async () => {
+            const cart = readCart();
+            if (!cart.length) return;
+            localStorage.removeItem(`cart_recovery_scheduled:${email}`);
+            await scheduleCartRecoveryOnce(true); // 🔸 тільки 24h
+          }, 30000);
+        }
+      }
+    } catch (_) {}
+  }
 
   // ─────────────────────────────────────────────────────────────────────────────
   // 3) Хелпер для перетворення "100mg" | "1 g" → mg (number)
@@ -1380,15 +1426,13 @@ if (emailInput) {
     const msg = document.getElementById('formMsg') || form.querySelector('.form-status');
     if (msg) { msg.textContent = ''; msg.style.color = ''; }
 
-    // honeypot
     const gotcha = form.querySelector('input[name="_gotcha"]')?.value || '';
     if (gotcha) return;
 
-    // заборона сабміту з пустим кошиком
     const cartNow = readCart();
     if (!cartNow.length) {
       if (msg) {
-        msg.textContent = 'Your cart is empty. Add at least one product before submitting.';
+        msg.textContent = 'Your cart is empty.';
         msg.style.color = '#dc2626';
       }
       try { showToast?.('Cart is empty', 'error'); } catch {}
@@ -1397,7 +1441,6 @@ if (emailInput) {
       return;
     }
 
-    // дані з форми
     const firstName = form.firstName.value.trim();
     const lastName  = form.lastName.value.trim();
     const email     = form.email.value.trim();
@@ -1410,7 +1453,6 @@ if (emailInput) {
     const handle    = form.handle?.value || '';
     const notes     = form.notes?.value || '';
 
-    // валідація
     if (!firstName || !lastName || !email || !country || !city || !postal || !address) {
       if (msg) {
         msg.textContent = 'Please fill all required fields.';
@@ -1419,41 +1461,32 @@ if (emailInput) {
       return;
     }
 
-    // Автозастосування RETURN15 якщо повернувся з recovery-листа
     const urlParams = new URLSearchParams(window.location.search);
-    const isRecovery    = urlParams.get('recovery') === 'true';
-    const promoFromURL  = (urlParams.get('promo') || '').toUpperCase();
-    const promoInputEl  = document.getElementById('promoCode');
+    const isRecovery = urlParams.get('recovery') === 'true';
+    const promoFromURL = (urlParams.get('promo') || '').toUpperCase();
+    const promoInputEl = document.getElementById('promoCode');
 
     if (isRecovery && promoFromURL === 'RETURN15' && promoInputEl && !promoInputEl.value) {
       promoInputEl.value = 'RETURN15';
       document.getElementById('applyPromoBtn')?.click?.();
     }
 
-    // ───────────────────────────────────────────────────────────────────────────
-    // КРИТИЧНО: промокод беремо БЕЗПОСЕРЕДНЬО з поля і відправляємо на бекенд
-    // (бекенд валідовує і рахує знижку; фронт може порахувати для UI)
-    // ───────────────────────────────────────────────────────────────────────────
     const appliedPromoCode = (promoInputEl?.value || '').trim().toUpperCase();
-    console.log('[FRONTEND DEBUG] Promo code (raw field):', appliedPromoCode);
-
-    // кошик → нормалізовані items
     const cart = normalizeCartUnits(readCart());
     const items = cart.map(i => {
       const mgFromLabel = parseQtyToMgLabel(i.display);
-      const mgPerPack   = mgFromLabel || Number(i.grams || 0);
+      const mgPerPack = mgFromLabel || Number(i.grams || 0);
       return {
-        name:    i.name,
-        sku:     i.sku || i.id || '',
-        qty:     Number(i.count || 1),
-        price:   Number(i.price || 0),
-        grams:   mgPerPack,
+        name: i.name,
+        sku: i.sku || i.id || '',
+        qty: Number(i.count || 1),
+        price: Number(i.price || 0),
+        grams: mgPerPack,
         display: i.display || (mgPerPack ? (mgPerPack >= 1000 ? (mgPerPack / 1000) + 'g' : mgPerPack + 'mg') : '')
       };
     });
 
-    // Локальні суми (для Success-URL/аналітики). Бекенд рахує заново.
-    const subtotal = items.reduce((sum, it) => sum + it.qty * it.price, 0);
+    const subtotal = items.reduce((s, it) => s + it.qty * it.price, 0);
     let discount = 0;
     let discountPercent = 0;
     if (appliedPromoCode) {
@@ -1461,10 +1494,8 @@ if (emailInput) {
       discountPercent = PROMO_CODES[appliedPromoCode] || 0;
       discount = subtotal * discountPercent;
     }
-    const shipping = 0;
-    const total = subtotal - discount + shipping;
+    const total = subtotal - discount;
 
-    // payload → НЕ нав’язуємо сум на сервер, відправляємо промокод окремо
     const payload = {
       firstName, lastName, email, country, region, city, postal, address,
       messenger, handle, notes,
@@ -1473,13 +1504,7 @@ if (emailInput) {
       promoCode: appliedPromoCode
     };
 
-    console.log('[FRONTEND DEBUG] Payload:', JSON.stringify(payload, null, 2));
-
-    // блокування кнопки
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.setAttribute('aria-disabled', 'true');
-    }
+    if (submitBtn) submitBtn.disabled = true;
 
     try {
       const res = await fetch('/api/checkout', {
@@ -1490,67 +1515,28 @@ if (emailInput) {
 
       if (!res.ok) {
         let errMsg = 'Could not submit. Please check your cart.';
-        try {
-          const j = await res.json();
-          if (j?.error) errMsg = j.error;
-          if (j?.code === 'EMPTY_CART') errMsg = 'Your cart is empty. Add at least one product before submitting.';
-          if (j?.code === 'INVALID_CART_ITEM') errMsg = 'One of items in your cart is invalid.';
-          if (j?.code === 'INVALID_SUBTOTAL') errMsg = 'Cart total invalid.';
-        } catch {}
         if (msg) { msg.textContent = errMsg; msg.style.color = '#dc2626'; }
-        try { showToast?.(errMsg, 'error'); } catch {}
-        updateCheckoutSubmitState?.();
         return;
       }
 
-      // GA intent
-      try {
-        if (typeof gtag === 'function') {
-          gtag('event', 'purchase_intent', {
-            event_category: 'checkout',
-            event_label: 'checkout form submitted',
-            value: total,
-            currency: 'USD',
-            coupon: appliedPromoCode || undefined
-          });
-        }
-      } catch {}
+      // 🟢 скасування 24h при успішній покупці
+      await cancelCartRecovery(email);
 
-      // Success URL (для UX). Бекенд уже надіслав листи із коректними totals.
-      const orderId = 'ORD-' + Date.now();
-      const successUrl = `/success.html`
-        + `?order_id=${encodeURIComponent(orderId)}`
-        + `&items=${encodeURIComponent(JSON.stringify(items))}`
-        + `&subtotal=${encodeURIComponent(subtotal.toFixed(2))}`
-        + `&discount=${encodeURIComponent(discount.toFixed(2))}`
-        + `&promo=${encodeURIComponent(appliedPromoCode || '')}`
-        + `&total=${encodeURIComponent(total.toFixed(2))}`;
-
-      // Очистка промо/станів після успіху
-      try {
-        localStorage.removeItem('cart_recovery_state');
-        localStorage.removeItem('pending_promo');
-      } catch {}
-
-      // очистка кошика + редірект
+      localStorage.removeItem('cart_recovery_state');
+      localStorage.removeItem(`cart_recovery_scheduled:${email}`);
       writeCart([]);
-      try { localStorage.removeItem('cart'); localStorage.removeItem('cartItems'); } catch {}
       updateCartBadge([]);
-      window.location.href = successUrl;
+      window.location.href = '/success.html';
 
     } catch (err) {
-      const human = 'Error. Try again later.';
-      if (msg) { msg.textContent = human; msg.style.color = '#ef4444'; }
-      try { showToast?.(human, 'error'); } catch {}
+      if (msg) { msg.textContent = 'Error. Try again later.'; msg.style.color = '#ef4444'; }
       console.error('[CHECKOUT_ERROR]', err);
     } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.setAttribute('aria-disabled', 'false');
-      }
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 }
+
 
 
 /* ============================ CONTACT ============================ */
