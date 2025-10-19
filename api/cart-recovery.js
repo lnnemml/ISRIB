@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     const subjects = {
       immediate: 'Your ISRIB research order is ready',
       '2h': 'Complete your ISRIB order — Free shipping included',
-      '24h': 'Your reserved research materials are waiting',
+      '24h': 'Your reserved research chemicals are waiting',
     };
 
     // ── CANCEL ────────────────────────────────────────────────────────────────
