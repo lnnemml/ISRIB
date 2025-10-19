@@ -12,92 +12,95 @@ export const config = { api: { bodyParser: false } };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
-    
-  let body = '';
+
+  // читаємо raw body ОДИН раз
+  let raw = '';
   await new Promise((resolve) => {
-    req.on('data', (chunk) => (body += chunk));
+    req.on('data', (c) => raw += c);
     req.on('end', resolve);
   });
-  const { email, action, cartItems, firstName } = JSON.parse(body || '{}');
 
-  const rawEmail = email || '';
-  const keyEmail = String(rawEmail).trim().toLowerCase();
+  let payload = {};
+  try { payload = JSON.parse(raw || '{}'); } catch {}
 
+  const {
+    action = 'schedule',
+    email = '',
+    cartItems = [],
+    firstName = '',
+    stage,
+    only24h = false,  // ← підтримка фронтового прапорця
+  } = payload;
+
+  const rawEmail = String(email || '');
+  const keyEmail = rawEmail.trim().toLowerCase();   // ← КАНОНІЧНИЙ ключ для Redis
 
   try {
-    const { action = 'schedule', email, cartItems = [], firstName, stage } = JSON.parse(await readBody(req));
-
-    if (!email) return res.status(400).json({ error: 'Missing email' });
-
     const subjects = {
       immediate: 'Your ISRIB research order is ready',
       '2h': 'Complete your ISRIB order — Free shipping included',
       '24h': 'Your reserved research materials are waiting',
     };
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // CANCEL: зняти з плану всі recovery-листи для цього email
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── CANCEL ────────────────────────────────────────────────────────────────
     if (action === 'cancel') {
-  const rec = await kv.get(`cart_recovery:${keyEmail}`);
-  if (rec?.twoH) { try { await resend.emails.cancel(rec.twoH); } catch {} }
-  if (rec?.day1) { try { await resend.emails.cancel(rec.day1); } catch {} }
-  await kv.del(`cart_recovery:${keyEmail}`);
-  return res.status(200).json({ ok: true, cancelled: !!rec });
-}
+      const rec = await kv.get(`cart_recovery:${keyEmail}`);
+      if (rec?.twoH) { try { await resend.emails.cancel(rec.twoH); } catch {} }
+      if (rec?.day1) { try { await resend.emails.cancel(rec.day1); } catch {} }
+      await kv.del(`cart_recovery:${keyEmail}`);
+      return res.status(200).json({ ok: true, cancelled: !!rec });
+    }
 
-
-    // Для відправки потрібні дані про кошик (окрім immediate test)
-    if (!cartItems.length && action !== 'immediate') {
+    if (!rawEmail) return res.status(400).json({ error: 'Missing email' });
+    if (!Array.isArray(cartItems) || (!cartItems.length && action !== 'immediate')) {
       return res.status(400).json({ error: 'Missing cartItems' });
     }
 
     const subtotal = cartItems.reduce((s, i) => s + Number(i.price || 0) * Number(i.count || 1), 0);
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // SCHEDULE: запланувати через 2 години і через 24 години + ЗБЕРЕГТИ ID
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── SCHEDULE (2h+24h або лише 24h) ───────────────────────────────────────
     if (action === 'schedule') {
       const now = Date.now();
-      const in2hISO  = new Date(now + 2 * 60 * 60 * 1000).toISOString();
+      const in2hISO  = new Date(now +  2 * 60 * 60 * 1000).toISOString();
       const in24hISO = new Date(now + 24 * 60 * 60 * 1000).toISOString();
 
-      const resp2h = await resend.emails.send({
-        from: process.env.RESEND_FROM,
-        to: email,
-        subject: subjects['2h'],
-        replyTo: 'isrib.shop@protonmail.com',
-        headers: {
-          'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}>`,
-          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-        },
-        html: generateRecoveryEmail(cartItems, subtotal, firstName, '2h', email),
-        tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: '2h' }],
-        scheduledAt: in2hISO,
-      });
+      let resp2h = null;
+      if (!only24h) {
+        resp2h = await resend.emails.send({
+          from: process.env.RESEND_FROM,
+          to: rawEmail, // надсилаємо на оригінал
+          subject: subjects['2h'],
+          replyTo: 'isrib.shop@protonmail.com',
+          headers: {
+            'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
+          html: generateRecoveryEmail(cartItems, subtotal, firstName, '2h', rawEmail),
+          tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: '2h' }],
+          scheduledAt: in2hISO,
+        });
+      }
 
       const resp24 = await resend.emails.send({
         from: process.env.RESEND_FROM,
-        to: email,
+        to: rawEmail,
         subject: subjects['24h'],
         replyTo: 'isrib.shop@protonmail.com',
         headers: {
-          'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}>`,
+          'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         },
-        html: generateRecoveryEmail(cartItems, subtotal, firstName, '24h', email),
+        html: generateRecoveryEmail(cartItems, subtotal, firstName, '24h', rawEmail),
         tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: '24h' }],
         scheduledAt: in24hISO,
       });
 
-      // 🔒 ЗБЕРЕГТИ ID у Redis (для подальшого скасування)
       await kv.set(`cart_recovery:${keyEmail}`, {
-       twoH: resp2h?.id || null,
-       day1: resp24?.id || null,
-       createdAt: new Date().toISOString(),
-       subtotal,
-     });
-
+        twoH: resp2h?.id || null,
+        day1: resp24?.id || null,
+        createdAt: new Date().toISOString(),
+        subtotal,
+      });
 
       return res.status(200).json({
         ok: true,
@@ -106,20 +109,18 @@ export default async function handler(req, res) {
       });
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // IMMEDIATE: миттєва відправка (без збереження id, бо не планується)
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── IMMEDIATE ────────────────────────────────────────────────────────────
     const subj = subjects[stage] || subjects.immediate;
     const resp = await resend.emails.send({
       from: process.env.RESEND_FROM,
-      to: email,
+      to: rawEmail,
       subject: subj,
       replyTo: 'isrib.shop@protonmail.com',
       headers: {
-        'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}>`,
+        'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       },
-      html: generateRecoveryEmail(cartItems, subtotal, firstName, stage || 'immediate', email),
+      html: generateRecoveryEmail(cartItems, subtotal, firstName, stage || 'immediate', rawEmail),
       tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: stage || 'immediate' }],
     });
 
@@ -129,6 +130,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: err.message });
   }
 }
+
 
 function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
   const itemsHtml = (cartItems || []).map(item => `
