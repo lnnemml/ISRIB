@@ -1,0 +1,7 @@
+{
+  "redirects": [
+    { "source": "/isrib-a15", "destination": "/product_isrib_A15.html", "permanent": true },
+    { "source": "/product-page/isrib-a15-500mg", "destination": "/product_isrib_A15.html", "permanent": true },
+    { "source": "/zzl-7", "destination": "//product_zzl_7.html", "permanent": true }
+  ]
+}
