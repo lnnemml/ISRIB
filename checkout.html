@@ -345,5 +345,33 @@
     }, 500);
   });
 </script>
+
+  <script>
+  (function autoCancel24hOnReturn() {
+    try {
+      const qs = new URLSearchParams(location.search);
+      if (qs.get('recovery') !== 'true') return;
+
+      // 1) беремо email з форми якщо вже є
+      const input = document.getElementById('email');
+      let email = (input && input.value || '').trim();
+
+      // 2) інакше — із нашого збереженого стейту (коли планували 2h/24h)
+      if (!email) {
+        const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}');
+        email = (state && state.email || '').trim();
+      }
+      if (!email) return;
+
+      // 3) викликаємо бекенд для скасування запланованих листів
+      fetch('/api/cart-recovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel', email })
+      }).catch(() => {});
+    } catch (e) { /* no-op */ }
+  })();
+</script>
+
 </body>
 </html>
