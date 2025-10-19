@@ -210,19 +210,19 @@ function fmtUSD(x) {
   const n = Number(x || 0);
   return `$${n.toFixed(2)}`;
 }
-// === Cart-recovery: cancel scheduled 24h email ===
+// === Cart-recovery: cancel scheduled follow-ups ===
 async function cancelCartRecovery(email) {
-  onst e = (email || '').trim().toLowerCase(); 
-  if (!email) return;
+  const e = (email || '').trim().toLowerCase();   // нормалізація
+  if (!e) return;
   try {
     await fetch('/api/cart-recovery', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'cancel', email })
+      body: JSON.stringify({ action: 'cancel', email: e })
     });
-    console.log('[Cart Recovery] 24h follow-up canceled for', email);
-  } catch (e) {
-    console.warn('[Cart Recovery] cancel failed', e);
+    console.log('[Cart Recovery] follow-ups canceled for', e);
+  } catch (err) {
+    console.warn('[Cart Recovery] cancel failed', err);
   }
 }
 
@@ -1290,23 +1290,7 @@ function initCheckoutForm() {
 
   const submitBtn = document.getElementById('submitOrderBtn');
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // ДОДАНО: хелпер для скасування запланованих follow-up листів
-  // ─────────────────────────────────────────────────────────────────────────────
-  async function cancelCartRecovery(email) {
-    if (!email) return;
-    try {
-      await fetch('/api/cart-recovery', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'cancel', email })
-      });
-      console.log('[Cart Recovery] canceled follow-ups for', email);
-    } catch (e) {
-      console.warn('[Cart Recovery] cancel failed', e);
-    }
-  }
-
+ 
   // ─────────────────────────────────────────────────────────────────────────────
   // 1) Автопідстановка промокоду
   // ─────────────────────────────────────────────────────────────────────────────
@@ -1338,39 +1322,43 @@ function initCheckoutForm() {
   if (emailInput) {
     let debounceTimer;
 
-    const scheduleCartRecoveryOnce = async (only24h = false) => {
-      const email = (emailInput.value || '').trim();
-      const email = emailRaw.toLowerCase();  
-      if (!email) return;
-      const cart = readCart();
-      if (!cart.length) return;
+   const scheduleCartRecoveryOnce = async (only24h = false) => {
+  const emailRaw = (emailInput.value || '').trim();
+  const email = emailRaw.toLowerCase();           // нормалізований
+  if (!email) return;
 
-      try {
-        const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
-        state.email = email;
-        localStorage.setItem('cart_recovery_state', JSON.stringify(state));
-      } catch {}
+  const cart = readCart();
+  if (!cart.length) return;
 
-      const key = `cart_recovery_scheduled:${email}`;
-      if (localStorage.getItem(key) === '1') return;
+  // зберегти стан для повернення
+  try {
+    const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
+    state.email = email;
+    localStorage.setItem('cart_recovery_state', JSON.stringify(state));
+  } catch {}
 
-      try {
-        await fetch('/api/cart-recovery', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'schedule',
-            email,
-            cartItems: cart,
-            firstName: form.firstName?.value.trim() || '',
-            only24h // якщо true — бекенд має запланувати лише 24h лист
-          })
-        });
-        localStorage.setItem(key, '1');
-        console.log('[Cart Recovery] scheduled', only24h ? '24h only' : '2h+24h', 'for', email);
-      } catch (err) {
-        console.error('[Cart Recovery] schedule failed:', err);
-      }
+  const key = `cart_recovery_scheduled:${email}`;
+  if (localStorage.getItem(key) === '1') return;
+
+  try {
+    await fetch('/api/cart-recovery', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'schedule',
+        email,
+        cartItems: cart,
+        firstName: form.firstName?.value.trim() || '',
+        only24h                           // ← тепер бекенд це розуміє
+      })
+    });
+    localStorage.setItem(key, '1');
+    console.log('[Cart Recovery] scheduled', only24h ? '24h only' : '2h+24h', 'for', email);
+  } catch (err) {
+    console.error('[Cart Recovery] schedule failed:', err);
+  }
+};
+
     };
 
     emailInput.addEventListener('blur', () => {
