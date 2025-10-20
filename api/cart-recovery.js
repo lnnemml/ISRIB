@@ -208,18 +208,24 @@ export default async function handler(req, res) {
         console.error('[Cart Recovery] ❌ Failed to schedule 24h:', err);
       }
 
+      // Чекаємо щоб Resend повернув ID
+      const twoHId = resp2h?.id || resp2h?.data?.id || null;
+      const day1Id = resp24?.id || resp24?.data?.id || null;
+
       await kv.set(`cart_recovery:${keyEmail}`, {
-        twoH: resp2h?.id || null,
-        day1: resp24?.id || null,
+        twoH: twoHId,
+        day1: day1Id,
         createdAt: new Date().toISOString(),
         subtotal,
+        email: keyEmail,
       });
 
       console.log('[Cart Recovery] ✅ Saved to Redis:', {
         key: `cart_recovery:${keyEmail}`,
-        twoH: resp2h?.id || null,
-        day1: resp24?.id || null
+        twoH: twoHId,
+        day1: day1Id
       });
+      
 
       return res.status(200).json({
         ok: true,
