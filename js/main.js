@@ -1289,6 +1289,15 @@ function initCheckoutForm() {
   if (!form) return;
 
   const submitBtn = document.getElementById('submitOrderBtn');
+   try {
+  if (typeof gtag === 'function') {
+    gtag('event', 'begin_checkout', {
+      event_category: 'ecommerce',
+      event_label: 'Checkout Form Opened',
+    });
+    console.log('[GA4] begin_checkout event sent');
+  }
+} catch(e) { console.warn('[GA4] begin_checkout failed', e); }
 
  
   // ─────────────────────────────────────────────────────────────────────────────
