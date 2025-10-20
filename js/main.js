@@ -210,38 +210,42 @@ function fmtUSD(x) {
   const n = Number(x || 0);
   return `$${n.toFixed(2)}`;
 }
-async function cancelCartRecovery(email) {
-  // КРИТИЧНО: нормалізація має бути ідентичною до бекенду
-  const normalizedEmail = String(email || '').trim().toLowerCase();
+// ============================================================================
+// ВИПРАВЛЕНА функція скасування cart recovery (НЕ БЛОКУЄ відправку листів)
+// ============================================================================
+async function cancelCartRecoveryEmails(email) {
+  const normalizedEmail = normalizeEmail(email);
   
   if (!normalizedEmail || !normalizedEmail.includes('@')) {
-    console.warn('[Cart Recovery] Invalid email for cancel:', email);
-    return;
+    console.warn('[Checkout] Invalid email for cart recovery cancel:', email);
+    return false;
   }
-  
-  try {
-    const response = await fetch('/api/cart-recovery', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        action: 'cancel', 
-        email: normalizedEmail  // ← передаємо нормалізований
-      })
-    });
-    
+
+  // ⚡ КРИТИЧНО: Виконуємо в фоні БЕЗ await — не блокуємо відправку листів
+  fetch(`${process.env.SITE_URL || 'https://isrib.shop'}/api/cart-recovery`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      action: 'cancel', 
+      email: normalizedEmail 
+    })
+  })
+  .then(response => {
     if (response.ok) {
-      const data = await response.json();
-      console.log('[Cart Recovery] ✅ Cancellation successful:', data);
-      
-      // Очищаємо локальні ключі
-      localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
-      localStorage.removeItem('cart_recovery_state');
+      return response.json();
     } else {
-      console.error('[Cart Recovery] Cancel failed:', response.status);
+      throw new Error(`Cancel failed: ${response.status}`);
     }
-  } catch (err) {
-    console.error('[Cart Recovery] Cancel request error:', err);
-  }
+  })
+  .then(data => {
+    console.log('[Checkout] ✅ Cart recovery canceled:', data);
+  })
+  .catch(error => {
+    // НЕ кидаємо помилку далі — просто логуємо
+    console.warn('[Checkout] ⚠️ Cart recovery cancel failed (non-critical):', error.message);
+  });
+
+  return true; // повертаємо одразу
 }
 
 /* ===================== PRODUCTS / QUANTITY ===================== */
