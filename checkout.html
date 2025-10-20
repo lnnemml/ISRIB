@@ -360,24 +360,38 @@
       const qs = new URLSearchParams(location.search);
       if (qs.get('recovery') !== 'true') return;
 
-      // 1) беремо email з форми якщо вже є
+      // 1) Нормалізуємо email
       const input = document.getElementById('email');
-      let email = (input && input.value || '').trim();
-
-      // 2) інакше — із нашого збереженого стейту (коли планували 2h/24h)
-      if (!email) {
+      let rawEmail = (input?.value || '').trim();
+      
+      if (!rawEmail) {
         const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}');
-        email = (state && state.email || '').trim();
+        rawEmail = (state?.email || '').trim();
       }
-      if (!email) return;
+      
+      const email = rawEmail.toLowerCase(); // ← нормалізація
+      if (!email || !email.includes('@')) {
+        console.warn('[Recovery] No valid email found');
+        return;
+      }
 
-      // 3) викликаємо бекенд для скасування запланованих листів
+      // 2) Скасовуємо старі листи
       fetch('/api/cart-recovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'cancel', email })
-      }).catch(() => {});
-    } catch (e) { /* no-op */ }
+      }).then(res => {
+        if (res.ok) {
+          console.log('[Recovery] ✅ Old emails canceled for:', email);
+          localStorage.removeItem(`cart_recovery_scheduled:${email}`);
+        }
+      }).catch(err => {
+        console.error('[Recovery] Cancel failed:', err);
+      });
+      
+    } catch (e) {
+      console.error('[Recovery] Auto-cancel error:', e);
+    }
   })();
 </script>
 
