@@ -2882,3 +2882,26 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     order: 2;
   }
 }
+
+/* === Fix: make buttons & quantity clickable on products grid === */
+.product-card { position: relative; }
+
+.product-card .stretched-link {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;       /* critical: don't eat clicks */
+}
+
+.product-footer,
+.quantity-row,
+.price-line {
+  position: relative;
+  z-index: 2;                 /* above stretched-link */
+}
+
+.quantity-option,
+.add-to-cart {
+  position: relative;
+  z-index: 3;
+}
