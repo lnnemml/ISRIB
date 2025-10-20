@@ -210,19 +210,37 @@ function fmtUSD(x) {
   const n = Number(x || 0);
   return `$${n.toFixed(2)}`;
 }
-// === Cart-recovery: cancel scheduled follow-ups ===
 async function cancelCartRecovery(email) {
-  const e = (email || '').trim().toLowerCase();   // нормалізація
-  if (!e) return;
+  // КРИТИЧНО: нормалізація має бути ідентичною до бекенду
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  
+  if (!normalizedEmail || !normalizedEmail.includes('@')) {
+    console.warn('[Cart Recovery] Invalid email for cancel:', email);
+    return;
+  }
+  
   try {
-    await fetch('/api/cart-recovery', {
+    const response = await fetch('/api/cart-recovery', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'cancel', email: e })
+      body: JSON.stringify({ 
+        action: 'cancel', 
+        email: normalizedEmail  // ← передаємо нормалізований
+      })
     });
-    console.log('[Cart Recovery] follow-ups canceled for', e);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('[Cart Recovery] ✅ Cancellation successful:', data);
+      
+      // Очищаємо локальні ключі
+      localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
+      localStorage.removeItem('cart_recovery_state');
+    } else {
+      console.error('[Cart Recovery] Cancel failed:', response.status);
+    }
   } catch (err) {
-    console.warn('[Cart Recovery] cancel failed', err);
+    console.error('[Cart Recovery] Cancel request error:', err);
   }
 }
 
@@ -1512,13 +1530,21 @@ function initCheckoutForm() {
       });
 
       if (!res.ok) {
-        let errMsg = 'Could not submit. Please check your cart.';
-        if (msg) { msg.textContent = errMsg; msg.style.color = '#dc2626'; }
-        return;
-      }
+  let errMsg = 'Could not submit. Please check your cart.';
+  if (msg) { msg.textContent = errMsg; msg.style.color = '#dc2626'; }
+  return;
+}
 
-      // 🟢 скасування 24h при успішній покупці
-      await cancelCartRecovery(email);
+// ✅ КРИТИЧНО: Скасовуємо follow-ups ПІСЛЯ підтвердження від бекенду
+const normalizedEmail = email.trim().toLowerCase();
+await cancelCartRecovery(normalizedEmail);
+
+// Очищаємо всі пов'язані ключі
+localStorage.removeItem('cart_recovery_state');
+localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
+localStorage.removeItem('pending_promo');
+
+console.log('[Checkout] ✅ Cart recovery canceled for:', normalizedEmail);
 
       localStorage.removeItem('cart_recovery_state');
       localStorage.removeItem(`cart_recovery_scheduled:${email}`);
