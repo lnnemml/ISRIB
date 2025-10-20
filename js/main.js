@@ -39,8 +39,8 @@ function initializeApp() {
   initFAQAccordion();       // FAQ акордеон (a11y + аналітика)
   initAnchorHighlight();    // підсвічування при переході за якорями
   updateCartBadge();
-  mountAddToCartButtons();
   prepareAddToCartButtons();
+  mountAddToCartButtons();
   renderCheckoutCart();
   initBundleWidget();
   initCheckoutUpsell(); 
