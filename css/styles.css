@@ -2930,3 +2930,22 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
 @media (hover: none) {
   .product-card .stretched-link{ pointer-events: none !important; }
 }
+
+/* === Mobile-only CTA in hero === */
+.hero-cta-mobile{
+  display: none;
+  margin-top: 12px;
+}
+
+/* показуємо тільки на мобільних */
+@media (max-width: 720px){
+  .hero-cta-mobile{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 320px;
+    margin-inline: auto;
+    text-align: center;
+  }
+}
