@@ -2905,3 +2905,28 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   position: relative;
   z-index: 3;
 }
+/* === Mobile fix: let buttons & quantity options receive taps === */
+.product-card { position: relative; }
+
+.product-card .stretched-link{
+  position: absolute;
+  inset: 0;
+  z-index: 0 !important;
+  pointer-events: none !important;  /* ключ: лінк не перехоплює тапи */
+}
+
+/* керування завжди поверх (на випадок різних стек-контекстів) */
+.product-card .price-line,
+.product-card .quantity-wrap,
+.product-card .quantity-row,
+.product-card .quantity-option,
+.product-card .product-footer,
+.product-card .add-to-cart{
+  position: relative;
+  z-index: 2;
+}
+
+/* для мобільних браузерів без hover — продублюємо */
+@media (hover: none) {
+  .product-card .stretched-link{ pointer-events: none !important; }
+}
