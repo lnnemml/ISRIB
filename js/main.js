@@ -1323,8 +1323,7 @@ function initCheckoutForm() {
     let debounceTimer;
 
    const scheduleCartRecoveryOnce = async (only24h = false) => {
-  const emailRaw = (emailInput.value || '').trim();
-  const email = emailRaw.toLowerCase();           // нормалізований
+  const email = (emailInput.value || '').trim().toLowerCase();        // нормалізований
   if (!email) return;
 
   const cart = readCart();
