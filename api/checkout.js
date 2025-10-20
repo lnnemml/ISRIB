@@ -6,21 +6,25 @@ const norm  = (s) => String(s || '').trim();
 const fmtUSD = (n) => `$${Number(n || 0).toFixed(2)}`;
 const fmtAmount = (mg) => (mg >= 1000 ? `${(mg / 1000)} g` : `${mg} mg`);
 
+// ✅ КРИТИЧНО: Ідентична функція нормалізації email
+function normalizeEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
 // "100mg" | "500 mg" | "1g" -> mg (number)
 const parseQtyToMg = (s) => {
   if (!s) return 0;
   const t = String(s).toLowerCase().trim();
   const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
   
-  // "1g" або "1000mg" → перевіряємо, чи є "g" БЕЗ "mg"
   if (t.includes('g') && !t.includes('mg')) {
-    return Math.round(n * 1000); // грами → міліграми
+    return Math.round(n * 1000);
   }
   
-  return Math.round(n); // вже в міліграмах
+  return Math.round(n);
 };
 
-// Нормалізуємо одиниці для item: приводимо grams строго до mg.
+// Нормалізуємо одиниці для item
 function normalizeItem(it) {
   let grams = toNum(it.grams || 0);
   const display = it.display || it.quantity || it.qtyLabel || '';
@@ -49,6 +53,46 @@ function validatePromoCode(code) {
   return PROMO_CODES[upper] || null;
 }
 
+// ============================================================================
+// Скасування cart recovery emails
+// ============================================================================
+async function cancelCartRecoveryEmails(email) {
+  const normalizedEmail = normalizeEmail(email);
+  
+  if (!normalizedEmail || !normalizedEmail.includes('@')) {
+    console.warn('[Checkout] Invalid email for cart recovery cancel:', email);
+    return false;
+  }
+
+  try {
+    console.log('[Checkout] 🔴 Canceling cart recovery for:', normalizedEmail);
+    
+    const response = await fetch(`${process.env.SITE_URL || 'https://isrib.shop'}/api/cart-recovery`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'cancel', 
+        email: normalizedEmail 
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('[Checkout] ✅ Cart recovery canceled:', data);
+      return true;
+    } else {
+      console.error('[Checkout] ❌ Cart recovery cancel failed:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('[Checkout] ❌ Cart recovery cancel error:', error);
+    return false;
+  }
+}
+
+// ============================================================================
+// Main handler
+// ============================================================================
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -90,10 +134,8 @@ export default async function handler(req, res) {
     const promoData = promoCodeInput ? validatePromoCode(promoCodeInput) : null;
     const promoCode = promoData ? promoCodeInput.toUpperCase() : null;
 
-    // DEBUG (можна видалити після тестування)
-    console.log('[CHECKOUT DEBUG]', {
-      promoCodeInput,
-      promoData,
+    console.log('[Checkout] Order received:', {
+      email,
       promoCode,
       hasPromo: !!promoCode
     });
@@ -104,7 +146,7 @@ export default async function handler(req, res) {
       return res.status(422).json({ code: 'EMPTY_CART', error: 'Cart is empty.' });
     }
 
-    // валідація базових полів та нормалізація одиниць
+    // валідація та нормалізація
     const items = itemsInput.map((it) => {
       const name  = norm(it.name ?? it.title ?? it.id);
       const qty   = toNum(it.qty ?? it.quantity ?? 0);
@@ -125,13 +167,16 @@ export default async function handler(req, res) {
       return res.status(422).json({ code: 'INVALID_SUBTOTAL', error: 'Cart total invalid.' });
     }
 
-    // ⚡ КРИТИЧНО: знижка розраховується ТУТ
     const discount = promoData ? subtotal * promoData.discount : 0;
     const shipping = 0;
     const total = subtotal - discount + shipping;
 
-    // DEBUG
-    console.log('[CHECKOUT TOTALS]', { subtotal, discount, total });
+    console.log('[Checkout] Totals:', { 
+      subtotal, 
+      discount, 
+      total,
+      promoApplied: !!promoCode 
+    });
 
     // ---- рендер таблиці ----
     const itemsRows = items.map(it => {
@@ -160,17 +205,28 @@ export default async function handler(req, res) {
             <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">Unit price</th>
           </tr>
         </thead>
-        <tbody>${itemsRows || `<tr><td colspan="5" style="padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280">No items provided</td></tr>`}</tbody>
+        <tbody>${itemsRows || `<tr><td colspan="5" style="padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280">No items</td></tr>`}</tbody>
       </table>`;
 
-    // ⚡ КРИТИЧНО: totalsBlockHtml формується ПІСЛЯ розрахунку discount
     const totalsBlockHtml = `
       <div style="margin-top:10px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Subtotal</span><b>${fmtUSD(subtotal)}</b></div>
-        ${discount > 0 ? `<div style="display:flex;justify-content:space-between;margin-bottom:4px;color:#10b981;"><span>Discount (${promoCode})</span><b>−${fmtUSD(discount)}</b></div>` : ''}
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>Shipping</span><b>FREE</b></div>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid #e5e7eb;padding-top:6px;margin-top:6px;font-size:16px;"><span><strong>Total</strong></span><b>${fmtUSD(total)}</b></div>
-        <div style="color:#6b7280;margin-top:4px;font-size:12px;">* Free shipping — limited-time launch offer.</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span>Subtotal</span><b>${fmtUSD(subtotal)}</b>
+        </div>
+        ${discount > 0 ? `
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;color:#10b981;">
+            <span>Discount (${promoCode})</span><b>−${fmtUSD(discount)}</b>
+          </div>
+        ` : ''}
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span>Shipping</span><b>FREE</b>
+        </div>
+        <div style="display:flex;justify-content:space-between;border-top:1px solid #e5e7eb;padding-top:6px;margin-top:6px;font-size:16px;">
+          <span><strong>Total</strong></span><b>${fmtUSD(total)}</b>
+        </div>
+        <div style="color:#6b7280;margin-top:4px;font-size:12px;">
+          * Free shipping — limited-time launch offer.
+        </div>
       </div>`;
 
     const fullName = `${firstName} ${lastName}`.trim();
@@ -180,7 +236,7 @@ export default async function handler(req, res) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // ---- HTML для листа адміну ----
+    // ---- HTML для адміну ----
     const adminHtml = `
       <h2>New Checkout Request</h2>
       <p><b>Name:</b> ${fullName}<br>
@@ -200,7 +256,6 @@ export default async function handler(req, res) {
       ${totalsBlockHtml}
     `;
 
-    // ---- текстова версія для листа адміну ----
     const adminText = `New Checkout Request
 
 Name: ${fullName}
@@ -221,7 +276,7 @@ ${items.map(it => {
   const packs = getQty(it);
   const mg = getMgPerPack(it);
   const totalMg = mg * packs;
-  return `- ${it.name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+  return `- ${it.name} — ${fmtAmount(mg)} × ${packs} = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
 }).join('\n')}
 
 Subtotal: ${fmtUSD(subtotal)}
@@ -230,17 +285,27 @@ Shipping: FREE
 Total: ${fmtUSD(total)}
 * Free shipping — limited-time launch offer.`;
 
-    // ---- лист адміну на ПЕРШИЙ email ----
+    // ============================================================================
+    // ✅ КРИТИЧНО: Відправка листів + скасування cart recovery
+    // ============================================================================
+
+    // 1. Відправляємо лист адміну (основний)
     await resend.emails.send({
       from: process.env.RESEND_FROM,
       to: process.env.RESEND_TO,
       reply_to: email,
       subject: adminSubject,
       html: adminHtml,
-      text: adminText
+      text: adminText,
+      tags: [
+        { name: 'type', value: 'order_admin' },
+        { name: 'promo', value: promoCode || 'none' }
+      ]
     });
 
-    // ---- лист адміну на ДРУГИЙ email (якщо налаштований) ----
+    console.log('[Checkout] ✅ Admin email sent to:', process.env.RESEND_TO);
+
+    // 2. Відправляємо лист адміну (додатковий, якщо є)
     if (process.env.RESEND_TO_EXTRA) {
       await resend.emails.send({
         from: process.env.RESEND_FROM,
@@ -248,11 +313,16 @@ Total: ${fmtUSD(total)}
         reply_to: email,
         subject: adminSubject,
         html: adminHtml,
-        text: adminText
+        text: adminText,
+        tags: [
+          { name: 'type', value: 'order_admin_extra' },
+          { name: 'promo', value: promoCode || 'none' }
+        ]
       });
+      console.log('[Checkout] ✅ Extra admin email sent to:', process.env.RESEND_TO_EXTRA);
     }
 
-    // ---- підтвердження клієнту ----
+    // 3. Відправляємо підтвердження клієнту
     await resend.emails.send({
       from: process.env.RESEND_FROM,
       to: email,
@@ -262,7 +332,12 @@ Total: ${fmtUSD(total)}
              <p><b>Summary:</b></p>
              ${itemsTable}
              ${totalsBlockHtml}
-             <p style="color:#6b7280;margin-top:10px;font-size:13px;">For research use only. Not for human consumption.</p>`,
+             <p style="color:#6b7280;margin-top:10px;font-size:13px;">For research use only. Not for human consumption.</p>
+             <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb;">
+             <p style="color:#94a3b8;font-size:12px;text-align:center;">
+               Need help? Reply to this email or contact us at 
+               <a href="mailto:isrib.shop@protonmail.com" style="color:#3b82f6;">isrib.shop@protonmail.com</a>
+             </p>`,
       text: `Hi ${firstName || ''},
 
 Thanks for your order request. We'll get back to you shortly.
@@ -272,7 +347,7 @@ ${items.map(it => {
   const packs = getQty(it);
   const mg = getMgPerPack(it);
   const totalMg = mg * packs;
-  return `- ${it.name} — ${fmtAmount(mg)} per pack × ${packs} packs = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+  return `- ${it.name} — ${fmtAmount(mg)} × ${packs} = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
 }).join('\n')}
 
 Subtotal: ${fmtUSD(subtotal)}
@@ -281,16 +356,63 @@ Shipping: FREE
 Total: ${fmtUSD(total)}
 * Free shipping — limited-time launch offer.
 
-For research use only. Not for human consumption.`
+For research use only. Not for human consumption.`,
+      tags: [
+        { name: 'type', value: 'order_confirmation' },
+        { name: 'promo', value: promoCode || 'none' }
+      ]
+    });
+
+    console.log('[Checkout] ✅ Confirmation email sent to customer:', email);
+
+    // ============================================================================
+    // 4. ✅ КРИТИЧНО: Скасовуємо cart recovery emails ПІСЛЯ успішної відправки
+    // ============================================================================
+    await cancelCartRecoveryEmails(email);
+
+    // 5. Генеруємо Order ID для редіректу
+    const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+    // 6. Формуємо items для URL (для success page)
+    const itemsForUrl = items.map(it => ({
+      name: it.name,
+      sku: it.sku || it.id || 'unknown',
+      qty: getQty(it),
+      price: getPrice(it),
+      grams: getMgPerPack(it),
+      display: it.display || fmtAmount(getMgPerPack(it))
+    }));
+
+    console.log('[Checkout] ✅ Order processed successfully:', {
+      orderId,
+      email: normalizeEmail(email),
+      total,
+      itemCount: items.length
     });
 
     // ---- завершення ----
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ 
+      ok: true,
+      orderId,
+      // Дані для success page
+      redirect: {
+        items: itemsForUrl,
+        subtotal,
+        discount,
+        total,
+        promo: promoCode || '',
+        order_id: orderId
+      }
+    });
+
   } catch (e) {
-    console.error('Checkout error:', e);
-    return res.status(500).json({ error: e?.message || 'Internal Error' });
+    console.error('[Checkout] ❌ Error:', e);
+    return res.status(500).json({ 
+      error: e?.message || 'Internal Error',
+      code: e?.code || 'UNKNOWN_ERROR'
+    });
   }
 }
 
-// Використовуємо raw-body вище
+// Використовуємо raw-body
 export const config = { api: { bodyParser: false } };
