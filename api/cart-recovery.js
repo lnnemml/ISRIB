@@ -1,14 +1,14 @@
 // /api/cart-recovery.js
 import { Resend } from 'resend';
+import { Redis } from '@upstash/redis';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const kv = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export const config = { api: { bodyParser: false } };
-
-// ============================================================================
-// ТИМЧАСОВО: Працюємо БЕЗ Redis (in-memory відстеження)
-// ============================================================================
-const scheduledEmails = new Map(); // email -> { twoH: id, day1: id }
 
 // ============================================================================
 // Нормалізація email
@@ -25,7 +25,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Читаємо raw body
   let raw = '';
   await new Promise((resolve) => {
     req.on('data', (c) => raw += c);
@@ -67,7 +66,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const rec = scheduledEmails.get(keyEmail);
+      const rec = await kv.get(`cart_recovery:${keyEmail}`);
       
       if (!rec) {
         console.log('[Cart Recovery] ⚠️ No scheduled emails found for:', keyEmail);
@@ -86,7 +85,6 @@ export default async function handler(req, res) {
 
       let cancelledCount = 0;
 
-      // Скасовуємо 2h email
       if (rec?.twoH) {
         try {
           await resend.emails.cancel(rec.twoH);
@@ -97,7 +95,6 @@ export default async function handler(req, res) {
         }
       }
 
-      // Скасовуємо 24h email
       if (rec?.day1) {
         try {
           await resend.emails.cancel(rec.day1);
@@ -108,9 +105,8 @@ export default async function handler(req, res) {
         }
       }
 
-      // Видаляємо з пам'яті
-      scheduledEmails.delete(keyEmail);
-      console.log('[Cart Recovery] ✅ Deleted from memory:', keyEmail);
+      await kv.del(`cart_recovery:${keyEmail}`);
+      console.log('[Cart Recovery] ✅ Deleted Redis key for:', keyEmail);
 
       return res.status(200).json({ 
         ok: true, 
@@ -129,7 +125,7 @@ export default async function handler(req, res) {
   }
 
   // ============================================================================
-  // Валідація для SCHEDULE та IMMEDIATE
+  // Валідація
   // ============================================================================
   if (!keyEmail || !keyEmail.includes('@')) {
     return res.status(400).json({ error: 'Missing or invalid email' });
@@ -167,7 +163,6 @@ export default async function handler(req, res) {
 
       let resp2h = null;
 
-      // Плануємо 2h email (якщо не only24h)
       if (!only24h) {
         try {
           resp2h = await resend.emails.send({
@@ -191,7 +186,6 @@ export default async function handler(req, res) {
         }
       }
 
-      // Плануємо 24h email (завжди)
       let resp24 = null;
       try {
         resp24 = await resend.emails.send({
@@ -214,16 +208,15 @@ export default async function handler(req, res) {
         console.error('[Cart Recovery] ❌ Failed to schedule 24h:', err);
       }
 
-      // Зберігаємо у пам'яті (замість Redis)
-      scheduledEmails.set(keyEmail, {
+      await kv.set(`cart_recovery:${keyEmail}`, {
         twoH: resp2h?.id || null,
         day1: resp24?.id || null,
         createdAt: new Date().toISOString(),
         subtotal,
       });
 
-      console.log('[Cart Recovery] ✅ Saved to memory:', {
-        key: keyEmail,
+      console.log('[Cart Recovery] ✅ Saved to Redis:', {
+        key: `cart_recovery:${keyEmail}`,
         twoH: resp2h?.id || null,
         day1: resp24?.id || null
       });
@@ -283,7 +276,7 @@ export default async function handler(req, res) {
 }
 
 // ============================================================================
-// Email template generator
+// Email template
 // ============================================================================
 function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
   const itemsHtml = (cartItems || []).map(item => `
