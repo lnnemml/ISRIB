@@ -444,13 +444,19 @@
     })();
   </script>
       
-      <script>
+     <script>
   gtag('event', 'view_item', {
-    event_category: 'product',
-    event_label: 'ZZL-07',
-    value: 120,
-    currency: 'USD'
+    currency: 'USD',
+    value: 50, // поточна ціна активного пакування
+    items: [{
+      item_id: 'zzl-7',          // sku або стабільний ID
+      item_name: 'ZZL-7',
+      item_category: 'Research Chemicals',
+      price: 50,                     // ціна активного варіанта
+      item_variant: '100mg'          // активний варіант (100mg/500mg/1g)
+    }]
   });
 </script>
+
 </body>
 </html>
