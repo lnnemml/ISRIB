@@ -1,17 +1,17 @@
-
+// /api/cart-recovery.js
 import { Resend } from 'resend';
-import { Redis } from '@upstash/redis';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const kv = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
 
 export const config = { api: { bodyParser: false } };
 
 // ============================================================================
-// КРИТИЧНО: Функція нормалізації email (має бути ідентичною скрізь)
+// ТИМЧАСОВО: Працюємо БЕЗ Redis (in-memory відстеження)
+// ============================================================================
+const scheduledEmails = new Map(); // email -> { twoH: id, day1: id }
+
+// ============================================================================
+// Нормалізація email
 // ============================================================================
 function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
@@ -21,9 +21,11 @@ function normalizeEmail(email) {
 // Основний handler
 // ============================================================================
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
-  // Читаємо raw body ОДИН раз
+  // Читаємо raw body
   let raw = '';
   await new Promise((resolve) => {
     req.on('data', (c) => raw += c);
@@ -47,12 +49,11 @@ export default async function handler(req, res) {
     only24h = false,
   } = payload;
 
-  // ✅ КРИТИЧНО: Нормалізуємо email для ключа Redis
   const rawEmail = String(email || '');
   const keyEmail = normalizeEmail(rawEmail);
 
   // ============================================================================
-  // ACTION: CANCEL — Скасування запланованих листів
+  // ACTION: CANCEL
   // ============================================================================
   if (action === 'cancel') {
     console.log('[Cart Recovery] 🔴 Cancel request for:', keyEmail);
@@ -61,29 +62,26 @@ export default async function handler(req, res) {
       console.warn('[Cart Recovery] Invalid email for cancel:', rawEmail);
       return res.status(400).json({ 
         ok: false, 
-        error: 'Invalid email',
-        receivedEmail: rawEmail 
+        error: 'Invalid email'
       });
     }
 
     try {
-      const rec = await kv.get(`cart_recovery:${keyEmail}`);
+      const rec = scheduledEmails.get(keyEmail);
       
       if (!rec) {
         console.log('[Cart Recovery] ⚠️ No scheduled emails found for:', keyEmail);
         return res.status(200).json({ 
           ok: true, 
           cancelled: false, 
-          message: 'No scheduled emails found',
-          email: keyEmail
+          message: 'No scheduled emails found'
         });
       }
 
       console.log('[Cart Recovery] Found record:', { 
         email: keyEmail,
         has2h: !!rec.twoH, 
-        has24h: !!rec.day1,
-        createdAt: rec.createdAt 
+        has24h: !!rec.day1
       });
 
       let cancelledCount = 0;
@@ -95,7 +93,7 @@ export default async function handler(req, res) {
           console.log('[Cart Recovery] ✅ Canceled 2h email:', rec.twoH);
           cancelledCount++;
         } catch (err) {
-          console.error('[Cart Recovery] ❌ Failed to cancel 2h email:', err.message);
+          console.error('[Cart Recovery] ❌ Failed to cancel 2h:', err.message);
         }
       }
 
@@ -106,28 +104,26 @@ export default async function handler(req, res) {
           console.log('[Cart Recovery] ✅ Canceled 24h email:', rec.day1);
           cancelledCount++;
         } catch (err) {
-          console.error('[Cart Recovery] ❌ Failed to cancel 24h email:', err.message);
+          console.error('[Cart Recovery] ❌ Failed to cancel 24h:', err.message);
         }
       }
 
-      // Видаляємо запис з Redis
-      await kv.del(`cart_recovery:${keyEmail}`);
-      console.log('[Cart Recovery] ✅ Deleted Redis key for:', keyEmail);
+      // Видаляємо з пам'яті
+      scheduledEmails.delete(keyEmail);
+      console.log('[Cart Recovery] ✅ Deleted from memory:', keyEmail);
 
       return res.status(200).json({ 
         ok: true, 
         cancelled: true,
         cancelledCount,
-        email: keyEmail,
-        message: `Successfully cancelled ${cancelledCount} scheduled email(s)`
+        message: `Successfully cancelled ${cancelledCount} email(s)`
       });
 
     } catch (error) {
-      console.error('[Cart Recovery] ❌ Cancel operation error:', error);
+      console.error('[Cart Recovery] ❌ Cancel error:', error);
       return res.status(500).json({ 
         ok: false, 
-        error: 'Failed to cancel emails',
-        details: error.message 
+        error: 'Failed to cancel emails'
       });
     }
   }
@@ -135,7 +131,7 @@ export default async function handler(req, res) {
   // ============================================================================
   // Валідація для SCHEDULE та IMMEDIATE
   // ============================================================================
-  if (!rawEmail || !keyEmail.includes('@')) {
+  if (!keyEmail || !keyEmail.includes('@')) {
     return res.status(400).json({ error: 'Missing or invalid email' });
   }
 
@@ -154,7 +150,7 @@ export default async function handler(req, res) {
   };
 
   // ============================================================================
-  // ACTION: SCHEDULE — Планування 2h + 24h (або тільки 24h)
+  // ACTION: SCHEDULE
   // ============================================================================
   if (action === 'schedule') {
     console.log('[Cart Recovery] 📅 Schedule request:', {
@@ -176,12 +172,11 @@ export default async function handler(req, res) {
         try {
           resp2h = await resend.emails.send({
             from: process.env.RESEND_FROM,
-            to: rawEmail, // надсилаємо на оригінальний email (Resend сам нормалізує)
+            to: rawEmail,
             subject: subjects['2h'],
             replyTo: 'isrib.shop@protonmail.com',
             headers: {
               'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
-              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
             },
             html: generateRecoveryEmail(cartItems, subtotal, firstName, '2h', rawEmail),
             tags: [
@@ -192,7 +187,7 @@ export default async function handler(req, res) {
           });
           console.log('[Cart Recovery] ✅ Scheduled 2h email:', resp2h.id);
         } catch (err) {
-          console.error('[Cart Recovery] ❌ Failed to schedule 2h email:', err);
+          console.error('[Cart Recovery] ❌ Failed to schedule 2h:', err);
         }
       }
 
@@ -206,7 +201,6 @@ export default async function handler(req, res) {
           replyTo: 'isrib.shop@protonmail.com',
           headers: {
             'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
-            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
           },
           html: generateRecoveryEmail(cartItems, subtotal, firstName, '24h', rawEmail),
           tags: [
@@ -217,21 +211,19 @@ export default async function handler(req, res) {
         });
         console.log('[Cart Recovery] ✅ Scheduled 24h email:', resp24.id);
       } catch (err) {
-        console.error('[Cart Recovery] ❌ Failed to schedule 24h email:', err);
+        console.error('[Cart Recovery] ❌ Failed to schedule 24h:', err);
       }
 
-      // Зберігаємо у Redis (ключ = нормалізований email)
-      await kv.set(`cart_recovery:${keyEmail}`, {
+      // Зберігаємо у пам'яті (замість Redis)
+      scheduledEmails.set(keyEmail, {
         twoH: resp2h?.id || null,
         day1: resp24?.id || null,
         createdAt: new Date().toISOString(),
         subtotal,
-        email: keyEmail, // зберігаємо нормалізований для debug
-        originalEmail: rawEmail, // зберігаємо оригінальний для референсу
       });
 
-      console.log('[Cart Recovery] ✅ Saved to Redis:', {
-        key: `cart_recovery:${keyEmail}`,
+      console.log('[Cart Recovery] ✅ Saved to memory:', {
+        key: keyEmail,
         twoH: resp2h?.id || null,
         day1: resp24?.id || null
       });
@@ -239,7 +231,6 @@ export default async function handler(req, res) {
       return res.status(200).json({
         ok: true,
         scheduled: true,
-        email: keyEmail,
         ids: { 
           twoH: resp2h?.id || null, 
           day1: resp24?.id || null 
@@ -250,14 +241,13 @@ export default async function handler(req, res) {
       console.error('[Cart Recovery] ❌ Schedule error:', error);
       return res.status(500).json({ 
         ok: false, 
-        error: 'Failed to schedule emails',
-        details: error.message 
+        error: 'Failed to schedule emails'
       });
     }
   }
 
   // ============================================================================
-  // ACTION: IMMEDIATE — Відправка негайного листа
+  // ACTION: IMMEDIATE
   // ============================================================================
   try {
     const subj = subjects[stage] || subjects.immediate;
@@ -269,7 +259,6 @@ export default async function handler(req, res) {
       replyTo: 'isrib.shop@protonmail.com',
       headers: {
         'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
-        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       },
       html: generateRecoveryEmail(cartItems, subtotal, firstName, stage || 'immediate', rawEmail),
       tags: [
@@ -282,15 +271,13 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ 
       ok: true, 
-      sentId: resp?.id || null,
-      email: keyEmail
+      sentId: resp?.id || null
     });
 
   } catch (err) {
     console.error('[Cart Recovery] ❌ Immediate send error:', err);
     return res.status(500).json({ 
-      error: err.message,
-      email: keyEmail 
+      error: err.message
     });
   }
 }
@@ -335,14 +322,12 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
             <table role="presentation" width="600" cellpadding="0" cellspacing="0" 
                    style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.05);">
               
-              <!-- Header -->
               <tr>
                 <td style="background:#111827;padding:28px 24px;text-align:center;color:#fff;font-weight:800;font-size:20px;">
                   ISRIB.shop
                 </td>
               </tr>
               
-              <!-- Body -->
               <tr>
                 <td style="padding:28px 24px;">
                   <h2 style="margin:0 0 16px;color:#1e293b;font-size:22px;">
@@ -354,7 +339,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
                   
                   ${urgencyBlock}
                   
-                  <!-- Cart Table -->
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" 
                          style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin:16px 0;">
                     <thead>
@@ -377,7 +361,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
                     </tfoot>
                   </table>
                   
-                  <!-- CTA Button -->
                   <div style="text-align:center;margin:24px 0;">
                     <a href="https://isrib.shop/checkout.html?recovery=true&promo=RETURN15" 
                        style="display:inline-block;background:#10b981;color:#fff;padding:14px 36px;border-radius:8px;font-weight:700;text-decoration:none;font-size:16px;">
@@ -385,7 +368,6 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
                     </a>
                   </div>
                   
-                  <!-- Footer -->
                   <p style="color:#94a3b8;font-size:12px;text-align:center;margin:16px 0 0;">
                     <a href="https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}" 
                        style="color:#64748b;text-decoration:underline;">Unsubscribe</a> •
