@@ -1358,7 +1358,7 @@ function initCheckoutForm() {
   }
 };
 
-    };
+  
 
     emailInput.addEventListener('blur', () => {
       clearTimeout(debounceTimer);
