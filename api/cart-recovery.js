@@ -1,4 +1,4 @@
-// /api/cart-recovery.js
+
 import { Resend } from 'resend';
 import { Redis } from '@upstash/redis';
 
@@ -10,10 +10,20 @@ const kv = new Redis({
 
 export const config = { api: { bodyParser: false } };
 
+// ============================================================================
+// КРИТИЧНО: Функція нормалізації email (має бути ідентичною скрізь)
+// ============================================================================
+function normalizeEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+// ============================================================================
+// Основний handler
+// ============================================================================
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  // читаємо raw body ОДИН раз
+  // Читаємо raw body ОДИН раз
   let raw = '';
   await new Promise((resolve) => {
     req.on('data', (c) => raw += c);
@@ -21,7 +31,12 @@ export default async function handler(req, res) {
   });
 
   let payload = {};
-  try { payload = JSON.parse(raw || '{}'); } catch {}
+  try { 
+    payload = JSON.parse(raw || '{}'); 
+  } catch (parseError) {
+    console.error('[Cart Recovery] JSON parse error:', parseError);
+    return res.status(400).json({ error: 'Invalid JSON' });
+  }
 
   const {
     action = 'schedule',
@@ -29,88 +44,224 @@ export default async function handler(req, res) {
     cartItems = [],
     firstName = '',
     stage,
-    only24h = false,  // ← підтримка фронтового прапорця
+    only24h = false,
   } = payload;
 
+  // ✅ КРИТИЧНО: Нормалізуємо email для ключа Redis
   const rawEmail = String(email || '');
-  const keyEmail = rawEmail.trim().toLowerCase();   // ← КАНОНІЧНИЙ ключ для Redis
+  const keyEmail = normalizeEmail(rawEmail);
 
-  try {
-    const subjects = {
-      immediate: 'Your ISRIB research order is ready',
-      '2h': 'Complete your ISRIB order — Free shipping included',
-      '24h': 'Your reserved research chemicals are waiting',
-    };
+  // ============================================================================
+  // ACTION: CANCEL — Скасування запланованих листів
+  // ============================================================================
+  if (action === 'cancel') {
+    console.log('[Cart Recovery] 🔴 Cancel request for:', keyEmail);
+    
+    if (!keyEmail || !keyEmail.includes('@')) {
+      console.warn('[Cart Recovery] Invalid email for cancel:', rawEmail);
+      return res.status(400).json({ 
+        ok: false, 
+        error: 'Invalid email',
+        receivedEmail: rawEmail 
+      });
+    }
 
-    // ── CANCEL ────────────────────────────────────────────────────────────────
-    if (action === 'cancel') {
+    try {
       const rec = await kv.get(`cart_recovery:${keyEmail}`);
-      if (rec?.twoH) { try { await resend.emails.cancel(rec.twoH); } catch {} }
-      if (rec?.day1) { try { await resend.emails.cancel(rec.day1); } catch {} }
+      
+      if (!rec) {
+        console.log('[Cart Recovery] ⚠️ No scheduled emails found for:', keyEmail);
+        return res.status(200).json({ 
+          ok: true, 
+          cancelled: false, 
+          message: 'No scheduled emails found',
+          email: keyEmail
+        });
+      }
+
+      console.log('[Cart Recovery] Found record:', { 
+        email: keyEmail,
+        has2h: !!rec.twoH, 
+        has24h: !!rec.day1,
+        createdAt: rec.createdAt 
+      });
+
+      let cancelledCount = 0;
+
+      // Скасовуємо 2h email
+      if (rec?.twoH) {
+        try {
+          await resend.emails.cancel(rec.twoH);
+          console.log('[Cart Recovery] ✅ Canceled 2h email:', rec.twoH);
+          cancelledCount++;
+        } catch (err) {
+          console.error('[Cart Recovery] ❌ Failed to cancel 2h email:', err.message);
+        }
+      }
+
+      // Скасовуємо 24h email
+      if (rec?.day1) {
+        try {
+          await resend.emails.cancel(rec.day1);
+          console.log('[Cart Recovery] ✅ Canceled 24h email:', rec.day1);
+          cancelledCount++;
+        } catch (err) {
+          console.error('[Cart Recovery] ❌ Failed to cancel 24h email:', err.message);
+        }
+      }
+
+      // Видаляємо запис з Redis
       await kv.del(`cart_recovery:${keyEmail}`);
-      return res.status(200).json({ ok: true, cancelled: !!rec });
+      console.log('[Cart Recovery] ✅ Deleted Redis key for:', keyEmail);
+
+      return res.status(200).json({ 
+        ok: true, 
+        cancelled: true,
+        cancelledCount,
+        email: keyEmail,
+        message: `Successfully cancelled ${cancelledCount} scheduled email(s)`
+      });
+
+    } catch (error) {
+      console.error('[Cart Recovery] ❌ Cancel operation error:', error);
+      return res.status(500).json({ 
+        ok: false, 
+        error: 'Failed to cancel emails',
+        details: error.message 
+      });
     }
+  }
 
-    if (!rawEmail) return res.status(400).json({ error: 'Missing email' });
-    if (!Array.isArray(cartItems) || (!cartItems.length && action !== 'immediate')) {
-      return res.status(400).json({ error: 'Missing cartItems' });
-    }
+  // ============================================================================
+  // Валідація для SCHEDULE та IMMEDIATE
+  // ============================================================================
+  if (!rawEmail || !keyEmail.includes('@')) {
+    return res.status(400).json({ error: 'Missing or invalid email' });
+  }
 
-    const subtotal = cartItems.reduce((s, i) => s + Number(i.price || 0) * Number(i.count || 1), 0);
+  if (!Array.isArray(cartItems) || (cartItems.length === 0 && action !== 'immediate')) {
+    return res.status(400).json({ error: 'Missing or empty cartItems' });
+  }
 
-    // ── SCHEDULE (2h+24h або лише 24h) ───────────────────────────────────────
-    if (action === 'schedule') {
+  const subtotal = cartItems.reduce((s, i) => 
+    s + Number(i.price || 0) * Number(i.count || 1), 0
+  );
+
+  const subjects = {
+    immediate: 'Your ISRIB research order is ready',
+    '2h': 'Complete your ISRIB order — Free shipping included',
+    '24h': 'Your reserved research chemicals are waiting',
+  };
+
+  // ============================================================================
+  // ACTION: SCHEDULE — Планування 2h + 24h (або тільки 24h)
+  // ============================================================================
+  if (action === 'schedule') {
+    console.log('[Cart Recovery] 📅 Schedule request:', {
+      email: keyEmail,
+      only24h,
+      itemCount: cartItems.length,
+      subtotal
+    });
+
+    try {
       const now = Date.now();
       const in2hISO  = new Date(now +  2 * 60 * 60 * 1000).toISOString();
       const in24hISO = new Date(now + 24 * 60 * 60 * 1000).toISOString();
 
       let resp2h = null;
+
+      // Плануємо 2h email (якщо не only24h)
       if (!only24h) {
-        resp2h = await resend.emails.send({
+        try {
+          resp2h = await resend.emails.send({
+            from: process.env.RESEND_FROM,
+            to: rawEmail, // надсилаємо на оригінальний email (Resend сам нормалізує)
+            subject: subjects['2h'],
+            replyTo: 'isrib.shop@protonmail.com',
+            headers: {
+              'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
+              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            },
+            html: generateRecoveryEmail(cartItems, subtotal, firstName, '2h', rawEmail),
+            tags: [
+              { name: 'category', value: 'cart_recovery' }, 
+              { name: 'stage', value: '2h' }
+            ],
+            scheduledAt: in2hISO,
+          });
+          console.log('[Cart Recovery] ✅ Scheduled 2h email:', resp2h.id);
+        } catch (err) {
+          console.error('[Cart Recovery] ❌ Failed to schedule 2h email:', err);
+        }
+      }
+
+      // Плануємо 24h email (завжди)
+      let resp24 = null;
+      try {
+        resp24 = await resend.emails.send({
           from: process.env.RESEND_FROM,
-          to: rawEmail, // надсилаємо на оригінал
-          subject: subjects['2h'],
+          to: rawEmail,
+          subject: subjects['24h'],
           replyTo: 'isrib.shop@protonmail.com',
           headers: {
             'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
           },
-          html: generateRecoveryEmail(cartItems, subtotal, firstName, '2h', rawEmail),
-          tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: '2h' }],
-          scheduledAt: in2hISO,
+          html: generateRecoveryEmail(cartItems, subtotal, firstName, '24h', rawEmail),
+          tags: [
+            { name: 'category', value: 'cart_recovery' }, 
+            { name: 'stage', value: '24h' }
+          ],
+          scheduledAt: in24hISO,
         });
+        console.log('[Cart Recovery] ✅ Scheduled 24h email:', resp24.id);
+      } catch (err) {
+        console.error('[Cart Recovery] ❌ Failed to schedule 24h email:', err);
       }
 
-      const resp24 = await resend.emails.send({
-        from: process.env.RESEND_FROM,
-        to: rawEmail,
-        subject: subjects['24h'],
-        replyTo: 'isrib.shop@protonmail.com',
-        headers: {
-          'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(rawEmail)}>`,
-          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-        },
-        html: generateRecoveryEmail(cartItems, subtotal, firstName, '24h', rawEmail),
-        tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: '24h' }],
-        scheduledAt: in24hISO,
-      });
-
+      // Зберігаємо у Redis (ключ = нормалізований email)
       await kv.set(`cart_recovery:${keyEmail}`, {
         twoH: resp2h?.id || null,
         day1: resp24?.id || null,
         createdAt: new Date().toISOString(),
         subtotal,
+        email: keyEmail, // зберігаємо нормалізований для debug
+        originalEmail: rawEmail, // зберігаємо оригінальний для референсу
+      });
+
+      console.log('[Cart Recovery] ✅ Saved to Redis:', {
+        key: `cart_recovery:${keyEmail}`,
+        twoH: resp2h?.id || null,
+        day1: resp24?.id || null
       });
 
       return res.status(200).json({
         ok: true,
         scheduled: true,
-        ids: { twoH: resp2h?.id || null, day1: resp24?.id || null },
+        email: keyEmail,
+        ids: { 
+          twoH: resp2h?.id || null, 
+          day1: resp24?.id || null 
+        },
+      });
+
+    } catch (error) {
+      console.error('[Cart Recovery] ❌ Schedule error:', error);
+      return res.status(500).json({ 
+        ok: false, 
+        error: 'Failed to schedule emails',
+        details: error.message 
       });
     }
+  }
 
-    // ── IMMEDIATE ────────────────────────────────────────────────────────────
+  // ============================================================================
+  // ACTION: IMMEDIATE — Відправка негайного листа
+  // ============================================================================
+  try {
     const subj = subjects[stage] || subjects.immediate;
+    
     const resp = await resend.emails.send({
       from: process.env.RESEND_FROM,
       to: rawEmail,
@@ -121,23 +272,42 @@ export default async function handler(req, res) {
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       },
       html: generateRecoveryEmail(cartItems, subtotal, firstName, stage || 'immediate', rawEmail),
-      tags: [{ name: 'category', value: 'cart_recovery' }, { name: 'stage', value: stage || 'immediate' }],
+      tags: [
+        { name: 'category', value: 'cart_recovery' }, 
+        { name: 'stage', value: stage || 'immediate' }
+      ],
     });
 
-    return res.status(200).json({ ok: true, sentId: resp?.id || null });
+    console.log('[Cart Recovery] ✅ Sent immediate email:', resp.id);
+
+    return res.status(200).json({ 
+      ok: true, 
+      sentId: resp?.id || null,
+      email: keyEmail
+    });
+
   } catch (err) {
-    console.error('Cart recovery error:', err);
-    return res.status(500).json({ error: err.message });
+    console.error('[Cart Recovery] ❌ Immediate send error:', err);
+    return res.status(500).json({ 
+      error: err.message,
+      email: keyEmail 
+    });
   }
 }
 
-
+// ============================================================================
+// Email template generator
+// ============================================================================
 function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
   const itemsHtml = (cartItems || []).map(item => `
     <tr style="border-bottom:1px solid #e5e7eb;">
-      <td style="padding:12px 8px;"><span style="font-weight:600;color:#1e293b;">${item.name}</span></td>
+      <td style="padding:12px 8px;">
+        <span style="font-weight:600;color:#1e293b;">${item.name}</span>
+      </td>
       <td style="padding:12px 8px;text-align:center;color:#64748b;">${item.display}</td>
-      <td style="padding:12px 8px;text-align:right;font-weight:600;color:#1e293b;">$${Number(item.price || 0).toFixed(2)}</td>
+      <td style="padding:12px 8px;text-align:right;font-weight:600;color:#1e293b;">
+        $${Number(item.price || 0).toFixed(2)}
+      </td>
     </tr>
   `).join('');
 
@@ -156,45 +326,78 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
        </div>`;
 
   return `
-    <!doctype html><html><body style="margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f8fafc;">
+    <!doctype html>
+    <html>
+    <body style="margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f8fafc;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:20px 0;">
-        <tr><td align="center">
-          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.05);">
-            <tr><td style="background:#111827;padding:28px 24px;text-align:center;color:#fff;font-weight:800;">ISRIB.shop</td></tr>
-            <tr><td style="padding:28px 24px;">
-              <h2 style="margin:0 0 16px;color:#1e293b;font-size:22px;">Hi ${firstName || 'there'},</h2>
-              <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
-                You have <strong>${cartItems.length}</strong> item${cartItems.length>1?'s':''} waiting in your cart.
-              </p>
-              ${urgencyBlock}
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin:16px 0;">
-                <thead><tr style="background:#f8fafc;">
-                  <th style="padding:10px 8px;text-align:left;color:#475569;font-size:13px;">Product</th>
-                  <th style="padding:10px 8px;text-align:center;color:#475569;font-size:13px;">Quantity</th>
-                  <th style="padding:10px 8px;text-align:right;color:#475569;font-size:13px;">Price</th>
-                </tr></thead>
-                <tbody>${itemsHtml}</tbody>
-                <tfoot><tr style="background:#f8fafc;">
-                  <td colspan="2" style="padding:12px 8px;font-weight:700;color:#1e293b;">Total:</td>
-                  <td style="padding:12px 8px;text-align:right;font-weight:800;color:#10b981;font-size:18px;">$${subtotal.toFixed(2)}</td>
-                </tr></tfoot>
-              </table>
-              <div style="text-align:center;margin:24px 0;">
-                <a href="https://isrib.shop/checkout.html?recovery=true" style="display:inline-block;background:#10b981;color:#fff;padding:14px 36px;border-radius:8px;font-weight:700;text-decoration:none;">Complete your order →</a>
-              </div>
-              <p style="color:#94a3b8;font-size:12px;text-align:center;margin:16px 0 0;">
-                <a href="https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}" style="color:#64748b;text-decoration:underline;">Unsubscribe</a> •
-                <a href="https://isrib.shop/privacy.html" style="color:#64748b;">Privacy</a>
-              </p>
-            </td></tr>
-          </table>
-        </td></tr>
+        <tr>
+          <td align="center">
+            <table role="presentation" width="600" cellpadding="0" cellspacing="0" 
+                   style="max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,.05);">
+              
+              <!-- Header -->
+              <tr>
+                <td style="background:#111827;padding:28px 24px;text-align:center;color:#fff;font-weight:800;font-size:20px;">
+                  ISRIB.shop
+                </td>
+              </tr>
+              
+              <!-- Body -->
+              <tr>
+                <td style="padding:28px 24px;">
+                  <h2 style="margin:0 0 16px;color:#1e293b;font-size:22px;">
+                    Hi ${firstName || 'there'},
+                  </h2>
+                  <p style="margin:0 0 16px;color:#475569;line-height:1.6;font-size:15px;">
+                    You have <strong>${cartItems.length}</strong> item${cartItems.length > 1 ? 's' : ''} waiting in your cart.
+                  </p>
+                  
+                  ${urgencyBlock}
+                  
+                  <!-- Cart Table -->
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" 
+                         style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin:16px 0;">
+                    <thead>
+                      <tr style="background:#f8fafc;">
+                        <th style="padding:10px 8px;text-align:left;color:#475569;font-size:13px;">Product</th>
+                        <th style="padding:10px 8px;text-align:center;color:#475569;font-size:13px;">Quantity</th>
+                        <th style="padding:10px 8px;text-align:right;color:#475569;font-size:13px;">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${itemsHtml}
+                    </tbody>
+                    <tfoot>
+                      <tr style="background:#f8fafc;">
+                        <td colspan="2" style="padding:12px 8px;font-weight:700;color:#1e293b;">Total:</td>
+                        <td style="padding:12px 8px;text-align:right;font-weight:800;color:#10b981;font-size:18px;">
+                          $${subtotal.toFixed(2)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                  
+                  <!-- CTA Button -->
+                  <div style="text-align:center;margin:24px 0;">
+                    <a href="https://isrib.shop/checkout.html?recovery=true&promo=RETURN15" 
+                       style="display:inline-block;background:#10b981;color:#fff;padding:14px 36px;border-radius:8px;font-weight:700;text-decoration:none;font-size:16px;">
+                      Complete your order →
+                    </a>
+                  </div>
+                  
+                  <!-- Footer -->
+                  <p style="color:#94a3b8;font-size:12px;text-align:center;margin:16px 0 0;">
+                    <a href="https://isrib.shop/unsubscribe?email=${encodeURIComponent(email)}" 
+                       style="color:#64748b;text-decoration:underline;">Unsubscribe</a> •
+                    <a href="https://isrib.shop/privacy.html" 
+                       style="color:#64748b;text-decoration:none;">Privacy</a>
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
       </table>
-    </body></html>`;
-}
-
-async function readBody(req) {
-  let raw = '';
-  for await (const chunk of req) raw += chunk;
-  return raw;
+    </body>
+    </html>`;
 }
