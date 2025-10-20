@@ -496,11 +496,17 @@
     
     <script>
   gtag('event', 'view_item', {
-    event_category: 'product',
-    event_label: 'ISRIB',
-    value: 180,
-    currency: 'USD'
+    currency: 'USD',
+    value: 27, // поточна ціна активного пакування
+    items: [{
+      item_id: 'isrib',          // sku або стабільний ID
+      item_name: 'ISRIB',
+      item_category: 'Research Chemicals',
+      price: 27,                     // ціна активного варіанта
+      item_variant: '100mg'          // активний варіант (100mg/500mg/1g)
+    }]
   });
 </script>
+
 </body>
 </html>
