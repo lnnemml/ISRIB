@@ -1,9 +1,14 @@
-// /api/cart-recovery.js
+// api/cart-recovery.js
 import { Redis } from '@upstash/redis';
+import { Client } from '@upstash/qstash';
 
 const kv = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+const qstash = new Client({
+  token: process.env.QSTASH_TOKEN,
 });
 
 export const config = { api: { bodyParser: false } };
@@ -42,7 +47,6 @@ export default async function handler(req, res) {
     email = '',
     cartItems = [],
     firstName = '',
-    only24h = false,
   } = payload;
 
   const rawEmail = String(email || '');
@@ -63,31 +67,16 @@ export default async function handler(req, res) {
     }
 
     try {
-      const rec = await kv.get(`cart_recovery:${keyEmail}`);
+      // Просто видаляємо ключ з Redis
+      // QStash endpoints перевірять і не надішлють
+      const deleted = await kv.del(`cart_recovery:${keyEmail}`);
       
-      if (!rec) {
-        console.log('[Cart Recovery] ⚠️ No scheduled emails found for:', keyEmail);
-        return res.status(200).json({ 
-          ok: true, 
-          cancelled: false, 
-          message: 'No scheduled emails found'
-        });
-      }
-
-      console.log('[Cart Recovery] Found record:', { 
-        email: keyEmail,
-        sent2h: rec.sent2h || false,
-        sent24h: rec.sent24h || false
-      });
-
-      // Просто видаляємо з Redis — cron не відправить emails
-      await kv.del(`cart_recovery:${keyEmail}`);
       console.log('[Cart Recovery] ✅ Deleted Redis key for:', keyEmail);
 
       return res.status(200).json({ 
         ok: true, 
         cancelled: true,
-        message: 'Successfully cancelled cart recovery emails'
+        message: 'Cart recovery cancelled (key deleted from Redis)'
       });
 
     } catch (error) {
@@ -120,33 +109,63 @@ export default async function handler(req, res) {
   if (action === 'schedule') {
     console.log('[Cart Recovery] 📅 Schedule request:', {
       email: keyEmail,
-      only24h,
       itemCount: cartItems.length,
       subtotal
     });
 
     try {
-      // 🎯 Просто зберігаємо в Redis — cron job відправить emails
+      const siteUrl = process.env.SITE_URL || 
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://isrib.shop');
+
+      // 🎯 Зберігаємо дані в Redis
       await kv.set(`cart_recovery:${keyEmail}`, {
         email: keyEmail,
         cartItems,
         firstName,
         subtotal,
-        only24h,
-        sent2h: false,
-        sent24h: false,
         createdAt: new Date().toISOString(),
       });
 
-      console.log('[Cart Recovery] ✅ Saved to Redis:', {
-        key: `cart_recovery:${keyEmail}`,
-        only24h
+      console.log('[Cart Recovery] ✅ Saved to Redis:', keyEmail);
+
+      // 🚀 Плануємо 2 QStash виклики
+      const TWO_HOURS = 2 * 60 * 60; // seconds
+      const TWENTYFOUR_HOURS = 24 * 60 * 60; // seconds
+
+      // Schedule 2h followup
+      const schedule2h = await qstash.publishJSON({
+        url: `${siteUrl}/api/followup`,
+        body: {
+          email: keyEmail,
+          stage: '2h'
+        },
+        delay: TWO_HOURS,
+        retries: 0, // Не retry якщо failed
       });
+
+      console.log('[Cart Recovery] ✅ Scheduled 2h QStash call:', schedule2h.messageId);
+
+      // Schedule 24h followup
+      const schedule24h = await qstash.publishJSON({
+        url: `${siteUrl}/api/followup`,
+        body: {
+          email: keyEmail,
+          stage: '24h'
+        },
+        delay: TWENTYFOUR_HOURS,
+        retries: 0,
+      });
+
+      console.log('[Cart Recovery] ✅ Scheduled 24h QStash call:', schedule24h.messageId);
 
       return res.status(200).json({
         ok: true,
         scheduled: true,
-        message: 'Cart recovery scheduled via cron job'
+        qstash: {
+          twoH: schedule2h.messageId,
+          twentyFourH: schedule24h.messageId
+        },
+        message: 'Cart recovery scheduled via QStash'
       });
 
     } catch (error) {
@@ -158,9 +177,6 @@ export default async function handler(req, res) {
     }
   }
 
-  // ============================================================================
-  // Якщо жоден action не підійшов
-  // ============================================================================
   return res.status(400).json({ 
     error: 'Invalid action. Use "schedule" or "cancel".' 
   });
