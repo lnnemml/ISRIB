@@ -1,5 +1,5 @@
 // api/followup.js
-// 🔧 БЕЗ SIGNATURE VERIFICATION (для діагностики)
+// БЕЗ signature verification - QStash може вільно викликати
 import { Resend } from 'resend';
 import { Redis } from '@upstash/redis';
 
@@ -9,9 +9,6 @@ const kv = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
-// ============================================================================
-// Helper: Generate recovery email HTML
-// ============================================================================
 function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
   const itemsHtml = (cartItems || []).map(item => `
     <tr style="border-bottom:1px solid #e5e7eb;">
@@ -118,48 +115,47 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
   };
 }
 
-// ============================================================================
-// Main Handler (БЕЗ signature verification для діагностики)
-// ============================================================================
-async function handler(req, res) {
+export default async function handler(req, res) {
   console.log('\n═══════════════════════════════════════');
-  console.log('[Followup] 📨 Received request');
+  console.log('[Followup] 📨 Received call from QStash');
   console.log('  Method:', req.method);
-  console.log('  URL:', req.url);
   console.log('  Headers:', JSON.stringify(req.headers, null, 2));
   console.log('═══════════════════════════════════════\n');
   
   if (req.method !== 'POST') {
-    console.error('[Followup] ❌ Wrong method:', req.method);
+    console.error('[Followup] ❌ Wrong method');
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    // 🔧 ВИПРАВЛЕНО: Parse body правильно
     let raw = '';
     await new Promise((resolve) => {
       req.on('data', (c) => raw += c);
       req.on('end', resolve);
     });
 
-    console.log('[Followup] Raw body:', raw);
+    console.log('[Followup] 📦 Body:', raw);
 
     const { email, stage } = JSON.parse(raw || '{}');
 
-    console.log('[Followup] Processing:', { email, stage });
+    console.log('[Followup] ✅ Parsed:', { email, stage });
 
     if (!email || !stage) {
-      console.error('[Followup] Missing email or stage');
-      return res.status(400).json({ error: 'Missing email or stage' });
+      console.error('[Followup] ❌ Missing data');
+      return res.status(400).json({ 
+        error: 'Missing email or stage',
+        received: { email, stage }
+      });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // 🔍 Перевіряємо чи ключ ще існує в Redis
+    console.log('[Followup] 🔍 Checking Redis...');
+    
     const record = await kv.get(`cart_recovery:${normalizedEmail}`);
 
     if (!record) {
-      console.log('[Followup] ✅ User completed checkout — skipping email');
+      console.log('[Followup] ✅ No record found - user completed checkout');
       return res.status(200).json({ 
         ok: true, 
         sent: false,
@@ -167,9 +163,21 @@ async function handler(req, res) {
       });
     }
 
-    console.log('[Followup] 📧 Sending', stage, 'email to:', normalizedEmail);
+    console.log('[Followup] ✅ Found record:', JSON.stringify(record, null, 2));
 
-    // 📧 Надсилаємо email
+    // Перевіряємо чи вже надсилали цей email
+    const alreadySent = record[`sent${stage === '2h' ? '2h' : '24h'}`];
+    if (alreadySent) {
+      console.log('[Followup] ⚠️ Already sent this stage');
+      return res.status(200).json({ 
+        ok: true, 
+        sent: false,
+        reason: 'Already sent'
+      });
+    }
+
+    console.log('[Followup] 📧 Sending email...');
+
     const emailTemplate = generateRecoveryEmail(
       record.cartItems || [],
       record.subtotal || 0,
@@ -193,14 +201,16 @@ async function handler(req, res) {
       ]
     });
 
-    console.log('[Followup] ✅ Email sent successfully');
+    console.log('[Followup] ✅ Email sent successfully!');
 
-    // Оновлюємо запис в Redis (позначаємо що відправили)
+    // Оновлюємо запис
     await kv.set(`cart_recovery:${normalizedEmail}`, {
       ...record,
       [`sent${stage === '2h' ? '2h' : '24h'}`]: true,
       [`sent${stage === '2h' ? '2h' : '24h'}At`]: new Date().toISOString()
     });
+
+    console.log('[Followup] ✅ Updated Redis record');
 
     return res.status(200).json({ 
       ok: true, 
@@ -210,15 +220,17 @@ async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('[Followup] ❌ Error:', error);
+    console.error('\n═══════════════════════════════════════');
+    console.error('[Followup] ❌ ERROR');
+    console.error('  Message:', error.message);
+    console.error('  Stack:', error.stack);
+    console.error('═══════════════════════════════════════\n');
+    
     return res.status(500).json({ 
       ok: false,
       error: error.message 
     });
   }
 }
-
-// 🔧 ТИМЧАСОВО БЕЗ SIGNATURE VERIFICATION (для тестування)
-export default handler;
 
 export const config = { api: { bodyParser: false } };
