@@ -1,8 +1,4 @@
 {
-  "crons": [{
-    "path": "/api/cron/send-cart-recovery",
-    "schedule": "0 * * * *"
-  }],
   "redirects": [
     { "source": "/isrib-a15", "destination": "/product_isrib_A15.html", "permanent": true },
     { "source": "/product-page/isrib-a15-500mg", "destination": "/product_isrib_A15.html", "permanent": true },
