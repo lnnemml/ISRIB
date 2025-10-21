@@ -114,8 +114,12 @@ export default async function handler(req, res) {
     });
 
     try {
-      const siteUrl = process.env.SITE_URL || 
-        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://isrib.shop');
+      // 🔧 ВИПРАВЛЕНО: Правильне визначення siteUrl
+      const siteUrl = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : (process.env.SITE_URL || 'https://isrib.shop');
+
+      console.log('[Cart Recovery] Using site URL:', siteUrl);
 
       // 🎯 Зберігаємо дані в Redis
       await kv.set(`cart_recovery:${keyEmail}`, {
@@ -132,6 +136,7 @@ export default async function handler(req, res) {
       const TWO_HOURS = 2 * 60 * 60; // seconds
       const TWENTYFOUR_HOURS = 24 * 60 * 60; // seconds
 
+      // 🔧 ВИПРАВЛЕНО: Використовуємо publishJSON замість publish
       // Schedule 2h followup
       const schedule2h = await qstash.publishJSON({
         url: `${siteUrl}/api/followup`,
@@ -141,6 +146,10 @@ export default async function handler(req, res) {
         },
         delay: TWO_HOURS,
         retries: 0, // Не retry якщо failed
+        // 🔧 ДОДАНО: Content-Type header
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       console.log('[Cart Recovery] ✅ Scheduled 2h QStash call:', schedule2h.messageId);
@@ -154,6 +163,9 @@ export default async function handler(req, res) {
         },
         delay: TWENTYFOUR_HOURS,
         retries: 0,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       console.log('[Cart Recovery] ✅ Scheduled 24h QStash call:', schedule24h.messageId);
@@ -172,7 +184,8 @@ export default async function handler(req, res) {
       console.error('[Cart Recovery] ❌ Schedule error:', error);
       return res.status(500).json({ 
         ok: false, 
-        error: 'Failed to schedule emails'
+        error: 'Failed to schedule emails',
+        details: error.message
       });
     }
   }
