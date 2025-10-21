@@ -1,7 +1,7 @@
 {
   "crons": [{
     "path": "/api/cron/send-cart-recovery",
-    "schedule": "*/5 * * * *"
+    "schedule": "0 * * * *"
   }],
   "redirects": [
     { "source": "/isrib-a15", "destination": "/product_isrib_A15.html", "permanent": true },
