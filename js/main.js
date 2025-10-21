@@ -213,41 +213,40 @@ function fmtUSD(x) {
 // ============================================================================
 // ВИПРАВЛЕНА функція скасування cart recovery (НЕ БЛОКУЄ відправку листів)
 // ============================================================================
-async function cancelCartRecoveryEmails(email) {
-  const normalizedEmail = normalizeEmail(email);
+// ✅ ASYNC функція для скасування cart recovery
+async function cancelCartRecovery(email) {
+  const normalizedEmail = (email || '').trim().toLowerCase();
   
   if (!normalizedEmail || !normalizedEmail.includes('@')) {
-    console.warn('[Checkout] Invalid email for cart recovery cancel:', email);
+    console.warn('[Cart Recovery] Invalid email for cancel:', email);
     return false;
   }
 
-  // ⚡ КРИТИЧНО: Виконуємо в фоні БЕЗ await — не блокуємо відправку листів
-  fetch(`${process.env.SITE_URL || 'https://isrib.shop'}/api/cart-recovery`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      action: 'cancel', 
-      email: normalizedEmail 
-    })
-  })
-  .then(response => {
-    if (response.ok) {
-      return response.json();
-    } else {
+  try {
+    console.log('[Cart Recovery] 🔄 Canceling for:', normalizedEmail);
+    
+    const response = await fetch('/api/cart-recovery', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'cancel', 
+        email: normalizedEmail 
+      })
+    });
+
+    if (!response.ok) {
       throw new Error(`Cancel failed: ${response.status}`);
     }
-  })
-  .then(data => {
-    console.log('[Checkout] ✅ Cart recovery canceled:', data);
-  })
-  .catch(error => {
-    // НЕ кидаємо помилку далі — просто логуємо
-    console.warn('[Checkout] ⚠️ Cart recovery cancel failed (non-critical):', error.message);
-  });
 
-  return true; // повертаємо одразу
+    const data = await response.json();
+    console.log('[Cart Recovery] ✅ Canceled:', data);
+    return true;
+
+  } catch (error) {
+    console.error('[Cart Recovery] ❌ Cancel failed:', error.message);
+    throw error;
+  }
 }
-
 /* ===================== PRODUCTS / QUANTITY ===================== */
 
 function initProductInteractions() {
@@ -1311,17 +1310,22 @@ function initCheckoutForm() {
   if (!form) return;
 
   const submitBtn = document.getElementById('submitOrderBtn');
-   try {
-  if (typeof gtag === 'function') {
-    gtag('event', 'begin_checkout', {
-      event_category: 'ecommerce',
-      event_label: 'Checkout Form Opened',
-    });
-    console.log('[GA4] begin_checkout event sent');
+  
+  // 🛡️ КРИТИЧНО: Глобальна змінна для захисту від дублів
+  let isSubmitting = false;
+  
+  try {
+    if (typeof gtag === 'function') {
+      gtag('event', 'begin_checkout', {
+        event_category: 'ecommerce',
+        event_label: 'Checkout Form Opened',
+      });
+      console.log('[GA4] begin_checkout event sent');
+    }
+  } catch(e) { 
+    console.warn('[GA4] begin_checkout failed', e); 
   }
-} catch(e) { console.warn('[GA4] begin_checkout failed', e); }
 
- 
   // ─────────────────────────────────────────────────────────────────────────────
   // 1) Автопідстановка промокоду
   // ─────────────────────────────────────────────────────────────────────────────
@@ -1344,7 +1348,9 @@ function initCheckoutForm() {
         console.log('[PROMO] prefilled:', code);
       }
     }
-  } catch (e) { console.warn('Promo prefill failed', e); }
+  } catch (e) { 
+    console.warn('Promo prefill failed', e); 
+  }
 
   // ─────────────────────────────────────────────────────────────────────────────
   // 2) Збір email для cart-recovery + follow-up логіка
@@ -1353,54 +1359,47 @@ function initCheckoutForm() {
   if (emailInput) {
     let debounceTimer;
 
-   const scheduleCartRecoveryOnce = async (only24h = false) => {
-  const email = (emailInput.value || '').trim().toLowerCase();        // нормалізований
-  if (!email) return;
+    const scheduleCartRecoveryOnce = async (only24h = false) => {
+      const email = (emailInput.value || '').trim().toLowerCase();
+      if (!email) return;
 
-  const cart = readCart();
-  if (!cart.length) return;
+      const cart = readCart();
+      if (!cart.length) return;
 
-  // зберегти стан для повернення
-  try {
-    const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
-    state.email = email;
-    localStorage.setItem('cart_recovery_state', JSON.stringify(state));
-  } catch {}
+      try {
+        const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}') || {};
+        state.email = email;
+        localStorage.setItem('cart_recovery_state', JSON.stringify(state));
+      } catch {}
 
-  const key = `cart_recovery_scheduled:${email}`;
-  if (localStorage.getItem(key) === '1') return;
+      const key = `cart_recovery_scheduled:${email}`;
+      if (localStorage.getItem(key) === '1') return;
 
-  try {
-    await fetch('/api/cart-recovery', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'schedule',
-        email,
-        cartItems: cart,
-        firstName: form.firstName?.value.trim() || '',
-        only24h                           // ← тепер бекенд це розуміє
-      })
-    });
-    localStorage.setItem(key, '1');
-    console.log('[Cart Recovery] scheduled', only24h ? '24h only' : '2h+24h', 'for', email);
-  } catch (err) {
-    console.error('[Cart Recovery] schedule failed:', err);
-  }
-};
-
-  
+      try {
+        await fetch('/api/cart-recovery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'schedule',
+            email,
+            cartItems: cart,
+            firstName: form.firstName?.value.trim() || '',
+            only24h
+          })
+        });
+        localStorage.setItem(key, '1');
+        console.log('[Cart Recovery] scheduled', only24h ? '24h only' : '2h+24h', 'for', email);
+      } catch (err) {
+        console.error('[Cart Recovery] schedule failed:', err);
+      }
+    };
 
     emailInput.addEventListener('blur', () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => scheduleCartRecoveryOnce(false), 400);
     });
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // якщо прийшов з follow-up ( ?recovery=true ):
-    // 1️⃣ скасувати старі листи
-    // 2️⃣ якщо не купив — запланувати тільки 24h через 30 секунд
-    // ─────────────────────────────────────────────────────────────────────────────
+    // Recovery flow для returning users
     try {
       const qs = new URLSearchParams(location.search);
       if (qs.get('recovery') === 'true') {
@@ -1413,15 +1412,13 @@ function initCheckoutForm() {
         }
 
         if (email) {
-          // скасувати старий цикл (2h+24h)
           cancelCartRecovery(email);
 
-          // через 30 секунд — якщо не купив — запланувати лише 24h follow-up
           setTimeout(async () => {
             const cart = readCart();
             if (!cart.length) return;
             localStorage.removeItem(`cart_recovery_scheduled:${email}`);
-            await scheduleCartRecoveryOnce(true); // 🔸 тільки 24h
+            await scheduleCartRecoveryOnce(true);
           }, 30000);
         }
       }
@@ -1429,7 +1426,7 @@ function initCheckoutForm() {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // 3) Хелпер для перетворення "100mg" | "1 g" → mg (number)
+  // 3) Helper для parseQtyToMg
   // ─────────────────────────────────────────────────────────────────────────────
   function parseQtyToMgLabel(s) {
     const t = String(s || '').toLowerCase();
@@ -1438,16 +1435,30 @@ function initCheckoutForm() {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // 4) Сабміт форми
+  // 4) 🛡️ SUBMIT HANDLER З ЗАХИСТОМ ВІД ДУБЛІВ
   // ─────────────────────────────────────────────────────────────────────────────
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // 🛡️ ЗАХИСТ #1: Перевірка чи вже йде сабміт
+    if (isSubmitting) {
+      console.warn('[Checkout] ⚠️ Already submitting, ignoring duplicate click');
+      return;
+    }
+
+    isSubmitting = true; // Блокуємо повторні спроби
+
     const msg = document.getElementById('formMsg') || form.querySelector('.form-status');
-    if (msg) { msg.textContent = ''; msg.style.color = ''; }
+    if (msg) { 
+      msg.textContent = ''; 
+      msg.style.color = ''; 
+    }
 
     const gotcha = form.querySelector('input[name="_gotcha"]')?.value || '';
-    if (gotcha) return;
+    if (gotcha) {
+      isSubmitting = false;
+      return;
+    }
 
     const cartNow = readCart();
     if (!cartNow.length) {
@@ -1455,12 +1466,16 @@ function initCheckoutForm() {
         msg.textContent = 'Your cart is empty.';
         msg.style.color = '#dc2626';
       }
-      try { showToast?.('Cart is empty', 'error'); } catch {}
+      try { 
+        showToast?.('Cart is empty', 'error'); 
+      } catch {}
       document.querySelector('.order-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       updateCheckoutSubmitState?.();
+      isSubmitting = false;
       return;
     }
 
+    // Збираємо дані форми
     const firstName = form.firstName.value.trim();
     const lastName  = form.lastName.value.trim();
     const email     = form.email.value.trim();
@@ -1478,6 +1493,7 @@ function initCheckoutForm() {
         msg.textContent = 'Please fill all required fields.';
         msg.style.color = '#dc2626';
       }
+      isSubmitting = false;
       return;
     }
 
@@ -1524,9 +1540,17 @@ function initCheckoutForm() {
       promoCode: appliedPromoCode
     };
 
-    if (submitBtn) submitBtn.disabled = true;
+    // 🛡️ ЗАХИСТ #2: Disable кнопки + візуальний feedback
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Processing...';
+      submitBtn.style.opacity = '0.6';
+      submitBtn.style.cursor = 'not-allowed';
+    }
 
     try {
+      console.log('[Checkout] 📤 Sending order...');
+      
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1534,34 +1558,68 @@ function initCheckoutForm() {
       });
 
       if (!res.ok) {
-  let errMsg = 'Could not submit. Please check your cart.';
-  if (msg) { msg.textContent = errMsg; msg.style.color = '#dc2626'; }
-  return;
-}
+        let errMsg = 'Could not submit. Please check your cart.';
+        if (msg) { 
+          msg.textContent = errMsg; 
+          msg.style.color = '#dc2626'; 
+        }
+        isSubmitting = false;
+        
+        // Відновлюємо кнопку
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Order Request';
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
+        }
+        return;
+      }
 
-// ✅ КРИТИЧНО: Скасовуємо follow-ups ПІСЛЯ підтвердження від бекенду
-const normalizedEmail = email.trim().toLowerCase();
-await cancelCartRecovery(normalizedEmail);
+      // ✅ SUCCESS FLOW
+      console.log('[Checkout] ✅ Order sent successfully');
+      
+      const normalizedEmail = email.trim().toLowerCase();
+      
+      // Скасовуємо cart recovery
+      try {
+        await cancelCartRecovery(normalizedEmail);
+        console.log('[Checkout] ✅ Cart recovery canceled for:', normalizedEmail);
+      } catch (cancelErr) {
+        console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
+      }
 
-// Очищаємо всі пов'язані ключі
-localStorage.removeItem('cart_recovery_state');
-localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
-localStorage.removeItem('pending_promo');
-
-console.log('[Checkout] ✅ Cart recovery canceled for:', normalizedEmail);
-
+      // Очищаємо localStorage
       localStorage.removeItem('cart_recovery_state');
-      localStorage.removeItem(`cart_recovery_scheduled:${email}`);
+      localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
+      localStorage.removeItem('pending_promo');
+      
+      // Очищаємо кошик
       writeCart([]);
       updateCartBadge([]);
+      
+      // Редірект на success
       window.location.href = '/success.html';
 
     } catch (err) {
-      if (msg) { msg.textContent = 'Error. Try again later.'; msg.style.color = '#ef4444'; }
-      console.error('[CHECKOUT_ERROR]', err);
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
+      console.error('[Checkout] ❌ Error:', err);
+      
+      if (msg) { 
+        msg.textContent = 'Network error. Please try again.'; 
+        msg.style.color = '#ef4444'; 
+      }
+      
+      isSubmitting = false;
+      
+      // Відновлюємо кнопку
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Order Request';
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+      }
     }
+    // ⚠️ ВАЖЛИВО: НЕ робимо finally block з submitBtn.disabled = false
+    // бо при success ми робимо redirect і кнопка не потрібна
   });
 }
 
