@@ -15,31 +15,18 @@ function normalizeEmail(email) {
 
 // Функція для створення QStash schedule через HTTP API
 async function scheduleEmail(email, stage, delay) {
-  // 🔧 ВАЖЛИВО: VERCEL_URL не містить https://, додаємо вручну
-  let siteUrl;
-  if (process.env.VERCEL_URL) {
-    siteUrl = `https://${process.env.VERCEL_URL}`;
-  } else if (process.env.SITE_URL) {
-    siteUrl = process.env.SITE_URL;
-  } else {
-    siteUrl = 'https://isrib.shop';
-  }
-
-  // Перевіряємо чи URL має схему
-  if (!siteUrl.startsWith('http://') && !siteUrl.startsWith('https://')) {
-    siteUrl = `https://${siteUrl}`;
-  }
-
-  const targetUrl = `${siteUrl}/api/followup`;
+  // 🔧 ВИКОРИСТОВУЄМО production URL напряму
+  const targetUrl = 'https://isrib.shop/api/followup';
 
   console.log(`[QStash] Scheduling ${stage} email...`);
-  console.log('  Site URL:', siteUrl);
   console.log('  Target URL:', targetUrl);
   console.log('  Delay:', delay, 'seconds');
 
-  const qstashApiUrl = `https://qstash.upstash.io/v2/publish/${encodeURIComponent(targetUrl)}`;
+  const qstashApiUrl = `https://qstash.upstash.io/v2/publish/${targetUrl}`;
   
   console.log('  QStash API URL:', qstashApiUrl);
+  console.log('  Token exists:', !!process.env.QSTASH_TOKEN);
+  console.log('  Token preview:', process.env.QSTASH_TOKEN?.substring(0, 20) + '...');
 
   const response = await fetch(qstashApiUrl, {
     method: 'POST',
@@ -57,11 +44,13 @@ async function scheduleEmail(email, stage, delay) {
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('[QStash] Schedule failed:', {
-      status: response.status,
-      statusText: response.statusText,
-      body: errorText
-    });
+    console.error('[QStash] ❌ Schedule failed');
+    console.error('  Status:', response.status);
+    console.error('  Status Text:', response.statusText);
+    console.error('  Error body:', errorText);
+    console.error('  Request URL was:', qstashApiUrl);
+    console.error('  Target URL was:', targetUrl);
+    
     throw new Error(`QStash failed: ${response.status} ${errorText}`);
   }
 
