@@ -114,12 +114,14 @@ export default async function handler(req, res) {
     });
 
     try {
-      // 🔧 ВИПРАВЛЕНО: Правильне визначення siteUrl
+      // 🔧 Правильне визначення siteUrl
       const siteUrl = process.env.VERCEL_URL 
         ? `https://${process.env.VERCEL_URL}` 
         : (process.env.SITE_URL || 'https://isrib.shop');
 
-      console.log('[Cart Recovery] Using site URL:', siteUrl);
+      console.log('[Cart Recovery] 🌐 Site URL:', siteUrl);
+      console.log('[Cart Recovery] 🔑 QStash token exists:', !!process.env.QSTASH_TOKEN);
+      console.log('[Cart Recovery] 🔑 Token preview:', process.env.QSTASH_TOKEN?.substring(0, 20) + '...');
 
       // 🎯 Зберігаємо дані в Redis
       await kv.set(`cart_recovery:${keyEmail}`, {
@@ -136,7 +138,8 @@ export default async function handler(req, res) {
       const TWO_HOURS = 2 * 60 * 60; // seconds
       const TWENTYFOUR_HOURS = 24 * 60 * 60; // seconds
 
-      // 🔧 ВИПРАВЛЕНО: Використовуємо publishJSON замість publish
+      console.log('[Cart Recovery] 📤 Attempting to schedule 2h followup...');
+      
       // Schedule 2h followup
       const schedule2h = await qstash.publishJSON({
         url: `${siteUrl}/api/followup`,
@@ -145,14 +148,15 @@ export default async function handler(req, res) {
           stage: '2h'
         },
         delay: TWO_HOURS,
-        retries: 0, // Не retry якщо failed
-        // 🔧 ДОДАНО: Content-Type header
+        retries: 0,
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
-      console.log('[Cart Recovery] ✅ Scheduled 2h QStash call:', schedule2h.messageId);
+      console.log('[Cart Recovery] ✅ Scheduled 2h:', JSON.stringify(schedule2h, null, 2));
+
+      console.log('[Cart Recovery] 📤 Attempting to schedule 24h followup...');
 
       // Schedule 24h followup
       const schedule24h = await qstash.publishJSON({
@@ -168,7 +172,7 @@ export default async function handler(req, res) {
         }
       });
 
-      console.log('[Cart Recovery] ✅ Scheduled 24h QStash call:', schedule24h.messageId);
+      console.log('[Cart Recovery] ✅ Scheduled 24h:', JSON.stringify(schedule24h, null, 2));
 
       return res.status(200).json({
         ok: true,
@@ -177,15 +181,26 @@ export default async function handler(req, res) {
           twoH: schedule2h.messageId,
           twentyFourH: schedule24h.messageId
         },
+        debug: {
+          site_url: siteUrl,
+          followup_endpoint: `${siteUrl}/api/followup`
+        },
         message: 'Cart recovery scheduled via QStash'
       });
 
     } catch (error) {
       console.error('[Cart Recovery] ❌ Schedule error:', error);
+      console.error('[Cart Recovery] Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
       return res.status(500).json({ 
         ok: false, 
         error: 'Failed to schedule emails',
-        details: error.message
+        details: error.message,
+        response: error.response?.data || 'No response data'
       });
     }
   }
