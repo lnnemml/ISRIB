@@ -119,14 +119,20 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
 }
 
 // ============================================================================
-// Main Handler (з QStash signature verification)
+// Main Handler (БЕЗ signature verification для діагностики)
 // ============================================================================
 async function handler(req, res) {
+  console.log('\n═══════════════════════════════════════');
+  console.log('[Followup] 📨 Received request');
+  console.log('  Method:', req.method);
+  console.log('  URL:', req.url);
+  console.log('  Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('═══════════════════════════════════════\n');
+  
   if (req.method !== 'POST') {
+    console.error('[Followup] ❌ Wrong method:', req.method);
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
-
-  console.log('[Followup] 📨 Received QStash call');
 
   try {
     // 🔧 ВИПРАВЛЕНО: Parse body правильно
@@ -212,7 +218,7 @@ async function handler(req, res) {
   }
 }
 
-// ✅ QStash signature verification wrapper
-export default verifySignatureAppRouter(handler);
+// 🔧 ТИМЧАСОВО БЕЗ SIGNATURE VERIFICATION (для тестування)
+export default handler;
 
 export const config = { api: { bodyParser: false } };
