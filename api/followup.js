@@ -1,12 +1,19 @@
 // api/followup.js
-// БЕЗ signature verification - QStash може вільно викликати
+// З QStash signature verification
 import { Resend } from 'resend';
 import { Redis } from '@upstash/redis';
+import { Receiver } from '@upstash/qstash';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const kv = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+// QStash receiver для signature verification
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY,
 });
 
 function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
@@ -117,9 +124,8 @@ function generateRecoveryEmail(cartItems, subtotal, firstName, stage, email) {
 
 export default async function handler(req, res) {
   console.log('\n═══════════════════════════════════════');
-  console.log('[Followup] 📨 Received call from QStash');
+  console.log('[Followup] 📨 Received call');
   console.log('  Method:', req.method);
-  console.log('  Headers:', JSON.stringify(req.headers, null, 2));
   console.log('═══════════════════════════════════════\n');
   
   if (req.method !== 'POST') {
@@ -128,11 +134,35 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 🔐 SIGNATURE VERIFICATION
     let raw = '';
     await new Promise((resolve) => {
       req.on('data', (c) => raw += c);
       req.on('end', resolve);
     });
+
+    const signature = req.headers['upstash-signature'];
+    const url = `https://${req.headers.host}${req.url}`;
+    
+    console.log('[Followup] 🔐 Verifying signature...');
+    console.log('  Signature header:', signature ? 'present' : 'missing');
+    console.log('  URL:', url);
+
+    // Verify QStash signature
+    try {
+      await receiver.verify({
+        signature: signature || '',
+        body: raw,
+        url: url
+      });
+      console.log('[Followup] ✅ Signature verified');
+    } catch (verifyError) {
+      console.error('[Followup] ❌ Invalid signature:', verifyError.message);
+      return res.status(401).json({ 
+        error: 'Unauthorized - Invalid signature',
+        details: verifyError.message 
+      });
+    }
 
     console.log('[Followup] 📦 Body:', raw);
 
