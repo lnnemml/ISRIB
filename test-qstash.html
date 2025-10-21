@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QStash Testing Interface</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      color: #1e293b;
+      margin-bottom: 8px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #64748b;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    
+    .test-section {
+      margin-bottom: 24px;
+      padding: 24px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+    }
+    
+    .test-section h2 {
+      color: #334155;
+      font-size: 18px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .test-section .desc {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+    }
+    
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .result.show {
+      display: block;
+    }
+    
+    .result.success {
+      background: #f0fdf4;
+      border: 2px solid #86efac;
+      color: #166534;
+    }
+    
+    .result.error {
+      background: #fef2f2;
+      border: 2px solid #fca5a5;
+      color: #991b1b;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .input-group {
+      margin-bottom: 16px;
+    }
+    
+    .input-group label {
+      display: block;
+      color: #475569;
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 QStash Testing Interface</h1>
+    <p class="subtitle">Test your cart recovery and QStash integration</p>
+    
+    <!-- Test 1: QStash Connection -->
+    <div class="test-section">
+      <h2>
+        <span>1️⃣</span>
+        Test QStash Connection
+      </h2>
+      <p class="desc">
+        Перевірка чи правильно налаштований QSTASH_TOKEN та чи працює з'єднання з QStash API
+      </p>
+      <button id="test1Btn" onclick="testQStashConnection()">
+        🔌 Test Connection
+      </button>
+      <div id="test1Result" class="result"></div>
+    </div>
+    
+    <!-- Test 2: Cart Recovery Schedule -->
+    <div class="test-section">
+      <h2>
+        <span>2️⃣</span>
+        Test Cart Recovery Schedule
+      </h2>
+      <p class="desc">
+        Створює тестовий cart recovery schedule. Перевірте чи з'явиться в QStash dashboard.
+      </p>
+      
+      <div class="input-group">
+        <label for="testEmail">Email для тесту</label>
+        <input 
+          type="email" 
+          id="testEmail" 
+          placeholder="test@example.com"
+          value="test@example.com"
+        />
+      </div>
+      
+      <button id="test2Btn" onclick="testCartRecovery()">
+        📅 Schedule Test Recovery
+      </button>
+      <div id="test2Result" class="result"></div>
+    </div>
+    
+    <!-- Test 3: Cancel Recovery -->
+    <div class="test-section">
+      <h2>
+        <span>3️⃣</span>
+        Test Cancel Recovery
+      </h2>
+      <p class="desc">
+        Скасовує cart recovery для тестового email (видаляє з Redis)
+      </p>
+      
+      <button id="test3Btn" onclick="testCancelRecovery()">
+        ❌ Cancel Test Recovery
+      </button>
+      <div id="test3Result" class="result"></div>
+    </div>
+  </div>
+
+  <script>
+    async function testQStashConnection() {
+      const btn = document.getElementById('test1Btn');
+      const result = document.getElementById('test1Result');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Testing...';
+      result.classList.remove('show', 'success', 'error');
+      
+      try {
+        const response = await fetch('https://isrib.shop/api/test-qstash', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        
+        result.classList.add('show');
+        
+        if (response.ok && data.success) {
+          result.classList.add('success');
+          result.textContent = '✅ SUCCESS!\n\n' + JSON.stringify(data, null, 2);
+        } else {
+          result.classList.add('error');
+          result.textContent = '❌ ERROR\n\n' + JSON.stringify(data, null, 2);
+        }
+      } catch (error) {
+        result.classList.add('show', 'error');
+        result.textContent = '❌ NETWORK ERROR\n\n' + error.message;
+      }
+      
+      btn.disabled = false;
+      btn.innerHTML = '🔌 Test Connection';
+    }
+    
+    async function testCartRecovery() {
+      const btn = document.getElementById('test2Btn');
+      const result = document.getElementById('test2Result');
+      const email = document.getElementById('testEmail').value;
+      
+      if (!email || !email.includes('@')) {
+        result.classList.add('show', 'error');
+        result.textContent = '❌ Please enter a valid email';
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Scheduling...';
+      result.classList.remove('show', 'success', 'error');
+      
+      try {
+        const response = await fetch('https://isrib.shop/api/cart-recovery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'schedule',
+            email: email,
+            cartItems: [
+              {
+                name: 'ISRIB A15',
+                sku: 'isrib-a15',
+                price: 50,
+                count: 1,
+                display: '100mg',
+                grams: 100
+              }
+            ],
+            firstName: 'TestUser'
+          })
+        });
+        
+        const data = await response.json();
+        
+        result.classList.add('show');
+        
+        if (response.ok && data.ok) {
+          result.classList.add('success');
+          result.textContent = '✅ SCHEDULED!\n\n' + 
+            'Check QStash dashboard:\nhttps://console.upstash.com/qstash\n\n' +
+            'Response:\n' + JSON.stringify(data, null, 2);
+        } else {
+          result.classList.add('error');
+          result.textContent = '❌ FAILED\n\n' + JSON.stringify(data, null, 2);
+        }
+      } catch (error) {
+        result.classList.add('show', 'error');
+        result.textContent = '❌ NETWORK ERROR\n\n' + error.message;
+      }
+      
+      btn.disabled = false;
+      btn.innerHTML = '📅 Schedule Test Recovery';
+    }
+    
+    async function testCancelRecovery() {
+      const btn = document.getElementById('test3Btn');
+      const result = document.getElementById('test3Result');
+      const email = document.getElementById('testEmail').value;
+      
+      if (!email || !email.includes('@')) {
+        result.classList.add('show', 'error');
+        result.textContent = '❌ Please enter a valid email';
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Canceling...';
+      result.classList.remove('show', 'success', 'error');
+      
+      try {
+        const response = await fetch('https://isrib.shop/api/cart-recovery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'cancel',
+            email: email
+          })
+        });
+        
+        const data = await response.json();
+        
+        result.classList.add('show');
+        
+        if (response.ok && data.ok) {
+          result.classList.add('success');
+          result.textContent = '✅ CANCELED!\n\n' + JSON.stringify(data, null, 2);
+        } else {
+          result.classList.add('error');
+          result.textContent = '❌ FAILED\n\n' + JSON.stringify(data, null, 2);
+        }
+      } catch (error) {
+        result.classList.add('show', 'error');
+        result.textContent = '❌ NETWORK ERROR\n\n' + error.message;
+      }
+      
+      btn.disabled = false;
+      btn.innerHTML = '❌ Cancel Test Recovery';
+    }
+  </script>
+</body>
+</html>
