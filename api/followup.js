@@ -129,18 +129,21 @@ async function handler(req, res) {
   console.log('[Followup] 📨 Received QStash call');
 
   try {
-    // Parse body
+    // 🔧 ВИПРАВЛЕНО: Parse body правильно
     let raw = '';
     await new Promise((resolve) => {
       req.on('data', (c) => raw += c);
       req.on('end', resolve);
     });
 
+    console.log('[Followup] Raw body:', raw);
+
     const { email, stage } = JSON.parse(raw || '{}');
 
     console.log('[Followup] Processing:', { email, stage });
 
     if (!email || !stage) {
+      console.error('[Followup] Missing email or stage');
       return res.status(400).json({ error: 'Missing email or stage' });
     }
 
