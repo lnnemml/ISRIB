@@ -15,18 +15,33 @@ function normalizeEmail(email) {
 
 // Функція для створення QStash schedule через HTTP API
 async function scheduleEmail(email, stage, delay) {
-  const siteUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : 'https://isrib.shop';
+  // 🔧 ВАЖЛИВО: VERCEL_URL не містить https://, додаємо вручну
+  let siteUrl;
+  if (process.env.VERCEL_URL) {
+    siteUrl = `https://${process.env.VERCEL_URL}`;
+  } else if (process.env.SITE_URL) {
+    siteUrl = process.env.SITE_URL;
+  } else {
+    siteUrl = 'https://isrib.shop';
+  }
 
-  const qstashUrl = 'https://qstash.upstash.io/v2/publish';
+  // Перевіряємо чи URL має схему
+  if (!siteUrl.startsWith('http://') && !siteUrl.startsWith('https://')) {
+    siteUrl = `https://${siteUrl}`;
+  }
+
   const targetUrl = `${siteUrl}/api/followup`;
 
   console.log(`[QStash] Scheduling ${stage} email...`);
+  console.log('  Site URL:', siteUrl);
   console.log('  Target URL:', targetUrl);
   console.log('  Delay:', delay, 'seconds');
 
-  const response = await fetch(`${qstashUrl}/${encodeURIComponent(targetUrl)}`, {
+  const qstashApiUrl = `https://qstash.upstash.io/v2/publish/${encodeURIComponent(targetUrl)}`;
+  
+  console.log('  QStash API URL:', qstashApiUrl);
+
+  const response = await fetch(qstashApiUrl, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${process.env.QSTASH_TOKEN}`,
