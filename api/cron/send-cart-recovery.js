@@ -137,8 +137,7 @@ export default async function handler(req, res) {
 
     const TWO_HOURS = 2 * 60 * 60 * 1000;
     const TWENTYFOUR_HOURS = 24 * 60 * 60 * 1000;
-    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
-    const FIVE_MINUTES = 5 * 60 * 1000; // Grace period
+    const ONE_HOUR = 60 * 60 * 1000; // Grace period для Hobby плану
 
     for (const key of keys) {
       const rec = await kv.get(key);
@@ -156,7 +155,7 @@ export default async function handler(req, res) {
       }
 
       // Send 2h email (within 5-minute window)
-      if (!rec.sent2h && elapsed >= TWO_HOURS && elapsed < (TWO_HOURS + FIVE_MINUTES)) {
+      if (!rec.sent2h && elapsed >= TWO_HOURS && elapsed < (TWO_HOURS + ONE_HOUR)) {
         try {
           await resend.emails.send({
             from: process.env.RESEND_FROM,
@@ -184,7 +183,7 @@ export default async function handler(req, res) {
       }
 
       // Send 24h email (within 5-minute window)
-      if (!rec.sent24h && elapsed >= TWENTYFOUR_HOURS && elapsed < (TWENTYFOUR_HOURS + FIVE_MINUTES)) {
+      if (!rec.sent24h && elapsed >= TWENTYFOUR_HOURS && elapsed < (TWENTYFOUR_HOURS + ONE_HOUR)) {
         try {
           await resend.emails.send({
             from: process.env.RESEND_FROM,
