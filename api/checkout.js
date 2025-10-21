@@ -465,6 +465,8 @@ For research use only. Not for human consumption.`,
     // ============================================================================
     console.log('[Checkout] 🔄 Canceling cart recovery for:', email);
 
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     try {
       await cancelCartRecoveryEmails(email); // ← КРИТИЧНО: await!
       console.log('[Checkout] ✅ Cart recovery canceled successfully');
