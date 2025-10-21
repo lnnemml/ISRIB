@@ -1,7 +1,7 @@
 // api/followup.js
+// 🔧 БЕЗ SIGNATURE VERIFICATION (для діагностики)
 import { Resend } from 'resend';
 import { Redis } from '@upstash/redis';
-import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const kv = new Redis({
