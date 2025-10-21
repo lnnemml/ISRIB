@@ -54,43 +54,43 @@ function validatePromoCode(code) {
 }
 
 // ============================================================================
-// ⚡ ВИПРАВЛЕНА функція скасування cart recovery (НЕ БЛОКУЄ відправку листів)
+// ✅ ВИПРАВЛЕНА функція скасування cart recovery (ASYNC з AWAIT)
 // ============================================================================
-function cancelCartRecoveryEmails(email) {
+async function cancelCartRecoveryEmails(email) {
   const normalizedEmail = normalizeEmail(email);
   
   if (!normalizedEmail || !normalizedEmail.includes('@')) {
     console.warn('[Checkout] Invalid email for cart recovery cancel:', email);
-    return;
+    return false;
   }
 
-  // ⚡ КРИТИЧНО: Виконуємо в фоні БЕЗ await — не блокуємо відправку листів
-  const siteUrl = process.env.SITE_URL || process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : 'https://isrib.shop';
+  const siteUrl = process.env.SITE_URL || 
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://isrib.shop');
 
-  fetch(`${siteUrl}/api/cart-recovery`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      action: 'cancel', 
-      email: normalizedEmail 
-    })
-  })
-  .then(response => {
-    if (response.ok) {
-      return response.json();
-    } else {
+  try {
+    console.log('[Checkout] 🔄 Canceling cart recovery for:', normalizedEmail);
+    
+    const response = await fetch(`${siteUrl}/api/cart-recovery`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'cancel', 
+        email: normalizedEmail 
+      })
+    });
+
+    if (!response.ok) {
       throw new Error(`Cancel failed: ${response.status}`);
     }
-  })
-  .then(data => {
-    console.log('[Checkout] ✅ Cart recovery canceled:', data);
-  })
-  .catch(error => {
-    // НЕ кидаємо помилку далі — просто логуємо
-    console.warn('[Checkout] ⚠️ Cart recovery cancel failed (non-critical):', error.message);
-  });
+
+    const data = await response.json();
+    console.log('[Checkout] ✅ Cart recovery API response:', data);
+    return true;
+
+  } catch (error) {
+    console.error('[Checkout] ❌ Cart recovery cancel failed:', error.message);
+    throw error; // ← Пробрасуємо помилку щоб catch блок зверху це побачив
+  }
 }
 
 // ============================================================================
@@ -461,9 +461,17 @@ For research use only. Not for human consumption.`,
     console.log('[Checkout] ✅ All emails queued');
 
     // ============================================================================
-    // 4. ✅ СКАСОВУЄМО cart recovery БЕЗ БЛОКУВАННЯ
+    // 4. ✅ СКАСОВУЄМО cart recovery З ОЧІКУВАННЯМ
     // ============================================================================
-    cancelCartRecoveryEmails(email);
+    console.log('[Checkout] 🔄 Canceling cart recovery for:', email);
+
+    try {
+      await cancelCartRecoveryEmails(email); // ← КРИТИЧНО: await!
+      console.log('[Checkout] ✅ Cart recovery canceled successfully');
+    } catch (cancelError) {
+      // Не блокуємо checkout якщо cancel failed
+      console.warn('[Checkout] ⚠️ Cart recovery cancel failed (non-critical):', cancelError.message);
+    }
 
     // 5. Генеруємо Order ID для редіректу
     const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
