@@ -500,5 +500,131 @@
       s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
     })();
   </script>
+
+    <!-- Email Popup -->
+<div id="emailPopup" class="email-popup">
+  <div class="popup-overlay"></div>
+  <div class="popup-card">
+    <button class="popup-close" onclick="closeEmailPopup()" aria-label="Close">×</button>
+    
+    <div class="popup-icon">🧬</div>
+    <h3 class="popup-title">Get 10% Off Your First Order</h3>
+    <p class="popup-subtitle">Join 500+ researchers receiving exclusive discounts and early access</p>
+    
+    <!-- Tally Form -->
+    <iframe 
+      data-tally-src="https://tally.so/embed/n0pNyQ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
+      loading="lazy" 
+      width="100%" 
+      height="420" 
+      frameborder="0" 
+      marginheight="0" 
+      marginwidth="0" 
+      title="Email Signup"
+      style="border: none;">
+    </iframe>
+    
+    <div class="popup-benefits">
+      <span>✓ Code: <strong>WELCOME10</strong></span>
+      <span>✓ Early compound access</span>
+      <span>✓ No spam ever</span>
+    </div>
+  </div>
+</div>
+     <!-- Tally Widget Script -->
+<script>
+  var d=document,w="https://tally.so/widgets/embed.js",
+  v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():
+  d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){
+  e.src=e.dataset.tallySrc}))};
+  if("undefined"!=typeof Tally)v();
+  else if(d.querySelector('script[src="'+w+'"]')==null){
+  var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+</script>
+
+<!-- Popup Logic -->
+<script>
+(function() {
+  const POPUP_KEY = 'emailPopupShown_v1';
+  const DELAY_MS = 30000; // 30 секунд
+  
+  // Перевірка чи вже показували
+  if (localStorage.getItem(POPUP_KEY)) return;
+  
+  const popup = document.getElementById('emailPopup');
+  if (!popup) return;
+  
+  let triggered = false;
+  
+  // Показати popup
+  function showPopup() {
+    if (triggered) return;
+    triggered = true;
+    popup.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    // Analytics
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'popup_shown', {
+          event_category: 'engagement',
+          event_label: 'email_popup_tally'
+        });
+      }
+    } catch(e) {}
+  }
+  
+  // Закрити popup
+  window.closeEmailPopup = function() {
+    popup.style.display = 'none';
+    document.body.style.overflow = '';
+    localStorage.setItem(POPUP_KEY, Date.now());
+    
+    // Analytics
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'popup_closed', {
+          event_category: 'engagement',
+          event_label: 'email_popup_tally'
+        });
+      }
+    } catch(e) {}
+  };
+  
+  // Trigger 1: Через 30 секунд
+  setTimeout(showPopup, DELAY_MS);
+  
+  // Trigger 2: Exit Intent (миша йде до верху)
+  document.addEventListener('mouseleave', function(e) {
+    if (e.clientY < 10 && !triggered) {
+      showPopup();
+    }
+  });
+  
+  // Trigger 3: Scroll до 50% сторінки
+  let scrollTriggered = false;
+  window.addEventListener('scroll', function() {
+    if (scrollTriggered || triggered) return;
+    const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    if (scrollPercent > 50) {
+      scrollTriggered = true;
+      setTimeout(showPopup, 2000);
+    }
+  }, { passive: true });
+  
+  // Закривати на Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && popup.style.display === 'flex') {
+      closeEmailPopup();
+    }
+  });
+  
+  // Закривати при кліку на overlay
+  const overlay = popup.querySelector('.popup-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', closeEmailPopup);
+  }
+})();
+</script>
 </body>
 </html>
