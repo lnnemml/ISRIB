@@ -501,28 +501,29 @@
     })();
   </script>
 
-    <!-- Email Popup -->
-<div id="emailPopup" class="email-popup">
-  <div class="popup-overlay"></div>
+   <!-- Email Popup (Fixed Version) -->
+<div id="emailPopup" class="email-popup" style="display: none;">
+  <div class="popup-overlay" id="popupOverlay"></div>
   <div class="popup-card">
-    <button class="popup-close" onclick="closeEmailPopup()" aria-label="Close">×</button>
+    <button class="popup-close" id="popupCloseBtn" type="button" aria-label="Close">×</button>
     
     <div class="popup-icon">🧬</div>
     <h3 class="popup-title">Get 10% Off Your First Order</h3>
     <p class="popup-subtitle">Join 500+ researchers receiving exclusive discounts and early access</p>
     
     <!-- Tally Form -->
-    <iframe 
-      data-tally-src="https://tally.so/embed/n0pNyQ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
-      loading="lazy" 
-      width="100%" 
-      height="420" 
-      frameborder="0" 
-      marginheight="0" 
-      marginwidth="0" 
-      title="Email Signup"
-      style="border: none;">
-    </iframe>
+    <div id="tallyFormContainer" style="min-height: 420px;">
+      <iframe 
+        src="https://tally.so/embed/n0pNyQ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
+        width="100%" 
+        height="420" 
+        frameborder="0" 
+        marginheight="0" 
+        marginwidth="0" 
+        title="Email Signup"
+        style="border: none; background: transparent;">
+      </iframe>
+    </div>
     
     <div class="popup-benefits">
       <span>✓ Code: <strong>WELCOME10</strong></span>
@@ -531,37 +532,47 @@
     </div>
   </div>
 </div>
-     <!-- Tally Widget Script -->
-<script>
-  var d=document,w="https://tally.so/widgets/embed.js",
-  v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():
-  d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){
-  e.src=e.dataset.tallySrc}))};
-  if("undefined"!=typeof Tally)v();
-  else if(d.querySelector('script[src="'+w+'"]')==null){
-  var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
-</script>
 
-<!-- Popup Logic -->
+<!-- Popup Logic (Simplified & Fixed) -->
 <script>
 (function() {
-  const POPUP_KEY = 'emailPopupShown_v1';
-  const DELAY_MS = 30000; // 30 секунд
+  'use strict';
   
-  // Перевірка чи вже показували
-  if (localStorage.getItem(POPUP_KEY)) return;
+  const POPUP_KEY = 'emailPopupShown_v2';
+  const DELAY_MS = 15000; // 15 секунд для тестування
   
+  // Перевірка чи popup існує
   const popup = document.getElementById('emailPopup');
-  if (!popup) return;
+  if (!popup) {
+    console.warn('Email popup not found');
+    return;
+  }
+  
+  const closeBtn = document.getElementById('popupCloseBtn');
+  const overlay = document.getElementById('popupOverlay');
+  
+  // Перевірка чи вже показували (тимчасово вимкнено для тестування)
+  // if (localStorage.getItem(POPUP_KEY)) {
+  //   console.log('Popup already shown');
+  //   return;
+  // }
   
   let triggered = false;
   
-  // Показати popup
+  // Функція показу popup
   function showPopup() {
     if (triggered) return;
     triggered = true;
+    
+    console.log('Showing popup...');
+    
     popup.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    
+    // Fade in animation
+    setTimeout(() => {
+      popup.style.opacity = '1';
+    }, 10);
     
     // Analytics
     try {
@@ -571,13 +582,22 @@
           event_label: 'email_popup_tally'
         });
       }
-    } catch(e) {}
+    } catch(e) {
+      console.error('Analytics error:', e);
+    }
   }
   
-  // Закрити popup
-  window.closeEmailPopup = function() {
-    popup.style.display = 'none';
-    document.body.style.overflow = '';
+  // Функція закриття popup
+  function closePopup() {
+    console.log('Closing popup...');
+    
+    popup.style.opacity = '0';
+    
+    setTimeout(() => {
+      popup.style.display = 'none';
+      document.body.style.overflow = '';
+    }, 300);
+    
     localStorage.setItem(POPUP_KEY, Date.now());
     
     // Analytics
@@ -589,41 +609,53 @@
         });
       }
     } catch(e) {}
-  };
+  }
   
-  // Trigger 1: Через 30 секунд
-  setTimeout(showPopup, DELAY_MS);
+  // Event listeners
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closePopup);
+  }
   
-  // Trigger 2: Exit Intent (миша йде до верху)
-  document.addEventListener('mouseleave', function(e) {
-    if (e.clientY < 10 && !triggered) {
-      showPopup();
-    }
-  });
-  
-  // Trigger 3: Scroll до 50% сторінки
-  let scrollTriggered = false;
-  window.addEventListener('scroll', function() {
-    if (scrollTriggered || triggered) return;
-    const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-    if (scrollPercent > 50) {
-      scrollTriggered = true;
-      setTimeout(showPopup, 2000);
-    }
-  }, { passive: true });
+  if (overlay) {
+    overlay.addEventListener('click', closePopup);
+  }
   
   // Закривати на Escape
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && popup.style.display === 'flex') {
-      closeEmailPopup();
+      closePopup();
     }
   });
   
-  // Закривати при кліку на overlay
-  const overlay = popup.querySelector('.popup-overlay');
-  if (overlay) {
-    overlay.addEventListener('click', closeEmailPopup);
-  }
+  // Trigger 1: Через 15 секунд (для тестування)
+  setTimeout(() => {
+    console.log('Timer trigger fired');
+    showPopup();
+  }, DELAY_MS);
+  
+  // Trigger 2: Exit Intent
+  document.addEventListener('mouseleave', function(e) {
+    if (e.clientY < 10 && !triggered) {
+      console.log('Exit intent trigger fired');
+      showPopup();
+    }
+  });
+  
+  // Trigger 3: Scroll 50%
+  let scrollTriggered = false;
+  window.addEventListener('scroll', function() {
+    if (scrollTriggered || triggered) return;
+    
+    const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    
+    if (scrollPercent > 50) {
+      scrollTriggered = true;
+      console.log('Scroll trigger fired');
+      setTimeout(showPopup, 2000);
+    }
+  }, { passive: true });
+  
+  console.log('Email popup initialized');
 })();
 </script>
 </body>
