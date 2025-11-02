@@ -500,7 +500,258 @@
       s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
     })();
   </script>
+     
+<!-- ISRIB Pop-up Email Capture -->
+<style>
+.isrib-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9998;
+    animation: fadeIn 0.3s ease;
+}
 
+.isrib-popup-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    max-width: 500px;
+    width: 90%;
+    animation: slideUp 0.4s ease;
+}
+
+.isrib-popup-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.isrib-popup-close:hover {
+    transform: rotate(90deg);
+}
+
+.isrib-popup-content {
+    text-align: center;
+    color: white;
+}
+
+.isrib-popup-content h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.isrib-popup-content p {
+    font-size: 16px;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+.isrib-popup-form input[type="email"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.isrib-popup-form button {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    background: #fff;
+    color: #667eea;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.isrib-popup-form button:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.isrib-success-message {
+    display: none;
+    color: #4ade80;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media (max-width: 600px) {
+    .isrib-popup-container {
+        padding: 30px 20px;
+    }
+    .isrib-popup-content h2 {
+        font-size: 24px;
+    }
+}
+</style>
+
+<div class="isrib-popup-overlay" id="isribPopupOverlay"></div>
+
+<div class="isrib-popup-container" id="isribPopupContainer">
+    <span class="isrib-popup-close" id="isribPopupClose">&times;</span>
+    <div class="isrib-popup-content">
+        <h2>🧠 Unlock Peak Cognitive Performance</h2>
+        <p>Get our exclusive 4-day email course on ISRIB A15 science, effects, and research findings</p>
+        
+        <form class="isrib-popup-form" id="isribEmailForm">
+            <input 
+                type="email" 
+                id="isribEmailInput" 
+                placeholder="Enter your email" 
+                required
+            >
+            <button type="submit">Start My Journey</button>
+        </form>
+
+        <div class="isrib-success-message" id="isribSuccessMessage">
+            ✓ Success! Check your inbox for Email #1
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ⚠️ IMPORTANT: ЗАМІНІТЬ цей URL на ваш n8n webhook URL
+    const WEBHOOK_URL = 'https://isrib.app.n8n.cloud/webhook/isrib-signup';
+    
+    // Settings
+    const config = {
+        showDelay: 10000,        // 10 секунд
+        cookieExpiry: 30,        // 30 днів
+        exitIntent: true
+    };
+
+    const overlay = document.getElementById('isribPopupOverlay');
+    const container = document.getElementById('isribPopupContainer');
+    const closeBtn = document.getElementById('isribPopupClose');
+    const form = document.getElementById('isribEmailForm');
+    const emailInput = document.getElementById('isribEmailInput');
+    const successMsg = document.getElementById('isribSuccessMessage');
+
+    function hasSeenPopup() {
+        return document.cookie.includes('isrib_popup_seen=true');
+    }
+
+    function setPopupCookie() {
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + config.cookieExpiry);
+        document.cookie = `isrib_popup_seen=true; expires=${expiry.toUTCString()}; path=/`;
+    }
+
+    function showPopup() {
+        if (!hasSeenPopup()) {
+            overlay.style.display = 'block';
+            container.style.display = 'block';
+        }
+    }
+
+    function hidePopup() {
+        overlay.style.display = 'none';
+        container.style.display = 'none';
+        setPopupCookie();
+    }
+
+    // Exit intent
+    let hasTriggeredExitIntent = false;
+    document.addEventListener('mouseout', (e) => {
+        if (config.exitIntent && !hasTriggeredExitIntent && e.clientY < 10) {
+            hasTriggeredExitIntent = true;
+            showPopup();
+        }
+    });
+
+    // Show after delay
+    setTimeout(() => {
+        if (!hasTriggeredExitIntent) {
+            showPopup();
+        }
+    }, config.showDelay);
+
+    // Close handlers
+    closeBtn.addEventListener('click', hidePopup);
+    overlay.addEventListener('click', hidePopup);
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = emailInput.value.trim();
+        const submitBtn = form.querySelector('button');
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    timestamp: new Date().toISOString(),
+                    source: 'website_popup'
+                })
+            });
+
+            if (response.ok) {
+                form.style.display = 'none';
+                successMsg.style.display = 'block';
+                
+                setTimeout(hidePopup, 3000);
+            } else {
+                alert('Something went wrong. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Start My Journey';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Start My Journey';
+        }
+    });
+})();
+</script>
   
 </body>
 </html>
