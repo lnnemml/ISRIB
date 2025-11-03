@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adding ISRIB A15 500mg to cart...</title>
+  <link rel="icon" type="image/png" href="/images/favicon-32x32.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .loader {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+    p {
+      opacity: 0.9;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="spinner"></div>
+    <h1>Adding ISRIB A15 (500mg) to your cart...</h1>
+    <p>Redirecting to secure checkout</p>
+  </div>
+
+  <script>
+    (function() {
+      // Функція для нормалізації cart
+      function normalizeCartUnits(arr) {
+        return (arr || []).map((i) => {
+          let grams = Number(i.grams || 0);
+          if (i.display) {
+            const mgFromLabel = parseQtyToMg(i.display);
+            if (mgFromLabel) grams = mgFromLabel;
+          }
+          return { 
+            ...i, 
+            grams,
+            count: Number(i.count || 1),
+            price: Number(i.price || 0)
+          };
+        });
+      }
+
+      function parseQtyToMg(s) {
+        if (!s) return 0;
+        const t = String(s).toLowerCase().trim();
+        const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
+        return t.includes('g') && !t.includes('mg') ? Math.round(n * 1000) : Math.round(n);
+      }
+
+      function readCart() {
+        try { 
+          const raw = JSON.parse(localStorage.getItem('isrib_cart') || '[]') || [];
+          return normalizeCartUnits(raw);
+        } catch { 
+          return []; 
+        }
+      }
+
+      function writeCart(arr) {
+        localStorage.setItem('isrib_cart', JSON.stringify(arr || []));
+      }
+
+      function addToCart(name, sku, grams, price, display) {
+        const cart = readCart();
+        const gramsInMg = Number(grams) || 0;
+        
+        const idx = cart.findIndex(i => 
+          i.sku === sku && 
+          Number(i.grams) === gramsInMg && 
+          Number(i.price) === Number(price)
+        );
+        
+        if (idx >= 0) {
+          cart[idx].count = Number(cart[idx].count || 1) + 1;
+        } else {
+          cart.push({ 
+            name, 
+            sku, 
+            grams: gramsInMg,
+            price: Number(price) || 0, 
+            display: display || null, 
+            count: 1, 
+            unit: 'pack' 
+          });
+        }
+        
+        writeCart(cart);
+      }
+
+      // Додаємо ISRIB A15 500mg у cart
+      addToCart('ISRIB A15', 'isrib-a15', 500, 130, '500mg');
+
+      // Analytics (якщо є gtag)
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', 'add_to_cart', {
+            event_category: 'ecommerce',
+            event_label: 'ISRIB A15 500mg direct',
+            value: 130,
+            currency: 'USD'
+          });
+        }
+      } catch(e) {}
+
+      // Через 500ms редірект на checkout
+      setTimeout(function() {
+        window.location.href = '/checkout.html';
+      }, 500);
+    })();
+  </script>
+</body>
+</html>
