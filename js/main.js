@@ -1575,7 +1575,7 @@ function initCheckoutForm() {
         return;
       }
 
-      javascript// ✅ SUCCESS FLOW
+      // ✅ SUCCESS FLOW
 console.log('[Checkout] ✅ Order sent successfully');
 
 const normalizedEmail = email.trim().toLowerCase();
@@ -1583,17 +1583,17 @@ const normalizedEmail = email.trim().toLowerCase();
 // Скасовуємо cart recovery
 try {
   await cancelCartRecovery(normalizedEmail);
-  console.log('[Checkout] ✅ Cart recovery canceled for:', normalizedEmail);
+  console.log('[Checkout] ✅ Cart recovery canceled');
 } catch (cancelErr) {
   console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
 }
 
-// Очищаємо localStorage (cart recovery)
+// Очищаємо старі дані
 localStorage.removeItem('cart_recovery_state');
 localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
 localStorage.removeItem('pending_promo');
 
-// 🎯 ЗБЕРЕЖЕННЯ ДАНИХ ЗАМОВЛЕННЯ
+// 🎯 ЗБЕРЕЖЕННЯ ДАНИХ (з ПОДВІЙНОЮ ПЕРЕВІРКОЮ)
 const orderIdFinal = 'ORD-' + Date.now();
 
 const orderData = {
@@ -1603,15 +1603,50 @@ const orderData = {
   promo: appliedPromoCode || '',
   total: total,
   items: items,
-  timestamp: Date.now() // для валідації
+  timestamp: Date.now()
 };
 
-// Зберігаємо в localStorage (більш надійно)
+console.log('[Checkout] 💾 Preparing order data:', orderData);
+
+// Спроба 1: localStorage
+let savedSuccessfully = false;
 try {
-  localStorage.setItem('_order_success_data', JSON.stringify(orderData));
-  console.log('[Checkout] 💾 Order data saved:', orderData);
+  const dataString = JSON.stringify(orderData);
+  localStorage.setItem('_order_success_data', dataString);
+  
+  // ПЕРЕВІРКА: чи збереглося?
+  const verification = localStorage.getItem('_order_success_data');
+  if (verification === dataString) {
+    console.log('[Checkout] ✅ Order data saved to localStorage');
+    savedSuccessfully = true;
+  } else {
+    console.error('[Checkout] ❌ localStorage verification failed');
+  }
 } catch (saveErr) {
-  console.error('[Checkout] ❌ Failed to save order data:', saveErr);
+  console.error('[Checkout] ❌ Failed to save to localStorage:', saveErr);
+}
+
+// Спроба 2: sessionStorage (fallback)
+if (!savedSuccessfully) {
+  try {
+    sessionStorage.setItem('_order_success_data', JSON.stringify(orderData));
+    console.log('[Checkout] ✅ Fallback: saved to sessionStorage');
+    savedSuccessfully = true;
+  } catch (sessionErr) {
+    console.error('[Checkout] ❌ sessionStorage also failed:', sessionErr);
+  }
+}
+
+// Спроба 3: Додамо в URL як backup (тільки critical data)
+let backupUrl = '';
+if (!savedSuccessfully) {
+  console.warn('[Checkout] ⚠️ Storage failed, using URL fallback');
+  const params = new URLSearchParams({
+    oid: orderIdFinal,
+    t: total.toFixed(2),
+    c: items.length
+  });
+  backupUrl = '?' + params.toString();
 }
 
 // 📊 GA4 Purchase Event
@@ -1635,10 +1670,9 @@ try {
       items: ga4Items
     });
 
-    console.log('[GA4] ✅ Purchase sent (checkout):', {
+    console.log('[GA4] ✅ Purchase sent:', {
       transaction_id: orderIdFinal,
-      value: total,
-      items: ga4Items.length
+      value: total
     });
   }
 } catch(gaErr) {
@@ -1649,9 +1683,9 @@ try {
 writeCart([]);
 updateCartBadge([]);
 
-// ⚡ НЕГАЙНИЙ РЕДІРЕКТ (без setTimeout)
-console.log('[Checkout] 🔄 Redirecting to success...');
-window.location.href = '/success.html';
+// ⚡ РЕДІРЕКТ
+console.log('[Checkout] 🔄 Redirecting to success' + (backupUrl ? ' (with URL backup)' : '') + '...');
+window.location.href = '/success.html' + backupUrl;
 
     } catch (err) {
       console.error('[Checkout] ❌ Error:', err);
