@@ -183,13 +183,14 @@
   // 🎯 ЧИТАЄМО ДАНІ З LOCALSTORAGE
   let orderData = null;
   
+  // Спроба 1: localStorage
   try {
     const stored = localStorage.getItem('_order_success_data');
     console.log('[SUCCESS] LocalStorage raw:', stored);
     
     if (stored) {
       orderData = JSON.parse(stored);
-      console.log('[SUCCESS] ✅ Order data loaded:', orderData);
+      console.log('[SUCCESS] ✅ Order data loaded from localStorage:', orderData);
       
       // Перевірка актуальності (не старше 5 хвилин)
       const age = Date.now() - (orderData.timestamp || 0);
@@ -208,7 +209,52 @@
     console.error('[SUCCESS] ❌ Failed to parse localStorage:', e);
   }
   
-  // Якщо немає даних — виходимо
+  // Спроба 2: sessionStorage (fallback)
+  if (!orderData) {
+    try {
+      const stored = sessionStorage.getItem('_order_success_data');
+      console.log('[SUCCESS] SessionStorage raw:', stored);
+      
+      if (stored) {
+        orderData = JSON.parse(stored);
+        sessionStorage.removeItem('_order_success_data');
+        console.log('[SUCCESS] ✅ Order data loaded from sessionStorage:', orderData);
+      }
+    } catch (e) {
+      console.error('[SUCCESS] ❌ Failed to parse sessionStorage:', e);
+    }
+  }
+  
+  // Спроба 3: URL params (якщо storage заблокований)
+  if (!orderData) {
+    console.log('[SUCCESS] Trying URL params as fallback...');
+    const q = new URLSearchParams(location.search);
+    const oid = q.get('oid');
+    const t = q.get('t');
+    const c = q.get('c');
+    
+    if (oid && t) {
+      console.warn('[SUCCESS] ⚠️ Using URL backup (limited data)');
+      orderData = {
+        order_id: oid,
+        total: parseFloat(t) || 0,
+        subtotal: parseFloat(t) || 0,
+        discount: 0,
+        promo: '',
+        items: [{
+          name: 'Order Items',
+          sku: 'backup',
+          qty: parseInt(c) || 1,
+          price: parseFloat(t) || 0,
+          display: 'See confirmation email'
+        }],
+        timestamp: Date.now()
+      };
+      console.log('[SUCCESS] ✅ Created backup order data from URL');
+    }
+  }
+  
+  // Якщо немає даних — показуємо повідомлення
   if (!orderData || !orderData.items || orderData.items.length === 0) {
     console.error('[SUCCESS] ❌ No valid order data found');
     
@@ -216,8 +262,19 @@
     const box = document.getElementById('summary');
     if (box) {
       box.style.display = 'block';
-      box.innerHTML = '<p style="color:#ef4444;text-align:center;">⚠️ Order data not found. Please contact support.</p>';
+      box.innerHTML = '<div style="text-align:center;padding:2rem;"><p style="color:#ef4444;font-size:1.1rem;margin-bottom:1rem;">⚠️ Unable to load order details</p><p style="color:#64748b;">Your order was submitted successfully. Please check your email for confirmation.</p></div>';
     }
+    
+    // Все одно спробуємо відправити базовий GA4 event
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'purchase_confirmation_viewed', {
+          event_category: 'ecommerce',
+          event_label: 'success_page_no_data'
+        });
+      }
+    } catch {}
+    
     return;
   }
   
@@ -241,9 +298,9 @@
   if (tbody) {
     tbody.innerHTML = items.map(item => `
       <tr style="border-bottom:1px solid #f3f4f6;">
-        <td style="padding:0.5rem;">${item.name}</td>
+        <td style="padding:0.5rem;">${item.name || 'Product'}</td>
         <td style="text-align:center; padding:0.5rem;">${item.display || ''}</td>
-        <td style="text-align:center; padding:0.5rem;">${item.qty}</td>
+        <td style="text-align:center; padding:0.5rem;">${item.qty || 1}</td>
         <td style="text-align:right; padding:0.5rem;">${fmtUSD(item.price)}</td>
       </tr>
     `).join('');
@@ -258,9 +315,9 @@
   set('s-total', fmtUSD(total));
   
   if (discount > 0 && promo) {
-    const allSumLines = box.querySelectorAll('.sum-line');
+    const allSumLines = box?.querySelectorAll('.sum-line');
     let shippingLine = null;
-    allSumLines.forEach(line => {
+    allSumLines?.forEach(line => {
       if (line.textContent.includes('Shipping') || line.textContent.includes('FREE')) {
         shippingLine = line;
       }
@@ -281,6 +338,16 @@
   function sendPurchaseEvent() {
     console.log('[GA4] 🎯 Sending purchase event...');
     
+    if (!items || items.length === 0) {
+      console.warn('[GA4] ⚠️ No items to send');
+      return;
+    }
+    
+    if (!total || total <= 0) {
+      console.warn('[GA4] ⚠️ Invalid total:', total);
+      return;
+    }
+    
     try {
       const ga4Items = items.map(item => ({
         item_id: item.sku || 'unknown',
@@ -291,12 +358,12 @@
         item_category: 'Research Chemicals'
       }));
 
-      console.log('[GA4] 📦 Items:', ga4Items);
+      console.log('[GA4] 📦 Prepared items:', ga4Items);
 
       // Метод 1: через gtag
       if (typeof gtag === 'function') {
         gtag('event', 'purchase', {
-          transaction_id: order_id,
+          transaction_id: order_id || 'ORD-' + Date.now(),
           value: total,
           currency: 'USD',
           shipping: 0,
@@ -311,7 +378,7 @@
           items: ga4Items.length
         });
       } else {
-        console.error('[GA4] ❌ gtag not available');
+        console.error('[GA4] ❌ gtag function not available');
       }
 
       // Метод 2: через dataLayer
@@ -319,7 +386,7 @@
       window.dataLayer.push({
         event: 'purchase',
         ecommerce: {
-          transaction_id: order_id,
+          transaction_id: order_id || 'ORD-' + Date.now(),
           value: total,
           currency: 'USD',
           tax: 0,
@@ -332,20 +399,25 @@
       console.log('[GA4] ✅ Purchase pushed to dataLayer');
 
     } catch (e) {
-      console.error('[GA4] ❌ Purchase error:', e);
+      console.error('[GA4] ❌ Purchase event error:', e);
     }
   }
 
   // Виконуємо після завантаження
+  console.log('[GA4] ⏳ Waiting for page load...');
+  
   if (document.readyState === 'complete') {
+    console.log('[GA4] Page already loaded, sending immediately');
     setTimeout(sendPurchaseEvent, 800);
   } else {
     window.addEventListener('load', function() {
+      console.log('[GA4] Page loaded, sending purchase event');
       setTimeout(sendPurchaseEvent, 800);
     });
   }
 
 })();
+</script>
 </script>
 <!-- Tawk.to chat (lazy) -->
 <script>
