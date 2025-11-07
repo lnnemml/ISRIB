@@ -1918,3 +1918,15 @@ function trackEvent(name, data){
   }
 })();
 
+
+
+window.trackPurchase = function(orderId, total, items) {
+  if (typeof gtag === 'function') {
+    gtag('event', 'purchase', {
+      transaction_id: orderId,
+      value: total,
+      currency: 'USD',
+      items: items
+    });
+  }
+};
