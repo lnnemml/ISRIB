@@ -18,7 +18,8 @@ gtag('config', 'G-SMCGZ6BPDC', {
     domains: ['isrib.shop', 'www.isrib.shop', 'isrib-landing.vercel.app'] 
   },
   send_page_view: true,
-  cookie_flags: 'SameSite=None;Secure'
+  cookie_flags: 'SameSite=None;Secure',
+  debug_mode: true
 });
 
 // Debug для тестування (видаліть після перевірки)
