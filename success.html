@@ -178,13 +178,19 @@
 <script src="js/main.js?v=34"></script>
 <script>
 (function() {
+  console.log('[SUCCESS] Script started');
+  console.log('[SUCCESS] URL params:', window.location.search);
+  
   const q = new URLSearchParams(location.search);
   
   let items = [];
   try {
-    items = JSON.parse(q.get('items') || '[]');
+    const itemsParam = q.get('items');
+    console.log('[SUCCESS] Items param:', itemsParam);
+    items = JSON.parse(itemsParam || '[]');
+    console.log('[SUCCESS] Parsed items:', items);
   } catch (e) {
-    console.error('[GA4] Failed to parse items:', e);
+    console.error('[SUCCESS] Failed to parse items:', e);
   }
   
   const subtotalQS = parseFloat(q.get('subtotal') || '0');
@@ -193,10 +199,17 @@
   const totalQS = parseFloat(q.get('total') || '0');
   const orderIdQS = q.get('order_id') || 'ORD-' + Date.now();
   
+  console.log('[SUCCESS] Order details:', {
+    orderId: orderIdQS,
+    total: totalQS,
+    items: items.length
+  });
+  
   const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
   
   // Рендеримо UI
   if (items.length > 0) {
+    console.log('[SUCCESS] Rendering order summary');
     const box = document.getElementById('summary');
     if (box) box.style.display = 'block';
     
@@ -239,18 +252,17 @@
     }
   }
 
-  // ✅ PURCHASE EVENT (один раз, але надійно)
-  let purchaseSent = false;
-  
+  // ✅ PURCHASE EVENT
   function sendPurchaseEvent() {
-    // Запобігаємо дублюванню
-    if (purchaseSent) {
-      console.log('[GA4] Purchase already sent, skipping');
+    console.log('[GA4] Attempting to send purchase event...');
+    
+    if (items.length === 0) {
+      console.warn('[GA4] ⚠️ No items in order');
       return;
     }
-
-    if (items.length === 0 || totalQS <= 0) {
-      console.warn('[GA4] ⚠️ No items or invalid total');
+    
+    if (totalQS <= 0) {
+      console.warn('[GA4] ⚠️ Invalid total:', totalQS);
       return;
     }
 
@@ -264,8 +276,11 @@
         item_category: 'Research Chemicals'
       }));
 
-      // 1. Через gtag (основний метод)
+      console.log('[GA4] Prepared items:', ga4Items);
+
+      // Метод 1: через gtag
       if (typeof gtag === 'function') {
+        console.log('[GA4] Sending via gtag...');
         gtag('event', 'purchase', {
           transaction_id: orderIdQS,
           value: totalQS,
@@ -276,15 +291,16 @@
           items: ga4Items
         });
         
-        purchaseSent = true;
-        console.log('[GA4] ✅ Purchase sent:', {
+        console.log('[GA4] ✅ Purchase sent via gtag:', {
           transaction_id: orderIdQS,
           value: totalQS,
           items: ga4Items.length
         });
+      } else {
+        console.error('[GA4] ❌ gtag function not available');
       }
 
-      // 2. Backup через dataLayer
+      // Метод 2: через dataLayer
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'purchase',
@@ -298,24 +314,30 @@
           items: ga4Items
         }
       });
+      
+      console.log('[GA4] ✅ Purchase sent via dataLayer');
+      console.log('[GA4] dataLayer content:', window.dataLayer);
 
     } catch (e) {
       console.error('[GA4] ❌ Purchase event error:', e);
     }
   }
 
-  // Виконуємо ОДИН РАЗ після завантаження
+  // Виконуємо після завантаження
+  console.log('[GA4] Waiting for page load...');
+  
   if (document.readyState === 'complete') {
-    setTimeout(sendPurchaseEvent, 800);
+    console.log('[GA4] Page already loaded, sending immediately');
+    setTimeout(sendPurchaseEvent, 1000);
   } else {
     window.addEventListener('load', function() {
-      setTimeout(sendPurchaseEvent, 800);
+      console.log('[GA4] Page loaded, sending purchase');
+      setTimeout(sendPurchaseEvent, 1000);
     });
   }
 
 })();
 </script>
-
 <!-- Tawk.to chat (lazy) -->
 <script>
   (function () {
