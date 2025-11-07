@@ -1576,77 +1576,80 @@ function initCheckoutForm() {
       }
 
       // ✅ SUCCESS FLOW
-      console.log('[Checkout] ✅ Order sent successfully');
-      
-      const normalizedEmail = email.trim().toLowerCase();
-      
-      // Скасовуємо cart recovery
-      try {
-        await cancelCartRecovery(normalizedEmail);
-        console.log('[Checkout] ✅ Cart recovery canceled for:', normalizedEmail);
-      } catch (cancelErr) {
-        console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
-      }
+console.log('[Checkout] ✅ Order sent successfully');
 
-      // Очищаємо localStorage
-      localStorage.removeItem('cart_recovery_state');
-      localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
-      localStorage.removeItem('pending_promo');
+const normalizedEmail = email.trim().toLowerCase();
 
-      // 🎯 КРИТИЧНО: Формуємо URL з параметрами для success.html
-      const orderIdFinal = 'ORD-' + Date.now();
+// Скасовуємо cart recovery
+try {
+  await cancelCartRecovery(normalizedEmail);
+  console.log('[Checkout] ✅ Cart recovery canceled for:', normalizedEmail);
+} catch (cancelErr) {
+  console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
+}
 
-      const successParams = new URLSearchParams({
-        order_id: orderIdFinal,
-        subtotal: subtotal.toFixed(2),
-        discount: discount.toFixed(2),
-        promo: appliedPromoCode || '',
-        total: total.toFixed(2),
-        items: JSON.stringify(items)
-      });
+// Очищаємо localStorage
+localStorage.removeItem('cart_recovery_state');
+localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
+localStorage.removeItem('pending_promo');
 
-      console.log('[Checkout] 🔗 Redirecting to success with params:', successParams.toString());
+// 🎯 КРИТИЧНО: Зберігаємо дані замовлення в sessionStorage
+const orderIdFinal = 'ORD-' + Date.now();
 
-      // 📊 GA4 Purchase Event ПЕРЕД редіректом (для надійності)
-      try {
-        if (typeof gtag === 'function') {
-          const ga4Items = items.map(item => ({
-            item_id: item.sku || 'unknown',
-            item_name: item.name,
-            quantity: item.qty,
-            price: item.price,
-            item_variant: item.display || ''
-          }));
+const orderData = {
+  order_id: orderIdFinal,
+  subtotal: subtotal,
+  discount: discount,
+  promo: appliedPromoCode || '',
+  total: total,
+  items: items // вже готовий масив
+};
 
-          gtag('event', 'purchase', {
-            transaction_id: orderIdFinal,
-            value: total,
-            currency: 'USD',
-            shipping: 0,
-            tax: 0,
-            coupon: appliedPromoCode || undefined,
-            items: ga4Items
-          });
+// Зберігаємо в sessionStorage (більш надійно ніж URL)
+sessionStorage.setItem('order_success', JSON.stringify(orderData));
 
-          console.log('[GA4] ✅ Purchase event sent before redirect:', {
-            transaction_id: orderIdFinal,
-            value: total,
-            items: ga4Items.length
-          });
-        }
-      } catch(gaErr) {
-        console.error('[GA4] Purchase event failed:', gaErr);
-      }
+console.log('[Checkout] 💾 Order data saved to sessionStorage:', orderData);
 
-      // Невелика затримка щоб GA4 встиг відправити + очищаємо кошик
-      setTimeout(() => {
-        // Очищаємо кошик ПЕРЕД редіректом
-        writeCart([]);
-        updateCartBadge([]);
-        
-        // Редірект з параметрами
-        window.location.href = '/success.html?' + successParams.toString();
-      }, 500);
+// 📊 GA4 Purchase Event ПЕРЕД редіректом
+try {
+  if (typeof gtag === 'function') {
+    const ga4Items = items.map(item => ({
+      item_id: item.sku || 'unknown',
+      item_name: item.name,
+      quantity: item.qty,
+      price: item.price,
+      item_variant: item.display || ''
+    }));
+
+    gtag('event', 'purchase', {
+      transaction_id: orderIdFinal,
+      value: total,
+      currency: 'USD',
+      shipping: 0,
+      tax: 0,
+      coupon: appliedPromoCode || undefined,
+      items: ga4Items
+    });
+
+    console.log('[GA4] ✅ Purchase event sent before redirect:', {
+      transaction_id: orderIdFinal,
+      value: total,
+      items: ga4Items.length
+    });
+  }
+} catch(gaErr) {
+  console.error('[GA4] Purchase event failed:', gaErr);
+}
+
+// Затримка + редірект
+setTimeout(() => {
+  // Очищаємо кошик ПЕРЕД редіректом
+  writeCart([]);
+  updateCartBadge([]);
+  
+  // Простий редірект (дані вже в sessionStorage)
+  window.location.href = '/success.html';
+}, 500);
 
     } catch (err) {
       console.error('[Checkout] ❌ Error:', err);
