@@ -177,180 +177,143 @@
 <!-- App JS -->
 <script src="js/main.js?v=34"></script>
 <script>
-  (function () {
-    const q = new URLSearchParams(location.search);
+(function() {
+  const q = new URLSearchParams(location.search);
+  
+  let items = [];
+  try {
+    items = JSON.parse(q.get('items') || '[]');
+  } catch (e) {
+    console.error('[GA4] Failed to parse items:', e);
+  }
+  
+  const subtotalQS = parseFloat(q.get('subtotal') || '0');
+  const discountQS = parseFloat(q.get('discount') || '0');
+  const promoQS = q.get('promo') || '';
+  const totalQS = parseFloat(q.get('total') || '0');
+  const orderIdQS = q.get('order_id') || 'ORD-' + Date.now();
+  
+  const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
+  
+  // Рендеримо UI
+  if (items.length > 0) {
+    const box = document.getElementById('summary');
+    if (box) box.style.display = 'block';
     
-    let items = [];
-    try {
-      items = JSON.parse(q.get('items') || '[]');
-    } catch (e) {
-      console.error('Failed to parse items', e);
+    const tbody = document.getElementById('s-items-tbody');
+    if (tbody) {
+      tbody.innerHTML = items.map(item => `
+        <tr style="border-bottom:1px solid #f3f4f6;">
+          <td style="padding:0.5rem;">${item.name}</td>
+          <td style="text-align:center; padding:0.5rem;">${item.display || ''}</td>
+          <td style="text-align:center; padding:0.5rem;">${item.qty}</td>
+          <td style="text-align:right; padding:0.5rem;">${fmtUSD(item.price)}</td>
+        </tr>
+      `).join('');
     }
     
-    const subtotalQS = parseFloat(q.get('subtotal') || '0');
-    const discountQS = parseFloat(q.get('discount') || '0');
-    const promoQS = q.get('promo') || '';
-    const totalQS = parseFloat(q.get('total') || '0');
-    const orderIdQS = q.get('order_id') || 'ORD-' + Date.now();
+    const set = (id, val) => { 
+      const el = document.getElementById(id); 
+      if (el) el.textContent = val; 
+    };
     
-    const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
+    set('s-subtotal', fmtUSD(subtotalQS));
+    set('s-total', fmtUSD(totalQS));
     
-    if (items.length > 0) {
-      const box = document.getElementById('summary');
-      if (box) box.style.display = 'block';
+    if (discountQS > 0 && promoQS) {
+      const allSumLines = box.querySelectorAll('.sum-line');
+      let shippingLine = null;
+      allSumLines.forEach(line => {
+        if (line.textContent.includes('Shipping') || line.textContent.includes('FREE')) {
+          shippingLine = line;
+        }
+      });
       
-      const tbody = document.getElementById('s-items-tbody');
-      if (tbody) {
-        tbody.innerHTML = items.map(item => `
-          <tr style="border-bottom:1px solid #f3f4f6;">
-            <td style="padding:0.5rem;">${item.name}</td>
-            <td style="text-align:center; padding:0.5rem;">${item.display || ''}</td>
-            <td style="text-align:center; padding:0.5rem;">${item.qty}</td>
-            <td style="text-align:right; padding:0.5rem;">${fmtUSD(item.price)}</td>
-          </tr>
-        `).join('');
+      if (shippingLine) {
+        const discountLine = document.createElement('div');
+        discountLine.className = 'sum-line';
+        discountLine.style.color = '#10b981';
+        discountLine.innerHTML = `<span>Discount (${promoQS})</span> <b>−${fmtUSD(discountQS)}</b>`;
+        shippingLine.parentNode.insertBefore(discountLine, shippingLine);
       }
-      
-      const set = (id, val) => { 
-        const el = document.getElementById(id); 
-        if (el) el.textContent = val; 
-      };
-      
-      set('s-subtotal', fmtUSD(subtotalQS));
-      set('s-total', fmtUSD(totalQS));
-      
-      if (discountQS > 0 && promoQS) {
-        const allSumLines = box.querySelectorAll('.sum-line');
-        let shippingLine = null;
-        allSumLines.forEach(line => {
-          if (line.textContent.includes('Shipping') || line.textContent.includes('FREE')) {
-            shippingLine = line;
-          }
+    }
+  }
+
+  // ✅ PURCHASE EVENT (один раз, але надійно)
+  let purchaseSent = false;
+  
+  function sendPurchaseEvent() {
+    // Запобігаємо дублюванню
+    if (purchaseSent) {
+      console.log('[GA4] Purchase already sent, skipping');
+      return;
+    }
+
+    if (items.length === 0 || totalQS <= 0) {
+      console.warn('[GA4] ⚠️ No items or invalid total');
+      return;
+    }
+
+    try {
+      const ga4Items = items.map(item => ({
+        item_id: item.sku || 'unknown',
+        item_name: item.name || 'Unknown Product',
+        quantity: Number(item.qty) || 1,
+        price: Number(item.price) || 0,
+        item_variant: item.display || '',
+        item_category: 'Research Chemicals'
+      }));
+
+      // 1. Через gtag (основний метод)
+      if (typeof gtag === 'function') {
+        gtag('event', 'purchase', {
+          transaction_id: orderIdQS,
+          value: totalQS,
+          currency: 'USD',
+          shipping: 0,
+          tax: 0,
+          coupon: promoQS || undefined,
+          items: ga4Items
         });
         
-        if (shippingLine) {
-          const discountLine = document.createElement('div');
-          discountLine.className = 'sum-line';
-          discountLine.style.color = '#10b981';
-          discountLine.innerHTML = `<span>Discount (${promoQS})</span> <b>−${fmtUSD(discountQS)}</b>`;
-          shippingLine.parentNode.insertBefore(discountLine, shippingLine);
-        }
-      }
-    }
-
-    // ⚡ КРИТИЧНО: Purchase event з ГАРАНТОВАНИМ виконанням
-    function sendPurchaseEvent() {
-      if (items.length === 0 || totalQS <= 0) {
-        console.warn('[GA4] ⚠️ No items or invalid total, skipping purchase event');
-        return;
-      }
-
-      try {
-        const ga4Items = items.map(item => ({
-          item_id: item.sku || 'unknown',
-          item_name: item.name || 'Unknown Product',
-          quantity: Number(item.qty) || 1,
-          price: Number(item.price) || 0,
-          item_variant: item.display || '',
-          item_category: 'Research Chemicals'
-        }));
-
-        // Основний purchase event
-        if (typeof gtag === 'function') {
-          gtag('event', 'purchase', {
-            transaction_id: orderIdQS,
-            value: totalQS,
-            currency: 'USD',
-            shipping: 0,
-            tax: 0,
-            coupon: promoQS || undefined,
-            items: ga4Items
-          });
-
-          console.log('[GA4] ✅ Purchase event sent via gtag:', {
-            transaction_id: orderIdQS,
-            value: totalQS,
-            items: ga4Items.length
-          });
-        } else {
-          console.warn('[GA4] ⚠️ gtag not available, using fallback');
-        }
-
-        // Додатковий event через dataLayer (більш надійний)
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'purchase',
-          ecommerce: {
-            transaction_id: orderIdQS,
-            value: totalQS,
-            currency: 'USD',
-            tax: 0,
-            shipping: 0,
-            coupon: promoQS || '',
-            items: ga4Items
-          }
+        purchaseSent = true;
+        console.log('[GA4] ✅ Purchase sent:', {
+          transaction_id: orderIdQS,
+          value: totalQS,
+          items: ga4Items.length
         });
-
-        console.log('[GA4] ✅ Purchase event sent via dataLayer');
-
-        // Fallback через Measurement Protocol (якщо все інше не спрацювало)
-        setTimeout(function() {
-          try {
-            const mpUrl = 'https://www.google-analytics.com/mp/collect?measurement_id=G-SMCGZ6BPDC&api_secret=3M-EAt53Q9uAtyM35gx8Xg';
-            
-            const cid = localStorage.getItem('_ga4_cid') || 
-                       (crypto && crypto.randomUUID ? crypto.randomUUID() : (Date.now() + '-' + Math.random()));
-            
-            if (!localStorage.getItem('_ga4_cid')) {
-              localStorage.setItem('_ga4_cid', cid);
-            }
-            
-            const payload = {
-              client_id: cid,
-              events: [{
-                name: 'purchase',
-                params: {
-                  transaction_id: orderIdQS,
-                  value: totalQS,
-                  currency: 'USD',
-                  coupon: promoQS || undefined,
-                  items: ga4Items
-                }
-              }]
-            };
-            
-            navigator.sendBeacon(mpUrl, JSON.stringify(payload));
-            console.log('[GA4] ✅ Fallback purchase sent via Measurement Protocol');
-          } catch (mpError) {
-            console.error('[GA4] ❌ Measurement Protocol failed:', mpError);
-          }
-        }, 1000);
-
-      } catch (e) {
-        console.error('[GA4] ❌ Purchase event error:', e);
       }
-    }
 
-    // Виконуємо ТРИЧІ для гарантії:
-    // 1. Негайно (якщо gtag вже завантажений)
-    sendPurchaseEvent();
-
-    // 2. Через 500ms (дати час gtag завантажитися)
-    setTimeout(sendPurchaseEvent, 500);
-
-    // 3. На window.load (коли все точно завантажено)
-    if (document.readyState === 'complete') {
-      setTimeout(sendPurchaseEvent, 1000);
-    } else {
-      window.addEventListener('load', function() {
-        setTimeout(sendPurchaseEvent, 1000);
+      // 2. Backup через dataLayer
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'purchase',
+        ecommerce: {
+          transaction_id: orderIdQS,
+          value: totalQS,
+          currency: 'USD',
+          tax: 0,
+          shipping: 0,
+          coupon: promoQS || '',
+          items: ga4Items
+        }
       });
+
+    } catch (e) {
+      console.error('[GA4] ❌ Purchase event error:', e);
     }
+  }
 
-    // 4. Додатковий backup через 2 секунди
-    setTimeout(sendPurchaseEvent, 2000);
+  // Виконуємо ОДИН РАЗ після завантаження
+  if (document.readyState === 'complete') {
+    setTimeout(sendPurchaseEvent, 800);
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(sendPurchaseEvent, 800);
+    });
+  }
 
-  })();
+})();
 </script>
 
 <!-- Tawk.to chat (lazy) -->
