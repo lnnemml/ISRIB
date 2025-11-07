@@ -180,58 +180,50 @@
 (function() {
   console.log('[SUCCESS] Script started');
   
-  // 🎯 ЧИТАЄМО ДАНІ З SESSIONSTORAGE
+  // 🎯 ЧИТАЄМО ДАНІ З LOCALSTORAGE
   let orderData = null;
   
   try {
-    const stored = sessionStorage.getItem('order_success');
-    console.log('[SUCCESS] SessionStorage data:', stored);
+    const stored = localStorage.getItem('_order_success_data');
+    console.log('[SUCCESS] LocalStorage raw:', stored);
     
     if (stored) {
       orderData = JSON.parse(stored);
-      console.log('[SUCCESS] Parsed order data:', orderData);
+      console.log('[SUCCESS] ✅ Order data loaded:', orderData);
       
-      // Очищаємо після читання
-      sessionStorage.removeItem('order_success');
+      // Перевірка актуальності (не старше 5 хвилин)
+      const age = Date.now() - (orderData.timestamp || 0);
+      if (age > 5 * 60 * 1000) {
+        console.warn('[SUCCESS] ⚠️ Order data too old, ignoring');
+        orderData = null;
+      }
+      
+      // Очищаємо НЕГАЙНО після читання
+      localStorage.removeItem('_order_success_data');
+      console.log('[SUCCESS] 🗑️ Order data removed from localStorage');
+    } else {
+      console.warn('[SUCCESS] ⚠️ No order data in localStorage');
     }
   } catch (e) {
-    console.error('[SUCCESS] Failed to parse sessionStorage:', e);
-  }
-  
-  // Fallback: спробуємо прочитати з URL (якщо sessionStorage не спрацював)
-  if (!orderData) {
-    console.log('[SUCCESS] Trying URL params as fallback...');
-    const q = new URLSearchParams(location.search);
-    
-    try {
-      const itemsParam = q.get('items');
-      const items = itemsParam ? JSON.parse(itemsParam) : [];
-      
-      if (items.length > 0) {
-        orderData = {
-          order_id: q.get('order_id') || 'ORD-' + Date.now(),
-          subtotal: parseFloat(q.get('subtotal') || '0'),
-          discount: parseFloat(q.get('discount') || '0'),
-          promo: q.get('promo') || '',
-          total: parseFloat(q.get('total') || '0'),
-          items: items
-        };
-        console.log('[SUCCESS] Fallback order data from URL:', orderData);
-      }
-    } catch (e) {
-      console.error('[SUCCESS] URL fallback failed:', e);
-    }
+    console.error('[SUCCESS] ❌ Failed to parse localStorage:', e);
   }
   
   // Якщо немає даних — виходимо
   if (!orderData || !orderData.items || orderData.items.length === 0) {
-    console.warn('[SUCCESS] ⚠️ No order data found');
+    console.error('[SUCCESS] ❌ No valid order data found');
+    
+    // Показуємо повідомлення користувачу
+    const box = document.getElementById('summary');
+    if (box) {
+      box.style.display = 'block';
+      box.innerHTML = '<p style="color:#ef4444;text-align:center;">⚠️ Order data not found. Please contact support.</p>';
+    }
     return;
   }
   
   const { order_id, subtotal, discount, promo, total, items } = orderData;
   
-  console.log('[SUCCESS] Order details:', {
+  console.log('[SUCCESS] 📦 Order details:', {
     orderId: order_id,
     total: total,
     items: items.length
@@ -242,7 +234,6 @@
   // ─────────────────────────────────────────────────────────────
   // РЕНДЕРИМО UI
   // ─────────────────────────────────────────────────────────────
-  console.log('[SUCCESS] Rendering order summary');
   const box = document.getElementById('summary');
   if (box) box.style.display = 'block';
   
@@ -285,21 +276,11 @@
   }
 
   // ─────────────────────────────────────────────────────────────
-  // ✅ PURCHASE EVENT
+  // ✅ GA4 PURCHASE EVENT
   // ─────────────────────────────────────────────────────────────
   function sendPurchaseEvent() {
-    console.log('[GA4] Attempting to send purchase event...');
+    console.log('[GA4] 🎯 Sending purchase event...');
     
-    if (items.length === 0) {
-      console.warn('[GA4] ⚠️ No items in order');
-      return;
-    }
-    
-    if (total <= 0) {
-      console.warn('[GA4] ⚠️ Invalid total:', total);
-      return;
-    }
-
     try {
       const ga4Items = items.map(item => ({
         item_id: item.sku || 'unknown',
@@ -310,11 +291,10 @@
         item_category: 'Research Chemicals'
       }));
 
-      console.log('[GA4] Prepared items:', ga4Items);
+      console.log('[GA4] 📦 Items:', ga4Items);
 
       // Метод 1: через gtag
       if (typeof gtag === 'function') {
-        console.log('[GA4] Sending via gtag...');
         gtag('event', 'purchase', {
           transaction_id: order_id,
           value: total,
@@ -325,13 +305,13 @@
           items: ga4Items
         });
         
-        console.log('[GA4] ✅ Purchase sent via gtag:', {
+        console.log('[GA4] ✅ Purchase sent (success page):', {
           transaction_id: order_id,
           value: total,
           items: ga4Items.length
         });
       } else {
-        console.error('[GA4] ❌ gtag function not available');
+        console.error('[GA4] ❌ gtag not available');
       }
 
       // Метод 2: через dataLayer
@@ -349,23 +329,19 @@
         }
       });
       
-      console.log('[GA4] ✅ Purchase sent via dataLayer');
+      console.log('[GA4] ✅ Purchase pushed to dataLayer');
 
     } catch (e) {
-      console.error('[GA4] ❌ Purchase event error:', e);
+      console.error('[GA4] ❌ Purchase error:', e);
     }
   }
 
   // Виконуємо після завантаження
-  console.log('[GA4] Waiting for page load...');
-  
   if (document.readyState === 'complete') {
-    console.log('[GA4] Page already loaded, sending immediately');
-    setTimeout(sendPurchaseEvent, 1000);
+    setTimeout(sendPurchaseEvent, 800);
   } else {
     window.addEventListener('load', function() {
-      console.log('[GA4] Page loaded, sending purchase');
-      setTimeout(sendPurchaseEvent, 1000);
+      setTimeout(sendPurchaseEvent, 800);
     });
   }
 
