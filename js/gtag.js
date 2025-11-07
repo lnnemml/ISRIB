@@ -1,23 +1,25 @@
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+gtag('js', new Date());
 
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){ dataLayer.push(arguments); }
-  gtag('js', new Date());
+// Consent (для ЄС)
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied', 
+  ad_personalization: 'denied',
+  analytics_storage: 'granted',
+  functionality_storage: 'granted',
+  security_storage: 'granted'
+});
 
-  // consent (щоб ЄС не глушив аналітику)
-  gtag('consent', 'default', {
-    ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied',
-    analytics_storage:'granted', functionality_storage:'granted', security_storage:'granted'
-  });
+// Основна конфігурація
+gtag('config', 'G-SMCGZ6BPDC', {
+  linker: { 
+    domains: ['isrib.shop', 'www.isrib.shop', 'isrib-landing.vercel.app'] 
+  },
+  send_page_view: true,
+  cookie_flags: 'SameSite=None;Secure'
+});
 
-  // 1) робочий існуючий тег (щоб той сам збирався, як і раніше)
-  gtag('config', 'G-SMCGZ6BPDC', {
-    linker:{ domains:['isrib.shop','www.isrib.shop','isrib-landing.vercel.app'] }
-  });
-
-  // 2) (опційно) додатково шлемо в новий стрім, навіть якщо його js 404
-  //    бібліотека вже завантажена, це легально:
- // gtag('config', 'G-XGMHXZNME9', {
-   // debug_mode:true,
-   // linker:{ domains:['isrib.shop','www.isrib.shop','isrib-landing.vercel.app'] }
- // });
-
+// Debug для тестування (видаліть після перевірки)
+console.log('[GA4] Configuration loaded');
