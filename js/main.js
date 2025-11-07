@@ -1575,7 +1575,7 @@ function initCheckoutForm() {
         return;
       }
 
-      // ✅ SUCCESS FLOW
+      javascript// ✅ SUCCESS FLOW
 console.log('[Checkout] ✅ Order sent successfully');
 
 const normalizedEmail = email.trim().toLowerCase();
@@ -1588,12 +1588,12 @@ try {
   console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
 }
 
-// Очищаємо localStorage
+// Очищаємо localStorage (cart recovery)
 localStorage.removeItem('cart_recovery_state');
 localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
 localStorage.removeItem('pending_promo');
 
-// 🎯 КРИТИЧНО: Зберігаємо дані замовлення в sessionStorage
+// 🎯 ЗБЕРЕЖЕННЯ ДАНИХ ЗАМОВЛЕННЯ
 const orderIdFinal = 'ORD-' + Date.now();
 
 const orderData = {
@@ -1602,15 +1602,19 @@ const orderData = {
   discount: discount,
   promo: appliedPromoCode || '',
   total: total,
-  items: items // вже готовий масив
+  items: items,
+  timestamp: Date.now() // для валідації
 };
 
-// Зберігаємо в sessionStorage (більш надійно ніж URL)
-sessionStorage.setItem('order_success', JSON.stringify(orderData));
+// Зберігаємо в localStorage (більш надійно)
+try {
+  localStorage.setItem('_order_success_data', JSON.stringify(orderData));
+  console.log('[Checkout] 💾 Order data saved:', orderData);
+} catch (saveErr) {
+  console.error('[Checkout] ❌ Failed to save order data:', saveErr);
+}
 
-console.log('[Checkout] 💾 Order data saved to sessionStorage:', orderData);
-
-// 📊 GA4 Purchase Event ПЕРЕД редіректом
+// 📊 GA4 Purchase Event
 try {
   if (typeof gtag === 'function') {
     const ga4Items = items.map(item => ({
@@ -1631,25 +1635,23 @@ try {
       items: ga4Items
     });
 
-    console.log('[GA4] ✅ Purchase event sent before redirect:', {
+    console.log('[GA4] ✅ Purchase sent (checkout):', {
       transaction_id: orderIdFinal,
       value: total,
       items: ga4Items.length
     });
   }
 } catch(gaErr) {
-  console.error('[GA4] Purchase event failed:', gaErr);
+  console.error('[GA4] ❌ Purchase failed:', gaErr);
 }
 
-// Затримка + редірект
-setTimeout(() => {
-  // Очищаємо кошик ПЕРЕД редіректом
-  writeCart([]);
-  updateCartBadge([]);
-  
-  // Простий редірект (дані вже в sessionStorage)
-  window.location.href = '/success.html';
-}, 500);
+// Очищаємо кошик
+writeCart([]);
+updateCartBadge([]);
+
+// ⚡ НЕГАЙНИЙ РЕДІРЕКТ (без setTimeout)
+console.log('[Checkout] 🔄 Redirecting to success...');
+window.location.href = '/success.html';
 
     } catch (err) {
       console.error('[Checkout] ❌ Error:', err);
