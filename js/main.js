@@ -1592,13 +1592,61 @@ function initCheckoutForm() {
       localStorage.removeItem('cart_recovery_state');
       localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
       localStorage.removeItem('pending_promo');
-      
-      // Очищаємо кошик
-      writeCart([]);
-      updateCartBadge([]);
-      
-      // Редірект на success
-      window.location.href = '/success.html';
+
+      // 🎯 КРИТИЧНО: Формуємо URL з параметрами для success.html
+      const orderIdFinal = 'ORD-' + Date.now();
+
+      const successParams = new URLSearchParams({
+        order_id: orderIdFinal,
+        subtotal: subtotal.toFixed(2),
+        discount: discount.toFixed(2),
+        promo: appliedPromoCode || '',
+        total: total.toFixed(2),
+        items: JSON.stringify(items)
+      });
+
+      console.log('[Checkout] 🔗 Redirecting to success with params:', successParams.toString());
+
+      // 📊 GA4 Purchase Event ПЕРЕД редіректом (для надійності)
+      try {
+        if (typeof gtag === 'function') {
+          const ga4Items = items.map(item => ({
+            item_id: item.sku || 'unknown',
+            item_name: item.name,
+            quantity: item.qty,
+            price: item.price,
+            item_variant: item.display || ''
+          }));
+
+          gtag('event', 'purchase', {
+            transaction_id: orderIdFinal,
+            value: total,
+            currency: 'USD',
+            shipping: 0,
+            tax: 0,
+            coupon: appliedPromoCode || undefined,
+            items: ga4Items
+          });
+
+          console.log('[GA4] ✅ Purchase event sent before redirect:', {
+            transaction_id: orderIdFinal,
+            value: total,
+            items: ga4Items.length
+          });
+        }
+      } catch(gaErr) {
+        console.error('[GA4] Purchase event failed:', gaErr);
+      }
+
+      // Невелика затримка щоб GA4 встиг відправити + очищаємо кошик
+      setTimeout(() => {
+        // Очищаємо кошик ПЕРЕД редіректом
+        writeCart([]);
+        updateCartBadge([]);
+        
+        // Редірект з параметрами
+        window.location.href = '/success.html?' + successParams.toString();
+      }, 500);
 
     } catch (err) {
       console.error('[Checkout] ❌ Error:', err);
