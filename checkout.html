@@ -422,6 +422,103 @@
     }
   })();
 </script>
+<!-- ТЕСТОВИЙ КОД: Додайте перед </body> в checkout.html -->
+<script>
+(function testCheckoutRedirect() {
+  const form = document.getElementById('checkoutForm');
+  if (!form) {
+    console.error('[TEST] ❌ Form not found');
+    return;
+  }
 
+  console.log('[TEST] ✅ Form found, adding listener');
+
+  // Перехоплюємо submit
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    console.log('[TEST] 🎯 Form submitted!');
+    
+    // Читаємо кошик
+    let cart = [];
+    try {
+      cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
+      console.log('[TEST] 📦 Cart:', cart);
+    } catch {}
+
+    if (cart.length === 0) {
+      alert('Cart is empty!');
+      return;
+    }
+
+    // Формуємо дані
+    const items = cart.map(i => ({
+      name: i.name,
+      sku: i.sku,
+      qty: i.count || 1,
+      price: i.price,
+      grams: i.grams,
+      display: i.display
+    }));
+
+    const total = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const orderId = 'ORD-' + Date.now();
+
+    const orderData = {
+      order_id: orderId,
+      total: total,
+      subtotal: total,
+      discount: 0,
+      promo: '',
+      items: items,
+      timestamp: Date.now()
+    };
+
+    console.log('[TEST] 💾 Saving order data:', orderData);
+
+    // Збереження
+    try {
+      localStorage.setItem('_order_success_data', JSON.stringify(orderData));
+      console.log('[TEST] ✅ Saved to localStorage');
+      
+      // Перевірка
+      const check = localStorage.getItem('_order_success_data');
+      console.log('[TEST] 🔍 Verification:', check ? 'SUCCESS' : 'FAILED');
+      
+    } catch (e) {
+      console.error('[TEST] ❌ Save failed:', e);
+    }
+
+    // GA4
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'purchase', {
+          transaction_id: orderId,
+          value: total,
+          currency: 'USD',
+          items: items.map(i => ({
+            item_id: i.sku,
+            item_name: i.name,
+            quantity: i.qty,
+            price: i.price
+          }))
+        });
+        console.log('[TEST] ✅ GA4 purchase sent');
+      }
+    } catch {}
+
+    // Очищаємо кошик
+    localStorage.removeItem('isrib_cart');
+
+    // Редірект через 1 секунду
+    console.log('[TEST] 🔄 Redirecting in 1 second...');
+    setTimeout(() => {
+      window.location.href = '/success.html';
+    }, 1000);
+  });
+
+  console.log('[TEST] ✅ Listener attached');
+})();
+</script>
 </body>
 </html>
