@@ -317,41 +317,69 @@
      // Замість існуючого коду в checkout.html (рядок ~200)
 
 <script>
-  // Чекаємо поки завантажиться кошик
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      try {
-        const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
-        
-        if (cart.length > 0) {
-          const items = cart.map(item => ({
-            item_id: item.sku || 'unknown',
-            item_name: item.name,
-            quantity: item.count || 1,
-            price: item.price || 0,
-            item_variant: item.display || ''
-          }));
-          
-          const total = cart.reduce((sum, i) => 
-            sum + (Number(i.price) * Number(i.count || 1)), 0
-          );
-
-          gtag('event', 'begin_checkout', {
-            currency: 'USD',
-            value: total,
-            items: items
-          });
-
-          console.log('[GA4] Begin checkout sent:', {
-            value: total,
-            items: items.length
-          });
-        }
-      } catch(e) {
-        console.error('[GA4] Begin checkout failed:', e);
+// ✅ ПРАВИЛЬНИЙ BEGIN_CHECKOUT
+(function() {
+  // Чекаємо поки main.js завантажить кошик
+  function sendBeginCheckout() {
+    try {
+      const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
+      
+      if (cart.length === 0) {
+        console.warn('[GA4] Cart is empty, skipping begin_checkout');
+        return;
       }
-    }, 500);
-  });
+
+      const items = cart.map(item => ({
+        item_id: item.sku || 'unknown',
+        item_name: item.name || 'Unknown Product',
+        quantity: Number(item.count) || 1,
+        price: Number(item.price) || 0,
+        item_variant: item.display || ''
+      }));
+      
+      const total = cart.reduce((sum, item) => 
+        sum + (Number(item.price) * Number(item.count || 1)), 0
+      );
+
+      // Відправляємо через gtag
+      if (typeof gtag === 'function') {
+        gtag('event', 'begin_checkout', {
+          currency: 'USD',
+          value: total,
+          items: items
+        });
+        
+        console.log('[GA4] ✅ Begin checkout sent:', {
+          value: total,
+          items: items.length
+        });
+      }
+
+      // Backup через dataLayer
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'begin_checkout',
+        ecommerce: {
+          currency: 'USD',
+          value: total,
+          items: items
+        }
+      });
+
+    } catch(e) {
+      console.error('[GA4] Begin checkout failed:', e);
+    }
+  }
+
+  // Спробувати відразу
+  if (document.readyState === 'complete') {
+    setTimeout(sendBeginCheckout, 1000);
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(sendBeginCheckout, 1000);
+    });
+  }
+})();
 </script>
 
   <script>
