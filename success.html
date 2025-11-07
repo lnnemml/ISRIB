@@ -179,80 +179,114 @@
 <script>
 (function() {
   console.log('[SUCCESS] Script started');
-  console.log('[SUCCESS] URL params:', window.location.search);
   
-  const q = new URLSearchParams(location.search);
+  // 🎯 ЧИТАЄМО ДАНІ З SESSIONSTORAGE
+  let orderData = null;
   
-  let items = [];
   try {
-    const itemsParam = q.get('items');
-    console.log('[SUCCESS] Items param:', itemsParam);
-    items = JSON.parse(itemsParam || '[]');
-    console.log('[SUCCESS] Parsed items:', items);
+    const stored = sessionStorage.getItem('order_success');
+    console.log('[SUCCESS] SessionStorage data:', stored);
+    
+    if (stored) {
+      orderData = JSON.parse(stored);
+      console.log('[SUCCESS] Parsed order data:', orderData);
+      
+      // Очищаємо після читання
+      sessionStorage.removeItem('order_success');
+    }
   } catch (e) {
-    console.error('[SUCCESS] Failed to parse items:', e);
+    console.error('[SUCCESS] Failed to parse sessionStorage:', e);
   }
   
-  const subtotalQS = parseFloat(q.get('subtotal') || '0');
-  const discountQS = parseFloat(q.get('discount') || '0');
-  const promoQS = q.get('promo') || '';
-  const totalQS = parseFloat(q.get('total') || '0');
-  const orderIdQS = q.get('order_id') || 'ORD-' + Date.now();
+  // Fallback: спробуємо прочитати з URL (якщо sessionStorage не спрацював)
+  if (!orderData) {
+    console.log('[SUCCESS] Trying URL params as fallback...');
+    const q = new URLSearchParams(location.search);
+    
+    try {
+      const itemsParam = q.get('items');
+      const items = itemsParam ? JSON.parse(itemsParam) : [];
+      
+      if (items.length > 0) {
+        orderData = {
+          order_id: q.get('order_id') || 'ORD-' + Date.now(),
+          subtotal: parseFloat(q.get('subtotal') || '0'),
+          discount: parseFloat(q.get('discount') || '0'),
+          promo: q.get('promo') || '',
+          total: parseFloat(q.get('total') || '0'),
+          items: items
+        };
+        console.log('[SUCCESS] Fallback order data from URL:', orderData);
+      }
+    } catch (e) {
+      console.error('[SUCCESS] URL fallback failed:', e);
+    }
+  }
+  
+  // Якщо немає даних — виходимо
+  if (!orderData || !orderData.items || orderData.items.length === 0) {
+    console.warn('[SUCCESS] ⚠️ No order data found');
+    return;
+  }
+  
+  const { order_id, subtotal, discount, promo, total, items } = orderData;
   
   console.log('[SUCCESS] Order details:', {
-    orderId: orderIdQS,
-    total: totalQS,
+    orderId: order_id,
+    total: total,
     items: items.length
   });
   
   const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
   
-  // Рендеримо UI
-  if (items.length > 0) {
-    console.log('[SUCCESS] Rendering order summary');
-    const box = document.getElementById('summary');
-    if (box) box.style.display = 'block';
-    
-    const tbody = document.getElementById('s-items-tbody');
-    if (tbody) {
-      tbody.innerHTML = items.map(item => `
-        <tr style="border-bottom:1px solid #f3f4f6;">
-          <td style="padding:0.5rem;">${item.name}</td>
-          <td style="text-align:center; padding:0.5rem;">${item.display || ''}</td>
-          <td style="text-align:center; padding:0.5rem;">${item.qty}</td>
-          <td style="text-align:right; padding:0.5rem;">${fmtUSD(item.price)}</td>
-        </tr>
-      `).join('');
-    }
-    
-    const set = (id, val) => { 
-      const el = document.getElementById(id); 
-      if (el) el.textContent = val; 
-    };
-    
-    set('s-subtotal', fmtUSD(subtotalQS));
-    set('s-total', fmtUSD(totalQS));
-    
-    if (discountQS > 0 && promoQS) {
-      const allSumLines = box.querySelectorAll('.sum-line');
-      let shippingLine = null;
-      allSumLines.forEach(line => {
-        if (line.textContent.includes('Shipping') || line.textContent.includes('FREE')) {
-          shippingLine = line;
-        }
-      });
-      
-      if (shippingLine) {
-        const discountLine = document.createElement('div');
-        discountLine.className = 'sum-line';
-        discountLine.style.color = '#10b981';
-        discountLine.innerHTML = `<span>Discount (${promoQS})</span> <b>−${fmtUSD(discountQS)}</b>`;
-        shippingLine.parentNode.insertBefore(discountLine, shippingLine);
+  // ─────────────────────────────────────────────────────────────
+  // РЕНДЕРИМО UI
+  // ─────────────────────────────────────────────────────────────
+  console.log('[SUCCESS] Rendering order summary');
+  const box = document.getElementById('summary');
+  if (box) box.style.display = 'block';
+  
+  const tbody = document.getElementById('s-items-tbody');
+  if (tbody) {
+    tbody.innerHTML = items.map(item => `
+      <tr style="border-bottom:1px solid #f3f4f6;">
+        <td style="padding:0.5rem;">${item.name}</td>
+        <td style="text-align:center; padding:0.5rem;">${item.display || ''}</td>
+        <td style="text-align:center; padding:0.5rem;">${item.qty}</td>
+        <td style="text-align:right; padding:0.5rem;">${fmtUSD(item.price)}</td>
+      </tr>
+    `).join('');
+  }
+  
+  const set = (id, val) => { 
+    const el = document.getElementById(id); 
+    if (el) el.textContent = val; 
+  };
+  
+  set('s-subtotal', fmtUSD(subtotal));
+  set('s-total', fmtUSD(total));
+  
+  if (discount > 0 && promo) {
+    const allSumLines = box.querySelectorAll('.sum-line');
+    let shippingLine = null;
+    allSumLines.forEach(line => {
+      if (line.textContent.includes('Shipping') || line.textContent.includes('FREE')) {
+        shippingLine = line;
       }
+    });
+    
+    if (shippingLine) {
+      const discountLine = document.createElement('div');
+      discountLine.className = 'sum-line';
+      discountLine.style.color = '#10b981';
+      discountLine.innerHTML = `<span>Discount (${promo})</span> <b>−${fmtUSD(discount)}</b>`;
+      shippingLine.parentNode.insertBefore(discountLine, shippingLine);
     }
   }
 
+  // ─────────────────────────────────────────────────────────────
   // ✅ PURCHASE EVENT
+  // ─────────────────────────────────────────────────────────────
   function sendPurchaseEvent() {
     console.log('[GA4] Attempting to send purchase event...');
     
@@ -261,8 +295,8 @@
       return;
     }
     
-    if (totalQS <= 0) {
-      console.warn('[GA4] ⚠️ Invalid total:', totalQS);
+    if (total <= 0) {
+      console.warn('[GA4] ⚠️ Invalid total:', total);
       return;
     }
 
@@ -282,18 +316,18 @@
       if (typeof gtag === 'function') {
         console.log('[GA4] Sending via gtag...');
         gtag('event', 'purchase', {
-          transaction_id: orderIdQS,
-          value: totalQS,
+          transaction_id: order_id,
+          value: total,
           currency: 'USD',
           shipping: 0,
           tax: 0,
-          coupon: promoQS || undefined,
+          coupon: promo || undefined,
           items: ga4Items
         });
         
         console.log('[GA4] ✅ Purchase sent via gtag:', {
-          transaction_id: orderIdQS,
-          value: totalQS,
+          transaction_id: order_id,
+          value: total,
           items: ga4Items.length
         });
       } else {
@@ -305,18 +339,17 @@
       window.dataLayer.push({
         event: 'purchase',
         ecommerce: {
-          transaction_id: orderIdQS,
-          value: totalQS,
+          transaction_id: order_id,
+          value: total,
           currency: 'USD',
           tax: 0,
           shipping: 0,
-          coupon: promoQS || '',
+          coupon: promo || '',
           items: ga4Items
         }
       });
       
       console.log('[GA4] ✅ Purchase sent via dataLayer');
-      console.log('[GA4] dataLayer content:', window.dataLayer);
 
     } catch (e) {
       console.error('[GA4] ❌ Purchase event error:', e);
