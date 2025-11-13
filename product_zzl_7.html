@@ -444,18 +444,23 @@
   </script>
       
      <script>
-  gtag('event', 'view_item', {
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+  event: 'view_item',
+  ecommerce: {
     currency: 'USD',
-    value: 50, // поточна ціна активного пакування
+    value: 50,  // поточна ціна активного пакування
     items: [{
-      item_id: 'zzl-7',          // sku або стабільний ID
+      item_id: 'zzl-7',                   // стабільний ID (SKU)
       item_name: 'ZZL-7',
       item_category: 'Research Chemicals',
-      price: 50,                     // ціна активного варіанта
-      item_variant: '100mg'          // активний варіант (100mg/500mg/1g)
+      price: 50,                          // ціна активного варіанта
+      item_variant: '100mg'               // активний варіант
     }]
-  });
+  }
+});
 </script>
+
 
 </body>
 </html>
