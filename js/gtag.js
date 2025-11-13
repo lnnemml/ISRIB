@@ -1,3 +1,7 @@
+// ============================================
+// DUAL GA4 TRACKING - isrib.shop + isrib-research
+// ============================================
+
 window.dataLayer = window.dataLayer || [];
 function gtag(){ dataLayer.push(arguments); }
 gtag('js', new Date());
@@ -12,13 +16,31 @@ gtag('consent', 'default', {
   security_storage: 'granted'
 });
 
-// Основна конфігурація
+// ============================================
+// PRIMARY GA4 (isrib.shop)
+// ============================================
 gtag('config', 'G-SMCGZ6BPDC', {
   linker: { 
-    domains: ['isrib.shop', 'www.isrib.shop', 'isrib-landing.vercel.app'] 
+    domains: ['isrib.shop', 'www.isrib.shop', 'isrib-research.com', 'isrib-landing-kdmw.vercel.app']
   },
   send_page_view: true,
-  cookie_flags: 'SameSite=None;Secure'
+  cookie_flags: 'SameSite=None;Secure',
+  cookie_domain: 'auto'
 });
 
+// ============================================
+// CROSS-DOMAIN GA4 (з landing site)
+// ============================================
+gtag('config', 'G-LJEBV5NPCT', {
+  linker: { 
+    domains: ['isrib.shop', 'www.isrib.shop', 'isrib-research.com', 'isrib-landing-kdmw.vercel.app']
+  },
+  send_page_view: true,
+  cookie_flags: 'SameSite=None;Secure',
+  cookie_domain: 'auto'
+});
 
+console.log('✅ Dual GA4 initialized:', {
+  primary: 'G-SMCGZ6BPDC',
+  crossdomain: 'G-LJEBV5NPCT'
+});
