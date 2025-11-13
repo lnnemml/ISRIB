@@ -1,6 +1,18 @@
 // ISRIB Shop - Main JavaScript (Unified)
 // v2025-09-26 — header UX, products, quantity, cart, top toasts, dynamic Add-to-Cart labels
 
+// ---- GA4 shim: перетворюємо старі gtag(...) у події для GTM ----
+window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function(type, name, params) {
+  if (type === 'event') {
+    window.dataLayer.push({
+      event: name,
+      ...(params || {})
+    });
+    console.log('[GTM shim] event ->', name, params || {});
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initializeApp();
 });
