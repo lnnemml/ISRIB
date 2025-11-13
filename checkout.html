@@ -317,18 +317,21 @@
      // Замість існуючого коду в checkout.html (рядок ~200)
 
 <script>
-// ✅ ПРАВИЛЬНИЙ BEGIN_CHECKOUT
+// ✅ IMPROVED BEGIN_CHECKOUT with dual GA4 tracking
 (function() {
-  // Чекаємо поки main.js завантажить кошик
+  console.log('[GA4] 🔄 Initializing begin_checkout...');
+  
   function sendBeginCheckout() {
     try {
+      // Читаємо кошик
       const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
       
       if (cart.length === 0) {
-        console.warn('[GA4] Cart is empty, skipping begin_checkout');
+        console.warn('[GA4] ⚠️ Cart empty, skipping begin_checkout');
         return;
       }
 
+      // Підготовка items
       const items = cart.map(item => ({
         item_id: item.sku || 'unknown',
         item_name: item.name || 'Unknown Product',
@@ -341,7 +344,15 @@
         sum + (Number(item.price) * Number(item.count || 1)), 0
       );
 
-      // Відправляємо через gtag
+      console.log('[GA4] 📦 Cart data:', {
+        items: items.length,
+        total: total,
+        cart: cart
+      });
+
+      // ============================================
+      // METHOD 1: Direct gtag (відправить в ОБА GA4)
+      // ============================================
       if (typeof gtag === 'function') {
         gtag('event', 'begin_checkout', {
           currency: 'USD',
@@ -349,13 +360,17 @@
           items: items
         });
         
-        console.log('[GA4] ✅ Begin checkout sent:', {
+        console.log('[GA4] ✅ begin_checkout sent via gtag:', {
           value: total,
           items: items.length
         });
+      } else {
+        console.error('[GA4] ❌ gtag not available');
       }
 
-      // Backup через dataLayer
+      // ============================================
+      // METHOD 2: dataLayer (backup)
+      // ============================================
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'begin_checkout',
@@ -365,62 +380,25 @@
           items: items
         }
       });
+      
+      console.log('[GA4] ✅ begin_checkout pushed to dataLayer');
 
     } catch(e) {
-      console.error('[GA4] Begin checkout failed:', e);
+      console.error('[GA4] ❌ begin_checkout failed:', e);
     }
   }
 
-  // Спробувати відразу
+  // Виконуємо після завантаження кошика
   if (document.readyState === 'complete') {
-    setTimeout(sendBeginCheckout, 1000);
+    console.log('[GA4] Page complete, executing begin_checkout');
+    setTimeout(sendBeginCheckout, 1200);
   } else {
     window.addEventListener('load', function() {
-      setTimeout(sendBeginCheckout, 1000);
+      console.log('[GA4] Page loaded, executing begin_checkout');
+      setTimeout(sendBeginCheckout, 1200);
     });
   }
 })();
-</script>
-
-  <script>
-  (function autoCancel24hOnReturn() {
-    try {
-      const qs = new URLSearchParams(location.search);
-      if (qs.get('recovery') !== 'true') return;
-
-      // 1) Нормалізуємо email
-      const input = document.getElementById('email');
-      let rawEmail = (input?.value || '').trim();
-      
-      if (!rawEmail) {
-        const state = JSON.parse(localStorage.getItem('cart_recovery_state') || '{}');
-        rawEmail = (state?.email || '').trim();
-      }
-      
-      const email = rawEmail.toLowerCase(); // ← нормалізація
-      if (!email || !email.includes('@')) {
-        console.warn('[Recovery] No valid email found');
-        return;
-      }
-
-      // 2) Скасовуємо старі листи
-      fetch('/api/cart-recovery', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'cancel', email })
-      }).then(res => {
-        if (res.ok) {
-          console.log('[Recovery] ✅ Old emails canceled for:', email);
-          localStorage.removeItem(`cart_recovery_scheduled:${email}`);
-        }
-      }).catch(err => {
-        console.error('[Recovery] Cancel failed:', err);
-      });
-      
-    } catch (e) {
-      console.error('[Recovery] Auto-cancel error:', e);
-    }
-  })();
 </script>
 
 </body>
