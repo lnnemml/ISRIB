@@ -187,7 +187,7 @@
   
   try {
     const stored = localStorage.getItem('_order_success_data');
-    console.log('[SUCCESS] 📦 LocalStorage data:', stored ? 'Found' : 'Empty');
+    console.log('[SUCCESS] 📦 LocalStorage:', stored ? 'Found' : 'Empty');
     
     if (stored) {
       orderData = JSON.parse(stored);
@@ -200,13 +200,13 @@
       // Перевірка актуальності (не старше 5 хвилин)
       const age = Date.now() - (orderData.timestamp || 0);
       if (age > 5 * 60 * 1000) {
-        console.warn('[SUCCESS] ⚠️ Order data expired (age: ' + Math.round(age/1000) + 's)');
+        console.warn('[SUCCESS] ⚠️ Order data expired');
         orderData = null;
       }
       
       // Очищаємо після читання
       localStorage.removeItem('_order_success_data');
-      console.log('[SUCCESS] 🗑️ Cleared localStorage');
+      console.log('[SUCCESS] 🗑️ Cleared from localStorage');
     }
   } catch (e) {
     console.error('[SUCCESS] ❌ Parse error:', e);
@@ -251,7 +251,7 @@
   }
   
   // ============================================
-  // ЯКЩО НЕМАЄ ДАНИХ - ПОКАЗУЄМО ПОВІДОМЛЕННЯ
+  // ЯКЩО НЕМАЄ ДАНИХ
   // ============================================
   if (!orderData || !orderData.items || orderData.items.length === 0) {
     console.error('[SUCCESS] ❌ No order data');
@@ -272,16 +272,6 @@
       `;
     }
     
-    // Базовий event
-    try {
-      if (typeof gtag === 'function') {
-        gtag('event', 'purchase_page_view', {
-          event_category: 'ecommerce',
-          event_label: 'no_data'
-        });
-      }
-    } catch {}
-    
     return;
   }
   
@@ -289,8 +279,6 @@
   
   console.log('[SUCCESS] 📊 Order summary:', {
     orderId: order_id,
-    subtotal: subtotal,
-    discount: discount,
     total: total,
     items: items.length
   });
@@ -343,10 +331,11 @@
   }
 
   // ============================================
-  // GA4 PURCHASE EVENT (DUAL TRACKING)
+  // GA4 BEGIN_CHECKOUT EVENT
+  // (NOT purchase - purchase fires when admin confirms payment)
   // ============================================
-  function sendPurchaseEvent() {
-    console.log('[GA4] 🎯 Preparing purchase event...');
+  function sendCheckoutEvent() {
+    console.log('[GA4] 🎯 Preparing begin_checkout event...');
     
     if (!items || items.length === 0) {
       console.warn('[GA4] ⚠️ No items');
@@ -375,18 +364,14 @@
       // METHOD 1: gtag (відправить в ОБА GA4!)
       // ============================================
       if (typeof gtag === 'function') {
-        gtag('event', 'purchase', {
-          transaction_id: order_id || 'ORD-' + Date.now(),
-          value: total,
+        gtag('event', 'begin_checkout', {
           currency: 'USD',
-          shipping: 0,
-          tax: 0,
+          value: total,
           coupon: promo || undefined,
           items: ga4Items
         });
         
-        console.log('[GA4] ✅ Purchase sent via gtag:', {
-          transaction_id: order_id,
+        console.log('[GA4] ✅ begin_checkout sent via gtag:', {
           value: total,
           items: ga4Items.length,
           targets: ['G-SMCGZ6BPDC', 'G-LJEBV5NPCT']
@@ -400,22 +385,35 @@
       // ============================================
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
-        event: 'purchase',
+        event: 'begin_checkout',
         ecommerce: {
-          transaction_id: order_id || 'ORD-' + Date.now(),
-          value: total,
           currency: 'USD',
-          tax: 0,
-          shipping: 0,
+          value: total,
           coupon: promo || '',
           items: ga4Items
         }
       });
       
-      console.log('[GA4] ✅ Purchase pushed to dataLayer');
+      console.log('[GA4] ✅ begin_checkout pushed to dataLayer');
+
+      // ============================================
+      // SAVE TO LOCALSTORAGE FOR ADMIN PANEL
+      // ============================================
+      const pendingOrder = {
+        order_id: order_id,
+        email: '', // Will be filled from checkout form if available
+        product: items[0]?.display || '1g',
+        amount: total,
+        utm_source: new URLSearchParams(location.search).get('utm_source') || 'direct',
+        utm_campaign: new URLSearchParams(location.search).get('utm_campaign') || 'none',
+        timestamp: Date.now()
+      };
+      
+      localStorage.setItem('pending_order_' + order_id, JSON.stringify(pendingOrder));
+      console.log('[SUCCESS] 💾 Saved to pending orders for admin panel');
 
     } catch (e) {
-      console.error('[GA4] ❌ Purchase error:', e);
+      console.error('[GA4] ❌ begin_checkout error:', e);
     }
   }
 
@@ -424,11 +422,11 @@
   
   if (document.readyState === 'complete') {
     console.log('[GA4] ✅ Page already loaded');
-    setTimeout(sendPurchaseEvent, 1000);
+    setTimeout(sendCheckoutEvent, 1000);
   } else {
     window.addEventListener('load', function() {
       console.log('[GA4] ✅ Page loaded');
-      setTimeout(sendPurchaseEvent, 1000);
+      setTimeout(sendCheckoutEvent, 1000);
     });
   }
 
