@@ -382,18 +382,23 @@
   </script>
 
       <script>
-  gtag('event', 'view_item', {
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+  event: 'view_item',
+  ecommerce: {
     currency: 'USD',
-    value: 50, // поточна ціна активного пакування
+    value: 50,  // поточна ціна активного варування
     items: [{
-      item_id: 'mpep',          // sku або стабільний ID
+      item_id: 'mpep',                   // стабільний ID (SKU)
       item_name: 'MPEP',
       item_category: 'Research Chemicals',
-      price: 50,                     // ціна активного варіанта
-      item_variant: '100mg'          // активний варіант (100mg/500mg/1g)
+      price: 50,                         // ціна активного варіанта
+      item_variant: '100mg'              // активний варіант
     }]
-  });
+  }
+});
 </script>
+
 
 </body>
 </html>
