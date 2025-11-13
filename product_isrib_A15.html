@@ -508,18 +508,21 @@
 </script>
       
      <script>
-  gtag('event', 'view_item', {
-    currency: 'USD',
-    value: 50, // поточна ціна активного пакування
-    items: [{
-      item_id: 'isrib-a15',          // sku або стабільний ID
-      item_name: 'ISRIB A15',
-      item_category: 'Research Chemicals',
-      price: 50,                     // ціна активного варіанта
-      item_variant: '100mg'          // активний варіант (100mg/500mg/1g)
-    }]
-  });
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+  event: 'view_item',
+  currency: 'USD',
+  value: 50,
+  items: [{
+    item_id: 'isrib-a15',
+    item_name: 'ISRIB A15',
+    item_category: 'Research Chemicals',
+    price: 50,
+    item_variant: '100mg'
+  }]
+});
 </script>
+
 
       <script src="js/main.js?v=31"></script>
 <!-- ISRIB Pop-up Email Capture -->
