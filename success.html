@@ -178,63 +178,60 @@
 <script src="js/main.js?v=34"></script>
 <script>
 (function() {
-  console.log('[SUCCESS] Script started');
+  console.log('[SUCCESS] 🚀 Script started');
   
-  // 🎯 ЧИТАЄМО ДАНІ З LOCALSTORAGE
+  // ============================================
+  // ЧИТАЄМО ДАНІ З LOCALSTORAGE
+  // ============================================
   let orderData = null;
   
-  // Спроба 1: localStorage
   try {
     const stored = localStorage.getItem('_order_success_data');
-    console.log('[SUCCESS] LocalStorage raw:', stored);
+    console.log('[SUCCESS] 📦 LocalStorage data:', stored ? 'Found' : 'Empty');
     
     if (stored) {
       orderData = JSON.parse(stored);
-      console.log('[SUCCESS] ✅ Order data loaded from localStorage:', orderData);
+      console.log('[SUCCESS] ✅ Order data loaded:', {
+        orderId: orderData.order_id,
+        total: orderData.total,
+        items: orderData.items?.length
+      });
       
       // Перевірка актуальності (не старше 5 хвилин)
       const age = Date.now() - (orderData.timestamp || 0);
       if (age > 5 * 60 * 1000) {
-        console.warn('[SUCCESS] ⚠️ Order data too old, ignoring');
+        console.warn('[SUCCESS] ⚠️ Order data expired (age: ' + Math.round(age/1000) + 's)');
         orderData = null;
       }
       
-      // Очищаємо НЕГАЙНО після читання
+      // Очищаємо після читання
       localStorage.removeItem('_order_success_data');
-      console.log('[SUCCESS] 🗑️ Order data removed from localStorage');
-    } else {
-      console.warn('[SUCCESS] ⚠️ No order data in localStorage');
+      console.log('[SUCCESS] 🗑️ Cleared localStorage');
     }
   } catch (e) {
-    console.error('[SUCCESS] ❌ Failed to parse localStorage:', e);
+    console.error('[SUCCESS] ❌ Parse error:', e);
   }
   
-  // Спроба 2: sessionStorage (fallback)
+  // Fallback: sessionStorage
   if (!orderData) {
     try {
       const stored = sessionStorage.getItem('_order_success_data');
-      console.log('[SUCCESS] SessionStorage raw:', stored);
-      
       if (stored) {
         orderData = JSON.parse(stored);
         sessionStorage.removeItem('_order_success_data');
-        console.log('[SUCCESS] ✅ Order data loaded from sessionStorage:', orderData);
+        console.log('[SUCCESS] ✅ Loaded from sessionStorage');
       }
-    } catch (e) {
-      console.error('[SUCCESS] ❌ Failed to parse sessionStorage:', e);
-    }
+    } catch (e) {}
   }
   
-  // Спроба 3: URL params (якщо storage заблокований)
+  // Fallback: URL params
   if (!orderData) {
-    console.log('[SUCCESS] Trying URL params as fallback...');
     const q = new URLSearchParams(location.search);
     const oid = q.get('oid');
     const t = q.get('t');
-    const c = q.get('c');
     
     if (oid && t) {
-      console.warn('[SUCCESS] ⚠️ Using URL backup (limited data)');
+      console.warn('[SUCCESS] ⚠️ Using URL fallback');
       orderData = {
         order_id: oid,
         total: parseFloat(t) || 0,
@@ -242,35 +239,45 @@
         discount: 0,
         promo: '',
         items: [{
-          name: 'Order Items',
+          name: 'Order',
           sku: 'backup',
-          qty: parseInt(c) || 1,
+          qty: 1,
           price: parseFloat(t) || 0,
-          display: 'See confirmation email'
+          display: ''
         }],
         timestamp: Date.now()
       };
-      console.log('[SUCCESS] ✅ Created backup order data from URL');
     }
   }
   
-  // Якщо немає даних — показуємо повідомлення
+  // ============================================
+  // ЯКЩО НЕМАЄ ДАНИХ - ПОКАЗУЄМО ПОВІДОМЛЕННЯ
+  // ============================================
   if (!orderData || !orderData.items || orderData.items.length === 0) {
-    console.error('[SUCCESS] ❌ No valid order data found');
+    console.error('[SUCCESS] ❌ No order data');
     
-    // Показуємо повідомлення користувачу
     const box = document.getElementById('summary');
     if (box) {
       box.style.display = 'block';
-      box.innerHTML = '<div style="text-align:center;padding:2rem;"><p style="color:#ef4444;font-size:1.1rem;margin-bottom:1rem;">⚠️ Unable to load order details</p><p style="color:#64748b;">Your order was submitted successfully. Please check your email for confirmation.</p></div>';
+      box.innerHTML = `
+        <div style="text-align:center;padding:2rem;">
+          <p style="color:#ef4444;font-size:1.1rem;margin-bottom:1rem;">
+            ⚠️ Unable to load order details
+          </p>
+          <p style="color:#64748b;">
+            Your order was submitted successfully.<br>
+            Check your email for confirmation.
+          </p>
+        </div>
+      `;
     }
     
-    // Все одно спробуємо відправити базовий GA4 event
+    // Базовий event
     try {
       if (typeof gtag === 'function') {
-        gtag('event', 'purchase_confirmation_viewed', {
+        gtag('event', 'purchase_page_view', {
           event_category: 'ecommerce',
-          event_label: 'success_page_no_data'
+          event_label: 'no_data'
         });
       }
     } catch {}
@@ -280,17 +287,19 @@
   
   const { order_id, subtotal, discount, promo, total, items } = orderData;
   
-  console.log('[SUCCESS] 📦 Order details:', {
+  console.log('[SUCCESS] 📊 Order summary:', {
     orderId: order_id,
+    subtotal: subtotal,
+    discount: discount,
     total: total,
     items: items.length
   });
   
   const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
   
-  // ─────────────────────────────────────────────────────────────
+  // ============================================
   // РЕНДЕРИМО UI
-  // ─────────────────────────────────────────────────────────────
+  // ============================================
   const box = document.getElementById('summary');
   if (box) box.style.display = 'block';
   
@@ -314,11 +323,12 @@
   set('s-subtotal', fmtUSD(subtotal));
   set('s-total', fmtUSD(total));
   
+  // Discount row
   if (discount > 0 && promo) {
     const allSumLines = box?.querySelectorAll('.sum-line');
     let shippingLine = null;
     allSumLines?.forEach(line => {
-      if (line.textContent.includes('Shipping') || line.textContent.includes('FREE')) {
+      if (line.textContent.includes('Shipping')) {
         shippingLine = line;
       }
     });
@@ -332,14 +342,14 @@
     }
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // ✅ GA4 PURCHASE EVENT
-  // ─────────────────────────────────────────────────────────────
+  // ============================================
+  // GA4 PURCHASE EVENT (DUAL TRACKING)
+  // ============================================
   function sendPurchaseEvent() {
-    console.log('[GA4] 🎯 Sending purchase event...');
+    console.log('[GA4] 🎯 Preparing purchase event...');
     
     if (!items || items.length === 0) {
-      console.warn('[GA4] ⚠️ No items to send');
+      console.warn('[GA4] ⚠️ No items');
       return;
     }
     
@@ -349,6 +359,7 @@
     }
     
     try {
+      // Prepare items
       const ga4Items = items.map(item => ({
         item_id: item.sku || 'unknown',
         item_name: item.name || 'Unknown Product',
@@ -358,9 +369,11 @@
         item_category: 'Research Chemicals'
       }));
 
-      console.log('[GA4] 📦 Prepared items:', ga4Items);
+      console.log('[GA4] 📦 Items:', ga4Items);
 
-      // Метод 1: через gtag
+      // ============================================
+      // METHOD 1: gtag (відправить в ОБА GA4!)
+      // ============================================
       if (typeof gtag === 'function') {
         gtag('event', 'purchase', {
           transaction_id: order_id || 'ORD-' + Date.now(),
@@ -372,16 +385,19 @@
           items: ga4Items
         });
         
-        console.log('[GA4] ✅ Purchase sent (success page):', {
+        console.log('[GA4] ✅ Purchase sent via gtag:', {
           transaction_id: order_id,
           value: total,
-          items: ga4Items.length
+          items: ga4Items.length,
+          targets: ['G-SMCGZ6BPDC', 'G-LJEBV5NPCT']
         });
       } else {
-        console.error('[GA4] ❌ gtag function not available');
+        console.error('[GA4] ❌ gtag not available');
       }
 
-      // Метод 2: через dataLayer
+      // ============================================
+      // METHOD 2: dataLayer (backup)
+      // ============================================
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'purchase',
@@ -399,45 +415,26 @@
       console.log('[GA4] ✅ Purchase pushed to dataLayer');
 
     } catch (e) {
-      console.error('[GA4] ❌ Purchase event error:', e);
+      console.error('[GA4] ❌ Purchase error:', e);
     }
   }
 
-  // Виконуємо після завантаження
-  console.log('[GA4] ⏳ Waiting for page load...');
+  // Виконуємо після load
+  console.log('[GA4] ⏳ Waiting for load...');
   
   if (document.readyState === 'complete') {
-    console.log('[GA4] Page already loaded, sending immediately');
-    setTimeout(sendPurchaseEvent, 800);
+    console.log('[GA4] ✅ Page already loaded');
+    setTimeout(sendPurchaseEvent, 1000);
   } else {
     window.addEventListener('load', function() {
-      console.log('[GA4] Page loaded, sending purchase event');
-      setTimeout(sendPurchaseEvent, 800);
+      console.log('[GA4] ✅ Page loaded');
+      setTimeout(sendPurchaseEvent, 1000);
     });
   }
 
 })();
 </script>
-</script>
-<!-- Tawk.to chat (lazy) -->
-<script>
-  (function () {
-    var loaded = false;
-    function loadTawk(){
-      if (loaded) return; loaded = true;
-      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-      s1.async = true;
-      s1.src = "https://embed.tawk.to/68d0f6a789c2a719288962de/1j5o46vrj";
-      s1.charset = "UTF-8";
-      s1.setAttribute("crossorigin","*");
-      s0.parentNode.insertBefore(s1, s0);
-    }
-    window.addEventListener("load", function(){ setTimeout(loadTawk, 1500); });
-    ["mousemove","scroll","keydown","touchstart"].forEach(function(evt){
-      window.addEventListener(evt, loadTawk, { once:true, passive:true });
-    });
-  })();
-</script>
+
 
 </body>
 </html>
