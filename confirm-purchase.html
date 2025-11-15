@@ -9,7 +9,6 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Confirm Purchase - ISRIB Admin</title>
   
-  
   <style>
     * {
       margin: 0;
@@ -396,11 +395,7 @@
   <script>
     // ============================================
     // AUTHENTICATION
-    // NOTE: In production, move this to environment variable
-    // and validate server-side!
     // ============================================
-    
-    // TODO: Replace with your actual campaign secret from .env
     const CAMPAIGN_SECRET = 'YFHDNBR6TR746hfgdyepjd';
     
     let isAuthenticated = false;
@@ -549,7 +544,7 @@
     }
     
     // ============================================
-    // CONFIRM PURCHASE (SEND GA4 EVENT)
+    // CONFIRM PURCHASE (SEND GA4 PURCHASE EVENT)
     // ============================================
     
     function confirmPurchase(orderId) {
@@ -565,47 +560,28 @@
         return;
       }
       
-      console.log('[GA4] 🎯 Sending purchase event:', {
+      console.log('[ADMIN] 🎯 Confirming purchase:', {
         orderId: orderData.order_id,
         amount: orderData.amount,
         product: orderData.product
       });
       
       // ============================================
-      // SEND PURCHASE EVENT TO BOTH GA4 PROPERTIES
-      // (via gtag.js dual tracking)
+      // CRITICAL: PURCHASE EVENT TO GA4
       // ============================================
       try {
         const ga4Items = [{
           item_id: 'ISRIB-A15-' + orderData.product,
           item_name: 'ISRIB A15 ' + orderData.product,
-          quantity: 1,
-          price: orderData.amount,
+          item_variant: orderData.product,
           item_category: 'Research Compounds',
-          item_variant: orderData.product
+          quantity: 1,
+          price: orderData.amount
         }];
         
-        // Method 1: gtag (sends to BOTH G-SMCGZ6BPDC + G-LJEBV5NPCT)
-        if (typeof gtag === 'function') {
-          gtag('event', 'purchase', {
-            transaction_id: orderData.order_id,
-            value: orderData.amount,
-            currency: 'USD',
-            shipping: 0,
-            tax: 0,
-            items: ga4Items
-          });
-          
-          console.log('[GA4] ✅ Purchase sent via gtag to BOTH properties:', {
-            transaction_id: orderData.order_id,
-            value: orderData.amount,
-            targets: ['G-SMCGZ6BPDC', 'G-LJEBV5NPCT']
-          });
-        } else {
-          console.error('[GA4] ❌ gtag not available!');
-        }
-        
-        // Method 2: dataLayer (backup)
+        // ============================================
+        // METHOD 1: dataLayer push (PRIMARY - GTM перехопить)
+        // ============================================
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: 'purchase',
@@ -616,10 +592,35 @@
             tax: 0,
             shipping: 0,
             items: ga4Items
-          }
+          },
+          // Додаткові параметри
+          payment_confirmed: true,
+          utm_source: orderData.utm_source || 'direct',
+          utm_campaign: orderData.utm_campaign || 'none'
         });
         
-        console.log('[GA4] ✅ Purchase pushed to dataLayer');
+        console.log('[GA4] ✅ PURCHASE sent via dataLayer:', {
+          transaction_id: orderData.order_id,
+          value: orderData.amount,
+          items: ga4Items,
+          method: 'dataLayer'
+        });
+        
+        // ============================================
+        // METHOD 2: Direct gtag (BACKUP - якщо GTM не спрацює)
+        // ============================================
+        if (typeof gtag === 'function') {
+          gtag('event', 'purchase', {
+            transaction_id: orderData.order_id,
+            value: orderData.amount,
+            currency: 'USD',
+            shipping: 0,
+            tax: 0,
+            items: ga4Items
+          });
+          
+          console.log('[GA4] ✅ PURCHASE sent via gtag (backup)');
+        }
         
       } catch (e) {
         console.error('[GA4] ❌ Purchase event failed:', e);
@@ -627,7 +628,9 @@
         return;
       }
       
-      // Move to confirmed orders
+      // ============================================
+      // MOVE TO CONFIRMED ORDERS
+      // ============================================
       const confirmedOrders = JSON.parse(localStorage.getItem('confirmed_orders') || '[]');
       confirmedOrders.unshift({
         ...orderData,
