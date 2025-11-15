@@ -787,15 +787,14 @@ function mountAddToCartButtons() {
       setTimeout(() => showUpsellPopup(sku), 800);
 
       // ============================================
-      // GA4 EVENT: ADD_TO_CART (BROWSE - LOW/MEDIUM INTENT)
+      // GA4 EVENT: ADD_TO_CART_BROWSE (LOW/MEDIUM INTENT)
       // ============================================
       try {
-        // Перевіряємо чи є transaction ID (якщо немає - це browse add to cart)
         const txnId = window.getTransactionId?.() || null;
         
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          event: 'add_to_cart', // звичайний add_to_cart (не direct)
+          event: 'add_to_cart_browse', // ✅ ВИПРАВЛЕНО: була 'add_to_cart'
           ecommerce: {
             currency: 'USD',
             value: price,
@@ -808,24 +807,25 @@ function mountAddToCartButtons() {
               quantity: 1
             }]
           },
-          transaction_id: txnId, // може бути null якщо browse
-          purchase_intent: txnId ? 'high' : 'medium', // high якщо є txn, medium якщо browse
+          transaction_id: txnId,
+          purchase_intent: txnId ? 'high' : 'medium',
           event_category: 'ecommerce',
           event_label: `Browse Add to Cart: ${name} ${display}`
         });
         
-        console.log('[GA4] ✅ add_to_cart (browse) sent:', {
+        console.log('[GA4] ✅ add_to_cart_browse sent:', {
           product: `${name} ${display}`,
           value: price,
           transaction_id: txnId || 'none (browsing)',
           intent: txnId ? 'high' : 'medium'
         });
       } catch(e) {
-        console.error('[GA4] ❌ add_to_cart failed:', e);
+        console.error('[GA4] ❌ add_to_cart_browse failed:', e);
       }
     }, { passive: false });
   });
 }
+
 function prepareAddToCartButtons() {
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     // якщо немає внутрішнього контейнера — створюємо
