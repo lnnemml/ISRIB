@@ -786,21 +786,46 @@ function mountAddToCartButtons() {
       // ⚡ НОВИЙ КОД: показуємо upsell popup
       setTimeout(() => showUpsellPopup(sku), 800);
 
-      // Analytics
+      // ============================================
+      // GA4 EVENT: ADD_TO_CART (BROWSE - LOW/MEDIUM INTENT)
+      // ============================================
       try {
-        if (typeof gtag === 'function') {
-          gtag('event', 'add_to_cart', {
-            event_category: 'ecommerce',
-            event_label: name,
+        // Перевіряємо чи є transaction ID (якщо немає - це browse add to cart)
+        const txnId = window.getTransactionId?.() || null;
+        
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'add_to_cart', // звичайний add_to_cart (не direct)
+          ecommerce: {
+            currency: 'USD',
             value: price,
-            currency: 'USD'
-          });
-        }
-      } catch(_) {}
+            items: [{
+              item_id: sku,
+              item_name: name,
+              item_variant: display,
+              item_category: 'Research Compounds',
+              price: price,
+              quantity: 1
+            }]
+          },
+          transaction_id: txnId, // може бути null якщо browse
+          purchase_intent: txnId ? 'high' : 'medium', // high якщо є txn, medium якщо browse
+          event_category: 'ecommerce',
+          event_label: `Browse Add to Cart: ${name} ${display}`
+        });
+        
+        console.log('[GA4] ✅ add_to_cart (browse) sent:', {
+          product: `${name} ${display}`,
+          value: price,
+          transaction_id: txnId || 'none (browsing)',
+          intent: txnId ? 'high' : 'medium'
+        });
+      } catch(e) {
+        console.error('[GA4] ❌ add_to_cart failed:', e);
+      }
     }, { passive: false });
   });
 }
-
 function prepareAddToCartButtons() {
   document.querySelectorAll('.add-to-cart').forEach(btn => {
     // якщо немає внутрішнього контейнера — створюємо
