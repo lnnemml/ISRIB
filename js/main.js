@@ -1,6 +1,115 @@
 // ISRIB Shop - Main JavaScript (Unified)
 // v2025-09-26 — header UX, products, quantity, cart, top toasts, dynamic Add-to-Cart labels
+// ============================================
+// TRANSACTION ID MANAGEMENT
+// Додайте цей блок НА ПОЧАТКУ main.js
+// ============================================
 
+/**
+ * Генерує або отримує існуючий Transaction ID
+ * Transaction ID використовується для зв'язування всіх ecommerce подій в одну транзакцію
+ * 
+ * @returns {string} Transaction ID у форматі TXN-{timestamp}-{random}
+ */
+window.getOrCreateTransactionId = function() {
+  const SESSION_KEY = '_txn_id';
+  const TIMESTAMP_KEY = '_txn_timestamp';
+  const MAX_AGE = 30 * 60 * 1000; // 30 хвилин
+  
+  try {
+    // Спроба отримати існуючий ID з sessionStorage
+    const stored = sessionStorage.getItem(SESSION_KEY);
+    const timestamp = parseInt(sessionStorage.getItem(TIMESTAMP_KEY) || '0');
+    
+    // Перевірка актуальності
+    if (stored && (Date.now() - timestamp) < MAX_AGE) {
+      console.log('[TXN] ♻️ Reusing existing ID:', stored);
+      return stored;
+    } else if (stored) {
+      console.log('[TXN] ⏰ Existing ID expired (age: ' + Math.round((Date.now() - timestamp) / 1000) + 's)');
+    }
+  } catch(e) {
+    console.warn('[TXN] ⚠️ SessionStorage read error:', e);
+  }
+  
+  // Генеруємо новий ID
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 9).toUpperCase();
+  const txnId = `TXN-${timestamp}-${random}`;
+  
+  try {
+    sessionStorage.setItem(SESSION_KEY, txnId);
+    sessionStorage.setItem(TIMESTAMP_KEY, timestamp.toString());
+    console.log('[TXN] ✨ Created new ID:', txnId);
+  } catch(e) {
+    console.warn('[TXN] ⚠️ SessionStorage write error:', e);
+  }
+  
+  return txnId;
+};
+
+/**
+ * Отримує поточний Transaction ID без створення нового
+ * Використовується коли ID повинен вже існувати
+ * 
+ * @returns {string|null} Transaction ID або null якщо не існує
+ */
+window.getTransactionId = function() {
+  try {
+    const stored = sessionStorage.getItem('_txn_id');
+    const timestamp = parseInt(sessionStorage.getItem('_txn_timestamp') || '0');
+    const MAX_AGE = 30 * 60 * 1000;
+    
+    if (stored && (Date.now() - timestamp) < MAX_AGE) {
+      return stored;
+    }
+  } catch(e) {
+    console.warn('[TXN] ⚠️ Cannot get transaction ID:', e);
+  }
+  
+  return null;
+};
+
+/**
+ * Очищає Transaction ID (використовується після успішної покупки)
+ */
+window.clearTransactionId = function() {
+  try {
+    sessionStorage.removeItem('_txn_id');
+    sessionStorage.removeItem('_txn_timestamp');
+    console.log('[TXN] 🗑️ Transaction ID cleared');
+  } catch(e) {
+    console.warn('[TXN] ⚠️ Cannot clear transaction ID:', e);
+  }
+};
+
+/**
+ * Перевіряє чи існує активний Transaction ID
+ * 
+ * @returns {boolean}
+ */
+window.hasActiveTransaction = function() {
+  return window.getTransactionId() !== null;
+};
+
+// ============================================
+// CONSOLE INFO (опціонально, для debugging)
+// ============================================
+console.log('[ISRIB] 🔧 Transaction ID management loaded');
+console.log('[ISRIB] Functions available:', {
+  getOrCreateTransactionId: 'Generate or retrieve transaction ID',
+  getTransactionId: 'Get existing transaction ID',
+  clearTransactionId: 'Clear transaction ID',
+  hasActiveTransaction: 'Check if transaction ID exists'
+});
+
+// Показуємо поточний стан при завантаженні
+const currentTxn = window.getTransactionId();
+if (currentTxn) {
+  console.log('[TXN] 📋 Active transaction:', currentTxn);
+} else {
+  console.log('[TXN] 💤 No active transaction');
+}
 // ---- GA4 shim: перетворюємо старі gtag(...) у події для GTM ----
 window.dataLayer = window.dataLayer || [];
 window.gtag = window.gtag || function(type, name, params) {
