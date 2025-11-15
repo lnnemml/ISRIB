@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Thank you — ISRIB.shop</title>
   <meta name="robots" content="noindex,follow"/>
-  <meta name="description" content="Thank you for your request. We’ll reply shortly with payment and shipping details.">
+  <meta name="description" content="Thank you for your request. We'll reply shortly with payment and shipping details.">
 
   <!-- Canonical / Open Graph -->
   <link rel="canonical" href="https://isrib.shop/success.html"/>
@@ -73,7 +73,7 @@
 <section class="success-hero">
   <div class="container">
     <h1 class="title">Thank you! 🎉</h1>
-    <p class="sub">We’ve received your request. We’ll reply shortly with payment & shipping instructions.</p>
+    <p class="sub">We've received your request. We'll reply shortly with payment & shipping instructions.</p>
   </div>
 </section>
 
@@ -102,6 +102,10 @@
 
             <hr class="sep" style="margin:0.85rem 0;">
             <div class="sum-line"><span>Subtotal</span> <b id="s-subtotal">—</b></div>
+            <div id="s-discount-line" style="display:none;" class="sum-line">
+              <span>Discount (<span id="s-promo-code"></span>)</span>
+              <b id="s-discount" style="color:#10b981;">—</b>
+            </div>
             <div class="sum-line"><span>Shipping</span> <b>FREE</b></div>
             <div class="sum-line grand"><span>Total</span> <b id="s-total">—</b></div>
             <div class="sum-note" style="color:#64748b;margin-top:.35rem;">* Free shipping — limited-time launch offer.</div>
@@ -175,12 +179,74 @@
 
 <!-- App JS -->
 <script src="js/main.js?v=34"></script>
+
+<!-- ============================================ -->
+<!-- SUCCESS PAGE: BUY INTENT & ORDER DISPLAY     -->
+<!-- ============================================ -->
 <script>
 (function() {
   console.log('[SUCCESS] 🚀 Script started');
   
   // ============================================
-  // ЧИТАЄМО ДАНІ З LOCALSTORAGE
+  // UTILITY FUNCTIONS
+  // ============================================
+  function fmtUSD(n) {
+    return '$' + (Number(n || 0)).toFixed(2);
+  }
+  
+  function parseQtyToMgLabel(s) {
+    const t = String(s || '').toLowerCase();
+    const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
+    return t.includes('g') && !t.includes('mg') ? Math.round(n * 1000) : Math.round(n);
+  }
+  
+  // ============================================
+  // ОТРИМАННЯ TRANSACTION ID
+  // ============================================
+  function getTransactionId() {
+    console.log('[SUCCESS] 🔍 Getting transaction ID...');
+    
+    // Спроба 1: з sessionStorage
+    try {
+      const stored = sessionStorage.getItem('_txn_id');
+      if (stored) {
+        console.log('[SUCCESS] 📋 Transaction ID from session:', stored);
+        return stored;
+      }
+    } catch(e) {
+      console.warn('[SUCCESS] ⚠️ Cannot read sessionStorage:', e);
+    }
+    
+    // Спроба 2: з localStorage order data
+    try {
+      const orderData = JSON.parse(localStorage.getItem('_order_success_data') || '{}');
+      if (orderData.order_id) {
+        console.log('[SUCCESS] 📋 Transaction ID from order data:', orderData.order_id);
+        return orderData.order_id;
+      }
+    } catch(e) {
+      console.warn('[SUCCESS] ⚠️ Cannot parse order data:', e);
+    }
+    
+    // Спроба 3: з URL параметрів
+    const urlParams = new URLSearchParams(window.location.search);
+    const oid = urlParams.get('oid');
+    if (oid) {
+      console.log('[SUCCESS] 📋 Transaction ID from URL:', oid);
+      return oid;
+    }
+    
+    // Fallback: генеруємо новий (не рекомендується, але краще ніж нічого)
+    const fallbackId = 'TXN-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+    console.warn('[SUCCESS] ⚠️ Using fallback ID:', fallbackId);
+    return fallbackId;
+  }
+  
+  const TRANSACTION_ID = getTransactionId();
+  console.log('[SUCCESS] 🎯 Final Transaction ID:', TRANSACTION_ID);
+  
+  // ============================================
+  // ЧИТАННЯ ДАНИХ ЗАМОВЛЕННЯ
   // ============================================
   let orderData = null;
   
@@ -193,13 +259,14 @@
       console.log('[SUCCESS] ✅ Order data loaded:', {
         orderId: orderData.order_id,
         total: orderData.total,
-        items: orderData.items?.length
+        items: orderData.items?.length,
+        timestamp: orderData.timestamp
       });
       
       // Перевірка актуальності (не старше 5 хвилин)
       const age = Date.now() - (orderData.timestamp || 0);
       if (age > 5 * 60 * 1000) {
-        console.warn('[SUCCESS] ⚠️ Order data expired');
+        console.warn('[SUCCESS] ⚠️ Order data expired (age: ' + Math.round(age/1000) + 's)');
         orderData = null;
       }
       
@@ -220,7 +287,9 @@
         sessionStorage.removeItem('_order_success_data');
         console.log('[SUCCESS] ✅ Loaded from sessionStorage');
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('[SUCCESS] ⚠️ SessionStorage fallback failed:', e);
+    }
   }
   
   // Fallback: URL params
@@ -253,7 +322,7 @@
   // ЯКЩО НЕМАЄ ДАНИХ
   // ============================================
   if (!orderData || !orderData.items || orderData.items.length === 0) {
-    console.error('[SUCCESS] ❌ No order data');
+    console.error('[SUCCESS] ❌ No order data available');
     
     const box = document.getElementById('summary');
     if (box) {
@@ -279,10 +348,10 @@
   console.log('[SUCCESS] 📊 Order summary:', {
     orderId: order_id,
     total: total,
-    items: items.length
+    items: items.length,
+    discount: discount,
+    promo: promo
   });
-  
-  const fmtUSD = (n) => '$' + (Number(n || 0)).toFixed(2);
   
   // ============================================
   // РЕНДЕРИМО UI
@@ -310,128 +379,109 @@
   set('s-subtotal', fmtUSD(subtotal));
   set('s-total', fmtUSD(total));
   
-  // Discount row
+  // Discount row (якщо є)
   if (discount > 0 && promo) {
-    const allSumLines = box?.querySelectorAll('.sum-line');
-    let shippingLine = null;
-    allSumLines?.forEach(line => {
-      if (line.textContent.includes('Shipping')) {
-        shippingLine = line;
-      }
-    });
-    
-    if (shippingLine) {
-      const discountLine = document.createElement('div');
-      discountLine.className = 'sum-line';
-      discountLine.style.color = '#10b981';
-      discountLine.innerHTML = `<span>Discount (${promo})</span> <b>−${fmtUSD(discount)}</b>`;
-      shippingLine.parentNode.insertBefore(discountLine, shippingLine);
+    const discountLine = document.getElementById('s-discount-line');
+    if (discountLine) {
+      discountLine.style.display = 'flex';
+      set('s-promo-code', promo);
+      set('s-discount', '−' + fmtUSD(discount));
     }
   }
 
   // ============================================
-  // GA4 BEGIN_CHECKOUT EVENT
-  // (NOT purchase - purchase fires when admin confirms payment)
+  // GA4 EVENT: BUY_INTENT
   // ============================================
-  function sendCheckoutEvent() {
-    console.log('[GA4] 🎯 Preparing begin_checkout event...');
+  function sendBuyIntent() {
+    console.log('[GA4] 🎯 Preparing buy_intent event...');
     
     if (!items || items.length === 0) {
-      console.warn('[GA4] ⚠️ No items');
+      console.warn('[GA4] ⚠️ No items for buy_intent');
       return;
     }
     
     if (!total || total <= 0) {
-      console.warn('[GA4] ⚠️ Invalid total:', total);
+      console.warn('[GA4] ⚠️ Invalid total for buy_intent:', total);
       return;
     }
     
     try {
-      // Prepare items
+      // Prepare items for GA4
       const ga4Items = items.map(item => ({
         item_id: item.sku || 'unknown',
         item_name: item.name || 'Unknown Product',
-        quantity: Number(item.qty) || 1,
-        price: Number(item.price) || 0,
         item_variant: item.display || '',
-        item_category: 'Research Chemicals'
+        item_category: 'Research Compounds',
+        quantity: Number(item.qty) || 1,
+        price: Number(item.price) || 0
       }));
 
-      console.log('[GA4] 📦 Items:', ga4Items);
+      console.log('[GA4] 📦 Items prepared:', ga4Items);
 
       // ============================================
-      // METHOD 1: gtag (відправить в ОБА GA4!)
-      // ============================================
-      if (typeof gtag === 'function') {
-        gtag('event', 'begin_checkout', {
-          currency: 'USD',
-          value: total,
-          coupon: promo || undefined,
-          items: ga4Items
-        });
-        
-        console.log('[GA4] ✅ begin_checkout sent via gtag:', {
-          value: total,
-          items: ga4Items.length,
-          targets: ['G-SMCGZ6BPDC', 'G-LJEBV5NPCT']
-        });
-      } else {
-        console.error('[GA4] ❌ gtag not available');
-      }
-
-      // ============================================
-      // METHOD 2: dataLayer (backup)
+      // METHOD 1: dataLayer push (PRIMARY)
       // ============================================
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
-        event: 'begin_checkout',
+        event: 'buy_intent',
         ecommerce: {
           currency: 'USD',
           value: total,
-          coupon: promo || '',
           items: ga4Items
-        }
+        },
+        transaction_id: TRANSACTION_ID,
+        order_status: 'pending_payment'
       });
       
-      console.log('[GA4] ✅ begin_checkout pushed to dataLayer');
+      console.log('[GA4] ✅ buy_intent sent via dataLayer:', {
+        transaction_id: TRANSACTION_ID,
+        value: total,
+        items: ga4Items.length,
+        status: 'pending_payment'
+      });
 
       // ============================================
-      // SAVE TO LOCALSTORAGE FOR ADMIN PANEL
+      // ЗБЕРЕЖЕННЯ ДЛЯ ADMIN PANEL
       // ============================================
-      const pendingOrder = {
-        order_id: order_id,
-        email: '', // Will be filled from checkout form if available
-        product: items[0]?.display || '1g',
-        amount: total,
-        utm_source: new URLSearchParams(location.search).get('utm_source') || 'direct',
-        utm_campaign: new URLSearchParams(location.search).get('utm_campaign') || 'none',
-        timestamp: Date.now()
-      };
+      try {
+        const pendingOrder = {
+          order_id: TRANSACTION_ID,
+          email: '', // буде заповнено з форми якщо доступно
+          product: items[0]?.display || '1g',
+          amount: total,
+          utm_source: new URLSearchParams(location.search).get('utm_source') || 'direct',
+          utm_campaign: new URLSearchParams(location.search).get('utm_campaign') || 'none',
+          timestamp: Date.now()
+        };
+        
+        localStorage.setItem('pending_order_' + TRANSACTION_ID, JSON.stringify(pendingOrder));
+        console.log('[SUCCESS] 💾 Saved to pending orders:', TRANSACTION_ID);
+      } catch(e) {
+        console.error('[SUCCESS] ❌ Cannot save pending order:', e);
+      }
       
-      localStorage.setItem('pending_order_' + order_id, JSON.stringify(pendingOrder));
-      console.log('[SUCCESS] 💾 Saved to pending orders for admin panel');
-
-    } catch (e) {
-      console.error('[GA4] ❌ begin_checkout error:', e);
+    } catch(e) {
+      console.error('[GA4] ❌ buy_intent error:', e);
     }
   }
 
-  // Виконуємо після load
-  console.log('[GA4] ⏳ Waiting for load...');
+  // ============================================
+  // ВИКОНАННЯ
+  // ============================================
+  console.log('[GA4] ⏳ Waiting for page load...');
   
   if (document.readyState === 'complete') {
-    console.log('[GA4] ✅ Page already loaded');
-    setTimeout(sendCheckoutEvent, 1000);
+    console.log('[GA4] ✅ Page already loaded, sending buy_intent');
+    setTimeout(sendBuyIntent, 1000);
   } else {
     window.addEventListener('load', function() {
-      console.log('[GA4] ✅ Page loaded');
-      setTimeout(sendCheckoutEvent, 1000);
+      console.log('[GA4] ✅ Page loaded, sending buy_intent');
+      setTimeout(sendBuyIntent, 1000);
     });
   }
 
 })();
 </script>
-
 
 </body>
 </html>
