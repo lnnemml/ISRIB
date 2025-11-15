@@ -783,18 +783,18 @@ function mountAddToCartButtons() {
       updateCartBadge?.();
       showToast?.(`Added to cart — ${display || (grams >= 1000 ? (grams/1000)+'g' : grams+'mg')} for $${price}`);
 
-      // ⚡ НОВИЙ КОД: показуємо upsell popup
       setTimeout(() => showUpsellPopup(sku), 800);
 
       // ============================================
-      // GA4 EVENT: ADD_TO_CART_BROWSE (LOW/MEDIUM INTENT)
+      // GA4 EVENT: ADD_TO_CART_BROWSE
       // ============================================
       try {
         const txnId = window.getTransactionId?.() || null;
         
+        // ✅ ВИПРАВЛЕНИЙ КОД - правильний формат для GTM
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          event: 'add_to_cart_browse', // ✅ ВИПРАВЛЕНО: була 'add_to_cart'
+          event: 'add_to_cart_browse',
           ecommerce: {
             currency: 'USD',
             value: price,
@@ -807,16 +807,16 @@ function mountAddToCartButtons() {
               quantity: 1
             }]
           },
-          transaction_id: txnId,
+          transaction_id: txnId || undefined,  // ← undefined замість null
           purchase_intent: txnId ? 'high' : 'medium',
           event_category: 'ecommerce',
           event_label: `Browse Add to Cart: ${name} ${display}`
         });
         
-        console.log('[GA4] ✅ add_to_cart_browse sent:', {
+        console.log('[GA4] ✅ add_to_cart_browse pushed to dataLayer:', {
           product: `${name} ${display}`,
           value: price,
-          transaction_id: txnId || 'none (browsing)',
+          transaction_id: txnId || 'none',
           intent: txnId ? 'high' : 'medium'
         });
       } catch(e) {
