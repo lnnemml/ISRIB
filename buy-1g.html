@@ -57,7 +57,7 @@
 
   <script>
     (function() {
-      console.log('[BUY-1G] 🚀 Initializing...');
+      console.log('[BUY-1G] 🚀 Initializing direct purchase...');
       
       // ============================================
       // ГЕНЕРАЦІЯ АБО ОТРИМАННЯ TRANSACTION ID
@@ -107,7 +107,8 @@
           product: 'ISRIB A15 1g',
           quantity: '1g',
           price: 200,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          purchase_type: 'direct_buy' // маркер що це direct buy
         }));
         console.log('[BUY-1G] 💾 Checkout data saved');
       } catch(e) {
@@ -187,12 +188,12 @@
       console.log('[BUY-1G] ✅ Added to cart');
 
       // ============================================
-      // GA4 EVENT: ADD_TO_CART
+      // GA4 EVENT: ADD_TO_CART_DIRECT (HIGH INTENT)
       // ============================================
       try {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          event: 'add_to_cart',
+          event: 'add_to_cart_direct',
           ecommerce: {
             currency: 'USD',
             value: 200,
@@ -206,17 +207,19 @@
             }]
           },
           transaction_id: TRANSACTION_ID,
+          purchase_intent: 'high', // high intent - йде прямо на checkout
           event_category: 'ecommerce',
-          event_label: 'ISRIB A15 1g direct'
+          event_label: 'Direct Buy: ISRIB A15 1g'
         });
         
-        console.log('[GA4] ✅ add_to_cart sent:', {
+        console.log('[GA4] ✅ add_to_cart_direct sent:', {
           product: 'ISRIB A15 1g',
           value: 200,
-          transaction_id: TRANSACTION_ID
+          transaction_id: TRANSACTION_ID,
+          intent: 'high'
         });
       } catch(e) {
-        console.error('[GA4] ❌ add_to_cart failed:', e);
+        console.error('[GA4] ❌ add_to_cart_direct failed:', e);
       }
 
       // ============================================
