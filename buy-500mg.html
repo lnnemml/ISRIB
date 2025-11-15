@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <script src="/scripts/gtm.js" async></script>
 
   <meta charset="UTF-8">
@@ -58,7 +57,66 @@
 
   <script>
     (function() {
-      // Функція для нормалізації cart
+      console.log('[BUY-500MG] 🚀 Initializing...');
+      
+      // ============================================
+      // ГЕНЕРАЦІЯ АБО ОТРИМАННЯ TRANSACTION ID
+      // ============================================
+      function getOrCreateTransactionId() {
+        const SESSION_KEY = '_txn_id';
+        const TIMESTAMP_KEY = '_txn_timestamp';
+        const MAX_AGE = 30 * 60 * 1000; // 30 хвилин
+        
+        try {
+          const stored = sessionStorage.getItem(SESSION_KEY);
+          const timestamp = parseInt(sessionStorage.getItem(TIMESTAMP_KEY) || '0');
+          
+          // Перевірка актуальності
+          if (stored && (Date.now() - timestamp) < MAX_AGE) {
+            console.log('[TXN] ♻️ Reusing existing ID:', stored);
+            return stored;
+          }
+        } catch(e) {
+          console.warn('[TXN] ⚠️ SessionStorage error:', e);
+        }
+        
+        // Генеруємо новий ID
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 9);
+        const txnId = `TXN-${timestamp}-${random}`.toUpperCase();
+        
+        try {
+          sessionStorage.setItem(SESSION_KEY, txnId);
+          sessionStorage.setItem(TIMESTAMP_KEY, timestamp.toString());
+          console.log('[TXN] ✨ Created new ID:', txnId);
+        } catch(e) {
+          console.warn('[TXN] ⚠️ Cannot save to sessionStorage');
+        }
+        
+        return txnId;
+      }
+      
+      const TRANSACTION_ID = getOrCreateTransactionId();
+      
+      // ============================================
+      // ЗБЕРЕЖЕННЯ ДАНИХ ДЛЯ CHECKOUT
+      // ============================================
+      try {
+        sessionStorage.setItem('_checkout_data', JSON.stringify({
+          transaction_id: TRANSACTION_ID,
+          product: 'ISRIB A15 500mg',
+          quantity: '500mg',
+          price: 130,
+          timestamp: Date.now()
+        }));
+        console.log('[BUY-500MG] 💾 Checkout data saved');
+      } catch(e) {
+        console.error('[BUY-500MG] ❌ Cannot save checkout data:', e);
+      }
+      
+      // ============================================
+      // CART FUNCTIONS
+      // ============================================
       function normalizeCartUnits(arr) {
         return (arr || []).map((i) => {
           let grams = Number(i.grams || 0);
@@ -122,29 +180,53 @@
         writeCart(cart);
       }
 
-      // Додаємо ISRIB A15 500mg у cart
+      // ============================================
+      // ДОДАЄМО ДО КОШИКА
+      // ============================================
       addToCart('ISRIB A15', 'isrib-a15', 500, 130, '500mg');
+      console.log('[BUY-500MG] ✅ Added to cart');
 
-      // Analytics (якщо є gtag)
+      // ============================================
+      // GA4 EVENT: ADD_TO_CART
+      // ============================================
       try {
-        if (typeof gtag === 'function') {
-          gtag('event', 'add_to_cart', {
-            event_category: 'ecommerce',
-            event_label: 'ISRIB A15 500mg direct',
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'add_to_cart',
+          ecommerce: {
+            currency: 'USD',
             value: 130,
-            currency: 'USD'
-          });
-        }
-      } catch(e) {}
+            items: [{
+              item_id: 'isrib-a15',
+              item_name: 'ISRIB A15',
+              item_variant: '500mg',
+              item_category: 'Research Compounds',
+              price: 130,
+              quantity: 1
+            }]
+          },
+          transaction_id: TRANSACTION_ID,
+          event_category: 'ecommerce',
+          event_label: 'ISRIB A15 500mg direct'
+        });
+        
+        console.log('[GA4] ✅ add_to_cart sent:', {
+          product: 'ISRIB A15 500mg',
+          value: 130,
+          transaction_id: TRANSACTION_ID
+        });
+      } catch(e) {
+        console.error('[GA4] ❌ add_to_cart failed:', e);
+      }
 
-      // Через 500ms редірект на checkout
+      // ============================================
+      // РЕДІРЕКТ НА CHECKOUT
+      // ============================================
       setTimeout(function() {
+        console.log('[BUY-500MG] 🔄 Redirecting to checkout...');
         window.location.href = '/checkout.html';
       }, 500);
     })();
   </script>
-
-  
-
 </body>
 </html>
