@@ -110,6 +110,32 @@ if (currentTxn) {
 } else {
   console.log('[TXN] 💤 No active transaction');
 }
+
+
+(function setupDataLayerDebug() {
+  window.dataLayer = window.dataLayer || [];
+  
+  console.log('[DEBUG] 🔧 DataLayer debug initialized');
+  console.log('[DEBUG] Initial dataLayer:', window.dataLayer);
+  
+  const originalPush = Array.prototype.push;
+  window.dataLayer.push = function(...args) {
+    console.log('[DEBUG] 📤 dataLayer.push called:', args);
+    
+    if (args[0] && typeof args[0] === 'object') {
+      console.log('[DEBUG] 📋 Event details:', {
+        event: args[0].event || 'no event name',
+        ecommerce: args[0].ecommerce || 'no ecommerce',
+        transaction_id: args[0].transaction_id || 'no txn_id',
+        allKeys: Object.keys(args[0])
+      });
+    }
+    
+    return originalPush.apply(this, args);
+  };
+  
+  console.log('[DEBUG] ✅ DataLayer interceptor installed');
+})();
 // ---- GA4 shim: перетворюємо старі gtag(...) у події для GTM ----
 window.dataLayer = window.dataLayer || [];
 window.gtag = window.gtag || function(type, name, params) {
@@ -179,19 +205,6 @@ function initializeApp() {
 } catch {}
 
 }
-
-
-window.addEventListener('load', () => {
-  console.log('[DEBUG] dataLayer at load:', window.dataLayer);
-  
-  // Слухаємо всі зміни dataLayer
-  const originalPush = window.dataLayer.push;
-  window.dataLayer.push = function(...args) {
-    console.log('[DEBUG] dataLayer.push called with:', args);
-    return originalPush.apply(window.dataLayer, args);
-  };
-});
-
 
 
 /* ========================= HEADER / NAV ========================= */
