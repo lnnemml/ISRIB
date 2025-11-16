@@ -180,6 +180,20 @@ function initializeApp() {
 
 }
 
+
+window.addEventListener('load', () => {
+  console.log('[DEBUG] dataLayer at load:', window.dataLayer);
+  
+  // Слухаємо всі зміни dataLayer
+  const originalPush = window.dataLayer.push;
+  window.dataLayer.push = function(...args) {
+    console.log('[DEBUG] dataLayer.push called with:', args);
+    return originalPush.apply(window.dataLayer, args);
+  };
+});
+
+
+
 /* ========================= HEADER / NAV ========================= */
 
 function bindBurgerMenu() {
