@@ -137,14 +137,14 @@ if (currentTxn) {
   console.log('[DEBUG] ✅ DataLayer interceptor installed');
 })();
 // ---- GA4 shim: перетворюємо старі gtag(...) у події для GTM ----
-window.dataLayer = window.dataLayer || [];
+// dataLayer вже ініціалізований вище в debug блоці!
 window.gtag = window.gtag || function(type, name, params) {
   if (type === 'event') {
+    console.log('[GTM shim] 🔔 gtag event called:', name, params || {});
     window.dataLayer.push({
       event: name,
       ...(params || {})
     });
-    console.log('[GTM shim] event ->', name, params || {});
   }
 };
 
