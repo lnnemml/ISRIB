@@ -181,7 +181,8 @@
 <script src="js/main.js?v=34"></script>
 
 <!-- ============================================ -->
-<!-- SUCCESS PAGE: BUY INTENT & ORDER DISPLAY     -->
+<!-- ✅ ВИПРАВЛЕНИЙ SUCCESS PAGE СКРИПТ          -->
+<!-- Використовує Order ID замість Transaction ID -->
 <!-- ============================================ -->
 <script>
 (function() {
@@ -201,49 +202,79 @@
   }
   
   // ============================================
-  // ОТРИМАННЯ TRANSACTION ID
+  // ✅ ОТРИМАННЯ ORDER ID (НЕ TRANSACTION ID!)
   // ============================================
-  function getTransactionId() {
-    console.log('[SUCCESS] 🔍 Getting transaction ID...');
+  function getOrderId() {
+    console.log('[SUCCESS] 🔍 Getting Order ID...');
     
-    // Спроба 1: з sessionStorage
-    try {
-      const stored = sessionStorage.getItem('_txn_id');
-      if (stored) {
-        console.log('[SUCCESS] 📋 Transaction ID from session:', stored);
-        return stored;
-      }
-    } catch(e) {
-      console.warn('[SUCCESS] ⚠️ Cannot read sessionStorage:', e);
-    }
-    
-    // Спроба 2: з localStorage order data
+    // Спроба 1: з localStorage order data (ПРІОРИТЕТ!)
     try {
       const orderData = JSON.parse(localStorage.getItem('_order_success_data') || '{}');
       if (orderData.order_id) {
-        console.log('[SUCCESS] 📋 Transaction ID from order data:', orderData.order_id);
+        console.log('[SUCCESS] ✅ Order ID from order data:', orderData.order_id);
         return orderData.order_id;
       }
     } catch(e) {
       console.warn('[SUCCESS] ⚠️ Cannot parse order data:', e);
     }
     
+    // Спроба 2: з sessionStorage
+    try {
+      const stored = sessionStorage.getItem('_order_id');
+      if (stored) {
+        console.log('[SUCCESS] ✅ Order ID from session:', stored);
+        return stored;
+      }
+    } catch(e) {
+      console.warn('[SUCCESS] ⚠️ Cannot read sessionStorage:', e);
+    }
+    
     // Спроба 3: з URL параметрів
     const urlParams = new URLSearchParams(window.location.search);
     const oid = urlParams.get('oid');
     if (oid) {
-      console.log('[SUCCESS] 📋 Transaction ID from URL:', oid);
+      console.log('[SUCCESS] ✅ Order ID from URL:', oid);
       return oid;
     }
     
-    // Fallback: генеруємо новий (не рекомендується, але краще ніж нічого)
-    const fallbackId = 'TXN-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9).toUpperCase();
-    console.warn('[SUCCESS] ⚠️ Using fallback ID:', fallbackId);
+    // Спроба 4: шукаємо в pending orders з email 'completed@checkout'
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('pending_order_')) {
+          const data = JSON.parse(localStorage.getItem(key) || '{}');
+          // Шукаємо останнє created замовлення (найновіше)
+          if (data.checkout_submitted_at) {
+            const age = Date.now() - data.checkout_submitted_at;
+            if (age < 2 * 60 * 1000) { // молодше 2 хвилин
+              console.log('[SUCCESS] ✅ Order ID from recent pending:', data.order_id);
+              return data.order_id;
+            }
+          }
+        }
+      }
+    } catch(e) {
+      console.warn('[SUCCESS] ⚠️ Cannot search pending orders:', e);
+    }
+    
+    // Fallback: генеруємо новий (НЕ РЕКОМЕНДУЄТЬСЯ)
+    const fallbackId = 'ORD-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+    console.warn('[SUCCESS] ⚠️ Using fallback Order ID:', fallbackId);
     return fallbackId;
   }
   
-  const TRANSACTION_ID = getTransactionId();
-  console.log('[SUCCESS] 🎯 Final Transaction ID:', TRANSACTION_ID);
+  const ORDER_ID = getOrderId();
+  console.log('[SUCCESS] 🆔 Final Order ID:', ORDER_ID);
+  
+  // Transaction ID для GA4 (може бути окремий)
+  let TRANSACTION_ID = ORDER_ID;
+  try {
+    const txnStored = sessionStorage.getItem('_txn_id');
+    if (txnStored) {
+      TRANSACTION_ID = txnStored;
+      console.log('[SUCCESS] 📋 Transaction ID:', TRANSACTION_ID);
+    }
+  } catch(e) {}
   
   // ============================================
   // ЧИТАННЯ ДАНИХ ЗАМОВЛЕННЯ
@@ -270,9 +301,9 @@
         orderData = null;
       }
       
-      // Очищаємо після читання
-      localStorage.removeItem('_order_success_data');
-      console.log('[SUCCESS] 🗑️ Cleared from localStorage');
+      // ✅ КРИТИЧНО: НЕ ОЧИЩАЄМО ОДРАЗУ!
+      // Очистимо після успішного збереження в pending orders
+      console.log('[SUCCESS] 📌 Keeping order data for now');
     }
   } catch (e) {
     console.error('[SUCCESS] ❌ Parse error:', e);
@@ -346,7 +377,7 @@
   const { order_id, subtotal, discount, promo, total, items } = orderData;
   
   console.log('[SUCCESS] 📊 Order summary:', {
-    orderId: order_id,
+    orderId: order_id || ORDER_ID,
     total: total,
     items: items.length,
     discount: discount,
@@ -390,7 +421,7 @@
   }
 
   // ============================================
-  // GA4 EVENT: BUY_INTENT
+  // ✅ GA4 EVENT: BUY_INTENT (з правильним Order ID)
   // ============================================
   function sendBuyIntent() {
     console.log('[GA4] 🎯 Preparing buy_intent event...');
@@ -430,34 +461,77 @@
           items: ga4Items
         },
         transaction_id: TRANSACTION_ID,
+        order_id: ORDER_ID,  // ✅ Додали Order ID
         order_status: 'pending_payment'
       });
       
       console.log('[GA4] ✅ buy_intent sent via dataLayer:', {
         transaction_id: TRANSACTION_ID,
+        order_id: ORDER_ID,
         value: total,
         items: ga4Items.length,
         status: 'pending_payment'
       });
 
       // ============================================
-      // ЗБЕРЕЖЕННЯ ДЛЯ ADMIN PANEL
+      // ✅ ЗБЕРЕЖЕННЯ ДЛЯ ADMIN PANEL (НЕ СТВОРЮЄ ДУБЛІКАТІВ!)
       // ============================================
       try {
-        const pendingOrder = {
-          order_id: TRANSACTION_ID,
-          email: '', // буде заповнено з форми якщо доступно
-          product: items[0]?.display || '1g',
-          amount: total,
-          utm_source: new URLSearchParams(location.search).get('utm_source') || 'direct',
-          utm_campaign: new URLSearchParams(location.search).get('utm_campaign') || 'none',
-          timestamp: Date.now()
-        };
+        const urlParams = new URLSearchParams(location.search);
         
-        localStorage.setItem('pending_order_' + TRANSACTION_ID, JSON.stringify(pendingOrder));
-        console.log('[SUCCESS] 💾 Saved to pending orders:', TRANSACTION_ID);
+        // ✅ КРИТИЧНО: Перевіряємо чи вже існує
+        const existingKey = 'pending_order_' + ORDER_ID;
+        const existing = localStorage.getItem(existingKey);
+        
+        if (existing) {
+          console.log('[SUCCESS] ✅ Pending order already exists, updating status');
+          
+          // Оновлюємо існуюче замовлення
+          const existingData = JSON.parse(existing);
+          existingData.success_page_visited = Date.now();
+          existingData.status = 'pending_payment';
+          existingData.buy_intent_sent = true;
+          
+          localStorage.setItem(existingKey, JSON.stringify(existingData));
+          console.log('[SUCCESS] ✅ Updated existing pending order:', ORDER_ID);
+          
+        } else {
+          console.log('[SUCCESS] ℹ️ Creating new pending order entry');
+          
+          // Створюємо нове замовлення тільки якщо його немає
+          const pendingOrder = {
+            order_id: ORDER_ID,
+            email: 'completed@checkout',
+            timestamp: Date.now(),
+            amount: total,
+            subtotal: subtotal || total,
+            discount: discount || 0,
+            promo: promo || '',
+            product: items.map(i => i.display || i.name).join(', '),
+            items: items,
+            utm_source: urlParams.get('utm_source') || 'direct',
+            utm_campaign: urlParams.get('utm_campaign') || 'checkout_success',
+            status: 'pending_payment',
+            success_page_visited: Date.now(),
+            buy_intent_sent: true
+          };
+          
+          localStorage.setItem(existingKey, JSON.stringify(pendingOrder));
+          console.log('[SUCCESS] ✅ Created new pending order:', ORDER_ID);
+        }
+        
       } catch(e) {
         console.error('[SUCCESS] ❌ Cannot save pending order:', e);
+      }
+      
+      // ============================================
+      // ✅ ТЕПЕР МОЖНА ОЧИСТИТИ _order_success_data
+      // ============================================
+      try {
+        localStorage.removeItem('_order_success_data');
+        console.log('[SUCCESS] 🗑️ Cleared order data from localStorage');
+      } catch(e) {
+        console.warn('[SUCCESS] ⚠️ Cannot clear order data:', e);
       }
       
     } catch(e) {
