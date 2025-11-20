@@ -1478,7 +1478,7 @@ function initCheckoutUpsell() {
 
 
 
-function initCheckoutForm() {
+unction initCheckoutForm() {
   const form = document.getElementById('checkoutForm');
   if (!form) return;
 
@@ -1486,18 +1486,8 @@ function initCheckoutForm() {
   
   let isSubmitting = false;
   
-  try {
-    if (typeof gtag === 'function') {
-      gtag('event', 'begin_checkout', {
-        event_category: 'ecommerce',
-        event_label: 'Checkout Form Opened',
-      });
-      console.log('[GA4] begin_checkout event sent');
-    }
-  } catch(e) { 
-    console.warn('[GA4] begin_checkout failed', e); 
-  }
-
+  // GA4 begin_checkout вже відправлено в окремому скрипті checkout.html
+  
   // Email збір для cart recovery
   const emailInput = form.querySelector('input[name="email"], #email');
   if (emailInput) {
@@ -1532,7 +1522,7 @@ function initCheckoutForm() {
           })
         });
         localStorage.setItem(key, '1');
-        console.log('[Cart Recovery] scheduled', only24h ? '24h only' : '2h+24h', 'for', email);
+        console.log('[Cart Recovery] scheduled for', email);
       } catch (err) {
         console.error('[Cart Recovery] schedule failed:', err);
       }
@@ -1647,15 +1637,56 @@ function initCheckoutForm() {
     const total = subtotal - discount;
 
     // ============================================
-    // ✅ ГЕНЕРАЦІЯ ORDER ID
+    // ✅ КРИТИЧНО: ВИКОРИСТОВУЄМО ORDER ID З ГЛОБАЛЬНОЇ ЗМІННОЇ
+    // Він був згенерований при завантаженні checkout.html
     // ============================================
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 9).toUpperCase();
-    const orderIdFinal = `ORD-${timestamp}-${random}`;
+    const orderIdFinal = window._generatedOrderId || 
+      `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     
-    console.log('[Checkout] 🆔 Generated Order ID:', orderIdFinal);
+    console.log('[Checkout] 🆔 Using Order ID:', orderIdFinal);
 
+    // ============================================
+    // ✅ ЗБЕРЕЖЕННЯ PENDING ORDER В LOCALSTORAGE
+    // ============================================
+    const pendingOrderData = {
+      order_id: orderIdFinal,
+      email: email.trim().toLowerCase(),
+      timestamp: Date.now(),
+      amount: total,
+      subtotal: subtotal,
+      discount: discount,
+      promo: appliedPromoCode || '',
+      product: items.map(i => `${i.name} ${i.display}`).join(', '),
+      items: items,
+      utm_source: urlParams.get('utm_source') || 'direct',
+      utm_campaign: urlParams.get('utm_campaign') || 'none',
+      firstName: firstName,
+      lastName: lastName,
+      country: country,
+      city: city
+    };
+
+    try {
+      const pendingKey = 'pending_order_' + orderIdFinal;
+      localStorage.setItem(pendingKey, JSON.stringify(pendingOrderData));
+      console.log('[Checkout] 💾 Pending order saved:', pendingKey);
+      
+      // Verification
+      const verification = localStorage.getItem(pendingKey);
+      if (verification) {
+        console.log('[Checkout] ✅ Pending order verified in localStorage');
+      } else {
+        console.error('[Checkout] ❌ Pending order NOT saved!');
+      }
+    } catch (saveErr) {
+      console.error('[Checkout] ❌ Failed to save pending order:', saveErr);
+    }
+
+    // ============================================
+    // ✅ PAYLOAD З ORDER ID
+    // ============================================
     const payload = {
+      orderId: orderIdFinal,  // ← КРИТИЧНО: відправляємо на бекенд
       firstName, lastName, email, country, region, city, postal, address,
       messenger, handle, notes,
       _gotcha: gotcha,
@@ -1671,7 +1702,7 @@ function initCheckoutForm() {
     }
 
     try {
-      console.log('[Checkout] 📤 Sending order...');
+      console.log('[Checkout] 📤 Sending order to backend...');
       
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -1703,46 +1734,7 @@ function initCheckoutForm() {
       
       const normalizedEmail = email.trim().toLowerCase();
       
-      // ============================================
-      // ✅ ЗБЕРЕЖЕННЯ PENDING ORDER
-      // ============================================
-      const pendingOrderData = {
-        order_id: orderIdFinal,
-        email: normalizedEmail,
-        timestamp: timestamp,
-        amount: total,
-        subtotal: subtotal,
-        discount: discount,
-        promo: appliedPromoCode || '',
-        product: items.map(i => `${i.name} ${i.display}`).join(', '),
-        items: items,
-        utm_source: urlParams.get('utm_source') || 'direct',
-        utm_campaign: urlParams.get('utm_campaign') || 'none',
-        firstName: firstName,
-        lastName: lastName,
-        country: country,
-        city: city
-      };
-
-      try {
-        const pendingKey = 'pending_order_' + orderIdFinal;
-        localStorage.setItem(pendingKey, JSON.stringify(pendingOrderData));
-        console.log('[Checkout] 💾 Pending order saved:', pendingKey);
-        
-        // Verification
-        const verification = localStorage.getItem(pendingKey);
-        if (verification) {
-          console.log('[Checkout] ✅ Pending order verified in localStorage');
-        } else {
-          console.error('[Checkout] ❌ Pending order NOT saved!');
-        }
-      } catch (saveErr) {
-        console.error('[Checkout] ❌ Failed to save pending order:', saveErr);
-      }
-
-      // ============================================
-      // CART RECOVERY CANCEL
-      // ============================================
+      // Cart recovery cancel
       try {
         await cancelCartRecovery(normalizedEmail);
         console.log('[Checkout] ✅ Cart recovery canceled');
@@ -1754,9 +1746,7 @@ function initCheckoutForm() {
       localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
       localStorage.removeItem('pending_promo');
 
-      // ============================================
-      // ЗБЕРЕЖЕННЯ ДАНИХ ДЛЯ SUCCESS PAGE
-      // ============================================
+      // Збереження даних для success page
       const orderData = {
         order_id: orderIdFinal,
         subtotal: subtotal,
@@ -1764,10 +1754,10 @@ function initCheckoutForm() {
         promo: appliedPromoCode || '',
         total: total,
         items: items,
-        timestamp: timestamp
+        timestamp: Date.now()
       };
 
-      console.log('[Checkout] 💾 Saving order data for success page:', orderData);
+      console.log('[Checkout] 💾 Saving order data for success page');
 
       try {
         const dataString = JSON.stringify(orderData);
@@ -1776,8 +1766,6 @@ function initCheckoutForm() {
         const verification = localStorage.getItem('_order_success_data');
         if (verification === dataString) {
           console.log('[Checkout] ✅ Order data saved for success page');
-        } else {
-          console.error('[Checkout] ❌ Success data verification failed');
         }
       } catch (saveErr) {
         console.error('[Checkout] ❌ Save failed:', saveErr);
@@ -1818,6 +1806,8 @@ function parseQtyToMgLabel(s) {
   const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
   return t.includes('g') && !t.includes('mg') ? Math.round(n * 1000) : Math.round(n);
 }
+
+
 
 
 /* ============================ CONTACT ============================ */
