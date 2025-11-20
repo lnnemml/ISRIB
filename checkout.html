@@ -16,7 +16,6 @@
 <link rel="shortcut icon" href="/images/favicon.ico">
 <meta name="theme-color" content="#ffffff">
 
-
   <!-- Unified CSS -->
   <link rel="stylesheet" href="css/styles.css?v=11" />
 
@@ -66,8 +65,6 @@
   </svg>
 </button>
 
-
-
   <!-- Mobile menu -->
   <nav class="mobile-menu" id="mobileMenu" data-nav aria-label="Mobile">
     <a href="products.html" class="mm-link">Products</a>
@@ -79,28 +76,30 @@
     </a>
   </nav>
 </header>
+
   <!-- Page Header -->
   <section class="checkout-hero">
     <div class="container">
       <h1 class="title">Checkout</h1>
-      <p class="sub">Fill the form below. We’ll confirm availability, shipping and payment details via email or messenger.</p>
+      <p class="sub">Fill the form below. We'll confirm availability, shipping and payment details via email or messenger.</p>
       
-          <div class="free-shipping-banner">
-      <span class="emoji">🚚</span>
-      <strong>Free Worldwide Shipping</strong>
-      <span>on all orders — limited-time launch offer</span>
-    </div>
-     <!-- На початку checkout.html -->
-<div style="max-width:800px;margin:0 auto 32px;padding:0 20px;">
-  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-    <span style="color:#10b981;font-weight:600;">✓ Cart</span>
-    <span style="color:#3b82f6;font-weight:600;">→ Shipping</span>
-    <span style="color:#94a3b8;">✓ Complete</span>
-  </div>
-  <div style="height:4px;background:#e5e7eb;border-radius:2px;">
-    <div style="width:66%;height:100%;background:#3b82f6;border-radius:2px;"></div>
-  </div>
-</div>
+      <div class="free-shipping-banner">
+        <span class="emoji">🚚</span>
+        <strong>Free Worldwide Shipping</strong>
+        <span>on all orders — limited-time launch offer</span>
+      </div>
+      
+      <!-- Progress bar -->
+      <div style="max-width:800px;margin:0 auto 32px;padding:0 20px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="color:#10b981;font-weight:600;">✓ Cart</span>
+          <span style="color:#3b82f6;font-weight:600;">→ Shipping</span>
+          <span style="color:#94a3b8;">✓ Complete</span>
+        </div>
+        <div style="height:4px;background:#e5e7eb;border-radius:2px;">
+          <div style="width:66%;height:100%;background:#3b82f6;border-radius:2px;"></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -130,35 +129,33 @@
             </div>
 
             <div class="form-two">
-  <div class="form-group">
-    <label for="country">Country<span class="req">*</span></label>
-    <input id="country" name="country" autocomplete="country-name" required />
-  </div>
-  <div class="form-group">
-    <label for="region">Region/State</label>
-    <input id="region" name="region" autocomplete="address-level1" />
-  </div>
-</div>
-
-<div class="form-two">
-  <div class="form-group">
-    <label for="city">City<span class="req">*</span></label>
-    <input id="city" name="city" autocomplete="address-level2" required />
-  </div>
-  <div class="form-group">
-    <label for="postal">Postal code<span class="req">*</span></label>
-    <input id="postal" name="postal" autocomplete="postal-code" required />
-  </div>
-</div>
-
+              <div class="form-group">
+                <label for="country">Country<span class="req">*</span></label>
+                <input id="country" name="country" autocomplete="country-name" required />
+              </div>
+              <div class="form-group">
+                <label for="region">Region/State</label>
+                <input id="region" name="region" autocomplete="address-level1" />
+              </div>
+            </div>
 
             <div class="form-two">
-             <div class="form-group full">
-             <label for="address">Address<span class="req">*</span></label>
-             <input id="address" name="address" autocomplete="address-line1" required />
+              <div class="form-group">
+                <label for="city">City<span class="req">*</span></label>
+                <input id="city" name="city" autocomplete="address-level2" required />
+              </div>
+              <div class="form-group">
+                <label for="postal">Postal code<span class="req">*</span></label>
+                <input id="postal" name="postal" autocomplete="postal-code" required />
+              </div>
             </div>
-         </div>
 
+            <div class="form-two">
+              <div class="form-group full">
+                <label for="address">Address<span class="req">*</span></label>
+                <input id="address" name="address" autocomplete="address-line1" required />
+              </div>
+            </div>
 
             <div class="form-two">
               <div class="form-group">
@@ -194,7 +191,7 @@
 
             <div class="form-actions">
               <button id="submitOrderBtn" class="btn btn-primary" type="submit">
-               Submit Order Request
+                Submit Order Request
               </button>
               <div id="formMsg" class="form-status muted" role="status" aria-live="polite"></div>
             </div>
@@ -209,42 +206,43 @@
             <!-- список позицій -->
             <div id="cartList" class="cart-list"></div>
             
-           <!-- Promo code -->
-<div class="promo-section" style="margin:20px 0;">
-  <div class="form-group">
-    <label for="promoCode">Promo code (optional)</label>
-    <div style="display:flex;gap:8px;">
-     <input 
-  type="text" 
-  id="promoCode" 
-  name="promoCode" 
-  placeholder="Enter code" 
-  style="flex:1;text-transform:uppercase;padding-left:14px;padding-right:14px;"
-  autocomplete="off"
-/>
-      <button 
-        type="button" 
-        id="applyPromoBtn" 
-        class="btn btn-outline"
-        style="white-space:nowrap;"
-      >
-        Apply
-      </button>
-    </div>
-    <div id="promoMsg" style="margin-top:8px;font-size:13px;"></div>
-  </div>
-</div>
+            <!-- Promo code -->
+            <div class="promo-section" style="margin:20px 0;">
+              <div class="form-group">
+                <label for="promoCode">Promo code (optional)</label>
+                <div style="display:flex;gap:8px;">
+                  <input 
+                    type="text" 
+                    id="promoCode" 
+                    name="promoCode" 
+                    placeholder="Enter code" 
+                    style="flex:1;text-transform:uppercase;padding-left:14px;padding-right:14px;"
+                    autocomplete="off"
+                  />
+                  <button 
+                    type="button" 
+                    id="applyPromoBtn" 
+                    class="btn btn-outline"
+                    style="white-space:nowrap;"
+                  >
+                    Apply
+                  </button>
+                </div>
+                <div id="promoMsg" style="margin-top:8px;font-size:13px;"></div>
+              </div>
+            </div>
+            
             <!-- підсумки -->
             <div id="summaryTotals" class="totals" aria-live="polite"></div>
 
             <hr class="sep" />
 
             <!-- Upsell Widget (динамічний контент) -->
-<div class="card upsell-widget" id="checkoutUpsell">
-  <div class="card-body">
-    <!-- Контент генерується через initCheckoutUpsell() -->
-  </div>
-</div>
+            <div class="card upsell-widget" id="checkoutUpsell">
+              <div class="card-body">
+                <!-- Контент генерується через initCheckoutUpsell() -->
+              </div>
+            </div>
             
             <div class="pill">Research Use Only</div>
             <ul class="muted ro-list">
@@ -308,22 +306,13 @@
   <!-- App JS -->
   <script src="js/main.js?v=34"></script>
 
+  <!-- ============================================ -->
+  <!-- BEGIN_CHECKOUT EVENT (КРИТИЧНО ВАЖЛИВО)     -->
+  <!-- ============================================ -->
   <script>
-    // рік у футері (без залежностей)
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
-
-     // Замість існуючого коду в checkout.html (рядок ~200)
-
-<script>
-// ============================================
-// КРИТИЧНО: BEGIN_CHECKOUT EVENT
-// Має спрацювати ДО будь-яких інших подій
-// ============================================
 (function() {
   console.log('[CHECKOUT] 🚀 Begin checkout initialization...');
   
-  // Отримуємо transaction ID з sessionStorage
   function getTransactionId() {
     try {
       const stored = sessionStorage.getItem('_txn_id');
@@ -332,7 +321,6 @@
         return stored;
       }
       
-      // Fallback: створюємо новий якщо немає
       const timestamp = Date.now();
       const random = Math.random().toString(36).substring(2, 9);
       const txnId = `TXN-${timestamp}-${random}`.toUpperCase();
@@ -347,7 +335,6 @@
   
   const TRANSACTION_ID = getTransactionId();
   
-  // Читаємо кошик
   function readCart() {
     try {
       const raw = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
@@ -357,7 +344,6 @@
     }
   }
   
-  // Відправляємо begin_checkout ОДРАЗУ при завантаженні
   function sendBeginCheckout() {
     const cart = readCart();
     
@@ -366,7 +352,6 @@
       return;
     }
     
-    // Підготовка items
     const items = cart.map(item => ({
       item_id: item.sku || 'unknown',
       item_name: item.name || 'Unknown Product',
@@ -386,9 +371,6 @@
       transaction_id: TRANSACTION_ID
     });
     
-    // ============================================
-    // CRITICAL: dataLayer push для begin_checkout
-    // ============================================
     try {
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
@@ -410,18 +392,33 @@
       console.error('[GA4] ❌ begin_checkout failed:', e);
     }
     
-    // Зберігаємо для використання при submit
     window._checkoutTransactionId = TRANSACTION_ID;
   }
   
-  // КРИТИЧНО: виконуємо якнайшвидше
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', sendBeginCheckout);
   } else {
     sendBeginCheckout();
   }
 })();
-</script>
+  </script>
+
+  <!-- ============================================ -->
+  <!-- ГЕНЕРАЦІЯ ORDER ID НА ФРОНТЕНДІ             -->
+  <!-- ============================================ -->
+  <script>
+(function() {
+  // Генеруємо Order ID ОДРАЗУ при завантаженні checkout
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 9).toUpperCase();
+  const orderId = `ORD-${timestamp}-${random}`;
+  
+  // Зберігаємо глобально
+  window._generatedOrderId = orderId;
+  
+  console.log('[CHECKOUT] 🆔 Pre-generated Order ID:', orderId);
+})();
+  </script>
 
 </body>
 </html>
