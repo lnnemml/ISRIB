@@ -57,7 +57,7 @@
 
   <script>
     // ============================================
-    // ✅ ВИПРАВЛЕНИЙ КОД
+    // ✅ ПОВНІСТЮ ОНОВЛЕНИЙ КОД З ПІДТРИМКОЮ ADMIN PANEL
     // ============================================
     (function() {
       console.log('[BUY-500MG] 🚀 Initializing direct purchase...');
@@ -105,11 +105,21 @@
       const TRANSACTION_ID = getOrCreateTransactionId();
       
       // ============================================
-      // 3. ЗБЕРЕЖЕННЯ ДАНИХ ДЛЯ CHECKOUT
+      // 3. ГЕНЕРАЦІЯ ORDER ID (ДЛЯ ADMIN PANEL)
+      // ============================================
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 9).toUpperCase();
+      const ORDER_ID = `ORD-${timestamp}-${random}`;
+      
+      console.log('[BUY-500MG] 🆔 Generated Order ID:', ORDER_ID);
+      
+      // ============================================
+      // 4. ЗБЕРЕЖЕННЯ ДАНИХ ДЛЯ CHECKOUT
       // ============================================
       try {
         sessionStorage.setItem('_checkout_data', JSON.stringify({
           transaction_id: TRANSACTION_ID,
+          order_id: ORDER_ID,
           product: 'ISRIB A15 500mg',
           quantity: '500mg',
           price: 130,
@@ -122,7 +132,7 @@
       }
       
       // ============================================
-      // 4. CART FUNCTIONS
+      // 5. CART FUNCTIONS
       // ============================================
       function normalizeCartUnits(arr) {
         return (arr || []).map((i) => {
@@ -188,13 +198,62 @@
       }
 
       // ============================================
-      // 5. ДОДАЄМО ДО КОШИКА
+      // 6. ДОДАЄМО ДО КОШИКА
       // ============================================
       addToCart('ISRIB A15', 'isrib-a15', 500, 130, '500mg');
       console.log('[BUY-500MG] ✅ Added to cart');
 
       // ============================================
-      // 6. GA4 EVENT: ADD_TO_CART_DIRECT (HIGH INTENT)
+      // 7. ЗБЕРІГАЄМО PENDING ORDER ДЛЯ ADMIN PANEL
+      // ============================================
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        const pendingOrderData = {
+          order_id: ORDER_ID,
+          email: 'pending@direct-buy',  // Буде оновлено в checkout
+          timestamp: Date.now(),
+          amount: 130,
+          subtotal: 130,
+          discount: 0,
+          promo: '',
+          product: '500mg',
+          items: [{
+            name: 'ISRIB A15',
+            sku: 'isrib-a15',
+            grams: 500,
+            price: 130,
+            display: '500mg',
+            qty: 1
+          }],
+          utm_source: urlParams.get('utm_source') || 'direct_buy',
+          utm_campaign: urlParams.get('utm_campaign') || 'buy_500mg_link',
+          firstName: '',
+          lastName: '',
+          country: '',
+          city: '',
+          purchase_flow: 'direct_buy_500mg'
+        };
+        
+        const pendingKey = 'pending_order_' + ORDER_ID;
+        localStorage.setItem(pendingKey, JSON.stringify(pendingOrderData));
+        
+        console.log('[BUY-500MG] 💾 Pending order saved for admin panel:', pendingKey);
+        console.log('[BUY-500MG] 📦 Order data:', pendingOrderData);
+        
+        // Verification
+        const verification = localStorage.getItem(pendingKey);
+        if (verification) {
+          console.log('[BUY-500MG] ✅ Admin panel order verified in localStorage');
+        } else {
+          console.error('[BUY-500MG] ❌ Admin panel order NOT saved!');
+        }
+      } catch(e) {
+        console.error('[BUY-500MG] ❌ Cannot save pending order:', e);
+      }
+
+      // ============================================
+      // 8. GA4 EVENT: ADD_TO_CART_DIRECT (HIGH INTENT)
       // ============================================
       
       // ✅ ВАЖЛИВО: Використовуємо setTimeout щоб GTM встиг завантажитись
@@ -217,6 +276,7 @@
               }]
             },
             transaction_id: TRANSACTION_ID,
+            order_id: ORDER_ID,
             purchase_intent: 'high',
             event_category: 'ecommerce',
             event_label: 'Direct Buy: ISRIB A15 500mg'
@@ -226,6 +286,7 @@
             product: 'ISRIB A15 500mg',
             value: 130,
             transaction_id: TRANSACTION_ID,
+            order_id: ORDER_ID,
             intent: 'high'
           });
           
@@ -238,7 +299,7 @@
       }, 300); // ✅ Затримка 300ms для завантаження GTM
 
       // ============================================
-      // 7. РЕДІРЕКТ НА CHECKOUT
+      // 9. РЕДІРЕКТ НА CHECKOUT
       // ============================================
       setTimeout(function() {
         console.log('[BUY-500MG] 🔄 Redirecting to checkout...');
