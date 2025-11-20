@@ -1727,35 +1727,56 @@ unction initCheckoutForm() {
         return;
       }
 
-      // ============================================
-      // ✅ SUCCESS FLOW
-      // ============================================
-      console.log('[Checkout] ✅ Order sent successfully');
-      
-      const normalizedEmail = email.trim().toLowerCase();
-      
-      // Cart recovery cancel
-      try {
-        await cancelCartRecovery(normalizedEmail);
-        console.log('[Checkout] ✅ Cart recovery canceled');
-      } catch (cancelErr) {
-        console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
-      }
+    // ============================================
+// ✅ SUCCESS FLOW
+// ============================================
+console.log('[Checkout] ✅ Order sent successfully');
 
-      localStorage.removeItem('cart_recovery_state');
-      localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
-      localStorage.removeItem('pending_promo');
+const normalizedEmail = email.trim().toLowerCase();
 
-      // Збереження даних для success page
-      const orderData = {
-        order_id: orderIdFinal,
-        subtotal: subtotal,
-        discount: discount,
-        promo: appliedPromoCode || '',
-        total: total,
-        items: items,
-        timestamp: Date.now()
-      };
+// Cart recovery cancel
+try {
+  await cancelCartRecovery(normalizedEmail);
+  console.log('[Checkout] ✅ Cart recovery canceled');
+} catch (cancelErr) {
+  console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
+}
+
+localStorage.removeItem('cart_recovery_state');
+localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
+localStorage.removeItem('pending_promo');
+
+// ============================================
+// ✅ КРИТИЧНО: ЗБЕРІГАЄМО PENDING ORDER ДЛЯ ADMIN PANEL
+// Використовуємо той самий pendingOrderData що вже створений вище
+// ============================================
+try {
+  const pendingKey = 'pending_order_' + orderIdFinal;
+  localStorage.setItem(pendingKey, JSON.stringify(pendingOrderData));
+  console.log('[Checkout] 💾 Pending order saved for admin panel:', pendingKey);
+  console.log('[Checkout] 📦 Order data:', pendingOrderData);
+  
+  // Verification
+  const verification = localStorage.getItem(pendingKey);
+  if (verification) {
+    console.log('[Checkout] ✅ Admin panel order verified in localStorage');
+  } else {
+    console.error('[Checkout] ❌ Admin panel order NOT saved!');
+  }
+} catch (adminSaveErr) {
+  console.error('[Checkout] ❌ Failed to save for admin panel:', adminSaveErr);
+}
+
+// Збереження даних для success page (окремо, спрощена версія)
+const orderData = {
+  order_id: orderIdFinal,
+  subtotal: subtotal,
+  discount: discount,
+  promo: appliedPromoCode || '',
+  total: total,
+  items: items,
+  timestamp: Date.now()
+};
 
       console.log('[Checkout] 💾 Saving order data for success page');
 
