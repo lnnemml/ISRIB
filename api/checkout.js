@@ -6,12 +6,10 @@ const norm  = (s) => String(s || '').trim();
 const fmtUSD = (n) => `$${Number(n || 0).toFixed(2)}`;
 const fmtAmount = (mg) => (mg >= 1000 ? `${(mg / 1000)} g` : `${mg} mg`);
 
-// ✅ Нормалізація email
 function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
 }
 
-// "100mg" | "500 mg" | "1g" -> mg (number)
 const parseQtyToMg = (s) => {
   if (!s) return 0;
   const t = String(s).toLowerCase().trim();
@@ -24,7 +22,6 @@ const parseQtyToMg = (s) => {
   return Math.round(n);
 };
 
-// Нормалізуємо одиниці для item
 function normalizeItem(it) {
   let grams = toNum(it.grams || 0);
   const display = it.display || it.quantity || it.qtyLabel || '';
@@ -42,7 +39,6 @@ function normalizeItem(it) {
   };
 }
 
-// Валідація promo code
 function validatePromoCode(code) {
   const PROMO_CODES = {
     'RETURN15': { discount: 0.15, label: '15% off' },
@@ -53,9 +49,6 @@ function validatePromoCode(code) {
   return PROMO_CODES[upper] || null;
 }
 
-// ============================================================================
-// ✅ ВИПРАВЛЕНА функція скасування cart recovery (ASYNC з AWAIT)
-// ============================================================================
 async function cancelCartRecoveryEmails(email) {
   const normalizedEmail = normalizeEmail(email);
   
@@ -89,7 +82,7 @@ async function cancelCartRecoveryEmails(email) {
 
   } catch (error) {
     console.error('[Checkout] ❌ Cart recovery cancel failed:', error.message);
-    throw error; // ← Пробрасуємо помилку щоб catch блок зверху це побачив
+    throw error;
   }
 }
 
@@ -113,6 +106,20 @@ export default async function handler(req, res) {
       console.log('[Checkout] Honeypot triggered — ignoring request');
       return res.status(200).json({ ok: true });
     }
+
+    // ============================================
+    // ✅ КРИТИЧНО: ОТРИМУЄМО ORDER ID З ФРОНТЕНДУ
+    // ============================================
+    const orderIdFromClient = norm(data.orderId || data.order_id);
+    
+    // Генеруємо fallback якщо клієнт не надіслав
+    const orderId = orderIdFromClient || 
+      `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    
+    console.log('[Checkout] 🆔 Order ID:', {
+      fromClient: !!orderIdFromClient,
+      orderId: orderId
+    });
 
     // ---- обов'язкові поля ----
     const firstName = norm(data.firstName);
@@ -140,10 +147,10 @@ export default async function handler(req, res) {
     const promoCode = promoData ? promoCodeInput.toUpperCase() : null;
 
     console.log('[Checkout] 📦 Order received:', {
+      orderId,
       email,
       country,
-      promoCode: promoCode || 'none',
-      hasPromo: !!promoCode
+      promoCode: promoCode || 'none'
     });
 
     // ---- кошик ----
@@ -153,7 +160,6 @@ export default async function handler(req, res) {
       return res.status(422).json({ code: 'EMPTY_CART', error: 'Cart is empty.' });
     }
 
-    // валідація та нормалізація
     const items = itemsInput.map((it) => {
       const name  = norm(it.name ?? it.title ?? it.id);
       const qty   = toNum(it.qty ?? it.quantity ?? 0);
@@ -180,10 +186,10 @@ export default async function handler(req, res) {
     const total = subtotal - discount + shipping;
 
     console.log('[Checkout] 💰 Totals:', { 
+      orderId,
       subtotal: fmtUSD(subtotal), 
       discount: fmtUSD(discount), 
-      total: fmtUSD(total),
-      promoApplied: !!promoCode 
+      total: fmtUSD(total)
     });
 
     // ---- рендер таблиці ----
@@ -240,7 +246,10 @@ export default async function handler(req, res) {
     const fullName = `${firstName} ${lastName}`.trim();
     const totalMgAll = items.reduce((s, it) => s + getMgPerPack(it) * getQty(it), 0);
 
-    const adminSubject = `Order Request — ${fullName} (${items.length} items, ${fmtAmount(totalMgAll)} total${promoCode ? `, ${promoCode} applied` : ''}, total ${fmtUSD(total)})`;
+    // ============================================
+    // ✅ ORDER ID В SUBJECT
+    // ============================================
+    const adminSubject = `Order ${orderId} — ${fullName} (${items.length} items, ${fmtAmount(totalMgAll)} total${promoCode ? `, ${promoCode}` : ''}, ${fmtUSD(total)})`;
 
     // ---- HTML для адміну ----
     const adminHtml = `
@@ -248,6 +257,14 @@ export default async function handler(req, res) {
       <html>
       <body style="font-family:system-ui,sans-serif;line-height:1.6;color:#1e293b;">
         <h2 style="color:#10b981;margin-bottom:20px;">🎉 New Order Request</h2>
+        
+        <!-- ✅ ORDER ID BANNER -->
+        <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;border-radius:8px;margin-bottom:20px;">
+          <p style="margin:0;font-size:18px;">
+            <b>Order ID:</b> 
+            <span style="background:#fff;padding:6px 14px;border-radius:6px;font-family:monospace;font-weight:700;color:#f59e0b;font-size:20px;">${orderId}</span>
+          </p>
+        </div>
         
         <div style="background:#f8fafc;padding:16px;border-radius:8px;margin-bottom:20px;">
           <h3 style="margin:0 0 12px;color:#475569;font-size:14px;text-transform:uppercase;">Customer Info</h3>
@@ -268,11 +285,11 @@ export default async function handler(req, res) {
         ` : ''}
 
         ${promoCode ? `
-        <div style="background:#fef3c7;padding:16px;border-radius:8px;margin-bottom:20px;border-left:4px solid #f59e0b;">
+        <div style="background:#dcfdf7;padding:16px;border-radius:8px;margin-bottom:20px;border-left:4px solid #10b981;">
           <p style="margin:0;">
             <b>🎟️ Promo code applied:</b> 
-            <span style="background:#fff;padding:4px 12px;border-radius:4px;font-family:monospace;font-weight:700;color:#f59e0b;">${promoCode}</span>
-            <span style="color:#92400e;margin-left:8px;">(${promoData.label})</span>
+            <span style="background:#fff;padding:4px 12px;border-radius:4px;font-family:monospace;font-weight:700;color:#059669;">${promoCode}</span>
+            <span style="color:#065f46;margin-left:8px;">(${promoData.label})</span>
           </p>
         </div>
         ` : ''}
@@ -291,13 +308,15 @@ export default async function handler(req, res) {
         <hr style="margin:24px 0;border:none;border-top:2px solid #e5e7eb;">
         
         <p style="color:#64748b;font-size:13px;margin:16px 0;">
-          <b>Quick reply:</b> <a href="mailto:${email}?subject=Re: ${encodeURIComponent(adminSubject)}" style="color:#3b82f6;">Reply to customer</a>
+          <b>Quick reply:</b> <a href="mailto:${email}?subject=Re: Order ${orderId}" style="color:#3b82f6;">Reply to customer</a>
         </p>
       </body>
       </html>
     `;
 
     const adminText = `New Order Request
+
+Order ID: ${orderId}
 
 Customer Info:
 Name: ${fullName}
@@ -329,12 +348,11 @@ Total: ${fmtUSD(total)}
 * Free shipping — limited-time launch offer.`;
 
     // ============================================================================
-    // ✅ ВІДПРАВКА ЛИСТІВ З ГАРАНТІЄЮ ВИКОНАННЯ
+    // ВІДПРАВКА ЛИСТІВ
     // ============================================================================
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     try {
-      // 1. Лист адміну (основний) — КРИТИЧНО, БЛОКУЄМО ВИКОНАННЯ
       console.log('[Checkout] 📧 Sending admin email to:', process.env.RESEND_TO);
       
       await resend.emails.send({
@@ -346,6 +364,7 @@ Total: ${fmtUSD(total)}
         text: adminText,
         tags: [
           { name: 'type', value: 'order_admin' },
+          { name: 'order_id', value: orderId },
           { name: 'promo', value: promoCode || 'none' }
         ]
       });
@@ -354,7 +373,6 @@ Total: ${fmtUSD(total)}
 
     } catch (emailError) {
       console.error('[Checkout] ❌ CRITICAL: Admin email failed:', emailError);
-      // Повертаємо помилку — адмін ПОВИНЕН отримати лист
       return res.status(500).json({ 
         error: 'Failed to send admin notification',
         details: emailError.message,
@@ -362,9 +380,9 @@ Total: ${fmtUSD(total)}
       });
     }
 
-    // 2. Додатковий адмін email (якщо є) — НЕ БЛОКУЄМО
+    // 2. Додатковий адмін email (якщо є)
     if (process.env.RESEND_TO_EXTRA) {
-      console.log('[Checkout] 📧 Sending extra admin email to:', process.env.RESEND_TO_EXTRA);
+      console.log('[Checkout] 📧 Sending extra admin email');
       
       resend.emails.send({
         from: process.env.RESEND_FROM,
@@ -375,24 +393,20 @@ Total: ${fmtUSD(total)}
         text: adminText,
         tags: [
           { name: 'type', value: 'order_admin_extra' },
-          { name: 'promo', value: promoCode || 'none' }
+          { name: 'order_id', value: orderId }
         ]
       })
-      .then(() => {
-        console.log('[Checkout] ✅ Extra admin email sent');
-      })
-      .catch(err => {
-        console.warn('[Checkout] ⚠️ Extra admin email failed (non-critical):', err.message);
-      });
+      .then(() => console.log('[Checkout] ✅ Extra admin email sent'))
+      .catch(err => console.warn('[Checkout] ⚠️ Extra admin email failed:', err.message));
     }
 
-    // 3. Підтвердження клієнту — НЕ БЛОКУЄМО
-    console.log('[Checkout] 📧 Sending customer confirmation to:', email);
+    // 3. Підтвердження клієнту
+    console.log('[Checkout] 📧 Sending customer confirmation');
     
     resend.emails.send({
       from: process.env.RESEND_FROM,
       to: email,
-      subject: `We received your order request — ISRIB.shop`,
+      subject: `Order ${orderId} received — ISRIB.shop`,
       html: `
         <!doctype html>
         <html>
@@ -400,6 +414,12 @@ Total: ${fmtUSD(total)}
           <div style="text-align:center;margin-bottom:24px;">
             <h1 style="color:#10b981;margin:0;">Thank you, ${firstName}!</h1>
             <p style="color:#64748b;margin:8px 0 0;">We've received your order request.</p>
+          </div>
+
+          <!-- ✅ ORDER ID -->
+          <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;border-radius:8px;margin-bottom:24px;text-align:center;">
+            <p style="margin:0;color:#92400e;font-size:14px;"><b>Your Order ID:</b></p>
+            <p style="margin:8px 0 0;font-family:monospace;font-size:20px;font-weight:700;color:#f59e0b;">${orderId}</p>
           </div>
 
           <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px;border-radius:8px;margin-bottom:24px;">
@@ -426,7 +446,11 @@ Total: ${fmtUSD(total)}
       `,
       text: `Hi ${firstName},
 
-Thanks for your order request! We've received it and will get back to you shortly.
+Thanks for your order request! 
+
+Your Order ID: ${orderId}
+
+We've received it and will get back to you shortly.
 
 Order Summary:
 ${items.map(it => {
@@ -441,44 +465,30 @@ ${discount > 0 ? `Discount (${promoCode}): −${fmtUSD(discount)}` : ''}
 Shipping: FREE
 Total: ${fmtUSD(total)}
 
-* Free shipping — limited-time launch offer.
-
 Questions? Reply to this email or contact: isrib.shop@protonmail.com
 
 For research use only. Not for human consumption.`,
       tags: [
         { name: 'type', value: 'order_confirmation' },
-        { name: 'promo', value: promoCode || 'none' }
+        { name: 'order_id', value: orderId }
       ]
     })
-    .then(() => {
-      console.log('[Checkout] ✅ Customer confirmation sent');
-    })
-    .catch(err => {
-      console.warn('[Checkout] ⚠️ Customer confirmation failed (non-critical):', err.message);
-    });
+    .then(() => console.log('[Checkout] ✅ Customer confirmation sent'))
+    .catch(err => console.warn('[Checkout] ⚠️ Customer confirmation failed:', err.message));
 
-    console.log('[Checkout] ✅ All emails queued');
-
-    // ============================================================================
-    // 4. ✅ СКАСОВУЄМО cart recovery З ОЧІКУВАННЯМ
-    // ============================================================================
-    console.log('[Checkout] 🔄 Canceling cart recovery for:', email);
+    // 4. Скасовуємо cart recovery
+    console.log('[Checkout] 🔄 Canceling cart recovery');
 
     await new Promise(resolve => setTimeout(resolve, 500));
 
     try {
-      await cancelCartRecoveryEmails(email); // ← КРИТИЧНО: await!
-      console.log('[Checkout] ✅ Cart recovery canceled successfully');
+      await cancelCartRecoveryEmails(email);
+      console.log('[Checkout] ✅ Cart recovery canceled');
     } catch (cancelError) {
-      // Не блокуємо checkout якщо cancel failed
-      console.warn('[Checkout] ⚠️ Cart recovery cancel failed (non-critical):', cancelError.message);
+      console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelError.message);
     }
 
-    // 5. Генеруємо Order ID для редіректу
-    const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-
-    // 6. Формуємо items для URL (для success page)
+    // 5. Формуємо items для URL
     const itemsForUrl = items.map(it => ({
       name: it.name,
       sku: it.sku || it.id || 'unknown',
@@ -491,15 +501,13 @@ For research use only. Not for human consumption.`,
     console.log('[Checkout] ✅ Order processed successfully:', {
       orderId,
       email: normalizeEmail(email),
-      total: fmtUSD(total),
-      itemCount: items.length
+      total: fmtUSD(total)
     });
 
     // ---- завершення ----
     return res.status(200).json({ 
       ok: true,
-      orderId,
-      // Дані для success page
+      orderId: orderId,
       redirect: {
         items: itemsForUrl,
         subtotal,
@@ -519,5 +527,4 @@ For research use only. Not for human consumption.`,
   }
 }
 
-// Використовуємо raw-body
 export const config = { api: { bodyParser: false } };
