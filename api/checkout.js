@@ -1,4 +1,6 @@
 import { Resend } from 'resend';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 // ---------- helpers ----------
 const toNum = (v) => (typeof v === 'number' ? v : Number(v || 0));
@@ -83,6 +85,71 @@ async function cancelCartRecoveryEmails(email) {
   } catch (error) {
     console.error('[Checkout] ❌ Cart recovery cancel failed:', error.message);
     throw error;
+  }
+}
+
+// ============================================
+// ✅ НОВА ФУНКЦІЯ: ЗБЕРЕЖЕННЯ PENDING ORDER
+// ============================================
+async function savePendingOrder(orderData) {
+  try {
+    // Створюємо директорію якщо не існує
+    const dataDir = path.join(process.cwd(), 'data');
+    const pendingFile = path.join(dataDir, 'pending-orders.json');
+    
+    try {
+      await fs.mkdir(dataDir, { recursive: true });
+    } catch (e) {
+      // Директорія вже існує
+    }
+    
+    // Читаємо існуючі pending orders
+    let pendingOrders = [];
+    try {
+      const content = await fs.readFile(pendingFile, 'utf-8');
+      pendingOrders = JSON.parse(content);
+    } catch (e) {
+      // Файл не існує або порожній
+      console.log('[Pending] Creating new pending orders file');
+    }
+    
+    // Перевіряємо чи вже є це замовлення
+    const existingIndex = pendingOrders.findIndex(
+      order => order.order_id === orderData.order_id
+    );
+    
+    if (existingIndex >= 0) {
+      // Оновлюємо існуюче
+      pendingOrders[existingIndex] = {
+        ...pendingOrders[existingIndex],
+        ...orderData,
+        updated_at: Date.now()
+      };
+      console.log('[Pending] ✅ Updated existing order:', orderData.order_id);
+    } else {
+      // Додаємо нове
+      pendingOrders.push({
+        ...orderData,
+        created_at: Date.now(),
+        updated_at: Date.now()
+      });
+      console.log('[Pending] ✅ Added new order:', orderData.order_id);
+    }
+    
+    // Видаляємо старі (>7 днів)
+    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    pendingOrders = pendingOrders.filter(order => 
+      (order.created_at || order.timestamp || Date.now()) > sevenDaysAgo
+    );
+    
+    // Зберігаємо
+    await fs.writeFile(pendingFile, JSON.stringify(pendingOrders, null, 2));
+    console.log('[Pending] 💾 Saved to file, total orders:', pendingOrders.length);
+    
+    return true;
+  } catch (error) {
+    console.error('[Pending] ❌ Failed to save:', error);
+    return false;
   }
 }
 
@@ -191,6 +258,33 @@ export default async function handler(req, res) {
       discount: fmtUSD(discount), 
       total: fmtUSD(total)
     });
+
+    // ============================================
+    // ✅ ЗБЕРІГАЄМО PENDING ORDER В ФАЙЛ
+    // ============================================
+    const pendingOrderData = {
+      order_id: orderId,
+      email: normalizeEmail(email),
+      firstName: firstName,
+      lastName: lastName,
+      country: country,
+      region: region,
+      city: city,
+      postal: postal,
+      address: address,
+      messenger: messenger,
+      handle: handle,
+      notes: notes,
+      items: items,
+      subtotal: subtotal,
+      discount: discount,
+      promo: promoCode || '',
+      total: total,
+      status: 'pending_payment',
+      timestamp: Date.now()
+    };
+    
+    await savePendingOrder(pendingOrderData);
 
     // ---- рендер таблиці ----
     const itemsRows = items.map(it => {
