@@ -311,97 +311,110 @@
   <!-- ============================================ -->
   <script>
 (function() {
-  console.log('[CHECKOUT] 🚀 Begin checkout initialization...');
-  
-  function getTransactionId() {
+  // ============================================
+  // ✅ ФУНКЦІЯ ДЛЯ ОТРИМАННЯ АБО ГЕНЕРАЦІЇ ORDER ID
+  // ============================================
+  function getOrCreateOrderId() {
+    const SESSION_KEY = '_order_id';
+    const TIMESTAMP_KEY = '_order_timestamp';
+    const MAX_AGE = 30 * 60 * 1000; // 30 хвилин
+    
     try {
-      const stored = sessionStorage.getItem('_txn_id');
-      if (stored) {
-        console.log('[CHECKOUT] 📋 Transaction ID:', stored);
+      // 1. Спробуємо отримати з sessionStorage
+      const stored = sessionStorage.getItem(SESSION_KEY);
+      const timestamp = parseInt(sessionStorage.getItem(TIMESTAMP_KEY) || '0');
+      
+      if (stored && (Date.now() - timestamp) < MAX_AGE) {
+        console.log('[CHECKOUT] ♻️ Reusing existing Order ID:', stored);
         return stored;
       }
       
-      const timestamp = Date.now();
-      const random = Math.random().toString(36).substring(2, 9);
-      const txnId = `TXN-${timestamp}-${random}`.toUpperCase();
-      sessionStorage.setItem('_txn_id', txnId);
-      console.log('[CHECKOUT] ✨ Created fallback ID:', txnId);
-      return txnId;
-    } catch(e) {
-      console.error('[CHECKOUT] ❌ Cannot get transaction ID:', e);
-      return 'TXN-' + Date.now();
-    }
-  }
-  
-  const TRANSACTION_ID = getTransactionId();
-  
-  function readCart() {
-    try {
-      const raw = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
-      return raw || [];
-    } catch {
-      return [];
-    }
-  }
-  
-  function sendBeginCheckout() {
-    const cart = readCart();
-    
-    if (!cart || cart.length === 0) {
-      console.warn('[CHECKOUT] ⚠️ Empty cart, skipping begin_checkout');
-      return;
-    }
-    
-    const items = cart.map(item => ({
-      item_id: item.sku || 'unknown',
-      item_name: item.name || 'Unknown Product',
-      item_variant: item.display || '',
-      item_category: 'Research Compounds',
-      quantity: Number(item.count) || 1,
-      price: Number(item.price) || 0
-    }));
-    
-    const total = cart.reduce((sum, item) => 
-      sum + (Number(item.price || 0) * Number(item.count || 1)), 0
-    );
-    
-    console.log('[CHECKOUT] 📦 Cart:', {
-      items: items.length,
-      total: total,
-      transaction_id: TRANSACTION_ID
-    });
-    
-    try {
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'begin_checkout',
-        ecommerce: {
-          currency: 'USD',
-          value: total,
-          items: items
-        },
-        transaction_id: TRANSACTION_ID
-      });
+      // 2. Спробуємо отримати з _checkout_data
+      const checkoutData = sessionStorage.getItem('_checkout_data');
+      if (checkoutData) {
+        try {
+          const parsed = JSON.parse(checkoutData);
+          if (parsed.order_id) {
+            console.log('[CHECKOUT] 📋 Found Order ID in checkout data:', parsed.order_id);
+            // Зберігаємо для наступного разу
+            sessionStorage.setItem(SESSION_KEY, parsed.order_id);
+            sessionStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
+            return parsed.order_id;
+          }
+        } catch(e) {}
+      }
       
-      console.log('[GA4] ✅ begin_checkout sent:', {
-        value: total,
-        items: items.length,
-        transaction_id: TRANSACTION_ID
-      });
+      // 3. Перевіряємо чи є pending order в localStorage
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('pending_order_')) {
+          try {
+            const orderData = JSON.parse(localStorage.getItem(key) || '{}');
+            if (orderData.email === 'pending@direct-buy' && orderData.order_id) {
+              console.log('[CHECKOUT] 🔄 Found pending order from direct buy:', orderData.order_id);
+              // Зберігаємо для використання
+              sessionStorage.setItem(SESSION_KEY, orderData.order_id);
+              sessionStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
+              return orderData.order_id;
+            }
+          } catch(e) {}
+        }
+      }
+      
     } catch(e) {
-      console.error('[GA4] ❌ begin_checkout failed:', e);
+      console.warn('[CHECKOUT] ⚠️ Error checking existing Order ID:', e);
     }
     
-    window._checkoutTransactionId = TRANSACTION_ID;
+    // 4. Якщо нічого не знайдено - генеруємо новий
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 9).toUpperCase();
+    const orderId = `ORD-${timestamp}-${random}`;
+    
+    try {
+      sessionStorage.setItem(SESSION_KEY, orderId);
+      sessionStorage.setItem(TIMESTAMP_KEY, timestamp.toString());
+      console.log('[CHECKOUT] ✨ Created new Order ID:', orderId);
+    } catch(e) {
+      console.warn('[CHECKOUT] ⚠️ Cannot save Order ID to sessionStorage');
+    }
+    
+    return orderId;
   }
   
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', sendBeginCheckout);
-  } else {
-    sendBeginCheckout();
+  // Генеруємо Order ID ОДРАЗУ при завантаженні checkout
+  const orderId = getOrCreateOrderId();
+  
+  // Зберігаємо глобально для використання в main.js
+  window._generatedOrderId = orderId;
+  
+  console.log('[CHECKOUT] 🆔 Active Order ID:', orderId);
+  
+  // ============================================
+  // ✅ ОНОВЛЮЄМО PENDING ORDER ЯКЩО ПОТРІБНО
+  // ============================================
+  try {
+    const pendingKey = 'pending_order_' + orderId;
+    const existingOrder = localStorage.getItem(pendingKey);
+    
+    if (existingOrder) {
+      const orderData = JSON.parse(existingOrder);
+      console.log('[CHECKOUT] 📦 Found existing pending order:', orderData);
+      
+      // Якщо це order з direct buy (без email), оновимо timestamp
+      if (orderData.email === 'pending@direct-buy') {
+        orderData.checkout_opened_at = Date.now();
+        localStorage.setItem(pendingKey, JSON.stringify(orderData));
+        console.log('[CHECKOUT] 🔄 Updated pending order timestamp');
+      }
+    } else {
+      console.log('[CHECKOUT] ℹ️ No existing pending order found (will be created on submit)');
+    }
+  } catch(e) {
+    console.error('[CHECKOUT] ❌ Error updating pending order:', e);
   }
 })();
-  </script>
+</script>
+
 
   <!-- ============================================ -->
   <!-- ГЕНЕРАЦІЯ ORDER ID НА ФРОНТЕНДІ             -->
