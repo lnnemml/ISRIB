@@ -1478,15 +1478,13 @@ function initCheckoutUpsell() {
 
 
 
-unction initCheckoutForm() {
+function initCheckoutForm() {
   const form = document.getElementById('checkoutForm');
   if (!form) return;
 
   const submitBtn = document.getElementById('submitOrderBtn');
   
   let isSubmitting = false;
-  
-  // GA4 begin_checkout вже відправлено в окремому скрипті checkout.html
   
   // Email збір для cart recovery
   const emailInput = form.querySelector('input[name="email"], #email');
@@ -1637,8 +1635,7 @@ unction initCheckoutForm() {
     const total = subtotal - discount;
 
     // ============================================
-    // ✅ КРИТИЧНО: ВИКОРИСТОВУЄМО ORDER ID З ГЛОБАЛЬНОЇ ЗМІННОЇ
-    // Він був згенерований при завантаженні checkout.html
+    // ✅ КРИТИЧНО: ВИКОРИСТОВУЄМО ІСНУЮЧИЙ ORDER ID
     // ============================================
     const orderIdFinal = window._generatedOrderId || 
       `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
@@ -1646,7 +1643,7 @@ unction initCheckoutForm() {
     console.log('[Checkout] 🆔 Using Order ID:', orderIdFinal);
 
     // ============================================
-    // ✅ ЗБЕРЕЖЕННЯ PENDING ORDER В LOCALSTORAGE
+    // ✅ СТВОРЮЄМО АБО ОНОВЛЮЄМО PENDING ORDER
     // ============================================
     const pendingOrderData = {
       order_id: orderIdFinal,
@@ -1663,13 +1660,24 @@ unction initCheckoutForm() {
       firstName: firstName,
       lastName: lastName,
       country: country,
-      city: city
+      city: city,
+      region: region,
+      postal: postal,
+      address: address,
+      messenger: messenger,
+      handle: handle,
+      notes: notes,
+      checkout_submitted_at: Date.now()
     };
 
+    // ============================================
+    // ✅ ЗБЕРІГАЄМО PENDING ORDER ПЕРЕД ВІДПРАВКОЮ
+    // ============================================
     try {
       const pendingKey = 'pending_order_' + orderIdFinal;
       localStorage.setItem(pendingKey, JSON.stringify(pendingOrderData));
-      console.log('[Checkout] 💾 Pending order saved:', pendingKey);
+      console.log('[Checkout] 💾 Pending order saved/updated:', pendingKey);
+      console.log('[Checkout] 📦 Order data:', pendingOrderData);
       
       // Verification
       const verification = localStorage.getItem(pendingKey);
@@ -1686,7 +1694,7 @@ unction initCheckoutForm() {
     // ✅ PAYLOAD З ORDER ID
     // ============================================
     const payload = {
-      orderId: orderIdFinal,  // ← КРИТИЧНО: відправляємо на бекенд
+      orderId: orderIdFinal,
       firstName, lastName, email, country, region, city, postal, address,
       messenger, handle, notes,
       _gotcha: gotcha,
@@ -1727,56 +1735,35 @@ unction initCheckoutForm() {
         return;
       }
 
-    // ============================================
-// ✅ SUCCESS FLOW
-// ============================================
-console.log('[Checkout] ✅ Order sent successfully');
+      // ============================================
+      // ✅ SUCCESS FLOW
+      // ============================================
+      console.log('[Checkout] ✅ Order sent successfully');
+      
+      const normalizedEmail = email.trim().toLowerCase();
+      
+      // Cart recovery cancel
+      try {
+        await cancelCartRecovery(normalizedEmail);
+        console.log('[Checkout] ✅ Cart recovery canceled');
+      } catch (cancelErr) {
+        console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
+      }
 
-const normalizedEmail = email.trim().toLowerCase();
+      localStorage.removeItem('cart_recovery_state');
+      localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
+      localStorage.removeItem('pending_promo');
 
-// Cart recovery cancel
-try {
-  await cancelCartRecovery(normalizedEmail);
-  console.log('[Checkout] ✅ Cart recovery canceled');
-} catch (cancelErr) {
-  console.warn('[Checkout] ⚠️ Cart recovery cancel failed:', cancelErr);
-}
-
-localStorage.removeItem('cart_recovery_state');
-localStorage.removeItem(`cart_recovery_scheduled:${normalizedEmail}`);
-localStorage.removeItem('pending_promo');
-
-// ============================================
-// ✅ КРИТИЧНО: ЗБЕРІГАЄМО PENDING ORDER ДЛЯ ADMIN PANEL
-// Використовуємо той самий pendingOrderData що вже створений вище
-// ============================================
-try {
-  const pendingKey = 'pending_order_' + orderIdFinal;
-  localStorage.setItem(pendingKey, JSON.stringify(pendingOrderData));
-  console.log('[Checkout] 💾 Pending order saved for admin panel:', pendingKey);
-  console.log('[Checkout] 📦 Order data:', pendingOrderData);
-  
-  // Verification
-  const verification = localStorage.getItem(pendingKey);
-  if (verification) {
-    console.log('[Checkout] ✅ Admin panel order verified in localStorage');
-  } else {
-    console.error('[Checkout] ❌ Admin panel order NOT saved!');
-  }
-} catch (adminSaveErr) {
-  console.error('[Checkout] ❌ Failed to save for admin panel:', adminSaveErr);
-}
-
-// Збереження даних для success page (окремо, спрощена версія)
-const orderData = {
-  order_id: orderIdFinal,
-  subtotal: subtotal,
-  discount: discount,
-  promo: appliedPromoCode || '',
-  total: total,
-  items: items,
-  timestamp: Date.now()
-};
+      // Збереження даних для success page
+      const orderData = {
+        order_id: orderIdFinal,
+        subtotal: subtotal,
+        discount: discount,
+        promo: appliedPromoCode || '',
+        total: total,
+        items: items,
+        timestamp: Date.now()
+      };
 
       console.log('[Checkout] 💾 Saving order data for success page');
 
