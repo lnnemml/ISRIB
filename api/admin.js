@@ -125,6 +125,7 @@ export default async function handler(req, res) {
         order: {
           order_id: orderId,
           status: 'confirmed',
+          payment_confirmed: true, 
           confirmed_at: Date.now(),
           customer: { 
             name: `${order.firstName} ${order.lastName}`, 
