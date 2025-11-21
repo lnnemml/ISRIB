@@ -3,26 +3,46 @@ import { getAllPendingOrders, getOrdersStats, updateOrderStatus, getPendingOrder
 import { Resend } from 'resend';
 
 export default async function handler(req, res) {
-  // Auth check
+  // ============================================
+  // ✅ AUTH CHECK - підтримка обох змінних
+  // ============================================
   const secret = req.query.secret || req.headers['x-admin-secret'];
-  if (secret !== process.env.ADMIN_SECRET) {
+  
+  // Використовуємо або ADMIN_SECRET або CAMPAIGN_SECRET (що є в env)
+  const validSecret = process.env.ADMIN_SECRET || process.env.CAMPAIGN_SECRET;
+  
+  if (!validSecret) {
+    console.error('[Admin API] ❌ No secret configured in environment');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+  
+  if (secret !== validSecret) {
+    console.error('[Admin API] ❌ Invalid secret');
+    console.error('  Received:', secret ? secret.substring(0, 5) + '...' : 'none');
+    console.error('  Expected:', validSecret.substring(0, 5) + '...');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { action } = req.query;
+  
+  console.log('[Admin API] ✅ Authorized, action:', action);
 
   // ============================================
   // GET ORDERS LIST
   // ============================================
-  if (action === 'get-orders' || req.method === 'GET') {
+  if (action === 'get-orders' || (!action && req.method === 'GET')) {
     try {
       const limit = parseInt(req.query.limit) || 50;
       const offset = parseInt(req.query.offset) || 0;
+
+      console.log('[Admin API] Fetching orders...');
 
       const [orders, stats] = await Promise.all([
         getAllPendingOrders(limit, offset),
         getOrdersStats()
       ]);
+
+      console.log('[Admin API] ✅ Found', orders.length, 'orders');
 
       return res.status(200).json({
         success: true,
@@ -31,7 +51,7 @@ export default async function handler(req, res) {
         pagination: { limit, offset, count: orders.length, total: stats.total }
       });
     } catch (error) {
-      console.error('[Admin API] Error:', error);
+      console.error('[Admin API] ❌ Error:', error);
       return res.status(500).json({ error: 'Internal server error', message: error.message });
     }
   }
