@@ -499,80 +499,106 @@
     // ✅ ЄДИНА ФУНКЦІЯ CONFIRM PURCHASE
     // ============================================
     async function confirmPurchase(orderId) {
-      if (!confirm(`Confirm payment for ${orderId}?`)) return;
-      
-      try {
-        const url = `/api/admin?action=confirm-payment&order_id=${orderId}&secret=${currentSecret}`;
-        
-        console.log('[Admin] 📤 Confirming payment for:', orderId);
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          throw new Error(`Failed: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        console.log('[Admin] 📦 Full response data:', data);
-        
-        if (data.success) {
-          showToast(`✓ Confirmed: ${orderId}`, 'success');
-          
-          // ============================================
-          // ✅ GA4 PURCHASE EVENT З PAYMENT_CONFIRMED
-          // ============================================
-          try {
-            console.log('[GA4] 📤 Preparing purchase event...');
-            
-            // Ініціалізуємо dataLayer якщо потрібно
-            window.dataLayer = window.dataLayer || [];
-            
-            const purchaseData = {
-  event: 'purchase',
-  payment_confirmed: true,  // ← явно перед ecommerce
-  ecommerce: {
-    transaction_id: orderId,
-    value: Number(data.order.total || 0),
-    currency: 'USD',
-    tax: 0,
-    shipping: 0,
-    payment_confirmed: true,  // ← дублюємо і тут
-    items: data.order.items || []
-  }
-};
-            
-            console.log('[GA4] 📊 Purchase event data:', purchaseData);
-            console.log('[GA4] 🛒 Items:', data.order.items);
-            console.log('[GA4] ✅ payment_confirmed:', purchaseData.payment_confirmed);
-            
-            // Push до dataLayer
-            window.dataLayer.push(purchaseData);
-            
-            console.log('[GA4] ✅ purchase event pushed to dataLayer');
-            console.log('[GA4] 📊 Current dataLayer:', window.dataLayer);
-            
-            // Перевірка GTM
-            if (window.google_tag_manager && window.google_tag_manager['GTM-M2QCB45Q']) {
-              console.log('[GA4] ✅ GTM container confirmed loaded');
-            } else {
-              console.warn('[GA4] ⚠️ GTM container may not be loaded');
-            }
-            
-          } catch(gaError) {
-            console.error('[GA4] ❌ Purchase event failed:', gaError);
-            console.error('[GA4] Error stack:', gaError.stack);
-          }
-          
-          // Reload orders після 2 секунд
-          setTimeout(() => loadOrders(), 2000);
-        }
-        
-      } catch (error) {
-        console.error('[Admin] ❌ Confirmation error:', error);
-        showToast(`Error: ${error.message}`, 'error');
-      }
+  if (!confirm(`Confirm payment for ${orderId}?`)) return;
+  
+  try {
+    const url = `/api/admin?action=confirm-payment&order_id=${orderId}&secret=${currentSecret}`;
+    
+    console.log('[Admin] 📤 Confirming payment for:', orderId);
+    console.log('[Admin] 📤 Request URL:', url);
+    
+    const response = await fetch(url, {
+      method: 'POST',  // ← ЗМІНІТЬ на POST!
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        order_id: orderId
+      })
+    });
+    
+    console.log('[Admin] 📥 Response:', response.status, response.statusText);
+    
+    if (!response.ok) {
+      const text = await response.text();
+      console.error('[Admin] ❌ Error response:', text);
+      throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
     }
+    
+    const data = await response.json();
+    
+    console.log('[Admin] 📦 Response data:', data);
+    
+    if (!data.success) {
+      throw new Error(data.error || 'Unknown error');
+    }
+    
+    if (data.order && data.order.payment_confirmed === true) {
+      showToast(`✓ Confirmed: ${orderId}`, 'success');
+      
+      // ============================================
+      // ✅ GA4 PURCHASE EVENT
+      // ============================================
+      try {
+        console.log('[GA4] 📤 Sending purchase event...');
+        
+        window.dataLayer = window.dataLayer || [];
+        
+        const purchaseEvent = {
+          event: 'purchase',
+          payment_confirmed: true,
+          ecommerce: {
+            transaction_id: orderId,
+            value: Number(data.order.total || 0),
+            currency: 'USD',
+            tax: 0,
+            shipping: 0,
+            payment_confirmed: true,
+            items: (data.order.items || []).map(item => ({
+              item_id: item.item_id || item.sku,
+              item_name: item.item_name || item.name,
+              item_variant: item.item_variant || item.display,
+              item_category: item.item_category || 'Research Compounds',
+              price: Number(item.price || 0),
+              quantity: Number(item.quantity || 1)
+            }))
+          }
+        };
+        
+        console.log('[GA4] 📊 Event object:', purchaseEvent);
+        
+        window.dataLayer.push(purchaseEvent);
+        
+        console.log('[GA4] ✅ Event pushed to dataLayer');
+        console.log('[GA4] 📊 Full dataLayer:', window.dataLayer);
+        
+        // Verify event was added
+        const hasPurchase = window.dataLayer.some(e => 
+          e.event === 'purchase' && e.payment_confirmed === true
+        );
+        
+        console.log('[GA4] ✅ Purchase event in dataLayer:', hasPurchase);
+        
+      } catch(gaError) {
+        console.error('[GA4] ❌ Failed to send purchase event:', gaError);
+        console.error('[GA4] Stack:', gaError.stack);
+      }
+      
+      // Reload orders
+      setTimeout(() => loadOrders(), 2000);
+      
+    } else {
+      console.warn('[Admin] ⚠️ Order confirmed but payment_confirmed !== true');
+      showToast(`⚠️ Order confirmed but verification failed`, 'warning');
+    }
+    
+  } catch (error) {
+    console.error('[Admin] ❌ Confirmation error:', error);
+    console.error('[Admin] Error stack:', error.stack);
+    showToast(`Error: ${error.message}`, 'error');
+  }
+}
     
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
