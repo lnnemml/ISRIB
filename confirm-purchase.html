@@ -583,7 +583,7 @@
       console.log('[Admin] 🎯 Confirming purchase:', orderId);
       
       try {
-        const response = await fetch(`/api/admin/confirm-payment?order_id=${orderId}&secret=${currentSecret}`);
+        const response = await fetch(`/api/admin?action=confirm-payment&order_id=${orderId}`);
         
         if (!response.ok) {
           throw new Error(`Failed to confirm: ${response.status}`);
