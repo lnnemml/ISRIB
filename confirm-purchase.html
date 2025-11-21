@@ -449,7 +449,7 @@
         console.log('[Admin] 🔄 Fetching orders from API...');
         
         // Fetch from Redis via API
-        const response = await fetch(`/api/admin/get-orders?secret=${currentSecret}&limit=50`);
+       const response = await fetch(`/api/admin?action=get-orders&secret=${secret}`);
         
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
