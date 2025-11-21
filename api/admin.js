@@ -116,6 +116,9 @@ export default async function handler(req, res) {
         return res.status(200).send(generateSuccessHTML(order, orderId));
       }
 
+      // ============================================
+      // ✅ ПОВЕРТАЄМО ПОВНІ ДАНІ ДЛЯ GA4 PURCHASE
+      // ============================================
       return res.status(200).json({
         success: true,
         message: 'Payment confirmed successfully',
@@ -123,8 +126,23 @@ export default async function handler(req, res) {
           order_id: orderId,
           status: 'confirmed',
           confirmed_at: Date.now(),
-          customer: { name: `${order.firstName} ${order.lastName}`, email: order.email },
-          total: order.total
+          customer: { 
+            name: `${order.firstName} ${order.lastName}`, 
+            email: order.email 
+          },
+          total: order.total || order.amount || 0,
+          currency: 'USD',
+          tax: 0,
+          shipping: 0,
+          // ✅ КРИТИЧНО: Повертаємо items у форматі GA4
+          items: (order.items || []).map(item => ({
+            item_id: item.sku || 'unknown',
+            item_name: item.name || 'Unknown Product',
+            item_variant: item.display || `${item.grams}mg`,
+            item_category: 'Research Compounds',
+            price: Number(item.price || 0),
+            quantity: Number(item.qty || item.count || 1)
+          }))
         }
       });
 
@@ -173,7 +191,7 @@ function generateAlreadyConfirmedHTML(order, orderId) {
         <div class="info">
           <p><strong>Customer:</strong> ${order.firstName} ${order.lastName}</p>
           <p><strong>Email:</strong> ${order.email}</p>
-          <p><strong>Total:</strong> $${order.total.toFixed(2)}</p>
+          <p><strong>Total:</strong> $${(order.total || order.amount || 0).toFixed(2)}</p>
         </div>
       </div>
     </body>
@@ -212,7 +230,7 @@ function generateSuccessHTML(order, orderId) {
         <div class="info">
           <p><strong>Customer:</strong> ${order.firstName} ${order.lastName}</p>
           <p><strong>Email:</strong> ${order.email}</p>
-          <p><strong>Total:</strong> $${order.total.toFixed(2)}</p>
+          <p><strong>Total:</strong> $${(order.total || order.amount || 0).toFixed(2)}</p>
           <p><strong>Confirmed at:</strong> ${new Date().toLocaleString()}</p>
         </div>
       </div>
@@ -265,7 +283,7 @@ function generateConfirmationEmail(order, orderId) {
         </p>
       </div>
       <div style="background:#f8fafc;padding:16px;border-radius:8px;">
-        <p style="margin:0;color:#475569;"><strong>Order Total:</strong> $${order.total.toFixed(2)}</p>
+        <p style="margin:0;color:#475569;"><strong>Order Total:</strong> $${(order.total || order.amount || 0).toFixed(2)}</p>
         <p style="margin:8px 0 0;color:#64748b;font-size:13px;">
           Questions? Reply to this email or contact 
           <a href="mailto:isrib.shop@protonmail.com" style="color:#3b82f6;">isrib.shop@protonmail.com</a>
