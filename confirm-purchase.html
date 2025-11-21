@@ -494,11 +494,17 @@
       return `${Math.floor(seconds / 86400)}d ago`;
     }
     
+    // ============================================
+    // ✅ ОНОВЛЕНА ФУНКЦІЯ CONFIRM PURCHASE
+    // ============================================
     async function confirmPurchase(orderId) {
       if (!confirm(`Confirm payment for ${orderId}?`)) return;
       
       try {
         const url = `/api/admin?action=confirm-payment&order_id=${orderId}&secret=${currentSecret}`;
+        
+        console.log('[Admin] 📤 Confirming payment for:', orderId);
+        
         const response = await fetch(url);
         
         if (!response.ok) {
@@ -507,27 +513,61 @@
         
         const data = await response.json();
         
+        console.log('[Admin] 📦 Full response data:', data);
+        
         if (data.success) {
           showToast(`✓ Confirmed: ${orderId}`, 'success');
           
-          // GA4
+          // ============================================
+          // ✅ GA4 PURCHASE EVENT З ПОВНИМИ ДАНИМИ
+          // ============================================
           try {
+            console.log('[GA4] 📤 Preparing purchase event...');
+            
+            // Ініціалізуємо dataLayer якщо потрібно
             window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
+            
+            const purchaseData = {
               event: 'purchase',
               ecommerce: {
                 transaction_id: orderId,
-                value: data.order.total,
-                currency: 'USD'
-              }
-            });
-          } catch(e) {}
+                value: Number(data.order.total || 0),
+                currency: 'USD',
+                tax: 0,
+                shipping: 0,
+                items: data.order.items || []
+              },
+              event_category: 'ecommerce',
+              event_label: 'Purchase Confirmed'
+            };
+            
+            console.log('[GA4] 📊 Purchase event data:', purchaseData);
+            console.log('[GA4] 🛒 Items:', data.order.items);
+            
+            // Push до dataLayer
+            window.dataLayer.push(purchaseData);
+            
+            console.log('[GA4] ✅ purchase event pushed to dataLayer');
+            console.log('[GA4] 📊 Current dataLayer:', window.dataLayer);
+            
+            // Перевірка GTM
+            if (window.google_tag_manager && window.google_tag_manager['GTM-M2QCB45Q']) {
+              console.log('[GA4] ✅ GTM container confirmed loaded');
+            } else {
+              console.warn('[GA4] ⚠️ GTM container may not be loaded');
+            }
+            
+          } catch(gaError) {
+            console.error('[GA4] ❌ Purchase event failed:', gaError);
+            console.error('[GA4] Error stack:', gaError.stack);
+          }
           
-          setTimeout(() => loadOrders(), 1000);
+          // Reload orders після 2 секунд (щоб GA4 встиг відправити)
+          setTimeout(() => loadOrders(), 2000);
         }
         
       } catch (error) {
-        console.error('[Admin] ❌', error);
+        console.error('[Admin] ❌ Confirmation error:', error);
         showToast(`Error: ${error.message}`, 'error');
       }
     }
@@ -546,7 +586,7 @@
       }, 3000);
     }
     
-    // Auto-refresh
+    // Auto-refresh every 30 seconds
     setInterval(() => {
       if (isAuthenticated && currentSecret) {
         loadOrders();
