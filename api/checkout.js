@@ -1,6 +1,5 @@
 import { Resend } from 'resend';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { savePendingOrder } from '../lib/redis.js';
 
 // ---------- helpers ----------
 const toNum = (v) => (typeof v === 'number' ? v : Number(v || 0));
@@ -85,71 +84,6 @@ async function cancelCartRecoveryEmails(email) {
   } catch (error) {
     console.error('[Checkout] ❌ Cart recovery cancel failed:', error.message);
     throw error;
-  }
-}
-
-// ============================================
-// ✅ НОВА ФУНКЦІЯ: ЗБЕРЕЖЕННЯ PENDING ORDER
-// ============================================
-async function savePendingOrder(orderData) {
-  try {
-    // Створюємо директорію якщо не існує
-    const dataDir = path.join(process.cwd(), 'data');
-    const pendingFile = path.join(dataDir, 'pending-orders.json');
-    
-    try {
-      await fs.mkdir(dataDir, { recursive: true });
-    } catch (e) {
-      // Директорія вже існує
-    }
-    
-    // Читаємо існуючі pending orders
-    let pendingOrders = [];
-    try {
-      const content = await fs.readFile(pendingFile, 'utf-8');
-      pendingOrders = JSON.parse(content);
-    } catch (e) {
-      // Файл не існує або порожній
-      console.log('[Pending] Creating new pending orders file');
-    }
-    
-    // Перевіряємо чи вже є це замовлення
-    const existingIndex = pendingOrders.findIndex(
-      order => order.order_id === orderData.order_id
-    );
-    
-    if (existingIndex >= 0) {
-      // Оновлюємо існуюче
-      pendingOrders[existingIndex] = {
-        ...pendingOrders[existingIndex],
-        ...orderData,
-        updated_at: Date.now()
-      };
-      console.log('[Pending] ✅ Updated existing order:', orderData.order_id);
-    } else {
-      // Додаємо нове
-      pendingOrders.push({
-        ...orderData,
-        created_at: Date.now(),
-        updated_at: Date.now()
-      });
-      console.log('[Pending] ✅ Added new order:', orderData.order_id);
-    }
-    
-    // Видаляємо старі (>7 днів)
-    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-    pendingOrders = pendingOrders.filter(order => 
-      (order.created_at || order.timestamp || Date.now()) > sevenDaysAgo
-    );
-    
-    // Зберігаємо
-    await fs.writeFile(pendingFile, JSON.stringify(pendingOrders, null, 2));
-    console.log('[Pending] 💾 Saved to file, total orders:', pendingOrders.length);
-    
-    return true;
-  } catch (error) {
-    console.error('[Pending] ❌ Failed to save:', error);
-    return false;
   }
 }
 
@@ -260,7 +194,7 @@ export default async function handler(req, res) {
     });
 
     // ============================================
-    // ✅ ЗБЕРІГАЄМО PENDING ORDER В ФАЙЛ
+    // ✅ ЗБЕРІГАЄМО PENDING ORDER В REDIS
     // ============================================
     const pendingOrderData = {
       order_id: orderId,
@@ -401,9 +335,21 @@ export default async function handler(req, res) {
 
         <hr style="margin:24px 0;border:none;border-top:2px solid #e5e7eb;">
         
-        <p style="color:#64748b;font-size:13px;margin:16px 0;">
-          <b>Quick reply:</b> <a href="mailto:${email}?subject=Re: Order ${orderId}" style="color:#3b82f6;">Reply to customer</a>
-        </p>
+        <div style="background:#fef3c7;padding:16px;border-radius:8px;margin-top:20px;">
+          <p style="margin:0;color:#92400e;">
+            <b>⚡ Quick Actions:</b>
+          </p>
+          <p style="margin:8px 0 0;">
+            <a href="${process.env.SITE_URL || 'https://isrib.shop'}/admin/confirm-payment?order_id=${orderId}" 
+               style="display:inline-block;background:#10b981;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;margin-right:10px;">
+              ✓ Confirm Payment
+            </a>
+            <a href="mailto:${email}?subject=Re: Order ${orderId}" 
+               style="display:inline-block;background:#3b82f6;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;">
+              ✉ Reply to Customer
+            </a>
+          </p>
+        </div>
       </body>
       </html>
     `;
@@ -439,7 +385,9 @@ ${discount > 0 ? `Discount (${promoCode}): −${fmtUSD(discount)}` : ''}
 Shipping: FREE
 Total: ${fmtUSD(total)}
 
-* Free shipping — limited-time launch offer.`;
+* Free shipping — limited-time launch offer.
+
+Confirm payment: ${process.env.SITE_URL || 'https://isrib.shop'}/admin/confirm-payment?order_id=${orderId}`;
 
     // ============================================================================
     // ВІДПРАВКА ЛИСТІВ
