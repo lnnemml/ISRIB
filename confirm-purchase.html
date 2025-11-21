@@ -117,6 +117,29 @@
       font-size: 14px;
     }
     
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #2a2f4a;
+      padding-bottom: 8px;
+    }
+    
+    .filter-tab {
+      background: transparent;
+      color: #888;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .filter-tab:hover { background: #2a2f4a; color: #fff; }
+    .filter-tab.active { background: #00d9ff; color: #0a0e27; }
+    
     .logout-btn {
       background: #ff4444;
       color: #fff;
@@ -232,7 +255,7 @@
     <div class="pending-orders" id="pendingOrders">
       <div class="orders-header">
         <div>
-          <h2>Pending Orders <span class="order-count" id="orderCount">0</span></h2>
+          <h2>Orders <span class="order-count" id="orderCount">0</span></h2>
         </div>
         <div style="display:flex;gap:12px;">
           <button class="btn" onclick="loadOrders()" style="width:auto;padding:8px 16px;background:#00d9ff;">
@@ -240,6 +263,19 @@
           </button>
           <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
+      </div>
+      
+      <!-- ✅ ФІЛЬТРИ -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="pending">
+          ⏳ Pending
+        </button>
+        <button class="filter-tab" data-filter="confirmed">
+          ✅ Confirmed
+        </button>
+        <button class="filter-tab" data-filter="all">
+          📋 All
+        </button>
       </div>
       
       <div id="ordersList"></div>
@@ -251,6 +287,8 @@
     
     let isAuthenticated = false;
     let currentSecret = null;
+    let allOrders = [];
+    let currentFilter = 'pending';
     
     document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -293,9 +331,15 @@
       }
     }
     
-    // ============================================
-    // ✅ ВИПРАВЛЕНІ API ENDPOINTS
-    // ============================================
+    // ✅ FILTER TABS
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentFilter = tab.dataset.filter;
+        renderOrders();
+      });
+    });
     
     async function loadOrders() {
       const ordersContainer = document.getElementById('ordersList');
@@ -318,10 +362,7 @@
       `;
 
       try {
-        // ✅ ПРАВИЛЬНИЙ URL з action parameter
         const url = `/api/admin?action=get-orders&secret=${currentSecret}&limit=50`;
-        console.log('[Admin] Fetching:', url);
-        
         const response = await fetch(url);
         
         if (!response.ok) {
@@ -334,26 +375,11 @@
           throw new Error(data.error || 'Unknown error');
         }
 
-        const { orders, stats } = data;
+        allOrders = data.orders;
         
-        document.getElementById('orderCount').textContent = stats.total || 0;
+        console.log('[Admin] ✅ Loaded:', allOrders.length, 'orders');
         
-        console.log('[Admin] ✅ Loaded:', orders.length, 'orders');
-        
-        if (orders.length === 0) {
-          ordersContainer.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">📭</div>
-              <p>No pending orders</p>
-            </div>
-          `;
-        } else {
-          ordersContainer.innerHTML = orders.map(order => createOrderCard(order)).join('');
-          
-          document.querySelectorAll('.btn-confirm').forEach(btn => {
-            btn.addEventListener('click', () => confirmPurchase(btn.dataset.orderId));
-          });
-        }
+        renderOrders();
 
       } catch (error) {
         console.error('[Admin] ❌ Error:', error);
@@ -368,6 +394,37 @@
             </button>
           </div>
         `;
+      }
+    }
+    
+    function renderOrders() {
+      const ordersContainer = document.getElementById('ordersList');
+      
+      // ✅ ФІЛЬТРАЦІЯ
+      let filteredOrders = allOrders;
+      
+      if (currentFilter === 'pending') {
+        filteredOrders = allOrders.filter(o => o.status !== 'confirmed');
+      } else if (currentFilter === 'confirmed') {
+        filteredOrders = allOrders.filter(o => o.status === 'confirmed');
+      }
+      
+      // Оновлюємо лічильник
+      document.getElementById('orderCount').textContent = filteredOrders.length;
+      
+      if (filteredOrders.length === 0) {
+        ordersContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p>No ${currentFilter} orders</p>
+          </div>
+        `;
+      } else {
+        ordersContainer.innerHTML = filteredOrders.map(order => createOrderCard(order)).join('');
+        
+        document.querySelectorAll('.btn-confirm').forEach(btn => {
+          btn.addEventListener('click', () => confirmPurchase(btn.dataset.orderId));
+        });
       }
     }
     
@@ -420,7 +477,7 @@
               </button>
             ` : `
               <div style="color:#00ff00;padding:12px;text-align:center;flex:1;">
-                ✓ Confirmed
+                ✓ Confirmed ${order.confirmed_at ? 'on ' + new Date(order.confirmed_at).toLocaleDateString() : ''}
               </div>
             `}
           </div>
@@ -441,7 +498,6 @@
       if (!confirm(`Confirm payment for ${orderId}?`)) return;
       
       try {
-        // ✅ ПРАВИЛЬНИЙ URL з action parameter
         const url = `/api/admin?action=confirm-payment&order_id=${orderId}&secret=${currentSecret}`;
         const response = await fetch(url);
         
