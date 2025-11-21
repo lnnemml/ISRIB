@@ -529,20 +529,18 @@
             window.dataLayer = window.dataLayer || [];
             
             const purchaseData = {
-              event: 'purchase',
-              ecommerce: {
-                transaction_id: orderId,
-                value: Number(data.order.total || 0),
-                currency: 'USD',
-                tax: 0,
-                shipping: 0,
-                items: data.order.items || [],
-                payment_confirmed: true  // ✅ КРИТИЧНО
-              },
-              payment_confirmed: true,  // ✅ КРИТИЧНО
-              event_category: 'ecommerce',
-              event_label: 'Purchase Confirmed'
-            };
+  event: 'purchase',
+  payment_confirmed: true,  // ← явно перед ecommerce
+  ecommerce: {
+    transaction_id: orderId,
+    value: Number(data.order.total || 0),
+    currency: 'USD',
+    tax: 0,
+    shipping: 0,
+    payment_confirmed: true,  // ← дублюємо і тут
+    items: data.order.items || []
+  }
+};
             
             console.log('[GA4] 📊 Purchase event data:', purchaseData);
             console.log('[GA4] 🛒 Items:', data.order.items);
