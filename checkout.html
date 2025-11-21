@@ -75,6 +75,7 @@
       🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
     </a>
   </nav>
+</div>
 </header>
 
   <!-- Page Header -->
@@ -307,7 +308,7 @@
   <script src="js/main.js?v=34"></script>
 
   <!-- ============================================ -->
-  <!-- BEGIN_CHECKOUT EVENT (КРИТИЧНО ВАЖЛИВО)     -->
+  <!-- ✅ ORDER ID GENERATION                       -->
   <!-- ============================================ -->
   <script>
 (function() {
@@ -336,7 +337,6 @@
           const parsed = JSON.parse(checkoutData);
           if (parsed.order_id) {
             console.log('[CHECKOUT] 📋 Found Order ID in checkout data:', parsed.order_id);
-            // Зберігаємо для наступного разу
             sessionStorage.setItem(SESSION_KEY, parsed.order_id);
             sessionStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
             return parsed.order_id;
@@ -352,7 +352,6 @@
             const orderData = JSON.parse(localStorage.getItem(key) || '{}');
             if (orderData.email === 'pending@direct-buy' && orderData.order_id) {
               console.log('[CHECKOUT] 🔄 Found pending order from direct buy:', orderData.order_id);
-              // Зберігаємо для використання
               sessionStorage.setItem(SESSION_KEY, orderData.order_id);
               sessionStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
               return orderData.order_id;
@@ -400,7 +399,6 @@
       const orderData = JSON.parse(existingOrder);
       console.log('[CHECKOUT] 📦 Found existing pending order:', orderData);
       
-      // Якщо це order з direct buy (без email), оновимо timestamp
       if (orderData.email === 'pending@direct-buy') {
         orderData.checkout_opened_at = Date.now();
         localStorage.setItem(pendingKey, JSON.stringify(orderData));
@@ -415,132 +413,104 @@
 })();
 </script>
 
-
   <!-- ============================================ -->
-  <!-- ГЕНЕРАЦІЯ ORDER ID НА ФРОНТЕНДІ             -->
+  <!-- ✅ BEGIN_CHECKOUT GA4 EVENT                  -->
   <!-- ============================================ -->
   <script>
-(function() {
-  // Генеруємо Order ID ОДРАЗУ при завантаженні checkout
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 9).toUpperCase();
-  const orderId = `ORD-${timestamp}-${random}`;
+(function fireBeginCheckout() {
+  console.log('[GA4] 🔧 Initializing begin_checkout...');
   
-  // Зберігаємо глобально
-  window._generatedOrderId = orderId;
-  
-  console.log('[CHECKOUT] 🆔 Pre-generated Order ID:', orderId);
-})();
-  </script>
-
-
-      <!-- ============================================ -->
-<!-- DEBUG СКРИПТ ДЛЯ ПЕРЕВІРКИ ORDER ID FLOW     -->
-<!-- Додайте в кінець checkout.html перед </body> -->
-<!-- ============================================ -->
-<script>
-// Debug: Показуємо всі Order ID в різних місцях
-console.log('');
-console.log('=== 🔍 ORDER ID DEBUG ===');
-console.log('');
-
-// 1. Перевіряємо sessionStorage
-console.log('📋 SessionStorage:');
-console.log('  _order_id:', sessionStorage.getItem('_order_id'));
-console.log('  _order_timestamp:', sessionStorage.getItem('_order_timestamp'));
-
-const checkoutData = sessionStorage.getItem('_checkout_data');
-if (checkoutData) {
-  try {
-    const parsed = JSON.parse(checkoutData);
-    console.log('  _checkout_data.order_id:', parsed.order_id);
-    console.log('  _checkout_data.transaction_id:', parsed.transaction_id);
-  } catch(e) {
-    console.log('  _checkout_data: ❌ Invalid JSON');
+  // Helper function для парсингу кількості
+  function parseQtyToMg(s) {
+    if (!s) return 0;
+    const t = String(s).toLowerCase().trim();
+    const n = parseFloat(t.replace(/[^0-9.]/g, '')) || 0;
+    return t.includes('g') && !t.includes('mg') ? Math.round(n * 1000) : Math.round(n);
   }
-} else {
-  console.log('  _checkout_data: ⚠️ Not found');
-}
-
-// 2. Перевіряємо глобальну змінну
-console.log('');
-console.log('🌐 Global Variable:');
-console.log('  window._generatedOrderId:', window._generatedOrderId);
-
-// 3. Перевіряємо localStorage pending orders
-console.log('');
-console.log('💾 LocalStorage Pending Orders:');
-let foundPending = false;
-for (let i = 0; i < localStorage.length; i++) {
-  const key = localStorage.key(i);
-  if (key && key.startsWith('pending_order_')) {
-    foundPending = true;
+  
+  // Чекаємо поки GTM завантажиться + DOM ready
+  setTimeout(function() {
     try {
-      const order = JSON.parse(localStorage.getItem(key) || '{}');
-      console.log('  ✓', key);
-      console.log('    - order_id:', order.order_id);
-      console.log('    - email:', order.email);
-      console.log('    - amount:', order.amount);
-      console.log('    - product:', order.product);
-      console.log('    - timestamp:', new Date(order.timestamp).toLocaleString());
-    } catch(e) {
-      console.log('  ✗', key, '❌ Invalid JSON');
+      const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
+      
+      if (cart.length === 0) {
+        console.log('[GA4] ⚠️ begin_checkout skipped - empty cart');
+        return;
+      }
+      
+      // Нормалізація одиниць
+      const normalizedCart = cart.map(item => {
+        let grams = Number(item.grams || 0);
+        if (item.display) {
+          const mgFromLabel = parseQtyToMg(item.display);
+          if (mgFromLabel) grams = mgFromLabel;
+        }
+        return { ...item, grams };
+      });
+      
+      // Розраховуємо загальну вартість
+      const cartValue = normalizedCart.reduce((sum, item) => {
+        return sum + (Number(item.price || 0) * Number(item.count || 1));
+      }, 0);
+      
+      // Отримуємо Order ID та Transaction ID
+      const orderId = window._generatedOrderId || 'unknown';
+      const txnId = sessionStorage.getItem('_txn_id') || orderId;
+      
+      // Формуємо items для GA4
+      const ga4Items = normalizedCart.map(item => ({
+        item_id: item.sku || 'unknown',
+        item_name: item.name || 'Unknown Product',
+        item_variant: item.display || (item.grams >= 1000 ? (item.grams/1000)+'g' : item.grams+'mg'),
+        item_category: 'Research Compounds',
+        price: Number(item.price || 0),
+        quantity: Number(item.count || 1)
+      }));
+      
+      console.log('[GA4] 📤 Preparing begin_checkout event:', {
+        orderId: orderId,
+        txnId: txnId,
+        value: cartValue,
+        items: ga4Items.length,
+        itemDetails: ga4Items
+      });
+      
+      // Ініціалізуємо dataLayer якщо потрібно
+      window.dataLayer = window.dataLayer || [];
+      
+      // Пушимо подію в dataLayer
+      window.dataLayer.push({
+        event: 'begin_checkout',
+        ecommerce: {
+          currency: 'USD',
+          value: cartValue,
+          items: ga4Items
+        },
+        transaction_id: txnId,
+        order_id: orderId,
+        event_category: 'ecommerce',
+        event_label: 'Checkout Started'
+      });
+      
+      console.log('[GA4] ✅ begin_checkout pushed to dataLayer');
+      console.log('[GA4] 📊 Current dataLayer:', window.dataLayer);
+      
+      // Додаткова перевірка чи GTM завантажився
+      if (window.google_tag_manager && window.google_tag_manager['GTM-M2QCB45Q']) {
+        console.log('[GA4] ✅ GTM container confirmed loaded');
+      } else {
+        console.warn('[GA4] ⚠️ GTM container may not be loaded yet');
+      }
+      
+    } catch(error) {
+      console.error('[GA4] ❌ begin_checkout error:', error);
+      console.error('[GA4] Error stack:', error.stack);
     }
-  }
-}
-if (!foundPending) {
-  console.log('  ⚠️ No pending orders found');
-}
-
-// 4. Показуємо кошик
-console.log('');
-console.log('🛒 Cart:');
-try {
-  const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
-  console.log('  Items:', cart.length);
-  cart.forEach((item, idx) => {
-    console.log(`  ${idx + 1}. ${item.name} - ${item.display} × ${item.count} = $${item.price * item.count}`);
-  });
-} catch(e) {
-  console.log('  ❌ Error reading cart');
-}
-
-console.log('');
-console.log('=== END DEBUG ===');
-console.log('');
-
-// Функція для очищення всього
-window.debugClearAll = function() {
-  console.log('🧹 Clearing all data...');
+    
+  }, 800); // Даємо 800ms для завантаження GTM
   
-  // Очищаємо sessionStorage
-  sessionStorage.removeItem('_order_id');
-  sessionStorage.removeItem('_order_timestamp');
-  sessionStorage.removeItem('_checkout_data');
-  sessionStorage.removeItem('_txn_id');
-  sessionStorage.removeItem('_txn_timestamp');
-  
-  // Очищаємо pending orders
-  const keys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key && key.startsWith('pending_order_')) {
-      keys.push(key);
-    }
-  }
-  keys.forEach(key => localStorage.removeItem(key));
-  
-  console.log('✅ Cleared:');
-  console.log('  - sessionStorage Order ID');
-  console.log('  - sessionStorage Transaction ID');
-  console.log('  - sessionStorage Checkout Data');
-  console.log('  - localStorage Pending Orders:', keys.length);
-  console.log('');
-  console.log('⚠️ Note: Cart was NOT cleared');
-  console.log('Run location.reload() to refresh');
-};
-
-console.log('💡 Tip: Run debugClearAll() to reset everything');
+})();
 </script>
+
 </body>
 </html>
