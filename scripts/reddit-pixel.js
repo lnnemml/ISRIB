@@ -24,4 +24,33 @@ rdt('init','a2_hz77nm0joupm', {
 // Track page visit
 rdt('track', 'PageVisit');
 
+// Helper functions for events
+window.RedditPixel = {
+  // Begin Checkout (AddToCart)
+  trackBeginCheckout: function(transactionId) {
+    rdt('track', 'AddToCart', {
+      'transactionId': transactionId || ''
+    });
+    console.log('✅ Reddit: AddToCart fired', transactionId);
+  },
+  
+  // Buy Intent (Lead)
+  trackBuyIntent: function(transactionId) {
+    rdt('track', 'Lead', {
+      'transactionId': transactionId || ''
+    });
+    console.log('✅ Reddit: Lead fired', transactionId);
+  },
+  
+  // Purchase
+  trackPurchase: function(transactionId, value) {
+    rdt('track', 'Purchase', {
+      'transactionId': transactionId || '',
+      'value': value || 0,
+      'currency': 'USD'
+    });
+    console.log('✅ Reddit: Purchase fired', transactionId, value);
+  }
+};
+
 console.log('✅ Reddit Pixel initialized on:', window.location.pathname);
