@@ -234,7 +234,7 @@
   <div class="container">
     <div class="header">
       <h1>📦 Order Confirmation Panel</h1>
-      <p class="subtitle">Confirm completed payments & send purchase events to GA4</p>
+      <p class="subtitle">Confirm completed payments & send purchase events to GA4 + Reddit</p>
     </div>
     
     <div class="login-box" id="loginBox">
@@ -498,109 +498,153 @@
     }
     
     // ============================================
-    // ✅ ЄДИНА ФУНКЦІЯ CONFIRM PURCHASE
+    // ✅ CONFIRM PURCHASE З GA4 + REDDIT PIXEL
     // ============================================
     async function confirmPurchase(orderId) {
-  if (!confirm(`Confirm payment for ${orderId}?`)) return;
-  
-  try {
-    const url = `/api/admin?action=confirm-payment&order_id=${orderId}&secret=${currentSecret}`;
-    
-    console.log('[Admin] 📤 Confirming payment for:', orderId);
-    console.log('[Admin] 📤 Request URL:', url);
-    
-    const response = await fetch(url, {
-      method: 'POST',  // ← ЗМІНІТЬ на POST!
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        order_id: orderId
-      })
-    });
-    
-    console.log('[Admin] 📥 Response:', response.status, response.statusText);
-    
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('[Admin] ❌ Error response:', text);
-      throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
-    }
-    
-    const data = await response.json();
-    
-    console.log('[Admin] 📦 Response data:', data);
-    
-    if (!data.success) {
-      throw new Error(data.error || 'Unknown error');
-    }
-    
-    if (data.order && data.order.payment_confirmed === true) {
-      showToast(`✓ Confirmed: ${orderId}`, 'success');
+      if (!confirm(`Confirm payment for ${orderId}?`)) return;
       
-      // ============================================
-      // ✅ GA4 PURCHASE EVENT
-      // ============================================
       try {
-        console.log('[GA4] 📤 Sending purchase event...');
+        const url = `/api/admin?action=confirm-payment&order_id=${orderId}&secret=${currentSecret}`;
         
-        window.dataLayer = window.dataLayer || [];
+        console.log('[Admin] 📤 Confirming payment for:', orderId);
+        console.log('[Admin] 📤 Request URL:', url);
         
-        const purchaseEvent = {
-          event: 'purchase',
-          payment_confirmed: true,
-          ecommerce: {
-            transaction_id: orderId,
-            value: Number(data.order.total || 0),
-            currency: 'USD',
-            tax: 0,
-            shipping: 0,
-            payment_confirmed: true,
-            items: (data.order.items || []).map(item => ({
-              item_id: item.item_id || item.sku,
-              item_name: item.item_name || item.name,
-              item_variant: item.item_variant || item.display,
-              item_category: item.item_category || 'Research Compounds',
-              price: Number(item.price || 0),
-              quantity: Number(item.quantity || 1)
-            }))
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            order_id: orderId
+          })
+        });
+        
+        console.log('[Admin] 📥 Response:', response.status, response.statusText);
+        
+        if (!response.ok) {
+          const text = await response.text();
+          console.error('[Admin] ❌ Error response:', text);
+          throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+        }
+        
+        const data = await response.json();
+        
+        console.log('[Admin] 📦 Response data:', data);
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Unknown error');
+        }
+        
+        if (data.order && data.order.payment_confirmed === true) {
+          showToast(`✓ Confirmed: ${orderId}`, 'success');
+          
+          const orderValue = Number(data.order.total || 0);
+          
+          // ============================================
+          // ✅ GA4 PURCHASE EVENT
+          // ============================================
+          try {
+            console.log('[GA4] 📤 Sending purchase event...');
+            
+            window.dataLayer = window.dataLayer || [];
+            
+            const purchaseEvent = {
+              event: 'purchase',
+              payment_confirmed: true,
+              ecommerce: {
+                transaction_id: orderId,
+                value: orderValue,
+                currency: 'USD',
+                tax: 0,
+                shipping: 0,
+                payment_confirmed: true,
+                items: (data.order.items || []).map(item => ({
+                  item_id: item.item_id || item.sku,
+                  item_name: item.item_name || item.name,
+                  item_variant: item.item_variant || item.display,
+                  item_category: item.item_category || 'Research Compounds',
+                  price: Number(item.price || 0),
+                  quantity: Number(item.quantity || 1)
+                }))
+              }
+            };
+            
+            console.log('[GA4] 📊 Event object:', purchaseEvent);
+            
+            window.dataLayer.push(purchaseEvent);
+            
+            console.log('[GA4] ✅ Event pushed to dataLayer');
+            console.log('[GA4] 📊 Full dataLayer:', window.dataLayer);
+            
+            // Verify event was added
+            const hasPurchase = window.dataLayer.some(e => 
+              e.event === 'purchase' && e.payment_confirmed === true
+            );
+            
+            console.log('[GA4] ✅ Purchase event in dataLayer:', hasPurchase);
+            
+          } catch(gaError) {
+            console.error('[GA4] ❌ Failed to send purchase event:', gaError);
+            console.error('[GA4] Stack:', gaError.stack);
           }
-        };
+          
+          // ============================================
+          // ✅ REDDIT PIXEL PURCHASE EVENT
+          // ============================================
+          try {
+            console.log('[Reddit Pixel] 📤 Sending purchase event...');
+            
+            if (window.RedditPixel && typeof window.RedditPixel.trackPurchase === 'function') {
+              window.RedditPixel.trackPurchase(orderId, orderValue);
+              console.log('[Reddit Pixel] ✅ Purchase event sent via helper');
+            } else if (typeof rdt !== 'undefined') {
+              // Direct fallback
+              rdt('track', 'Purchase', {
+                'transactionId': orderId,
+                'value': orderValue,
+                'currency': 'USD'
+              });
+              console.log('[Reddit Pixel] ✅ Purchase event sent via direct rdt');
+            } else {
+              console.warn('[Reddit Pixel] ⚠️ Reddit Pixel not available, retrying...');
+              
+              // Retry after 500ms
+              setTimeout(function() {
+                if (window.RedditPixel && typeof window.RedditPixel.trackPurchase === 'function') {
+                  window.RedditPixel.trackPurchase(orderId, orderValue);
+                  console.log('[Reddit Pixel] ✅ Purchase event sent (delayed)');
+                } else if (typeof rdt !== 'undefined') {
+                  rdt('track', 'Purchase', {
+                    'transactionId': orderId,
+                    'value': orderValue,
+                    'currency': 'USD'
+                  });
+                  console.log('[Reddit Pixel] ✅ Purchase event sent (delayed direct)');
+                } else {
+                  console.error('[Reddit Pixel] ❌ Reddit Pixel still not available');
+                }
+              }, 500);
+            }
+            
+          } catch(rdtError) {
+            console.error('[Reddit Pixel] ❌ Failed to send purchase event:', rdtError);
+          }
+          
+          // Reload orders
+          setTimeout(() => loadOrders(), 2000);
+          
+        } else {
+          console.warn('[Admin] ⚠️ Order confirmed but payment_confirmed !== true');
+          showToast(`⚠️ Order confirmed but verification failed`, 'warning');
+        }
         
-        console.log('[GA4] 📊 Event object:', purchaseEvent);
-        
-        window.dataLayer.push(purchaseEvent);
-        
-        console.log('[GA4] ✅ Event pushed to dataLayer');
-        console.log('[GA4] 📊 Full dataLayer:', window.dataLayer);
-        
-        // Verify event was added
-        const hasPurchase = window.dataLayer.some(e => 
-          e.event === 'purchase' && e.payment_confirmed === true
-        );
-        
-        console.log('[GA4] ✅ Purchase event in dataLayer:', hasPurchase);
-        
-      } catch(gaError) {
-        console.error('[GA4] ❌ Failed to send purchase event:', gaError);
-        console.error('[GA4] Stack:', gaError.stack);
+      } catch (error) {
+        console.error('[Admin] ❌ Confirmation error:', error);
+        console.error('[Admin] Error stack:', error.stack);
+        showToast(`Error: ${error.message}`, 'error');
       }
-      
-      // Reload orders
-      setTimeout(() => loadOrders(), 2000);
-      
-    } else {
-      console.warn('[Admin] ⚠️ Order confirmed but payment_confirmed !== true');
-      showToast(`⚠️ Order confirmed but verification failed`, 'warning');
     }
-    
-  } catch (error) {
-    console.error('[Admin] ❌ Confirmation error:', error);
-    console.error('[Admin] Error stack:', error.stack);
-    showToast(`Error: ${error.message}`, 'error');
-  }
-}
     
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
