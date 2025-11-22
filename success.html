@@ -183,8 +183,7 @@
 <script src="js/main.js?v=34"></script>
 
 <!-- ============================================ -->
-<!-- ✅ ВИПРАВЛЕНИЙ SUCCESS PAGE СКРИПТ          -->
-<!-- Використовує Order ID замість Transaction ID -->
+<!-- ✅ SUCCESS PAGE СКРИПТ З REDDIT PIXEL       -->
 <!-- ============================================ -->
 <script>
 (function() {
@@ -204,7 +203,7 @@
   }
   
   // ============================================
-  // ✅ ОТРИМАННЯ ORDER ID (НЕ TRANSACTION ID!)
+  // ✅ ОТРИМАННЯ ORDER ID
   // ============================================
   function getOrderId() {
     console.log('[SUCCESS] 🔍 Getting Order ID...');
@@ -239,13 +238,12 @@
       return oid;
     }
     
-    // Спроба 4: шукаємо в pending orders з email 'completed@checkout'
+    // Спроба 4: шукаємо в pending orders
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith('pending_order_')) {
           const data = JSON.parse(localStorage.getItem(key) || '{}');
-          // Шукаємо останнє created замовлення (найновіше)
           if (data.checkout_submitted_at) {
             const age = Date.now() - data.checkout_submitted_at;
             if (age < 2 * 60 * 1000) { // молодше 2 хвилин
@@ -259,7 +257,7 @@
       console.warn('[SUCCESS] ⚠️ Cannot search pending orders:', e);
     }
     
-    // Fallback: генеруємо новий (НЕ РЕКОМЕНДУЄТЬСЯ)
+    // Fallback
     const fallbackId = 'ORD-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9).toUpperCase();
     console.warn('[SUCCESS] ⚠️ Using fallback Order ID:', fallbackId);
     return fallbackId;
@@ -268,7 +266,7 @@
   const ORDER_ID = getOrderId();
   console.log('[SUCCESS] 🆔 Final Order ID:', ORDER_ID);
   
-  // Transaction ID для GA4 (може бути окремий)
+  // Transaction ID для GA4
   let TRANSACTION_ID = ORDER_ID;
   try {
     const txnStored = sessionStorage.getItem('_txn_id');
@@ -303,8 +301,6 @@
         orderData = null;
       }
       
-      // ✅ КРИТИЧНО: НЕ ОЧИЩАЄМО ОДРАЗУ!
-      // Очистимо після успішного збереження в pending orders
       console.log('[SUCCESS] 📌 Keeping order data for now');
     }
   } catch (e) {
@@ -412,7 +408,7 @@
   set('s-subtotal', fmtUSD(subtotal));
   set('s-total', fmtUSD(total));
   
-  // Discount row (якщо є)
+  // Discount row
   if (discount > 0 && promo) {
     const discountLine = document.getElementById('s-discount-line');
     if (discountLine) {
@@ -423,18 +419,18 @@
   }
 
   // ============================================
-  // ✅ GA4 EVENT: BUY_INTENT (з правильним Order ID)
+  // ✅ GA4 + REDDIT PIXEL EVENT: BUY_INTENT
   // ============================================
   function sendBuyIntent() {
-    console.log('[GA4] 🎯 Preparing buy_intent event...');
+    console.log('[SUCCESS] 🎯 Preparing buy_intent event...');
     
     if (!items || items.length === 0) {
-      console.warn('[GA4] ⚠️ No items for buy_intent');
+      console.warn('[SUCCESS] ⚠️ No items for buy_intent');
       return;
     }
     
     if (!total || total <= 0) {
-      console.warn('[GA4] ⚠️ Invalid total for buy_intent:', total);
+      console.warn('[SUCCESS] ⚠️ Invalid total for buy_intent:', total);
       return;
     }
     
@@ -449,10 +445,10 @@
         price: Number(item.price) || 0
       }));
 
-      console.log('[GA4] 📦 Items prepared:', ga4Items);
+      console.log('[SUCCESS] 📦 Items prepared:', ga4Items);
 
       // ============================================
-      // METHOD 1: dataLayer push (PRIMARY)
+      // ✅ GA4 EVENT: buy_intent
       // ============================================
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
@@ -463,7 +459,7 @@
           items: ga4Items
         },
         transaction_id: TRANSACTION_ID,
-        order_id: ORDER_ID,  // ✅ Додали Order ID
+        order_id: ORDER_ID,
         order_status: 'pending_payment'
       });
       
@@ -476,23 +472,48 @@
       });
 
       // ============================================
-      // ✅ ЗБЕРЕЖЕННЯ ДЛЯ ADMIN PANEL (НЕ СТВОРЮЄ ДУБЛІКАТІВ!)
+      // ✅ REDDIT PIXEL EVENT: Lead (Buy Intent)
+      // ============================================
+      if (window.RedditPixel && typeof window.RedditPixel.trackBuyIntent === 'function') {
+        window.RedditPixel.trackBuyIntent(ORDER_ID, total);
+        console.log('[Reddit Pixel] ✅ Buy Intent (Lead) event sent');
+      } else {
+        // Fallback: пряма функція rdt
+        console.log('[Reddit Pixel] ⏳ Waiting for RedditPixel...');
+        setTimeout(function() {
+          if (window.RedditPixel && typeof window.RedditPixel.trackBuyIntent === 'function') {
+            window.RedditPixel.trackBuyIntent(ORDER_ID, total);
+            console.log('[Reddit Pixel] ✅ Buy Intent (Lead) event sent (delayed)');
+          } else if (typeof rdt !== 'undefined') {
+            rdt('track', 'Lead', {
+              'transactionId': ORDER_ID,
+              'value': total,
+              'currency': 'USD'
+            });
+            console.log('[Reddit Pixel] ✅ Buy Intent (Lead) event sent (direct rdt)');
+          } else {
+            console.warn('[Reddit Pixel] ⚠️ Reddit Pixel not available');
+          }
+        }, 500);
+      }
+
+      // ============================================
+      // ✅ ЗБЕРЕЖЕННЯ ДЛЯ ADMIN PANEL
       // ============================================
       try {
         const urlParams = new URLSearchParams(location.search);
         
-        // ✅ КРИТИЧНО: Перевіряємо чи вже існує
         const existingKey = 'pending_order_' + ORDER_ID;
         const existing = localStorage.getItem(existingKey);
         
         if (existing) {
           console.log('[SUCCESS] ✅ Pending order already exists, updating status');
           
-          // Оновлюємо існуюче замовлення
           const existingData = JSON.parse(existing);
           existingData.success_page_visited = Date.now();
           existingData.status = 'pending_payment';
           existingData.buy_intent_sent = true;
+          existingData.reddit_lead_sent = true;
           
           localStorage.setItem(existingKey, JSON.stringify(existingData));
           console.log('[SUCCESS] ✅ Updated existing pending order:', ORDER_ID);
@@ -500,7 +521,6 @@
         } else {
           console.log('[SUCCESS] ℹ️ Creating new pending order entry');
           
-          // Створюємо нове замовлення тільки якщо його немає
           const pendingOrder = {
             order_id: ORDER_ID,
             email: 'completed@checkout',
@@ -515,7 +535,8 @@
             utm_campaign: urlParams.get('utm_campaign') || 'checkout_success',
             status: 'pending_payment',
             success_page_visited: Date.now(),
-            buy_intent_sent: true
+            buy_intent_sent: true,
+            reddit_lead_sent: true
           };
           
           localStorage.setItem(existingKey, JSON.stringify(pendingOrder));
@@ -527,7 +548,7 @@
       }
       
       // ============================================
-      // ✅ ТЕПЕР МОЖНА ОЧИСТИТИ _order_success_data
+      // ✅ ОЧИЩАЄМО _order_success_data
       // ============================================
       try {
         localStorage.removeItem('_order_success_data');
@@ -537,21 +558,21 @@
       }
       
     } catch(e) {
-      console.error('[GA4] ❌ buy_intent error:', e);
+      console.error('[SUCCESS] ❌ buy_intent error:', e);
     }
   }
 
   // ============================================
   // ВИКОНАННЯ
   // ============================================
-  console.log('[GA4] ⏳ Waiting for page load...');
+  console.log('[SUCCESS] ⏳ Waiting for page load...');
   
   if (document.readyState === 'complete') {
-    console.log('[GA4] ✅ Page already loaded, sending buy_intent');
+    console.log('[SUCCESS] ✅ Page already loaded, sending buy_intent');
     setTimeout(sendBuyIntent, 1000);
   } else {
     window.addEventListener('load', function() {
-      console.log('[GA4] ✅ Page loaded, sending buy_intent');
+      console.log('[SUCCESS] ✅ Page loaded, sending buy_intent');
       setTimeout(sendBuyIntent, 1000);
     });
   }
