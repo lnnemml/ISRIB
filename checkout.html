@@ -417,11 +417,11 @@
 </script>
 
   <!-- ============================================ -->
-  <!-- ✅ BEGIN_CHECKOUT GA4 EVENT                  -->
+  <!-- ✅ BEGIN_CHECKOUT GA4 + REDDIT PIXEL EVENT   -->
   <!-- ============================================ -->
   <script>
 (function fireBeginCheckout() {
-  console.log('[GA4] 🔧 Initializing begin_checkout...');
+  console.log('[CHECKOUT] 🔧 Initializing begin_checkout...');
   
   // Helper function для парсингу кількості
   function parseQtyToMg(s) {
@@ -431,13 +431,13 @@
     return t.includes('g') && !t.includes('mg') ? Math.round(n * 1000) : Math.round(n);
   }
   
-  // Чекаємо поки GTM завантажиться + DOM ready
+  // Чекаємо поки GTM та Reddit Pixel завантажаться + DOM ready
   setTimeout(function() {
     try {
       const cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
       
       if (cart.length === 0) {
-        console.log('[GA4] ⚠️ begin_checkout skipped - empty cart');
+        console.log('[CHECKOUT] ⚠️ begin_checkout skipped - empty cart');
         return;
       }
       
@@ -470,7 +470,7 @@
         quantity: Number(item.count || 1)
       }));
       
-      console.log('[GA4] 📤 Preparing begin_checkout event:', {
+      console.log('[CHECKOUT] 📤 Preparing begin_checkout event:', {
         orderId: orderId,
         txnId: txnId,
         value: cartValue,
@@ -478,10 +478,11 @@
         itemDetails: ga4Items
       });
       
-      // Ініціалізуємо dataLayer якщо потрібно
+      // ============================================
+      // ✅ GA4 EVENT
+      // ============================================
       window.dataLayer = window.dataLayer || [];
       
-      // Пушимо подію в dataLayer
       window.dataLayer.push({
         event: 'begin_checkout',
         ecommerce: {
@@ -496,7 +497,33 @@
       });
       
       console.log('[GA4] ✅ begin_checkout pushed to dataLayer');
-      console.log('[GA4] 📊 Current dataLayer:', window.dataLayer);
+      
+      // ============================================
+      // ✅ REDDIT PIXEL EVENT: AddToCart (Begin Checkout)
+      // ============================================
+      if (window.RedditPixel && typeof window.RedditPixel.trackBeginCheckout === 'function') {
+        window.RedditPixel.trackBeginCheckout(orderId, cartValue);
+        console.log('[Reddit Pixel] ✅ Begin Checkout event sent');
+      } else {
+        // Fallback: якщо RedditPixel ще не завантажився
+        console.log('[Reddit Pixel] ⏳ Waiting for RedditPixel to load...');
+        setTimeout(function() {
+          if (window.RedditPixel && typeof window.RedditPixel.trackBeginCheckout === 'function') {
+            window.RedditPixel.trackBeginCheckout(orderId, cartValue);
+            console.log('[Reddit Pixel] ✅ Begin Checkout event sent (delayed)');
+          } else if (typeof rdt !== 'undefined') {
+            // Direct fallback
+            rdt('track', 'AddToCart', {
+              'transactionId': orderId,
+              'value': cartValue,
+              'currency': 'USD'
+            });
+            console.log('[Reddit Pixel] ✅ Begin Checkout event sent (direct rdt)');
+          } else {
+            console.warn('[Reddit Pixel] ⚠️ Reddit Pixel not available');
+          }
+        }, 500);
+      }
       
       // Додаткова перевірка чи GTM завантажився
       if (window.google_tag_manager && window.google_tag_manager['GTM-M2QCB45Q']) {
@@ -506,11 +533,11 @@
       }
       
     } catch(error) {
-      console.error('[GA4] ❌ begin_checkout error:', error);
-      console.error('[GA4] Error stack:', error.stack);
+      console.error('[CHECKOUT] ❌ begin_checkout error:', error);
+      console.error('[CHECKOUT] Error stack:', error.stack);
     }
     
-  }, 800); // Даємо 800ms для завантаження GTM
+  }, 800); // Даємо 800ms для завантаження GTM та Reddit Pixel
   
 })();
 </script>
