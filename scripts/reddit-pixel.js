@@ -27,12 +27,19 @@ rdt('track', 'PageVisit');
 // Helper functions for events
 window.RedditPixel = {
   // Begin Checkout (AddToCart)
-  trackBeginCheckout: function(transactionId) {
+trackBeginCheckout: function(transactionId, value) {
+  try {
     rdt('track', 'AddToCart', {
-      'transactionId': transactionId || ''
+      'value': value || 0,
+      'currency': 'USD',
+      'itemCount': 1
+      // Прибрали transactionId — Reddit не підтримує його для AddToCart
     });
-    console.log('✅ Reddit: AddToCart fired', transactionId);
-  },
+    console.log('[Reddit Pixel] ✅ AddToCart fired, value:', value);
+  } catch(e) {
+    console.error('[Reddit Pixel] ❌ AddToCart error:', e);
+  }
+},
   
   // Buy Intent (Lead)
   trackBuyIntent: function(transactionId) {
