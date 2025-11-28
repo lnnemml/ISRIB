@@ -1060,10 +1060,10 @@ function initPromoCode() {
 
   let appliedPromo = null;
 
-  const PROMO_CODES = {
+   const PROMO_CODES = {
     'RETURN15': { discount: 0.15, label: '15% off' },
     'WELCOME15': { discount: 0.15, label: '15% off' },
-    'BLACK25': { discount: 0.25, label: '25% off' } 
+    'BLACK25': { discount: 0.25, label: '25% off' }
   };
 
   // ⚡ АВТОМАТИЧНА АКТИВАЦІЯ З LOCALSTORAGE
