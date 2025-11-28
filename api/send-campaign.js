@@ -130,8 +130,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No customers provided' });
     }
 
-    if (customers.length > 100) {
-      return res.status(400).json({ error: 'Maximum 100 emails per batch (free tier limit)' });
+    // ✅ НОВИЙ ЛІМІТ: 1000 emails per batch (Pro plan)
+    if (customers.length > 1000) {
+      return res.status(400).json({ 
+        error: 'Maximum 1000 emails per batch. Split your list if you have more.',
+        suggestion: 'For larger lists, use multiple API calls with batches of 500-1000 emails each.'
+      });
     }
 
     const template = TEMPLATES[campaignId];
@@ -147,8 +151,10 @@ export default async function handler(req, res) {
       startTime: new Date().toISOString()
     };
 
+    // ✅ ОНОВЛЕНИЙ TIME ESTIMATE
+    const estimatedMinutes = Math.round(customerList.length * 3.5 / 60); // 3.5s per email average
     console.log(`\n🚀 Starting campaign ${campaignId} for ${customerList.length} customers`);
-    console.log(`⏱️  Estimated time: ~${Math.round(customerList.length * 4 / 60)} minutes\n`);
+    console.log(`⏱️  Estimated time: ~${estimatedMinutes} minutes\n`);
 
     for (let i = 0; i < customerList.length; i++) {
       const customer = customerList[i];
@@ -171,9 +177,8 @@ export default async function handler(req, res) {
         const personalizedHtml = personalizeEmail(template.html, customer);
         const personalizedSubject = personalizeSubject(template.subject, customer);
 
-        // КРИТИЧНО: Мінімальні headers (як Email 1)
         const result = await resend.emails.send({
-          from: 'Danylo from ISRIB <danylo@isrib.shop>',
+          from: 'Danylo from ISRIB <noreply@isrib.shop>',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
@@ -192,9 +197,16 @@ export default async function handler(req, res) {
         console.log(`✓ [${i+1}/${customerList.length}] Sent to ${customer.email} (${customer.firstName}) - ID: ${result.id}`);
         results.sent++;
 
+        // ✅ ОПТИМІЗОВАНА ЗАТРИМКА для Pro plan
         if (i < customerList.length - 1) {
-          const delay = 3000 + Math.random() * 2000;
-          console.log(`   ⏱️  Waiting ${(delay/1000).toFixed(1)}s before next email...`);
+          // Resend Pro: 10 emails/second max, але краще тримати ~3-4/second для безпеки
+          const delay = 2500 + Math.random() * 1500; // 2.5-4s (безпечно для deliverability)
+          
+          // Лог кожні 50 emails щоб не спамити console
+          if (i % 50 === 0 || i === customerList.length - 2) {
+            console.log(`   ⏱️  Waiting ${(delay/1000).toFixed(1)}s before next email...`);
+          }
+          
           await sleep(delay);
         }
 
@@ -207,6 +219,7 @@ export default async function handler(req, res) {
           error: error.message 
         });
         
+        // При помилці чекаємо довше
         if (i < customerList.length - 1) {
           console.log(`   ⚠️  Error detected, waiting 10s before retry...`);
           await sleep(10000);
@@ -222,7 +235,8 @@ export default async function handler(req, res) {
     console.log(`   Sent: ${results.sent}`);
     console.log(`   Skipped (unsubscribed): ${results.skipped}`);
     console.log(`   Failed: ${results.failed}`);
-    console.log(`   Duration: ${Math.floor(duration/60)}m ${duration%60}s\n`);
+    console.log(`   Duration: ${Math.floor(duration/60)}m ${duration%60}s`);
+    console.log(`   Average: ${(duration/results.sent).toFixed(1)}s per email\n`);
 
     return res.status(200).json({
       success: true,
