@@ -54,7 +54,117 @@ const TEMPLATES = {
   </div>
 </body>
 </html>`
-  }
+  },
+  '3': {
+  subject: '🔥 Black Friday: 25% off ISRIB — 48h only',
+  html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000000;">
+  <div style="max-width:600px;margin:40px auto;padding:0 20px;">
+    
+    <!-- Hero Banner -->
+    <div style="background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%);border-radius:16px;padding:32px 24px;text-align:center;margin-bottom:24px;box-shadow:0 8px 24px rgba(220,38,38,0.3);">
+      <div style="font-size:48px;margin-bottom:8px;">🔥</div>
+      <h1 style="color:#fff;font-size:32px;font-weight:900;margin:0 0 8px;letter-spacing:-0.5px;">BLACK FRIDAY</h1>
+      <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;margin-top:16px;">
+        <div style="color:#fca5a5;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Exclusive Offer</div>
+        <div style="color:#fff;font-size:42px;font-weight:900;line-height:1;">25% OFF</div>
+        <div style="color:#fecaca;font-size:16px;margin-top:8px;font-weight:600;">All Research Compounds</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div style="background:#111827;border-radius:16px;padding:32px 24px;margin-bottom:24px;">
+      <p style="color:#f3f4f6;font-size:18px;line-height:1.6;margin:0 0 16px;font-weight:600;">Hi {{firstName}},</p>
+      
+      <p style="color:#d1d5db;font-size:16px;line-height:1.6;margin:0 0 24px;">
+        Black Friday is here. For the next <strong style="color:#fff;">48 hours only</strong>, take 25% off your entire order with code <strong style="color:#fca5a5;">BLACK25</strong>.
+      </p>
+
+      <!-- Product Grid -->
+      <div style="background:#1f2937;border-radius:12px;padding:20px;margin-bottom:24px;">
+        <h3 style="color:#f9fafb;margin:0 0 16px;font-size:18px;">In Stock Now:</h3>
+        
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #374151;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#e5e7eb;font-weight:600;">ISRIB A15</span>
+            <span style="color:#9ca3af;font-size:14px;">98%+ purity</span>
+          </div>
+        </div>
+        
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #374151;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#e5e7eb;font-weight:600;">ZZL-7</span>
+            <span style="color:#9ca3af;font-size:14px;">Rapid acting</span>
+          </div>
+        </div>
+        
+        <div style="margin-bottom:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#e5e7eb;font-weight:600;">ISRIB Original</span>
+            <span style="color:#9ca3af;font-size:14px;">Lab grade</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promo Code Box -->
+      <div style="background:#dc2626;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;">
+        <div style="color:#fecaca;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Your Code</div>
+        <div style="background:#991b1b;border-radius:8px;padding:16px;border:2px dashed #fca5a5;">
+          <div style="color:#fff;font-size:32px;font-weight:900;font-family:monospace;letter-spacing:2px;">BLACK25</div>
+        </div>
+        <div style="color:#fecaca;font-size:13px;margin-top:12px;font-weight:600;">Valid until Sunday, midnight GMT</div>
+      </div>
+
+      <!-- CTA Button -->
+      <div style="text-align:center;margin-bottom:24px;">
+        <a href="https://isrib.shop/products.html?promo=BLACK25&utm_source=email&utm_campaign=black_friday&utm_content={{firstName}}" 
+           style="display:inline-block;background:#dc2626;color:#fff;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:800;font-size:18px;box-shadow:0 4px 12px rgba(220,38,38,0.4);">
+          🛒 Shop Black Friday Sale
+        </a>
+      </div>
+
+      <!-- Benefits -->
+      <div style="background:#1f2937;border-radius:12px;padding:20px;margin-bottom:24px;">
+        <div style="color:#10b981;font-size:14px;margin-bottom:12px;display:flex;align-items:center;">
+          <span style="margin-right:8px;">✓</span>
+          <span>Free worldwide shipping on all orders</span>
+        </div>
+        <div style="color:#10b981;font-size:14px;margin-bottom:12px;display:flex;align-items:center;">
+          <span style="margin-right:8px;">✓</span>
+          <span>Verified COA with every purchase</span>
+        </div>
+        <div style="color:#10b981;font-size:14px;display:flex;align-items:center;">
+          <span style="margin-right:8px;">✓</span>
+          <span>Discrete packaging, fast processing</span>
+        </div>
+      </div>
+
+      <!-- Urgency -->
+      <div style="background:#7c2d12;border-left:4px solid #dc2626;padding:16px;border-radius:8px;">
+        <p style="margin:0;color:#fca5a5;font-size:14px;line-height:1.6;">
+          <strong>⏰ Limited time:</strong> This is our biggest discount of the year. Ends Sunday, November 30 at midnight GMT.
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="border-top:1px solid #374151;padding-top:20px;margin-top:40px;">
+      <p style="color:#6b7280;font-size:12px;line-height:1.6;margin:0 0 8px;">
+        Research compounds • Worldwide shipping • Verified COA
+      </p>
+      <p style="color:#6b7280;font-size:12px;margin:0;">
+        <a href="https://isrib.shop/unsubscribe?email={{email}}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>`
+}
 };
 
 function personalizeEmail(html, customer) {
