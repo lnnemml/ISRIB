@@ -56,14 +56,26 @@ const TEMPLATES = {
 </html>`
   },
   '3': {
-  subject: '🔥 Black Friday: 25% off ISRIB — 48h only',
+  // ✅ ПЕРСОНАЛІЗОВАНИЙ SUBJECT
+  subject: '{{firstName}}, your BLACK25 code expires in 48h 🔥',
+  
   html: `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ✅ PRIORITY META TAGS -->
+  <meta name="importance" content="high">
+  <meta name="priority" content="urgent">
+  <meta name="x-priority" content="1">
 </head>
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000000;">
+  
+  <!-- ✅ URGENCY BANNER -->
+  <div style="background:#dc2626;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:700;letter-spacing:0.5px;">
+    ⏰ TIME-SENSITIVE: Expires Sunday at midnight GMT
+  </div>
+  
   <div style="max-width:600px;margin:40px auto;padding:0 20px;">
     
     <!-- Hero Banner -->
@@ -79,11 +91,20 @@ const TEMPLATES = {
 
     <!-- Main Content -->
     <div style="background:#111827;border-radius:16px;padding:32px 24px;margin-bottom:24px;">
+      <!-- ✅ ПЕРСОНАЛІЗОВАНЕ ПРИВІТАННЯ -->
       <p style="color:#f3f4f6;font-size:18px;line-height:1.6;margin:0 0 16px;font-weight:600;">Hi {{firstName}},</p>
       
       <p style="color:#d1d5db;font-size:16px;line-height:1.6;margin:0 0 24px;">
         Black Friday is here. For the next <strong style="color:#fff;">48 hours only</strong>, take 25% off your entire order with code <strong style="color:#fca5a5;">BLACK25</strong>.
       </p>
+
+      <!-- ✅ ПЕРСОНАЛІЗОВАНА URGENCY MESSAGE -->
+      <div style="background:#7c2d12;border-left:4px solid #dc2626;padding:16px;border-radius:8px;margin-bottom:24px;">
+        <p style="margin:0;color:#fca5a5;font-size:14px;line-height:1.6;">
+          <strong>{{firstName}}, this is our biggest discount of the year.</strong><br>
+          Ends Sunday, November 30 at midnight GMT.
+        </p>
+      </div>
 
       <!-- Product Grid -->
       <div style="background:#1f2937;border-radius:12px;padding:20px;margin-bottom:24px;">
@@ -113,14 +134,14 @@ const TEMPLATES = {
 
       <!-- Promo Code Box -->
       <div style="background:#dc2626;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;">
-        <div style="color:#fecaca;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Your Code</div>
+        <div style="color:#fecaca;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Your Personal Code</div>
         <div style="background:#991b1b;border-radius:8px;padding:16px;border:2px dashed #fca5a5;">
           <div style="color:#fff;font-size:32px;font-weight:900;font-family:monospace;letter-spacing:2px;">BLACK25</div>
         </div>
         <div style="color:#fecaca;font-size:13px;margin-top:12px;font-weight:600;">Valid until Sunday, midnight GMT</div>
       </div>
 
-      <!-- CTA Button -->
+      <!-- CTA Button with personalization -->
       <div style="text-align:center;margin-bottom:24px;">
         <a href="https://isrib.shop/products.html?promo=BLACK25&utm_source=email&utm_campaign=black_friday&utm_content={{firstName}}" 
            style="display:inline-block;background:#dc2626;color:#fff;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:800;font-size:18px;box-shadow:0 4px 12px rgba(220,38,38,0.4);">
@@ -144,10 +165,10 @@ const TEMPLATES = {
         </div>
       </div>
 
-      <!-- Urgency -->
+      <!-- Final Urgency -->
       <div style="background:#7c2d12;border-left:4px solid #dc2626;padding:16px;border-radius:8px;">
         <p style="margin:0;color:#fca5a5;font-size:14px;line-height:1.6;">
-          <strong>⏰ Limited time:</strong> This is our biggest discount of the year. Ends Sunday, November 30 at midnight GMT.
+          <strong>⏰ {{firstName}}, don't miss out:</strong> This is our biggest discount of the year. Offer ends Sunday, November 30 at midnight GMT.
         </p>
       </div>
     </div>
@@ -159,6 +180,9 @@ const TEMPLATES = {
       </p>
       <p style="color:#6b7280;font-size:12px;margin:0;">
         <a href="https://isrib.shop/unsubscribe?email={{email}}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a>
+      </p>
+      <p style="color:#4b5563;font-size:11px;margin:8px 0 0;">
+        You're receiving this because you previously ordered from ISRIB.shop
       </p>
     </div>
   </div>
@@ -234,76 +258,100 @@ export default async function handler(req, res) {
     console.log(`⏱️  Estimated time: ~${Math.round(customerList.length * 4 / 60)} minutes\n`);
 
     for (let i = 0; i < customerList.length; i++) {
-      const customer = customerList[i];
-      
-      try {
-        // ⚡ КРИТИЧНО: ПЕРЕВІРКА UNSUBSCRIBE ПЕРЕД ВІДПРАВКОЮ
-        const normalizedEmail = customer.email.trim().toLowerCase();
-        const isUnsubscribed = await unsubscribeStore.has(normalizedEmail);
-        
-        if (isUnsubscribed) {
-          console.log(`⊘ [${i+1}/${customerList.length}] SKIPPED (unsubscribed): ${customer.email}`);
-          results.skipped++;
-          results.skippedEmails.push({
-            email: customer.email,
-            firstName: customer.firstName,
-            reason: 'unsubscribed'
-          });
-          
-          // ⚠️ ВАЖЛИВО: пропускаємо ітерацію БЕЗ затримки
-          continue;
-        }
-
-        // Тільки якщо НЕ unsubscribed - персоналізуємо та відправляємо
-        const personalizedHtml = personalizeEmail(template.html, customer);
-        const personalizedSubject = personalizeSubject(template.subject, customer);
-
-        const result = await resend.emails.send({
-          from: 'Danylo from ISRIB <noreply@isrib.shop>',
-          to: customer.email,
-          subject: personalizedSubject,
-          html: personalizedHtml,
-          
-          replyTo: 'isrib.shop@protonmail.com',
-          
-          headers: {
-            'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(customer.email)}>`,
-            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-            'X-Entity-Ref-ID': `campaign-${campaignId}-${Date.now()}`,
-            'X-Campaign-Type': 'transactional',
-          },
-          
-          tags: [
-            { name: 'campaign', value: campaignId },
-            { name: 'batch', value: 'relaunch' }
-          ]
-        });
-
-        console.log(`✓ [${i+1}/${customerList.length}] Sent to ${customer.email} (${customer.firstName}) - ID: ${result.id}`);
-        results.sent++;
-
-        // Затримка ТІЛЬКИ для відправлених emails
-        if (i < customerList.length - 1) {
-          const delay = 3000 + Math.random() * 2000; // 3000-5000ms
-          console.log(`   ⏱️  Waiting ${(delay/1000).toFixed(1)}s before next email...`);
-          await sleep(delay);
-        }
-
-      } catch (error) {
-        console.error(`✗ [${i+1}/${customerList.length}] Failed ${customer.email}: ${error.message}`);
-        results.failed++;
-        results.errors.push({ 
-          email: customer.email,
-          firstName: customer.firstName,
-          error: error.message 
-        });
-        
-        if (i < customerList.length - 1) {
-          console.log(`   ⚠️  Error detected, waiting 10s before retry...`);
-          await sleep(10000);
-        }
-      }
+  const customer = customerList[i];
+  
+  try {
+    // ⚡ ПЕРЕВІРКА UNSUBSCRIBE
+    const normalizedEmail = customer.email.trim().toLowerCase();
+    const isUnsubscribed = await unsubscribeStore.has(normalizedEmail);
+    
+    if (isUnsubscribed) {
+      console.log(`⊘ [${i+1}/${customerList.length}] SKIPPED (unsubscribed): ${customer.email}`);
+      results.skipped++;
+      results.skippedEmails.push({
+        email: customer.email,
+        firstName: customer.firstName,
+        reason: 'unsubscribed'
+      });
+      continue;
     }
+
+    // ✅ ПЕРСОНАЛІЗАЦІЯ КОНТЕНТУ
+    const personalizedHtml = personalizeEmail(template.html, customer);
+    
+    // ✅ ПЕРСОНАЛІЗАЦІЯ SUBJECT (спеціально для Black Friday)
+    let finalSubject = template.subject;
+    
+    // Для Black Friday (campaignId === '3') - використовуємо персоналізований subject
+    if (campaignId === '3' && customer.firstName) {
+      finalSubject = `${customer.firstName}, your BLACK25 code expires in 48h 🔥`;
+    }
+    
+    const personalizedSubject = personalizeSubject(finalSubject, customer);
+
+    // ✅ ВІДПРАВКА З HIGH PRIORITY HEADERS
+    const result = await resend.emails.send({
+      from: 'Danylo from ISRIB <noreply@isrib.shop>',
+      to: customer.email,
+      subject: personalizedSubject,
+      html: personalizedHtml,
+      
+      replyTo: 'isrib.shop@protonmail.com',
+      
+      // ✅ КРИТИЧНО: HEADERS ДЛЯ ПОТРАПЛЯННЯ У ВАЖЛИВІ
+      headers: {
+        // Priority headers (Gmail, Outlook, Apple Mail)
+        'Importance': 'high',
+        'Priority': 'urgent',
+        'X-Priority': '1',
+        'X-MSMail-Priority': 'High',
+        
+        // Unsubscribe
+        'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(customer.email)}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        
+        // Entity reference
+        'X-Entity-Ref-ID': `campaign-${campaignId}-${Date.now()}`,
+        
+        // ✅ ДОДАТКОВІ HEADERS ДЛЯ ENGAGEMENT
+        'X-Campaign-Name': campaignId === '3' ? 'Black Friday 2024' : 'Relaunch',
+        'X-Auto-Response-Suppress': 'OOF, DR, RN, NRN, AutoReply',
+      },
+      
+      // ✅ TAGS ДЛЯ ANALYTICS
+      tags: [
+        { name: 'campaign', value: campaignId },
+        { name: 'batch', value: campaignId === '3' ? 'black_friday' : 'relaunch' },
+        { name: 'priority', value: campaignId === '3' ? 'high' : 'normal' },
+        { name: 'personalized', value: customer.firstName ? 'yes' : 'no' }
+      ]
+    });
+
+    console.log(`✓ [${i+1}/${customerList.length}] Sent to ${customer.email} (${customer.firstName}) - ID: ${result.id}`);
+    results.sent++;
+
+    // ⏱️ ЗАТРИМКА МІЖ ВІДПРАВКАМИ
+    if (i < customerList.length - 1) {
+      const delay = 3000 + Math.random() * 2000; // 3-5 секунд
+      console.log(`   ⏱️  Waiting ${(delay/1000).toFixed(1)}s before next email...`);
+      await sleep(delay);
+    }
+
+  } catch (error) {
+    console.error(`✗ [${i+1}/${customerList.length}] Failed ${customer.email}: ${error.message}`);
+    results.failed++;
+    results.errors.push({ 
+      email: customer.email,
+      firstName: customer.firstName,
+      error: error.message 
+    });
+    
+    if (i < customerList.length - 1) {
+      console.log(`   ⚠️  Error detected, waiting 10s before retry...`);
+      await sleep(10000);
+    }
+  }
+}
 
     results.endTime = new Date().toISOString();
     const duration = Math.round((new Date(results.endTime) - new Date(results.startTime)) / 1000);
