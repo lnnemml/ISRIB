@@ -56,8 +56,8 @@ const TEMPLATES = {
 </html>`
   },
   '3': {
-  subject: '{{firstName}}, quick update',
-  html: `<!DOCTYPE html>
+    subject: '{{firstName}}, quick update',
+    html: `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -66,7 +66,7 @@ const TEMPLATES = {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
   <div style="max-width:600px;margin:40px auto;padding:0 20px;">
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick note — we're running a Black Friday offer this weekend.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick note — we're running a weekend offer through Sunday.</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Here's <strong>BLACK25</strong> for 25% off (valid through Sunday).</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Plus: <strong>worldwide shipping included</strong> on all orders.</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib.shop/products.html?promo=BLACK25&utm_source=email&utm_campaign=bf_minimal&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Visit isrib.shop</a></p>
@@ -81,7 +81,7 @@ const TEMPLATES = {
   </div>
 </body>
 </html>`
-}
+  }
 };
 
 function personalizeEmail(html, customer) {
@@ -154,7 +154,6 @@ export default async function handler(req, res) {
       const customer = customerList[i];
       
       try {
-        // Перевірка unsubscribe
         const normalizedEmail = customer.email.trim().toLowerCase();
         const isUnsubscribed = await unsubscribeStore.has(normalizedEmail);
         
@@ -169,39 +168,30 @@ export default async function handler(req, res) {
           continue;
         }
 
-        // Персоналізація
         const personalizedHtml = personalizeEmail(template.html, customer);
         const personalizedSubject = personalizeSubject(template.subject, customer);
 
-        // Відправка (БЕЗ aggressive headers для consultative версії)
+        // КРИТИЧНО: Мінімальні headers (як Email 1)
         const result = await resend.emails.send({
-          from: 'Danylo from ISRIB <noreply@isrib.shop>',
+          from: 'Danylo from ISRIB <danylo@isrib.shop>',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
-          
           replyTo: 'isrib.shop@protonmail.com',
           
           headers: {
-            // Мінімальні headers для consultative стилю
             'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(customer.email)}>`,
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-            'X-Entity-Ref-ID': `campaign-${campaignId}-${Date.now()}`,
-            'X-Campaign-Name': campaignId === '3' ? 'Black Friday Consultative 2024' : 'Relaunch',
           },
           
           tags: [
-            { name: 'campaign', value: campaignId },
-            { name: 'batch', value: campaignId === '3' ? 'bf_consultative' : 'relaunch' },
-            { name: 'style', value: campaignId === '3' ? 'consultative' : 'normal' },
-            { name: 'personalized', value: customer.firstName ? 'yes' : 'no' }
+            { name: 'campaign', value: campaignId }
           ]
         });
 
         console.log(`✓ [${i+1}/${customerList.length}] Sent to ${customer.email} (${customer.firstName}) - ID: ${result.id}`);
         results.sent++;
 
-        // Затримка
         if (i < customerList.length - 1) {
           const delay = 3000 + Math.random() * 2000;
           console.log(`   ⏱️  Waiting ${(delay/1000).toFixed(1)}s before next email...`);
