@@ -57,11 +57,9 @@ const TEMPLATES = {
   },
   '3': {
     name: 'Black Friday - Consultative',
-    subject: '{{firstName}}, a brief update',
-    
-    html: (customer, orderId) => `
-<!DOCTYPE html>
-<html lang="en">
+    subject: '{{firstName}}, a brief update',`
+     html: `<!DOCTYPE html>
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
