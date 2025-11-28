@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Splitter - ISRIB</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+    }
+    h1 { font-size: 28px; margin-bottom: 10px; color: #1e293b; }
+    .subtitle { color: #64748b; margin-bottom: 30px; }
+    
+    .section { margin-bottom: 30px; }
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin-bottom: 8px; 
+      color: #334155; 
+    }
+    
+    input[type="number"], textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    textarea { 
+      min-height: 200px; 
+      font-family: monospace;
+      resize: vertical;
+    }
+    
+    .btn {
+      background: #000;
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover { 
+      background: #333; 
+      transform: translateY(-2px); 
+    }
+    
+    .info-box {
+      background: #f0f7ff;
+      border-left: 4px solid #0066cc;
+      padding: 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    
+    .batch-output {
+      margin-top: 30px;
+      display: none;
+    }
+    
+    .batch-output.show {
+      display: block;
+    }
+    
+    .batch-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .batch-card h3 {
+      margin-bottom: 12px;
+      color: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .batch-card textarea {
+      min-height: 150px;
+      font-size: 12px;
+      background: white;
+    }
+    
+    .copy-btn {
+      background: #10b981;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .copy-btn:hover {
+      background: #059669;
+    }
+    
+    .copy-btn.copied {
+      background: #6366f1;
+    }
+    
+    .stats {
+      background: #f1f5f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="container">
+    
+    <h1>📦 Batch Splitter</h1>
+    <p class="subtitle">Розділи список customers на батчі по 70 emails</p>
+    
+    <div class="info-box">
+      <strong>💡 Як використовувати:</strong><br>
+      1. Вставити повний JSON список customers<br>
+      2. Натиснути "Split into Batches"<br>
+      3. Скопіювати кожен batch і вставити у campaign.html<br>
+      4. Відправити кожен batch окремо (чекати 2-3 хв між батчами)
+    </div>
+    
+    <div class="section">
+      <label for="batchSize">Batch Size (emails per batch):</label>
+      <input type="number" id="batchSize" value="70" min="1" max="100">
+    </div>
+    
+    <div class="section">
+      <label for="customerList">Customer List (JSON Array):</label>
+      <textarea id="customerList" placeholder='[
+  {"email": "customer1@example.com", "firstName": "John"},
+  {"email": "customer2@example.com", "firstName": "Jane"},
+  {"email": "customer3@example.com", "firstName": "Bob"}
+]'></textarea>
+    </div>
+    
+    <button class="btn" onclick="splitIntoBatches()">🔪 Split into Batches</button>
+    
+    <div class="batch-output" id="output">
+      <h2 style="margin: 30px 0 20px 0;">📊 Results</h2>
+      
+      <div class="stats" id="stats"></div>
+      
+      <div id="batches"></div>
+    </div>
+    
+  </div>
+  
+  <script>
+    function splitIntoBatches() {
+      const batchSize = parseInt(document.getElementById('batchSize').value);
+      const customerListRaw = document.getElementById('customerList').value.trim();
+      
+      // Parse JSON
+      let customers;
+      try {
+        customers = JSON.parse(customerListRaw);
+      } catch (error) {
+        alert('Invalid JSON format! Please check your customer list.');
+        return;
+      }
+      
+      if (!Array.isArray(customers) || customers.length === 0) {
+        alert('Customer list must be a non-empty array!');
+        return;
+      }
+      
+      // Split into batches
+      const batches = [];
+      for (let i = 0; i < customers.length; i += batchSize) {
+        const batch = customers.slice(i, i + batchSize);
+        batches.push(batch);
+      }
+      
+      // Display stats
+      const statsHTML = `
+        <div class="stat">
+          <div class="stat-number">${customers.length}</div>
+          <div class="stat-label">Total Customers</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">${batchSize}</div>
+          <div class="stat-label">Batch Size</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">${batches.length}</div>
+          <div class="stat-label">Total Batches</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">~${Math.ceil(batches.length * 5)}</div>
+          <div class="stat-label">Minutes (est.)</div>
+        </div>
+      `;
+      
+      document.getElementById('stats').innerHTML = statsHTML;
+      
+      // Display batches
+      let batchesHTML = '';
+      
+      batches.forEach((batch, index) => {
+        const batchJSON = JSON.stringify(batch, null, 2);
+        
+        batchesHTML += `
+          <div class="batch-card">
+            <h3>
+              <span>Batch ${index + 1} (${batch.length} customers)</span>
+              <button class="copy-btn" onclick="copyBatch(${index})">
+                📋 Copy
+              </button>
+            </h3>
+            <textarea id="batch${index}" readonly>${batchJSON}</textarea>
+          </div>
+        `;
+      });
+      
+      document.getElementById('batches').innerHTML = batchesHTML;
+      document.getElementById('output').classList.add('show');
+      
+      // Scroll to results
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function copyBatch(index) {
+      const textarea = document.getElementById(`batch${index}`);
+      textarea.select();
+      document.execCommand('copy');
+      
+      // Visual feedback
+      const btn = event.target;
+      btn.textContent = '✅ Copied!';
+      btn.classList.add('copied');
+      
+      setTimeout(() => {
+        btn.textContent = '📋 Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+    
+    // Example data for testing
+    const exampleData = [
+      {"email": "test1@example.com", "firstName": "John"},
+      {"email": "test2@example.com", "firstName": "Jane"},
+      {"email": "test3@example.com", "firstName": "Bob"}
+    ];
+    
+    // You can pre-fill with example data by uncommenting:
+    // document.getElementById('customerList').value = JSON.stringify(exampleData, null, 2);
+  </script>
+  
+</body>
+</html>
