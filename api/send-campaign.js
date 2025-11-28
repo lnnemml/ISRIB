@@ -56,135 +56,32 @@ const TEMPLATES = {
 </html>`
   },
   '3': {
-    name: 'Black Friday - Consultative',
-    subject: '{{firstName}}, a brief update',
-    html: `<!DOCTYPE html>
-<html lang="en">
+  subject: '{{firstName}}, quick update',
+  html: `<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brief Update</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #ffffff; color: #1a1a1a;">
-  
-  <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
-    
-    <!-- Header -->
-    <div style="padding: 40px 30px 30px 30px; border-bottom: 1px solid #e5e5e5;">
-      <div style="font-size: 14px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500;">
-        ISRIB Research
-      </div>
-      <div style="font-size: 11px; color: #999; letter-spacing: 0.5px;">
-        Research-Grade Compounds
-      </div>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
+  <div style="max-width:600px;margin:40px auto;padding:0 20px;">
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick note — we're running a Black Friday offer this weekend.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Here's <strong>BLACK25</strong> for 25% off (valid through Sunday).</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Plus: <strong>worldwide shipping included</strong> on all orders.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib.shop/products.html?promo=BLACK25&utm_source=email&utm_campaign=bf_minimal&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Visit isrib.shop</a></p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 8px;">Available now:</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• ISRIB A15 (98%+ purity)<br>• ZZL-7 (rapid acting)<br>• ISRIB (original compound)</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Thanks,</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
+    <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
+      <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Verified COA • Worldwide shipping</p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="https://isrib.shop/unsubscribe?email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
     </div>
-    
-    <!-- Main Content -->
-    <div style="padding: 40px 30px;">
-      
-      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
-        Hi {{firstName}},
-      </p>
-      
-      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
-        I wanted to reach out personally about our Black Friday offering this year.
-      </p>
-      
-      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
-        For the next few days, we're offering 25% off all compounds to our existing customers. I thought this might be a good opportunity if you were considering restocking or trying one of our other products.
-      </p>
-      
-      <!-- Promo Code Box -->
-      <div style="background: #f8f8f8; border-left: 3px solid #1a1a1a; padding: 20px 25px; margin: 30px 0;">
-        <div style="font-size: 13px; color: #666; margin-bottom: 6px; letter-spacing: 0.5px;">
-          Discount Code
-        </div>
-        <div style="font-size: 24px; font-weight: 600; color: #1a1a1a; letter-spacing: 1px; font-family: 'Courier New', monospace;">
-          BLACK25
-        </div>
-        <div style="font-size: 13px; color: #666; margin-top: 6px;">
-          25% off • Valid through Sunday
-        </div>
-      </div>
-      
-      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
-        The code works on all our current inventory:
-      </p>
-      
-      <!-- Product List -->
-      <div style="margin: 20px 0 30px 0;">
-        <div style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
-          <div style="font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px;">
-            ISRIB A15
-          </div>
-          <div style="font-size: 13px; color: #666;">
-            98%+ purity, 500mg or 1000mg options
-          </div>
-        </div>
-        
-        <div style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
-          <div style="font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px;">
-            ZZL-7
-          </div>
-          <div style="font-size: 13px; color: #666;">
-            Rapid-acting analog, 100mg
-          </div>
-        </div>
-        
-        <div style="padding: 12px 0;">
-          <div style="font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px;">
-            ISRIB Original
-          </div>
-          <div style="font-size: 13px; color: #666;">
-            Lab-grade reference standard
-          </div>
-        </div>
-      </div>
-      
-      <p style="margin: 0 0 25px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
-        No pressure—just wanted to make sure you were aware in case it's helpful.
-      </p>
-      
-      <!-- CTA -->
-      <div style="margin: 30px 0;">
-        <a href="https://isrib.shop/products.html?promo=BLACK25&utm_source=email&utm_campaign=bf_consultative&utm_content={{firstName}}" 
-           style="display: inline-block; background: #1a1a1a; color: #ffffff; text-decoration: none; padding: 14px 32px; font-size: 15px; font-weight: 500; letter-spacing: 0.5px; border-radius: 4px;">
-          View Products
-        </a>
-      </div>
-      
-      <p style="margin: 30px 0 0 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
-        Best regards,<br>
-        Danylo
-      </p>
-      
-    </div>
-    
-    <!-- Footer -->
-    <div style="padding: 30px; border-top: 1px solid #e5e5e5; background: #fafafa;">
-      <div style="font-size: 12px; color: #666; line-height: 1.6; margin-bottom: 15px;">
-        <strong style="color: #1a1a1a;">ISRIB Research</strong><br>
-        Research-grade compounds for qualified researchers<br>
-        COA verification available upon request
-      </div>
-      
-      <div style="font-size: 11px; color: #999; margin-bottom: 10px;">
-        This email was sent to {{email}} because you previously ordered from ISRIB Shop.
-      </div>
-      
-      <div style="font-size: 11px;">
-        <a href="https://isrib.shop/unsubscribe?email={{email}}" 
-           style="color: #666; text-decoration: underline;">
-          Unsubscribe
-        </a>
-      </div>
-    </div>
-    
   </div>
-  
 </body>
 </html>`
-  }
+}
 };
 
 function personalizeEmail(html, customer) {
