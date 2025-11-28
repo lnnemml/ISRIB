@@ -205,8 +205,8 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    if (!campaignId || !['1', '2'].includes(campaignId)) {
-      return res.status(400).json({ error: 'Invalid campaignId. Use "1" or "2"' });
+    if (!campaignId || !['1', '2', '3'].includes(campaignId)) {
+      return res.status(400).json({ error: 'Invalid campaignId. Use "1", "2", or "3"' });
     }
 
     if (!Array.isArray(customers) || customers.length === 0) {
