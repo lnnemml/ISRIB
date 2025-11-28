@@ -56,138 +56,132 @@ const TEMPLATES = {
 </html>`
   },
   '3': {
-  // ✅ ПЕРСОНАЛІЗОВАНИЙ SUBJECT
-  subject: '{{firstName}}, your BLACK25 code expires in 48h 🔥',
-  
-  html: `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- ✅ PRIORITY META TAGS -->
-  <meta name="importance" content="high">
-  <meta name="priority" content="urgent">
-  <meta name="x-priority" content="1">
-</head>
-<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#000000;">
-  
-  <!-- ✅ URGENCY BANNER -->
-  <div style="background:#dc2626;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:700;letter-spacing:0.5px;">
-    ⏰ TIME-SENSITIVE: Expires Sunday at midnight GMT
-  </div>
-  
-  <div style="max-width:600px;margin:40px auto;padding:0 20px;">
+    name: 'Black Friday - Consultative',
+    subject: '{{firstName}}, a brief update',
     
-    <!-- Hero Banner -->
-    <div style="background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%);border-radius:16px;padding:32px 24px;text-align:center;margin-bottom:24px;box-shadow:0 8px 24px rgba(220,38,38,0.3);">
-      <div style="font-size:48px;margin-bottom:8px;">🔥</div>
-      <h1 style="color:#fff;font-size:32px;font-weight:900;margin:0 0 8px;letter-spacing:-0.5px;">BLACK FRIDAY</h1>
-      <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;margin-top:16px;">
-        <div style="color:#fca5a5;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Exclusive Offer</div>
-        <div style="color:#fff;font-size:42px;font-weight:900;line-height:1;">25% OFF</div>
-        <div style="color:#fecaca;font-size:16px;margin-top:8px;font-weight:600;">All Research Compounds</div>
+    html: (customer, orderId) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brief Update</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #ffffff; color: #1a1a1a;">
+  
+  <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
+    
+    <!-- Header: Simple, professional -->
+    <div style="padding: 40px 30px 30px 30px; border-bottom: 1px solid #e5e5e5;">
+      <div style="font-size: 14px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500;">
+        ISRIB Research
+      </div>
+      <div style="font-size: 11px; color: #999; letter-spacing: 0.5px;">
+        Research-Grade Compounds
       </div>
     </div>
-
+    
     <!-- Main Content -->
-    <div style="background:#111827;border-radius:16px;padding:32px 24px;margin-bottom:24px;">
-      <!-- ✅ ПЕРСОНАЛІЗОВАНЕ ПРИВІТАННЯ -->
-      <p style="color:#f3f4f6;font-size:18px;line-height:1.6;margin:0 0 16px;font-weight:600;">Hi {{firstName}},</p>
+    <div style="padding: 40px 30px;">
       
-      <p style="color:#d1d5db;font-size:16px;line-height:1.6;margin:0 0 24px;">
-        Black Friday is here. For the next <strong style="color:#fff;">48 hours only</strong>, take 25% off your entire order with code <strong style="color:#fca5a5;">BLACK25</strong>.
+      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
+        Hi ${customer.firstName},
       </p>
-
-      <!-- ✅ ПЕРСОНАЛІЗОВАНА URGENCY MESSAGE -->
-      <div style="background:#7c2d12;border-left:4px solid #dc2626;padding:16px;border-radius:8px;margin-bottom:24px;">
-        <p style="margin:0;color:#fca5a5;font-size:14px;line-height:1.6;">
-          <strong>{{firstName}}, this is our biggest discount of the year.</strong><br>
-          Ends Sunday, November 30 at midnight GMT.
-        </p>
+      
+      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
+        I wanted to reach out personally about our Black Friday offering this year.
+      </p>
+      
+      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
+        For the next few days, we're offering 25% off all compounds to our existing customers. I thought this might be a good opportunity if you were considering restocking or trying one of our other products.
+      </p>
+      
+      <!-- Promo Code Box: Clean, minimal -->
+      <div style="background: #f8f8f8; border-left: 3px solid #1a1a1a; padding: 20px 25px; margin: 30px 0;">
+        <div style="font-size: 13px; color: #666; margin-bottom: 6px; letter-spacing: 0.5px;">
+          Discount Code
+        </div>
+        <div style="font-size: 24px; font-weight: 600; color: #1a1a1a; letter-spacing: 1px; font-family: 'Courier New', monospace;">
+          BLACK25
+        </div>
+        <div style="font-size: 13px; color: #666; margin-top: 6px;">
+          25% off • Valid through Sunday
+        </div>
       </div>
-
-      <!-- Product Grid -->
-      <div style="background:#1f2937;border-radius:12px;padding:20px;margin-bottom:24px;">
-        <h3 style="color:#f9fafb;margin:0 0 16px;font-size:18px;">In Stock Now:</h3>
-        
-        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #374151;">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="color:#e5e7eb;font-weight:600;">ISRIB A15</span>
-            <span style="color:#9ca3af;font-size:14px;">98%+ purity</span>
+      
+      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
+        The code works on all our current inventory:
+      </p>
+      
+      <!-- Product List: Clean, no hype -->
+      <div style="margin: 20px 0 30px 0;">
+        <div style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+          <div style="font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px;">
+            ISRIB A15
+          </div>
+          <div style="font-size: 13px; color: #666;">
+            98%+ purity, 500mg or 1000mg options
           </div>
         </div>
         
-        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #374151;">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="color:#e5e7eb;font-weight:600;">ZZL-7</span>
-            <span style="color:#9ca3af;font-size:14px;">Rapid acting</span>
+        <div style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+          <div style="font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px;">
+            ZZL-7
+          </div>
+          <div style="font-size: 13px; color: #666;">
+            Rapid-acting analog, 100mg
           </div>
         </div>
         
-        <div style="margin-bottom:0;">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="color:#e5e7eb;font-weight:600;">ISRIB Original</span>
-            <span style="color:#9ca3af;font-size:14px;">Lab grade</span>
+        <div style="padding: 12px 0;">
+          <div style="font-size: 15px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px;">
+            ISRIB Original
+          </div>
+          <div style="font-size: 13px; color: #666;">
+            Lab-grade reference standard
           </div>
         </div>
       </div>
-
-      <!-- Promo Code Box -->
-      <div style="background:#dc2626;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;">
-        <div style="color:#fecaca;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Your Personal Code</div>
-        <div style="background:#991b1b;border-radius:8px;padding:16px;border:2px dashed #fca5a5;">
-          <div style="color:#fff;font-size:32px;font-weight:900;font-family:monospace;letter-spacing:2px;">BLACK25</div>
-        </div>
-        <div style="color:#fecaca;font-size:13px;margin-top:12px;font-weight:600;">Valid until Sunday, midnight GMT</div>
-      </div>
-
-      <!-- CTA Button with personalization -->
-      <div style="text-align:center;margin-bottom:24px;">
-        <a href="https://isrib.shop/products.html?promo=BLACK25&utm_source=email&utm_campaign=black_friday&utm_content={{firstName}}" 
-           style="display:inline-block;background:#dc2626;color:#fff;padding:16px 40px;border-radius:12px;text-decoration:none;font-weight:800;font-size:18px;box-shadow:0 4px 12px rgba(220,38,38,0.4);">
-          🛒 Shop Black Friday Sale
+      
+      <!-- CTA: Subtle, not aggressive -->
+      <div style="margin: 30px 0;">
+        <a href="https://isrib.shop/products.html?promo=BLACK25&utm_source=email&utm_campaign=bf_consultative&utm_content=${customer.firstName}" 
+           style="display: inline-block; background: #1a1a1a; color: #ffffff; text-decoration: none; padding: 14px 32px; font-size: 15px; font-weight: 500; letter-spacing: 0.5px; border-radius: 4px;">
+          View Products
         </a>
       </div>
-
-      <!-- Benefits -->
-      <div style="background:#1f2937;border-radius:12px;padding:20px;margin-bottom:24px;">
-        <div style="color:#10b981;font-size:14px;margin-bottom:12px;display:flex;align-items:center;">
-          <span style="margin-right:8px;">✓</span>
-          <span>Free worldwide shipping on all orders</span>
-        </div>
-        <div style="color:#10b981;font-size:14px;margin-bottom:12px;display:flex;align-items:center;">
-          <span style="margin-right:8px;">✓</span>
-          <span>Verified COA with every purchase</span>
-        </div>
-        <div style="color:#10b981;font-size:14px;display:flex;align-items:center;">
-          <span style="margin-right:8px;">✓</span>
-          <span>Discrete packaging, fast processing</span>
-        </div>
+      
+      <p style="margin: 30px 0 0 0; font-size: 16px; line-height: 1.6; color: #1a1a1a;">
+        Best regards,<br>
+        Danylo
+      </p>
+      
+    </div>
+    
+    <!-- Footer: Professional -->
+    <div style="padding: 30px; border-top: 1px solid #e5e5e5; background: #fafafa;">
+      <div style="font-size: 12px; color: #666; line-height: 1.6; margin-bottom: 15px;">
+        <strong style="color: #1a1a1a;">ISRIB Research</strong><br>
+        Research-grade compounds for qualified researchers<br>
+        COA verification available upon request
       </div>
-
-      <!-- Final Urgency -->
-      <div style="background:#7c2d12;border-left:4px solid #dc2626;padding:16px;border-radius:8px;">
-        <p style="margin:0;color:#fca5a5;font-size:14px;line-height:1.6;">
-          <strong>⏰ {{firstName}}, don't miss out:</strong> This is our biggest discount of the year. Offer ends Sunday, November 30 at midnight GMT.
-        </p>
+      
+      <div style="font-size: 11px; color: #999; margin-bottom: 10px;">
+        This email was sent to ${customer.email} because you previously ordered from ISRIB Shop.
+      </div>
+      
+      <div style="font-size: 11px;">
+        <a href="https://isrib.shop/unsubscribe?email=${customer.email}" 
+           style="color: #666; text-decoration: underline;">
+          Unsubscribe
+        </a>
       </div>
     </div>
-
-    <!-- Footer -->
-    <div style="border-top:1px solid #374151;padding-top:20px;margin-top:40px;">
-      <p style="color:#6b7280;font-size:12px;line-height:1.6;margin:0 0 8px;">
-        Research compounds • Worldwide shipping • Verified COA
-      </p>
-      <p style="color:#6b7280;font-size:12px;margin:0;">
-        <a href="https://isrib.shop/unsubscribe?email={{email}}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a>
-      </p>
-      <p style="color:#4b5563;font-size:11px;margin:8px 0 0;">
-        You're receiving this because you previously ordered from ISRIB.shop
-      </p>
-    </div>
+    
   </div>
+  
 </body>
-</html>`
+</html>
 }
 };
 
