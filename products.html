@@ -19,7 +19,7 @@
 <link rel="shortcut icon" href="/images/favicon.ico">
 <meta name="theme-color" content="#ffffff">
 
-  <link rel="stylesheet" href="css/styles.css?v=6" />
+  <link rel="stylesheet" href="css/styles.css?v=27" />
 </head>
 <body>
 
@@ -42,14 +42,22 @@
         </a>
       </nav>
 
-     <!-- Burger (mobile) -->
-<button class="burger" id="burgerBtn"
-        aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-  <svg class="burger-icon" width="22" height="22" viewBox="0 0 24 24"
-       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-    <path d="M4 7h16M4 12h16M10 17h10"/>
-  </svg>
-</button>
+      <!-- Mobile actions group (cart + burger) -->
+      <div class="mobile-actions">
+        <!-- Mobile cart button (always visible) -->
+        <a href="checkout.html" class="cart-btn-mobile" id="cartBtnMobile" aria-label="View cart">
+          🧺 <span id="cartCountMobileBtn" class="badge-mobile">0</span>
+        </a>
+
+       <!-- Burger (mobile) -->
+  <button class="burger" id="burgerBtn"
+          aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <svg class="burger-icon" width="22" height="22" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M10 17h10"/>
+    </svg>
+  </button>
+      </div>
 
 
 
@@ -59,9 +67,6 @@
     <a href="about.html" class="mm-link">About</a>
     <a href="faq.html" class="mm-link">FAQ</a>
     <a href="contact.html" class="mm-link">Contact</a>
-    <a href="checkout.html" class="mm-link mm-cart">
-      🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
-    </a>
   </nav>
 </header>
 
@@ -90,7 +95,7 @@
               <h2 class="product-title product-name">ISRIB A15</h2>
               <span class="product-sub muted">Ultra Potent Analog</span>
             </div>
-            
+
              <div class="product-formula">
               <img src="images/isrib-a15-formula.svg" alt="ISRIB A15 Formula" class="formula-img" loading="lazy" decoding="async" />
              </div>
@@ -101,18 +106,27 @@
             </div>
 
             <div class="quantity-wrap">
-              <div class="quantity-title">Select Quantity</div>
-              <div class="quantity-row">
-                <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
-                <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
-                <div class="quantity-option" data-quantity="1g" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
+              <label class="quantity-title">Select Size:</label>
+              <select class="quantity-dropdown" data-product="isrib-a15">
+                <option value="100" data-price="60" data-display="100mg">100mg - $60 (Trial)</option>
+                <option value="500" data-price="130" data-display="500mg">500mg - $130 (Trial)</option>
+                <option value="1000" data-price="200" data-display="1g">1g - $200</option>
+                <option value="2000" data-price="360" data-display="2g" data-savings="40" selected>2g - $360 (Save 10%) Most Popular</option>
+                <option value="5000" data-price="850" data-display="5g" data-savings="150">5g - $850 (Save 15%)</option>
+                <option value="10000" data-price="1600" data-display="10g" data-savings="400">10g - $1,600 (Save 20%)</option>
+              </select>
+            </div>
+
+            <div class="price-display">
+              <div class="price-line">
+                <span class="current-price">$360.00</span>
+              </div>
+              <div class="savings-line" style="display: block;">
+                <span class="savings-text">You save $40 (10%)</span>
               </div>
             </div>
 
-            <div class="price-line">
-              <span class="current-price">$50.00</span>
-              <small class="price-per-mg">($0.50/mg)</small>
-            </div>
+            <p class="bulk-hint">💰 Bulk discount: Save up to 20% on 10g orders</p>
 
           <div class="product-footer">
   <div class="top-buttons" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
@@ -120,10 +134,10 @@
       class="btn-primary add-to-cart"
       data-name="ISRIB A15"
       data-sku="isrib-a15"
-      data-grams="100"
-      data-display="100mg"
-      data-price="50">
-      ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$50</span>
+      data-grams="2000"
+      data-display="2g"
+      data-price="360">
+      ➕ Add to Cart — <span class="add-label">2g</span>
     </button>
     <a class="view-cart" href="checkout.html">View Cart</a>
     <a class="view-cart view-product" href="product_isrib_A15.html">View Details</a>
@@ -150,18 +164,27 @@
             </div>
 
             <div class="quantity-wrap">
-              <div class="quantity-title">Select Quantity</div>
-              <div class="quantity-row">
-                <div class="quantity-option active" data-quantity="100mg" data-price="27"><span class="tag">100mg</span><span class="price">$27</span></div>
-                <div class="quantity-option" data-quantity="500mg" data-price="60"><span class="tag">500mg</span><span class="price">$60</span></div>
-                <div class="quantity-option" data-quantity="1g" data-price="100"><span class="tag">1000mg</span><span class="price">$100</span></div>
+              <label class="quantity-title">Select Size:</label>
+              <select class="quantity-dropdown" data-product="isrib">
+                <option value="100" data-price="27" data-display="100mg">100mg - $27 (Trial)</option>
+                <option value="500" data-price="60" data-display="500mg">500mg - $60 (Trial)</option>
+                <option value="1000" data-price="100" data-display="1g">1g - $100</option>
+                <option value="2000" data-price="180" data-display="2g" data-savings="20" selected>2g - $180 (Save 10%) Most Popular</option>
+                <option value="5000" data-price="425" data-display="5g" data-savings="75">5g - $425 (Save 15%)</option>
+                <option value="10000" data-price="800" data-display="10g" data-savings="200">10g - $800 (Save 20%)</option>
+              </select>
+            </div>
+
+            <div class="price-display">
+              <div class="price-line">
+                <span class="current-price">$180.00</span>
+              </div>
+              <div class="savings-line" style="display: block;">
+                <span class="savings-text">You save $20 (10%)</span>
               </div>
             </div>
 
-            <div class="price-line">
-              <span class="current-price">$27.00</span>
-              <small class="price-per-mg">($0.27/mg)</small>
-            </div>
+            <p class="bulk-hint">💰 Bulk discount: Save up to 20% on 10g orders</p>
 
            <div class="product-footer">
   <div class="top-buttons" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
@@ -169,10 +192,10 @@
       class="btn-primary add-to-cart"
       data-name="ISRIB (Original)"
       data-sku="isrib"
-      data-grams="100"
-      data-display="100mg"
-      data-price="27">
-      ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$27</span>
+      data-grams="2000"
+      data-display="2g"
+      data-price="180">
+      ➕ Add to Cart — <span class="add-label">2g</span>
     </button>
    <a class="view-cart" href="checkout.html">View Cart</a>
    <a class="view-cart view-product" href="product_isrib.html">View Details</a>
@@ -189,7 +212,7 @@
               <h2 class="product-title product-name">ZZL‑7</h2>
               <span class="product-sub muted">Fast-Onset Antidepressant</span>
             </div>
-            
+
             <div class="product-formula">
               <img src="images/zzl7-formula.svg" alt="ZZL-7 Formula" class="formula-img" loading="lazy" decoding="async" />
             </div>
@@ -200,17 +223,21 @@
             </div>
 
             <div class="quantity-wrap">
-              <div class="quantity-title">Select Quantity</div>
-              <div class="quantity-row">
-                <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
-                <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
-                <div class="quantity-option" data-quantity="1g" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
-              </div>
+              <label class="quantity-title">Select Size:</label>
+              <select class="quantity-dropdown" data-product="zzl7">
+                <option value="100" data-price="50" data-display="100mg">100mg - $50</option>
+                <option value="500" data-price="130" data-display="500mg">500mg - $130</option>
+                <option value="1000" data-price="200" data-display="1g" selected>1000mg - $200 Most Popular</option>
+              </select>
             </div>
 
-            <div class="price-line">
-              <span class="current-price">$50.00</span>
-              <small class="price-per-mg">($0.50/mg)</small>
+            <div class="price-display">
+              <div class="price-line">
+                <span class="current-price">$200.00</span>
+              </div>
+              <div class="savings-line" style="display: none;">
+                <span class="savings-text"></span>
+              </div>
             </div>
 
             <div class="product-footer">
@@ -219,10 +246,10 @@
       class="btn-primary add-to-cart"
       data-name="ZZL-7"
       data-sku="zzl7"
-      data-grams="100"
-      data-display="100mg"
-      data-price="50">
-      ➕ Add to Cart — <span class="add-label">100mg</span> <span class="add-price">$50</span>
+      data-grams="1000"
+      data-display="1g"
+      data-price="200">
+      ➕ Add to Cart — <span class="add-label">1g</span>
     </button>
    <a class="view-cart" href="checkout.html">View Cart</a>
    <a class="view-cart view-product" href="product_zzl_7.html">View Details</a>
@@ -239,7 +266,7 @@
               <h2 class="product-title product-name">MPEP Oxalate</h2>
               <span class="product-sub muted">mGluR5 Negative Allosteric Modulator</span>
             </div>
-            
+
             <div class="product-formula">
              <img src="images/mpep-formula.svg" alt="MPEP Formula" class="formula-img" loading="lazy" decoding="async" />
             </div>
@@ -250,17 +277,21 @@
             </div>
 
             <div class="quantity-wrap">
-              <div class="quantity-title">Select Quantity</div>
-              <div class="quantity-row">
-                <div class="quantity-option active" data-quantity="100mg" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
-                <div class="quantity-option" data-quantity="500mg" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
-                <div class="quantity-option" data-quantity="1g" data-price="200"><span class="tag">1000mg</span><span class="price">$200</span></div>
-              </div>
+              <label class="quantity-title">Select Size:</label>
+              <select class="quantity-dropdown" data-product="mpep" disabled>
+                <option value="100" data-price="50" data-display="100mg">100mg - $50</option>
+                <option value="500" data-price="130" data-display="500mg">500mg - $130</option>
+                <option value="1000" data-price="200" data-display="1g" selected>1000mg - $200 Most Popular</option>
+              </select>
             </div>
 
-            <div class="price-line">
-              <span class="current-price">$50.00</span>
-              <small class="price-per-mg">($0.50/mg)</small>
+            <div class="price-display">
+              <div class="price-line">
+                <span class="current-price">$200.00</span>
+              </div>
+              <div class="savings-line" style="display: none;">
+                <span class="savings-text"></span>
+              </div>
             </div>
 
             <div class="product-footer">
@@ -322,7 +353,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=34"></script>
+  <script src="js/main.js?v=36"></script>
 
 
 

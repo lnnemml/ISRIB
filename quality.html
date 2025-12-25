@@ -102,14 +102,22 @@
         </a>
       </nav>
 
-     <!-- Burger (mobile) -->
-<button class="burger" id="burgerBtn"
-        aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-  <svg class="burger-icon" width="22" height="22" viewBox="0 0 24 24"
-       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-    <path d="M4 7h16M4 12h16M10 17h10"/>
-  </svg>
-</button>
+      <!-- Mobile actions group (cart + burger) -->
+      <div class="mobile-actions">
+        <!-- Mobile cart button (always visible) -->
+        <a href="checkout.html" class="cart-btn-mobile" id="cartBtnMobile" aria-label="View cart">
+          🧺 <span id="cartCountMobileBtn" class="badge-mobile">0</span>
+        </a>
+
+       <!-- Burger (mobile) -->
+  <button class="burger" id="burgerBtn"
+          aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <svg class="burger-icon" width="22" height="22" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M10 17h10"/>
+    </svg>
+  </button>
+      </div>
 
 
 
@@ -119,9 +127,6 @@
     <a href="about.html" class="mm-link">About</a>
     <a href="faq.html" class="mm-link">FAQ</a>
     <a href="contact.html" class="mm-link">Contact</a>
-    <a href="checkout.html" class="mm-link mm-cart">
-      🧺 Cart <span id="cartCountMobile" class="mm-badge">0</span>
-    </a>
   </nav>
 </header>
 

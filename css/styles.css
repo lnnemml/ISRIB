@@ -53,6 +53,52 @@ img { max-width: 100%; height: auto; }
 .cart-btn-slim{ background:#1e40af; color:#fff; padding:6px 14px; border-radius:10px; font-weight:700; display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
 .badge-slim{ background:#fff; color:#1e40af; font-size:.75rem; font-weight:800; padding:2px 6px; border-radius:6px; }
 
+/* Mobile actions group (cart + burger together) */
+.mobile-actions {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+/* Mobile cart button (always visible on mobile, next to burger) */
+.cart-btn-mobile {
+  display: inline-flex;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 18px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.cart-btn-mobile:hover {
+  background: #f8fafc;
+}
+.badge-mobile {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #1e40af;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
 /* Burger */
 .burger {
   display: none;
@@ -3181,5 +3227,389 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   
   .popup-benefits span {
     color: #cbd5e1;
+  }
+}
+
+/* ========== A15 Hero & Tier Pricing Styles ========== */
+.a15-hero {
+  background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+  padding: 52px 0 38px;
+  position:relative;
+}
+.a15-hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at 18% 82%, rgba(30,64,175,.10) 0%, transparent 50%),
+              radial-gradient(circle at 84% 18%, rgba(14,165,233,.10) 0%, transparent 50%);
+}
+
+/* 🎯 TIER PRICING CALCULATOR STYLES */
+.tier-pricing-wrap {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 28px;
+  margin: 24px 0;
+}
+
+.tier-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tier-option {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tier-option:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.tier-option.active {
+  border-color: #10b981;
+  background: #ecfdf5;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.tier-popular {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.tier-popular:hover {
+  border-color: #d97706;
+}
+
+.tier-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.tier-popular .tier-badge {
+  color: #d97706;
+}
+
+.tier-range {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.tier-rate {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.tier-savings {
+  font-size: 0.7rem;
+  color: #059669;
+  font-weight: 600;
+  margin-top: 6px;
+  background: #dcfdf7;
+  padding: 3px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.quantity-input-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.quantity-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.quantity-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  transition: all 0.2s;
+}
+
+.quantity-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.quantity-unit {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #475569;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quantity-unit:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.btn-calculate {
+  padding: 12px 24px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-calculate:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.quantity-helper {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.link-inline {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link-inline:hover {
+  text-decoration: underline;
+}
+
+.price-breakdown {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 12px;
+  padding: 24px;
+  color: white;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.breakdown-row.main {
+  font-size: 1.4rem;
+  font-weight: 800;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.breakdown-row .label {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.breakdown-row.main .label {
+  color: #e2e8f0;
+}
+
+.breakdown-row .value {
+  font-weight: 700;
+  color: white;
+}
+
+.breakdown-row.main .value {
+  color: #10b981;
+  font-size: 1.6rem;
+}
+
+.breakdown-row.savings {
+  background: rgba(16, 185, 129, 0.15);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.breakdown-row.savings .label,
+.breakdown-row.savings .value {
+  color: #6ee7b7;
+}
+
+.breakdown-row.tier-info {
+  border: none;
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.tier-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .tier-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quantity-input-group {
+    flex-wrap: wrap;
+  }
+
+  .quantity-input {
+    min-width: 100%;
+  }
+
+  .btn-calculate {
+    width: 100%;
+  }
+}
+
+/* ========== Product Dropdown Selectors ========== */
+.quantity-dropdown {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+  padding-right: 40px;
+}
+
+.quantity-dropdown:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.quantity-dropdown:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.quantity-dropdown:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f1f5f9;
+}
+
+.quantity-dropdown option {
+  padding: 10px;
+  font-weight: 600;
+}
+
+.price-display {
+  margin: 16px 0;
+}
+
+.price-display .price-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.price-display .current-price {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e40af;
+}
+
+.savings-line {
+  display: none;
+  margin-top: 8px;
+}
+
+.savings-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #059669;
+  background: #dcfdf7;
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.bulk-hint {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 12px 0;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 3px solid #10b981;
+}
+
+@media (max-width: 768px) {
+  .quantity-dropdown {
+    font-size: 0.95rem;
+    padding: 12px 14px;
+    padding-right: 36px;
+    background-size: 18px;
+  }
+
+  .price-display .current-price {
+    font-size: 1.4rem;
   }
 }

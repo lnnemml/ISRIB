@@ -157,7 +157,7 @@ function initializeApp() {
   (function savePromoFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const promoFromURL = urlParams.get('promo');
-    
+
     if (promoFromURL) {
       // Зберігаємо на 72 години (відповідає терміну дії промокоду)
       const expiryTime = Date.now() + (72 * 60 * 60 * 1000);
@@ -166,7 +166,7 @@ function initializeApp() {
         expiry: expiryTime,
         source: 'email_campaign'
       }));
-      
+
       console.log('[PROMO] Saved from URL:', promoFromURL);
     }
   })();
@@ -190,11 +190,14 @@ function initializeApp() {
   mountAddToCartButtons();
   renderCheckoutCart();
   initBundleWidget();
-  initCheckoutUpsell(); 
+  initCheckoutUpsell();
   initCheckoutForm();
   initPromoCode();
   initContactUX();        // показ/приховування product-section, автозаповнення з query string
   initContactFormResend(); // сабміт форми через ваш бекенд/серверлес із Resend
+  initTierPricingCalculator(); // 🎯 Tier pricing calculator для A15
+  initISRIBTierPricingCalculator(); // 🎯 Tier pricing calculator для ISRIB original
+  initProductDropdowns(); // 🎯 Product page dropdown selectors
   // Back-compat helpers some code expects:
   try { updateContactLinks(); } catch {}
   try {
@@ -402,7 +405,7 @@ function initProductInteractions() {
   document.addEventListener('click', (e) => {
     const card = e.target.closest?.('.product-card');
     if (!card) return;
-    if (e.target.closest('a,button,.quantity-row,.quantity-option,.product-footer,.price-line,.card-controls')) return;
+    if (e.target.closest('a,button,.quantity-row,.quantity-option,.quantity-wrap,.quantity-dropdown,.price-display,.product-footer,.price-line,.card-controls')) return;
     const href = card.dataset.href || card.querySelector('.stretched-link')?.getAttribute('href');
     if (href) window.location.href = href;
   }, { passive: false });
@@ -412,7 +415,7 @@ function initProductInteractions() {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const card = e.target.closest?.('.product-card');
     if (!card) return;
-    if (e.target.closest('a,button,.quantity-row,.quantity-option,.product-footer,.price-line,.card-controls')) return;
+    if (e.target.closest('a,button,.quantity-row,.quantity-option,.quantity-wrap,.quantity-dropdown,.price-display,.product-footer,.price-line,.card-controls')) return;
     const href = card.dataset.href || card.querySelector('.stretched-link')?.getAttribute('href');
     if (href) { e.preventDefault(); window.location.href = href; }
   });
@@ -515,6 +518,525 @@ function initA15OrderCard() {
 function initProductFilters() { /* no-op */ }
 function initMobileOptimizations() { /* no-op */ }
 
+/* ========================= PRODUCT DROPDOWN SELECTORS ========================= */
+
+function initProductDropdowns() {
+  const dropdowns = document.querySelectorAll('.quantity-dropdown');
+  if (!dropdowns.length) return;
+
+  dropdowns.forEach(dropdown => {
+    // Get the product card container
+    const card = dropdown.closest('.product-card');
+    if (!card) return;
+
+    // Get elements to update
+    const priceDisplay = card.querySelector('.current-price');
+    const savingsLine = card.querySelector('.savings-line');
+    const savingsText = card.querySelector('.savings-text');
+    const addToCartBtn = card.querySelector('.add-to-cart');
+    const addLabel = card.querySelector('.add-label');
+
+    // Handle dropdown change
+    dropdown.addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const grams = selectedOption.value;
+      const price = selectedOption.dataset.price;
+      const display = selectedOption.dataset.display;
+      const savings = selectedOption.dataset.savings;
+
+      // Update price display
+      if (priceDisplay) {
+        priceDisplay.textContent = `$${parseFloat(price).toFixed(2)}`;
+      }
+
+      // Update savings display
+      if (savingsLine && savingsText) {
+        if (savings && parseFloat(savings) > 0) {
+          const percent = Math.round((parseFloat(savings) / (parseFloat(price) + parseFloat(savings))) * 100);
+          savingsText.textContent = `You save $${savings} (${percent}%)`;
+          savingsLine.style.display = 'block';
+        } else {
+          savingsLine.style.display = 'none';
+        }
+      }
+
+      // Update add to cart button
+      if (addToCartBtn) {
+        addToCartBtn.dataset.grams = grams;
+        addToCartBtn.dataset.price = price;
+        addToCartBtn.dataset.display = display;
+
+        if (addLabel) {
+          addLabel.textContent = display;
+        }
+      }
+
+      console.log('[Product Dropdown] Updated:', { grams, price, display, savings });
+    });
+
+    // Trigger initial update
+    dropdown.dispatchEvent(new Event('change'));
+  });
+
+  console.log('[Product Dropdowns] Initialized:', dropdowns.length, 'dropdowns');
+}
+
+/* ========================= TIER PRICING CALCULATOR ========================= */
+
+function initTierPricingCalculator() {
+  // Перевіряємо чи це сторінка A15
+  if (!document.getElementById('customQuantity')) return;
+
+  const input = document.getElementById('customQuantity');
+  const unitSelect = document.getElementById('quantityUnit');
+  const calculateBtn = document.getElementById('calculateBtn');
+  const tierOptions = document.querySelectorAll('.tier-option');
+
+  // Output elements
+  const totalPriceEl = document.getElementById('totalPrice');
+  const selectedQuantityEl = document.getElementById('selectedQuantity');
+  const pricePerGramEl = document.getElementById('pricePerGram');
+  const savingsRowEl = document.getElementById('savingsRow');
+  const savingsAmountEl = document.getElementById('savingsAmount');
+  const tierLabelEl = document.getElementById('tierLabel');
+
+  // Add to Cart button
+  const addToCartBtn = document.getElementById('addToCartA15');
+  const cartButtonQuantity = document.getElementById('cartButtonQuantity');
+  const cartButtonPrice = document.getElementById('cartButtonPrice');
+
+  // Tier pricing structure
+  const TIER_PRICING = [
+    { name: 'Trial Size (100mg)', min: 100, max: 100, fixedPrice: 60, emoji: '🧪', label: 'trial', showAsFixed: true },
+    { name: 'Trial Size (500mg)', min: 500, max: 500, fixedPrice: 130, pricePerG: 260, emoji: '🧪', label: 'trial', showAsFixed: false },
+    { name: 'Standard', min: 1000, max: 1000, pricePerG: 200, emoji: '📦', label: 'standard' },
+    { name: 'Popular Choice', min: 2000, max: 4000, pricePerG: 180, emoji: '⭐', label: 'popular' },
+    { name: 'Serious Users', min: 5000, max: 9000, pricePerG: 170, emoji: '🔥', label: 'serious' },
+    { name: 'Bulk/Resellers', min: 10000, max: 30000, pricePerG: 160, emoji: '📦📦', label: 'bulk' }
+  ];
+
+  const BASE_PRICE_PER_G = 200; // базова ціна для розрахунку знижки
+
+  // Функція знаходження відповідного тієру
+  function findTier(mg) {
+    for (let tier of TIER_PRICING) {
+      if (mg >= tier.min && mg <= tier.max) {
+        return tier;
+      }
+      // Для діапазонів (2-4g, 5-9g)
+      if (mg > tier.min && mg < tier.max) {
+        return tier;
+      }
+    }
+    return null;
+  }
+
+  // Функція розрахунку ціни
+  function calculatePrice(mg, skipConfirm = false) {
+    if (mg < 100) {
+      if (!skipConfirm) showToast('Minimum quantity is 100mg', 'error');
+      return null;
+    }
+
+    if (mg > 30000) {
+      // Redirect на contact page (тільки якщо не skip)
+      if (!skipConfirm) {
+        if (confirm('Orders over 30g require individual arrangement. Would you like to contact us?')) {
+          window.location.href = 'contact.html?subject=Bulk Order: ISRIB A15 ' + (mg / 1000) + 'g';
+        }
+      }
+      return null;
+    }
+
+    const tier = findTier(mg);
+    if (!tier) {
+      showToast('Please select a valid quantity', 'error');
+      return null;
+    }
+
+    const grams = mg / 1000;
+
+    // Використовуємо фіксовану ціну якщо вона є, інакше обчислюємо
+    let totalPrice;
+    let effectivePricePerG;
+
+    if (tier.fixedPrice !== undefined) {
+      totalPrice = tier.fixedPrice;
+      effectivePricePerG = Math.round(totalPrice / grams);
+    } else {
+      totalPrice = Math.round(grams * tier.pricePerG);
+      effectivePricePerG = tier.pricePerG;
+    }
+
+    const baseTotalPrice = Math.round(grams * BASE_PRICE_PER_G);
+    const savings = baseTotalPrice - totalPrice;
+    const savingsPercent = Math.round((savings / baseTotalPrice) * 100);
+
+    return {
+      mg,
+      grams,
+      tier,
+      totalPrice,
+      pricePerG: effectivePricePerG,
+      savings,
+      savingsPercent
+    };
+  }
+
+  // Функція форматування для відображення
+  function formatQuantity(mg) {
+    if (mg >= 1000) {
+      const g = mg / 1000;
+      return g % 1 === 0 ? `${g}g` : `${g.toFixed(1)}g`;
+    }
+    return `${mg}mg`;
+  }
+
+  // Функція оновлення UI
+  function updateUI(result) {
+    if (!result) return;
+
+    // Update price breakdown
+    totalPriceEl.textContent = `$${result.totalPrice.toFixed(2)}`;
+    selectedQuantityEl.textContent = `${formatQuantity(result.mg)} (${result.mg}mg)`;
+    pricePerGramEl.textContent = `$${result.pricePerG}/g`;
+
+    // Update tier label
+    tierLabelEl.textContent = `${result.tier.emoji} ${result.tier.name}`;
+
+    // Update savings
+    if (result.savings > 0) {
+      savingsRowEl.style.display = 'flex';
+      savingsAmountEl.textContent = `$${result.savings} (${result.savingsPercent}% off)`;
+    } else {
+      savingsRowEl.style.display = 'none';
+    }
+
+    // Update tier options visual state
+    tierOptions.forEach(opt => {
+      opt.classList.remove('active');
+      if (opt.dataset.tier === result.tier.label) {
+        opt.classList.add('active');
+      }
+    });
+
+    // Update Add to Cart button
+    if (addToCartBtn) {
+      addToCartBtn.dataset.grams = String(result.mg);
+      addToCartBtn.dataset.price = String(result.totalPrice);
+      addToCartBtn.dataset.display = formatQuantity(result.mg);
+
+      if (cartButtonQuantity) cartButtonQuantity.textContent = formatQuantity(result.mg);
+      if (cartButtonPrice) cartButtonPrice.textContent = `$${result.totalPrice}`;
+    }
+
+    console.log('[Tier Pricing] Updated:', result);
+  }
+
+  // Calculate button handler
+  function handleCalculate(skipConfirm = false) {
+    let mg = parseFloat(input.value);
+    const unit = unitSelect.value;
+
+    if (unit === 'g') {
+      mg = mg * 1000; // convert to mg
+    }
+
+    const result = calculatePrice(mg, skipConfirm);
+    if (result) {
+      updateUI(result);
+    }
+  }
+
+  // Event listeners
+  if (calculateBtn) {
+    calculateBtn.addEventListener('click', () => handleCalculate(false));
+  }
+
+  // Enter key in input
+  if (input) {
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        handleCalculate(false);
+      }
+    });
+
+    // Auto-calculate on blur
+    input.addEventListener('blur', () => {
+      if (input.value) {
+        handleCalculate(true); // silent при blur
+      }
+    });
+  }
+
+  // Unit change auto-calculates
+  if (unitSelect) {
+    unitSelect.addEventListener('change', () => handleCalculate(true));
+  }
+
+  // Tier option clicks
+  tierOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+      const min = parseInt(opt.dataset.min);
+      const max = parseInt(opt.dataset.max);
+
+      // Використовуємо середнє значення діапазону або мінімум
+      let targetMg = min;
+      if (min !== max) {
+        // Для діапазонів беремо найближче кругле число
+        if (min === 2000 && max === 4000) targetMg = 3000; // 3g
+        else if (min === 5000 && max === 9000) targetMg = 7000; // 7g
+        else if (min === 10000 && max === 30000) targetMg = 15000; // 15g
+      }
+
+      // Set input values
+      if (targetMg >= 1000) {
+        input.value = targetMg / 1000;
+        unitSelect.value = 'g';
+      } else {
+        input.value = targetMg;
+        unitSelect.value = 'mg';
+      }
+
+      // Calculate
+      handleCalculate(true); // silent при tier click
+    });
+  });
+
+  // Initial calculation (default to 1g) - silent mode
+  handleCalculate(true);
+
+  console.log('[Tier Pricing] Initialized');
+}
+
+/* ========================= ISRIB TIER PRICING CALCULATOR ========================= */
+
+function initISRIBTierPricingCalculator() {
+  // Перевіряємо чи це сторінка ISRIB original
+  if (!document.getElementById('customQuantityISRIB')) return;
+
+  const input = document.getElementById('customQuantityISRIB');
+  const unitSelect = document.getElementById('quantityUnitISRIB');
+  const calculateBtn = document.getElementById('calculateBtnISRIB');
+  const tierOptions = document.querySelectorAll('.tier-option');
+
+  // Output elements
+  const totalPriceEl = document.getElementById('totalPriceISRIB');
+  const selectedQuantityEl = document.getElementById('selectedQuantityISRIB');
+  const pricePerGramEl = document.getElementById('pricePerGramISRIB');
+  const savingsRowEl = document.getElementById('savingsRowISRIB');
+  const savingsAmountEl = document.getElementById('savingsAmountISRIB');
+  const tierLabelEl = document.getElementById('tierLabelISRIB');
+
+  // Add to Cart button
+  const addToCartBtn = document.getElementById('addToCartISRIB');
+  const cartButtonQuantity = document.getElementById('cartButtonQuantityISRIB');
+  const cartButtonPrice = document.getElementById('cartButtonPriceISRIB');
+
+  // ISRIB Tier pricing structure
+  const TIER_PRICING = [
+    { name: 'Trial Size (100mg)', min: 100, max: 100, fixedPrice: 27, emoji: '🧪', label: 'trial', showAsFixed: true },
+    { name: 'Trial Size (500mg)', min: 500, max: 500, fixedPrice: 60, pricePerG: 120, emoji: '🧪', label: 'trial', showAsFixed: false },
+    { name: 'Standard', min: 1000, max: 1000, pricePerG: 100, emoji: '📦', label: 'standard' },
+    { name: 'Popular Choice', min: 2000, max: 4000, fixedPrice: 180, pricePerG: 90, emoji: '⭐', label: 'popular' },
+    { name: 'Serious Users', min: 5000, max: 9000, fixedPrice: 425, pricePerG: 85, emoji: '🔥', label: 'serious' },
+    { name: 'Bulk/Resellers', min: 10000, max: 30000, fixedPrice: 800, pricePerG: 80, emoji: '📦📦', label: 'bulk' }
+  ];
+
+  const BASE_PRICE_PER_G = 100; // базова ціна для розрахунку знижки
+
+  // Функція знаходження відповідного тієру
+  function findTier(mg) {
+    for (let tier of TIER_PRICING) {
+      if (mg >= tier.min && mg <= tier.max) {
+        return tier;
+      }
+      // Для діапазонів (2-4g, 5-9g)
+      if (mg > tier.min && mg < tier.max) {
+        return tier;
+      }
+    }
+    return null;
+  }
+
+  // Функція розрахунку ціни
+  function calculatePrice(mg, skipConfirm = false) {
+    if (mg < 100) {
+      if (!skipConfirm) showToast('Minimum quantity is 100mg', 'error');
+      return null;
+    }
+
+    if (mg > 30000) {
+      // Redirect на contact page (тільки якщо не skip)
+      if (!skipConfirm) {
+        if (confirm('Orders over 30g require individual arrangement. Would you like to contact us?')) {
+          window.location.href = 'contact.html?subject=Bulk Order: ISRIB ' + (mg / 1000) + 'g';
+        }
+      }
+      return null;
+    }
+
+    const tier = findTier(mg);
+    if (!tier) {
+      if (!skipConfirm) showToast('Please select a valid quantity', 'error');
+      return null;
+    }
+
+    const grams = mg / 1000;
+
+    // Використовуємо фіксовану ціну якщо вона є, інакше обчислюємо
+    let totalPrice;
+    let effectivePricePerG;
+
+    if (tier.fixedPrice !== undefined && (mg === tier.min || mg === tier.max)) {
+      // Для фіксованих цін (100mg, 500mg, або діапазонів 2-4g, 5-9g, 10-30g)
+      totalPrice = tier.fixedPrice;
+      effectivePricePerG = Math.round(totalPrice / grams);
+    } else {
+      totalPrice = Math.round(grams * tier.pricePerG);
+      effectivePricePerG = tier.pricePerG;
+    }
+
+    const baseTotalPrice = Math.round(grams * BASE_PRICE_PER_G);
+    const savings = baseTotalPrice - totalPrice;
+    const savingsPercent = Math.round((savings / baseTotalPrice) * 100);
+
+    return {
+      mg,
+      grams,
+      tier,
+      totalPrice,
+      pricePerG: effectivePricePerG,
+      savings,
+      savingsPercent
+    };
+  }
+
+  // Функція форматування для відображення
+  function formatQuantity(mg) {
+    if (mg >= 1000) {
+      const g = mg / 1000;
+      return g % 1 === 0 ? `${g}g` : `${g.toFixed(1)}g`;
+    }
+    return `${mg}mg`;
+  }
+
+  // Функція оновлення UI
+  function updateUI(result) {
+    if (!result) return;
+
+    // Update price breakdown
+    totalPriceEl.textContent = `$${result.totalPrice.toFixed(2)}`;
+    selectedQuantityEl.textContent = `${formatQuantity(result.mg)} (${result.mg}mg)`;
+    pricePerGramEl.textContent = `$${result.pricePerG}/g`;
+
+    // Update tier label
+    tierLabelEl.textContent = `${result.tier.emoji} ${result.tier.name}`;
+
+    // Update savings
+    if (result.savings > 0) {
+      savingsRowEl.style.display = 'flex';
+      savingsAmountEl.textContent = `$${result.savings} (${result.savingsPercent}% off)`;
+    } else {
+      savingsRowEl.style.display = 'none';
+    }
+
+    // Update tier options visual state
+    tierOptions.forEach(opt => {
+      opt.classList.remove('active');
+      if (opt.dataset.tier === result.tier.label) {
+        opt.classList.add('active');
+      }
+    });
+
+    // Update Add to Cart button
+    if (addToCartBtn) {
+      addToCartBtn.dataset.grams = String(result.mg);
+      addToCartBtn.dataset.price = String(result.totalPrice);
+      addToCartBtn.dataset.display = formatQuantity(result.mg);
+
+      if (cartButtonQuantity) cartButtonQuantity.textContent = formatQuantity(result.mg);
+      if (cartButtonPrice) cartButtonPrice.textContent = `$${result.totalPrice}`;
+    }
+
+    console.log('[ISRIB Tier Pricing] Updated:', result);
+  }
+
+  // Calculate button handler
+  function handleCalculate(skipConfirm = false) {
+    let mg = parseFloat(input.value);
+    const unit = unitSelect.value;
+
+    if (unit === 'g') {
+      mg = mg * 1000; // convert to mg
+    }
+
+    const result = calculatePrice(mg, skipConfirm);
+    if (result) {
+      updateUI(result);
+    }
+  }
+
+  // Event listeners
+  if (calculateBtn) {
+    calculateBtn.addEventListener('click', () => handleCalculate(false));
+  }
+
+  // Enter key in input
+  if (input) {
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        handleCalculate(false);
+      }
+    });
+
+    // Auto-calculate on blur
+    input.addEventListener('blur', () => {
+      if (input.value) {
+        handleCalculate(true); // silent при blur
+      }
+    });
+  }
+
+  // Unit change auto-calculates
+  if (unitSelect) {
+    unitSelect.addEventListener('change', () => handleCalculate(true));
+  }
+
+  // Tier option clicks
+  tierOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+      const min = parseInt(opt.dataset.min);
+      const max = parseInt(opt.dataset.max);
+
+      // Використовуємо середнє значення діапазону або мінімум
+      let targetMg = min;
+      if (min !== max) {
+        // Для діапазонів беремо найближче кругле число
+        if (min === 2000 && max === 4000) targetMg = 3000; // 3g
+        else if (min === 5000 && max === 9000) targetMg = 7000; // 7g
+        else if (min === 10000 && max === 30000) targetMg = 15000; // 15g
+      }
+
+      // Set input values
+      if (targetMg >= 1000) {
+        input.value = targetMg / 1000;
+        unitSelect.value = 'g';
+      } else {
+        input.value = targetMg;
+        unitSelect.value = 'mg';
+      }
+
+      // Calculate
+      handleCalculate(true); // silent при tier click
+    });
+  });
+
+  // Initial calculation (default to 1g) - silent mode
+  handleCalculate(true);
+
+  console.log('[ISRIB Tier Pricing] Initialized');
+}
 
 /* ========================= BUNDLE WIDGET ========================= */
 
@@ -619,15 +1141,24 @@ function updateBundleOffer(card, mainSku) {
     
     newBtn.addEventListener('click', () => {
       const checkbox = document.getElementById('bundle-zzl7');
-      
+
       // Додаємо головний продукт
       addToCart(getProductName(mainSku), mainSku, mainQty, mainPrice, mainDisplay);
-      
+
       // Додаємо upsell якщо вибрано
       if (checkbox && checkbox.checked) {
         addToCart(upsell.name, upsell.sku, upsell.qty, upsell.price, upsell.display);
-        showToast('Bundle added to cart! 🎉', 'success');
-        
+
+        // 🎯 ЗБЕРІГАЄМО ПРОМОКОД ДЛЯ АВТОМАТИЧНОЇ АКТИВАЦІЇ НА CHECKOUT
+        const expiryTime = Date.now() + (72 * 60 * 60 * 1000); // 72 години
+        localStorage.setItem('pending_promo', JSON.stringify({
+          code: 'BUNDLE15',
+          expiry: expiryTime,
+          source: 'bundle_purchase'
+        }));
+
+        showToast('Bundle added to cart! 🎉 15% discount will be applied at checkout', 'success');
+
         try {
           if (typeof gtag === 'function') {
             gtag('event', 'upsell_accepted', {
@@ -640,7 +1171,7 @@ function updateBundleOffer(card, mainSku) {
       } else {
         showToast('Added to cart! 🛒', 'success');
       }
-      
+
       updateCartBadge();
     });
   }
@@ -748,7 +1279,7 @@ function writeCart(arr) {
 function updateCartBadge(arr) {
   const cart = Array.isArray(arr) ? arr : readCart();
   const total = cart.reduce((n, i) => n + (Number(i.count) || 0), 0);
-  const ids = ['cartCount', 'cartCountMobile'];
+  const ids = ['cartCount', 'cartCountMobile', 'cartCountMobileBtn'];
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = String(total); });
 }
 
@@ -1051,51 +1582,80 @@ function bindCheckoutCartEvents(){
 /* ===================== CHECKOUT FORM SUBMIT ===================== */
 
 // --- Promo code logic ---
+const PROMO_CODES = {
+  'RETURN15': { discount: 0.15, label: '15% off' },
+  'WELCOME15': { discount: 0.15, label: '15% off' },
+  'BUNDLE15': { discount: 0.15, label: '15% off' }
+};
+
+// 🎯 Глобальна функція для застосування промокоду (можна викликати з будь-якого місця)
+window.applyPromoCode = function(code, source = 'manual') {
+  const input = document.getElementById('promoCode');
+  const btn = document.getElementById('applyPromoBtn');
+  const msg = document.getElementById('promoMsg');
+
+  if (!input || !btn || !msg) return false;
+
+  const upperCode = String(code).trim().toUpperCase();
+
+  if (!PROMO_CODES[upperCode]) {
+    console.warn('[PROMO] Invalid code:', code);
+    return false;
+  }
+
+  const promoData = PROMO_CODES[upperCode];
+  const appliedPromo = { code: upperCode, ...promoData };
+
+  // Оновлюємо UI
+  input.value = upperCode;
+  input.disabled = true;
+  btn.textContent = 'Applied';
+  btn.disabled = true;
+
+  // Правильний текст залежно від source
+  const sourceText = source === 'bundle_purchase' ? 'bundle' : source === 'manual' ? '' : source;
+  msg.textContent = sourceText
+    ? `✓ ${promoData.label} applied from ${sourceText}`
+    : `✓ ${promoData.label} applied`;
+  msg.style.color = '#10b981';
+
+  // Застосовуємо знижку
+  window._appliedPromo = appliedPromo;
+  recalcTotals(readCart(), appliedPromo);
+
+  console.log('[PROMO] Applied:', upperCode, 'source:', source);
+
+  return true;
+};
+
 function initPromoCode() {
   const input = document.getElementById('promoCode');
   const btn = document.getElementById('applyPromoBtn');
   const msg = document.getElementById('promoMsg');
-  
+
   if (!input || !btn) return;
 
   let appliedPromo = null;
-
-   const PROMO_CODES = {
-    'RETURN15': { discount: 0.15, label: '15% off' },
-    'WELCOME15': { discount: 0.15, label: '15% off' }
-  };
 
   // ⚡ АВТОМАТИЧНА АКТИВАЦІЯ З LOCALSTORAGE
   (function autoApplyPromo() {
     try {
       const stored = localStorage.getItem('pending_promo');
       if (!stored) return;
-      
+
       const { code, expiry, source } = JSON.parse(stored);
-      
+
       // Перевіряємо термін дії
       if (Date.now() > expiry) {
         localStorage.removeItem('pending_promo');
         return;
       }
-      
-      // Перевіряємо чи код валідний
-      if (PROMO_CODES[code]) {
-        input.value = code;
-        
-        // Застосовуємо автоматично
-        appliedPromo = { code, ...PROMO_CODES[code] };
-        msg.textContent = `✓ ${appliedPromo.label} applied from email`;
-        msg.style.color = '#10b981';
-        input.disabled = true;
-        btn.textContent = 'Applied';
-        btn.disabled = true;
-        
-        recalcTotals(readCart(), appliedPromo);
-        
+
+      // Використовуємо глобальну функцію для застосування
+      if (window.applyPromoCode(code, source)) {
         // Видаляємо з localStorage після активації
         localStorage.removeItem('pending_promo');
-        
+
         // Analytics
         try {
           if (typeof gtag === 'function') {
@@ -1106,8 +1666,6 @@ function initPromoCode() {
             });
           }
         } catch(e) {}
-        
-        console.log('[PROMO] Auto-applied:', code);
       }
     } catch(e) {
       console.error('[PROMO] Auto-apply error:', e);
@@ -1437,7 +1995,7 @@ function initCheckoutUpsell() {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const item = btn.closest('.upsell-item');
-      
+
       const name = item.dataset.name;
       const sku = item.dataset.sku;
       const price = parseFloat(item.dataset.price);
@@ -1447,7 +2005,12 @@ function initCheckoutUpsell() {
       addToCart(name, sku, grams, price, display);
       updateCartBadge();
       renderCheckoutCart();
-      
+
+      // 🎯 ВИПРАВЛЕННЯ: Застосовуємо промокод BUNDLE15 автоматично
+      if (window.applyPromoCode) {
+        window.applyPromoCode('BUNDLE15', 'bundle_purchase');
+      }
+
       item.classList.add('added');
       btn.textContent = '✓ Added';
       showToast(`${name} (${display}) added with 15% discount!`, 'success');
