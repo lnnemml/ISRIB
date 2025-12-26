@@ -19,7 +19,9 @@
 html, body { height: 100%; }
 body { font-family: 'Inter','Segoe UI',system-ui,-apple-system,sans-serif; line-height: 1.8; color: var(--text); background: var(--bg); overflow-x: hidden; }
 img { max-width: 100%; height: auto; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; box-sizing: border-box; overflow-x: hidden; }
+html { overflow-x: hidden; }
+* { box-sizing: border-box; }
 .muted { color: var(--muted); }
 
 /* ========== Buttons ========== */
@@ -281,7 +283,7 @@ img { max-width: 100%; height: auto; }
 .spec-row:last-child{ margin-bottom:0; }
 .spec-label{ font-weight:600; color:#374151; }
 .spec-value{ color:#64748b; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9rem; }
-.product-footer{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.product-footer{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; width: 100%; max-width: 100%; overflow-x: hidden; }
 .price-range{ font-size:1.2rem; font-weight:700; color:#1e40af; }
 .product-buttons{ display:flex; gap:10px; }
 .view-product{ background: linear-gradient(135deg,#dc2626,#ef4444); color:#fff; padding:10px 20px; border-radius:20px; text-decoration:none; font-weight:600; font-size:.9rem; transition:.3s; }
@@ -723,6 +725,14 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   flex: 1 1 auto;              /* кнопка займає весь доступний простір */
   min-width: 220px;            /* запобігає "зламу" при дуже коротких лейблах (100mg) */
   white-space: nowrap;         /* текст в кнопці на одній лінії */
+}
+
+/* На мобільних прибираємо min-width щоб кнопка поміщалась */
+@media (max-width: 560px){
+  .product-footer .add-to-cart{
+    min-width: 0;
+    white-space: normal;      /* дозволяємо перенос тексту */
+  }
 }
 
 /* Мобільна поведінка: стек у два рядки — але контрольовано */
@@ -1985,6 +1995,18 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   }
 }
 
+/* action-buttons: десктопний layout (горизонтальний ряд) */
+.product-footer .action-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 /* ZZL-7: акуратна колонка кнопок на мобільних */
 @media (max-width: 560px){
   .product-footer .action-buttons{
@@ -1992,10 +2014,41 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
+    width: 100%;
+    max-width: 100%;
   }
   .product-footer .action-buttons .add-to-cart,
   .product-footer .action-buttons .view-cart{
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Дозволяємо тексту в кнопці переноситись якщо потрібно */
+  .product-footer .action-buttons .add-to-cart .btn-text {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Зменшуємо padding контейнера на дуже малих екранах */
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Зменшуємо gap між кнопками на малих екранах */
+  .product-footer .action-buttons {
+    gap: 8px;
+  }
+
+  /* Зменшуємо padding кнопок щоб текст поміщався */
+  .product-footer .action-buttons .add-to-cart,
+  .product-footer .action-buttons .view-cart {
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
 }
 
@@ -2119,13 +2172,13 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
-/* Центруємо текст у обох кнопках і розтягуємо на всю ширину */
+/* Центруємо текст у обох кнопках */
 .product-footer .view-cart,
 .product-footer .view-product {
   display: flex;              /* дає ідеальне центрування */
   align-items: center;        /* по вертикалі */
   justify-content: center;    /* по горизонталі */
-  width: 100%;
+  width: auto;                /* auto на десктопі, 100% буде на мобільних */
   text-align: center;
 }
 
@@ -2161,7 +2214,7 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: auto;                /* auto на десктопі, 100% буде на мобільних */
   padding: 10px 16px;
   border-radius: 8px;
   background-color: #f3f4f6;
@@ -2201,6 +2254,10 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     width: 100%;
     justify-content: center;
     min-width: 0;
+  }
+  .product-footer .view-cart,
+  .product-footer .view-product {
+    width: 100%;      /* на мобільних розтягуємо на всю ширину */
   }
 }
 

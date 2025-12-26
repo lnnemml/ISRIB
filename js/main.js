@@ -602,8 +602,6 @@ function initTierPricingCalculator() {
 
   // Add to Cart button
   const addToCartBtn = document.getElementById('addToCartA15');
-  const cartButtonQuantity = document.getElementById('cartButtonQuantity');
-  const cartButtonPrice = document.getElementById('cartButtonPrice');
 
   // Tier pricing structure
   const TIER_PRICING = [
@@ -726,8 +724,11 @@ function initTierPricingCalculator() {
       addToCartBtn.dataset.price = String(result.totalPrice);
       addToCartBtn.dataset.display = formatQuantity(result.mg);
 
-      if (cartButtonQuantity) cartButtonQuantity.textContent = formatQuantity(result.mg);
-      if (cartButtonPrice) cartButtonPrice.textContent = `$${result.totalPrice}`;
+      // Update button text via .btn-text span
+      const btnText = addToCartBtn.querySelector('.btn-text');
+      if (btnText) {
+        btnText.textContent = `➕ Add to cart — ${formatQuantity(result.mg)} for $${result.totalPrice}`;
+      }
     }
 
     console.log('[Tier Pricing] Updated:', result);
@@ -830,8 +831,6 @@ function initISRIBTierPricingCalculator() {
 
   // Add to Cart button
   const addToCartBtn = document.getElementById('addToCartISRIB');
-  const cartButtonQuantity = document.getElementById('cartButtonQuantityISRIB');
-  const cartButtonPrice = document.getElementById('cartButtonPriceISRIB');
 
   // ISRIB Tier pricing structure
   const TIER_PRICING = [
@@ -955,8 +954,11 @@ function initISRIBTierPricingCalculator() {
       addToCartBtn.dataset.price = String(result.totalPrice);
       addToCartBtn.dataset.display = formatQuantity(result.mg);
 
-      if (cartButtonQuantity) cartButtonQuantity.textContent = formatQuantity(result.mg);
-      if (cartButtonPrice) cartButtonPrice.textContent = `$${result.totalPrice}`;
+      // Update button text via .btn-text span
+      const btnText = addToCartBtn.querySelector('.btn-text');
+      if (btnText) {
+        btnText.textContent = `➕ Add to cart — ${formatQuantity(result.mg)} for $${result.totalPrice}`;
+      }
     }
 
     console.log('[ISRIB Tier Pricing] Updated:', result);
