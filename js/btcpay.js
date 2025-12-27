@@ -60,39 +60,66 @@
       });
 
       try {
-        const response = await fetch(`${this.serverUrl}/api/v1/invoices`, {
+        // Greenfield API endpoint (новий формат BTCPay)
+        const apiUrl = `${this.serverUrl}/api/v1/stores/${this.storeId}/invoices`;
+
+        const payload = {
+          amount: Number(price).toFixed(2),
+          currency: currency,
+          metadata: {
+            orderId: orderId,
+            buyerEmail: buyerEmail,
+            ...metadata
+          },
+          checkout: {
+            redirectURL: redirectURL || `${window.location.origin}/success.html`,
+            redirectAutomatically: false
+          }
+        };
+
+        console.log('[BTCPay] 🔧 API Request:', {
+          url: apiUrl,
+          method: 'POST',
+          hasAuth: !!this.apiKey,
+          storeId: this.storeId,
+          payload: payload
+        });
+
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Basic ${this.apiKey}`
+            'Authorization': `token ${this.apiKey}`
           },
-          body: JSON.stringify({
-            price: Number(price).toFixed(2),
-            currency: currency,
-            orderId: orderId,
-            buyerEmail: buyerEmail,
-            redirectURL: redirectURL || `${window.location.origin}/success.html`,
-            notificationURL: notificationURL,
-            posData: JSON.stringify(metadata)
-          })
+          body: JSON.stringify(payload)
+        });
+
+        console.log('[BTCPay] 📥 Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          contentType: response.headers.get('content-type')
         });
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('[BTCPay] ❌ API error:', response.status, errorText);
-          throw new Error(`BTCPay API error: ${response.status} - ${errorText.substring(0, 100)}`);
+          console.error('[BTCPay] ❌ API error response:', errorText.substring(0, 500));
+          throw new Error(`BTCPay API error: ${response.status} ${response.statusText} - ${errorText.substring(0, 100)}`);
         }
 
-        const data = await response.json();
-        console.log('[BTCPay] ✅ Invoice created:', data.data.id);
+        const responseText = await response.text();
+        console.log('[BTCPay] 📄 Response text (first 200 chars):', responseText.substring(0, 200));
 
+        const data = JSON.parse(responseText);
+        console.log('[BTCPay] ✅ Invoice created:', data.id);
+
+        // Greenfield API response format
         return {
-          id: data.data.id,
-          checkoutLink: data.data.checkoutLink,
-          status: data.data.status,
-          price: data.data.price,
-          currency: data.data.currency,
-          createdTime: data.data.invoiceTime
+          id: data.id,
+          checkoutLink: data.checkoutLink,
+          status: data.status,
+          price: data.amount,
+          currency: data.currency,
+          createdTime: data.createdTime
         };
 
       } catch (error) {
@@ -108,9 +135,9 @@
      */
     async checkInvoiceStatus(invoiceId) {
       try {
-        const response = await fetch(`${this.serverUrl}/api/v1/invoices/${invoiceId}`, {
+        const response = await fetch(`${this.serverUrl}/api/v1/stores/${this.storeId}/invoices/${invoiceId}`, {
           headers: {
-            'Authorization': `Basic ${this.apiKey}`
+            'Authorization': `token ${this.apiKey}`
           }
         });
 
@@ -121,15 +148,15 @@
         const data = await response.json();
 
         return {
-          id: data.data.id,
-          status: data.data.status,
-          exceptionStatus: data.data.exceptionStatus,
-          price: data.data.price,
-          amountPaid: data.data.amountPaid,
-          currency: data.data.currency,
-          invoiceTime: data.data.invoiceTime,
-          expirationTime: data.data.expirationTime,
-          currentTime: data.data.currentTime
+          id: data.id,
+          status: data.status,
+          exceptionStatus: data.additionalStatus,
+          price: data.amount,
+          amountPaid: data.amount,
+          currency: data.currency,
+          invoiceTime: data.createdTime,
+          expirationTime: data.expirationTime,
+          currentTime: Date.now()
         };
 
       } catch (error) {
@@ -165,25 +192,29 @@
               onStatusChange(status);
             }
 
-            // Статуси BTCPay:
-            // - new: нова транзакція
-            // - paid: оплачена (0 confirmations)
-            // - confirmed: підтверджена (достатньо confirmations)
-            // - complete: завершена
-            // - expired: прострочена
-            // - invalid: невалідна
+            // Статуси BTCPay Greenfield API:
+            // - New: нова транзакція
+            // - Processing: отримана оплата, чекаємо confirmations
+            // - Expired: прострочена
+            // - Invalid: невалідна
+            // - Settled: підтверджена та завершена
 
-            if (status.status === 'confirmed' || status.status === 'complete') {
-              console.log('[BTCPay] ✅ Payment confirmed!');
+            const statusLower = (status.status || '').toLowerCase();
+
+            if (statusLower === 'settled') {
+              console.log('[BTCPay] ✅ Payment confirmed and settled!');
               this.stopPolling();
               resolve(status);
-            } else if (status.status === 'paid') {
-              console.log('[BTCPay] 💰 Payment received, waiting for confirmation...');
+            } else if (statusLower === 'processing') {
+              console.log('[BTCPay] 💰 Payment received, waiting for confirmations...');
               // Продовжуємо чекати confirmations
-            } else if (status.status === 'expired' || status.status === 'invalid') {
+            } else if (statusLower === 'expired' || statusLower === 'invalid') {
               console.log('[BTCPay] ⚠️ Invoice expired or invalid');
               this.stopPolling();
               reject(new Error(`Invoice ${status.status}`));
+            } else if (statusLower === 'new') {
+              console.log('[BTCPay] ⏳ Waiting for payment...');
+              // Продовжуємо чекати
             }
 
             // Timeout after max attempts

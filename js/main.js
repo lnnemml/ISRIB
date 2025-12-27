@@ -2595,12 +2595,14 @@ async function handleBitcoinPayment(orderData, form) {
     const finalStatus = await btcpay.pollInvoiceStatus(invoice.id, (status) => {
       console.log('[Bitcoin Payment] 📊 Status update:', status.status);
 
-      if (status.status === 'paid') {
+      const statusLower = (status.status || '').toLowerCase();
+
+      if (statusLower === 'processing') {
         if (formMsg) {
           formMsg.innerHTML = `
             <div style="color:#f59e0b;">
               <strong>💰 Payment received!</strong><br>
-              <span style="font-size:12px;">Waiting for blockchain confirmation...</span>
+              <span style="font-size:12px;">Waiting for blockchain confirmations...</span>
             </div>
           `;
         }
