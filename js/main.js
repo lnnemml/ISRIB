@@ -2430,10 +2430,72 @@ async function handleBitcoinPayment(orderData, form) {
   const formMsg = document.getElementById('formMsg');
 
   try {
-    // Перевіряємо чи завантажені BTCPay модулі
-    if (typeof BTCPayClient === 'undefined' || typeof BTCPAY_CONFIG === 'undefined') {
-      throw new Error('BTCPay modules not loaded. Please refresh the page.');
+    // ============================================
+    // ✅ ОЧІКУЄМО ЗАВАНТАЖЕННЯ BTCPAY CONFIG
+    // ============================================
+    if (typeof BTCPAY_CONFIG === 'undefined' || !window.BTCPAY_CONFIG) {
+      console.log('[Bitcoin Payment] ⏳ Waiting for BTCPay config to load...');
+
+      if (formMsg) {
+        formMsg.textContent = '⏳ Loading payment system...';
+        formMsg.style.color = '#3b82f6';
+      }
+
+      // Чекаємо до 10 секунд на завантаження конфігу
+      await new Promise((resolve, reject) => {
+        let timeoutId;
+
+        const checkConfig = () => {
+          if (window.BTCPAY_CONFIG && window.BTCPAY_CONFIG.serverUrl) {
+            clearTimeout(timeoutId);
+            console.log('[Bitcoin Payment] ✅ Config loaded');
+            resolve();
+          }
+        };
+
+        // Слухаємо подію готовності конфігу
+        window.addEventListener('btcpay-config-ready', () => {
+          clearTimeout(timeoutId);
+          console.log('[Bitcoin Payment] ✅ Config ready event received');
+          resolve();
+        }, { once: true });
+
+        // Перевіряємо чи конфіг вже завантажений
+        checkConfig();
+
+        // Timeout через 10 секунд
+        timeoutId = setTimeout(() => {
+          reject(new Error('BTCPay configuration failed to load. Please check your internet connection and try again.'));
+        }, 10000);
+      });
     }
+
+    // Перевіряємо чи BTCPayClient доступний
+    if (typeof BTCPayClient === 'undefined') {
+      throw new Error('BTCPay client not loaded. Please refresh the page.');
+    }
+
+    // Перевіряємо чи є помилка в конфігурації
+    if (window.BTCPAY_CONFIG._error) {
+      throw new Error(window.BTCPAY_CONFIG._error);
+    }
+
+    // Перевіряємо чи конфігурація валідна
+    if (!window.BTCPAY_CONFIG.serverUrl || !window.BTCPAY_CONFIG.apiKey || !window.BTCPAY_CONFIG.storeId) {
+      console.error('[Bitcoin Payment] ❌ Invalid config:', {
+        hasServerUrl: !!window.BTCPAY_CONFIG.serverUrl,
+        hasApiKey: !!window.BTCPAY_CONFIG.apiKey,
+        hasStoreId: !!window.BTCPAY_CONFIG.storeId
+      });
+      console.error('[Bitcoin Payment] ❌ Config dump:', window.BTCPAY_CONFIG);
+      throw new Error('Bitcoin payment is not properly configured. Environment variables missing in Vercel.');
+    }
+
+    console.log('[Bitcoin Payment] ✅ BTCPay modules ready:', {
+      serverUrl: window.BTCPAY_CONFIG.serverUrl,
+      hasApiKey: !!window.BTCPAY_CONFIG.apiKey,
+      hasStoreId: !!window.BTCPAY_CONFIG.storeId
+    });
 
     // Розраховуємо ціну з Bitcoin знижкою (10%)
     const bitcoinPrice = orderData.total * 0.90;

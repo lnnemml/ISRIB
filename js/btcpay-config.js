@@ -38,11 +38,24 @@
 
   } catch (error) {
     // Fallback для локальної розробки
-    console.warn('[BTCPay Config] ⚠️ Failed to load from API, using fallback config');
+    console.warn('[BTCPay Config] ⚠️ Failed to load from API');
     console.warn('[BTCPay Config] Error:', error.message);
-    console.log('[BTCPay Config] 💡 This is expected for local development');
+    console.error('[BTCPay Config] ❌ ВАЖЛИВО: Environment variables не налаштовані в Vercel!');
+    console.error('[BTCPay Config] 📋 Додайте в Vercel: BTCPAY_SERVER_URL, BTCPAY_API_KEY, BTCPAY_STORE_ID');
 
-    config = FALLBACK_CONFIG;
+    // Перевіряємо що fallback також має все необхідне
+    if (!FALLBACK_CONFIG.serverUrl || !FALLBACK_CONFIG.apiKey || !FALLBACK_CONFIG.storeId) {
+      console.error('[BTCPay Config] ❌ Fallback config також порожній - Bitcoin платежі недоступні!');
+
+      // Створюємо порожній конфіг з помилкою
+      config = {
+        ...FALLBACK_CONFIG,
+        _error: 'Bitcoin payment not configured. Please contact support.'
+      };
+    } else {
+      console.log('[BTCPay Config] 💡 Використовую fallback config (для локальної розробки)');
+      config = FALLBACK_CONFIG;
+    }
   }
 
   // Експортуємо глобально
