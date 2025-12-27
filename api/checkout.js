@@ -195,6 +195,31 @@ export default async function handler(req, res) {
     });
 
     // ============================================
+    // ✅ ПЕРЕВІРКА PAYMENT METHOD
+    // ============================================
+    const paymentMethod = norm(data.paymentMethod) || 'manual';
+    const isBitcoinPayment = paymentMethod === 'bitcoin';
+
+    let bitcoinInvoiceId = '';
+    let bitcoinCheckoutLink = '';
+    let bitcoinDiscount = 0;
+    let finalTotal = total;
+
+    if (isBitcoinPayment) {
+      bitcoinInvoiceId = norm(data.bitcoinInvoiceId);
+      bitcoinCheckoutLink = norm(data.bitcoinCheckoutLink);
+      bitcoinDiscount = Number(data.bitcoinDiscount || 0);
+      finalTotal = Number(data.discountedTotal || total);
+
+      console.log('[Checkout] 🪙 Bitcoin payment detected:', {
+        invoiceId: bitcoinInvoiceId,
+        originalTotal: total,
+        discountedTotal: finalTotal,
+        discount: bitcoinDiscount
+      });
+    }
+
+    // ============================================
     // ✅ ЗБЕРІГАЄМО PENDING ORDER В REDIS
     // ============================================
     const pendingOrderData = {
@@ -215,10 +240,14 @@ export default async function handler(req, res) {
       discount: discount,
       promo: promoCode || '',
       total: total,
-      status: 'pending_payment',
+      payment_method: paymentMethod,
+      bitcoin_invoice_id: bitcoinInvoiceId || null,
+      bitcoin_discount: bitcoinDiscount || 0,
+      bitcoin_final_total: isBitcoinPayment ? finalTotal : null,
+      status: isBitcoinPayment ? 'awaiting_bitcoin_payment' : 'pending_payment',
       timestamp: Date.now()
     };
-    
+
     await savePendingOrder(pendingOrderData);
 
     // ---- рендер таблиці ----
@@ -445,51 +474,181 @@ Confirm payment: ${process.env.SITE_URL || 'https://isrib.shop'}/admin/confirm-p
 
     // 3. Підтвердження клієнту
     console.log('[Checkout] 📧 Sending customer confirmation');
-    
-    resend.emails.send({
-      from: process.env.RESEND_FROM,
-      to: email,
-      subject: `Order ${orderId} received — ISRIB.shop`,
-      html: `
-        <!doctype html>
-        <html>
-        <body style="font-family:system-ui,sans-serif;line-height:1.6;color:#1e293b;max-width:600px;margin:0 auto;padding:20px;">
-          <div style="text-align:center;margin-bottom:24px;">
-            <h1 style="color:#10b981;margin:0;">Thank you, ${firstName}!</h1>
-            <p style="color:#64748b;margin:8px 0 0;">We've received your order request.</p>
-          </div>
 
-          <!-- ✅ ORDER ID -->
-          <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;border-radius:8px;margin-bottom:24px;text-align:center;">
-            <p style="margin:0;color:#92400e;font-size:14px;"><b>Your Order ID:</b></p>
-            <p style="margin:8px 0 0;font-family:monospace;font-size:20px;font-weight:700;color:#f59e0b;">${orderId}</p>
-          </div>
+    // ============================================
+    // ✅ BITCOIN EMAIL vs MANUAL EMAIL
+    // ============================================
+    if (isBitcoinPayment) {
+      // Bitcoin: "Order Received - Awaiting Bitcoin Payment"
+      resend.emails.send({
+        from: process.env.RESEND_FROM,
+        to: email,
+        subject: `Order ${orderId} — Awaiting Bitcoin Payment`,
+        html: `
+          <!doctype html>
+          <html>
+          <body style="font-family:system-ui,sans-serif;line-height:1.6;color:#1e293b;max-width:600px;margin:0 auto;padding:20px;">
+            <div style="text-align:center;margin-bottom:24px;">
+              <h1 style="color:#f59e0b;margin:0;">₿ Bitcoin Payment Required</h1>
+              <p style="color:#64748b;margin:8px 0 0;">Thank you, ${firstName}! Complete your Bitcoin payment to confirm your order.</p>
+            </div>
 
-          <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px;border-radius:8px;margin-bottom:24px;">
-            <p style="margin:0;color:#14532d;font-weight:600;">✓ What happens next?</p>
-            <p style="margin:8px 0 0;color:#166534;">We'll review availability and payment options, then get back to you via email${messenger ? ` or ${messenger}` : ''} within 24 hours.</p>
-          </div>
+            <!-- ✅ ORDER ID -->
+            <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;border-radius:8px;margin-bottom:24px;text-align:center;">
+              <p style="margin:0;color:#92400e;font-size:14px;"><b>Your Order ID:</b></p>
+              <p style="margin:8px 0 0;font-family:monospace;font-size:20px;font-weight:700;color:#f59e0b;">${orderId}</p>
+            </div>
 
-          <h3 style="margin:24px 0 12px;color:#475569;">Your Order Summary</h3>
-          ${itemsTable}
-          ${totalsBlockHtml}
+            <!-- Bitcoin Savings -->
+            <div style="background:#dcfdf7;border-left:4px solid #10b981;padding:16px;border-radius:8px;margin-bottom:24px;">
+              <p style="margin:0;color:#14532d;font-weight:600;">🎉 You're saving with Bitcoin!</p>
+              <p style="margin:8px 0 0;color:#166534;">
+                Original price: <span style="text-decoration:line-through;">$${total.toFixed(2)}</span><br>
+                Bitcoin discount (10%): <b style="color:#10b981;">−$${bitcoinDiscount.toFixed(2)}</b><br>
+                <b>Final price: $${finalTotal.toFixed(2)}</b>
+              </p>
+            </div>
 
-          <div style="background:#f8fafc;padding:16px;border-radius:8px;margin-top:24px;">
-            <p style="margin:0;color:#64748b;font-size:13px;">
-              <b>Questions?</b> Just reply to this email or contact us at 
-              <a href="mailto:isrib.shop@protonmail.com" style="color:#3b82f6;">isrib.shop@protonmail.com</a>
+            <!-- Payment Instructions -->
+            <div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:16px;border-radius:8px;margin-bottom:24px;">
+              <p style="margin:0;color:#1e3a8a;font-weight:600;">₿ Complete your Bitcoin payment:</p>
+              <p style="margin:12px 0;">
+                <a href="${bitcoinCheckoutLink}"
+                   style="display:inline-block;background:#f59e0b;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;">
+                  Pay with Bitcoin →
+                </a>
+              </p>
+              <p style="margin:8px 0 0;color:#475569;font-size:13px;">
+                Click the button above to complete your Bitcoin payment via BTCPay Server.<br>
+                Your order will be automatically confirmed once payment is received.
+              </p>
+            </div>
+
+            <h3 style="margin:24px 0 12px;color:#475569;">Your Order Summary</h3>
+            ${itemsTable}
+
+            <!-- Bitcoin Totals -->
+            <div style="margin-top:10px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span>Subtotal</span><b>${fmtUSD(subtotal)}</b>
+              </div>
+              ${discount > 0 ? `
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;color:#10b981;">
+                  <span>Promo (${promoCode})</span><b>−${fmtUSD(discount)}</b>
+                </div>
+              ` : ''}
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;color:#10b981;">
+                <span>Bitcoin Discount (10%)</span><b>−${fmtUSD(bitcoinDiscount)}</b>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span>Shipping</span><b>FREE</b>
+              </div>
+              <div style="display:flex;justify-content:space-between;border-top:1px solid #e5e7eb;padding-top:6px;margin-top:6px;font-size:16px;">
+                <span><strong>Total (Bitcoin)</strong></span><b>${fmtUSD(finalTotal)}</b>
+              </div>
+            </div>
+
+            <div style="background:#f8fafc;padding:16px;border-radius:8px;margin-top:24px;">
+              <p style="margin:0;color:#64748b;font-size:13px;">
+                <b>Questions?</b> Just reply to this email or contact us at
+                <a href="mailto:isrib.shop@protonmail.com" style="color:#3b82f6;">isrib.shop@protonmail.com</a>
+              </p>
+            </div>
+
+            <p style="color:#94a3b8;font-size:12px;text-align:center;margin-top:24px;border-top:1px solid #e5e7eb;padding-top:16px;">
+              For research use only. Not for human consumption.
             </p>
-          </div>
+          </body>
+          </html>
+        `,
+        text: `Hi ${firstName},
 
-          <p style="color:#94a3b8;font-size:12px;text-align:center;margin-top:24px;border-top:1px solid #e5e7eb;padding-top:16px;">
-            For research use only. Not for human consumption.
-          </p>
-        </body>
-        </html>
-      `,
-      text: `Hi ${firstName},
+Thank you for your order! Please complete your Bitcoin payment to confirm.
 
-Thanks for your order request! 
+Order ID: ${orderId}
+
+💰 Bitcoin Payment Details:
+- Original Price: $${total.toFixed(2)}
+- Bitcoin Discount (10%): -$${bitcoinDiscount.toFixed(2)}
+- Final Price: $${finalTotal.toFixed(2)}
+
+Complete payment here:
+${bitcoinCheckoutLink}
+
+Your order will be automatically confirmed once payment is received.
+
+Order Summary:
+${items.map(it => {
+  const packs = getQty(it);
+  const mg = getMgPerPack(it);
+  const totalMg = mg * packs;
+  return `- ${it.name} — ${fmtAmount(mg)} × ${packs} = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
+}).join('\n')}
+
+Subtotal: ${fmtUSD(subtotal)}
+${discount > 0 ? `Promo (${promoCode}): −${fmtUSD(discount)}` : ''}
+Bitcoin Discount (10%): −${fmtUSD(bitcoinDiscount)}
+Shipping: FREE
+Total: ${fmtUSD(finalTotal)}
+
+Questions? Reply to this email or contact: isrib.shop@protonmail.com
+
+For research use only. Not for human consumption.`,
+        tags: [
+          { name: 'type', value: 'bitcoin_payment_awaiting' },
+          { name: 'order_id', value: orderId },
+          { name: 'payment_method', value: 'bitcoin' }
+        ]
+      })
+      .then(() => console.log('[Checkout] ✅ Bitcoin payment email sent'))
+      .catch(err => console.warn('[Checkout] ⚠️ Bitcoin email failed:', err.message));
+
+    } else {
+      // Manual Payment: стандартний "Order Received" email
+      resend.emails.send({
+        from: process.env.RESEND_FROM,
+        to: email,
+        subject: `Order ${orderId} received — ISRIB.shop`,
+        html: `
+          <!doctype html>
+          <html>
+          <body style="font-family:system-ui,sans-serif;line-height:1.6;color:#1e293b;max-width:600px;margin:0 auto;padding:20px;">
+            <div style="text-align:center;margin-bottom:24px;">
+              <h1 style="color:#10b981;margin:0;">Thank you, ${firstName}!</h1>
+              <p style="color:#64748b;margin:8px 0 0;">We've received your order request.</p>
+            </div>
+
+            <!-- ✅ ORDER ID -->
+            <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;border-radius:8px;margin-bottom:24px;text-align:center;">
+              <p style="margin:0;color:#92400e;font-size:14px;"><b>Your Order ID:</b></p>
+              <p style="margin:8px 0 0;font-family:monospace;font-size:20px;font-weight:700;color:#f59e0b;">${orderId}</p>
+            </div>
+
+            <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:16px;border-radius:8px;margin-bottom:24px;">
+              <p style="margin:0;color:#14532d;font-weight:600;">✓ What happens next?</p>
+              <p style="margin:8px 0 0;color:#166534;">We'll review availability and payment options, then get back to you via email${messenger ? ` or ${messenger}` : ''} within 24 hours.</p>
+            </div>
+
+            <h3 style="margin:24px 0 12px;color:#475569;">Your Order Summary</h3>
+            ${itemsTable}
+            ${totalsBlockHtml}
+
+            <div style="background:#f8fafc;padding:16px;border-radius:8px;margin-top:24px;">
+              <p style="margin:0;color:#64748b;font-size:13px;">
+                <b>Questions?</b> Just reply to this email or contact us at
+                <a href="mailto:isrib.shop@protonmail.com" style="color:#3b82f6;">isrib.shop@protonmail.com</a>
+              </p>
+            </div>
+
+            <p style="color:#94a3b8;font-size:12px;text-align:center;margin-top:24px;border-top:1px solid #e5e7eb;padding-top:16px;">
+              For research use only. Not for human consumption.
+            </p>
+          </body>
+          </html>
+        `,
+        text: `Hi ${firstName},
+
+Thanks for your order request!
 
 Your Order ID: ${orderId}
 
@@ -511,13 +670,14 @@ Total: ${fmtUSD(total)}
 Questions? Reply to this email or contact: isrib.shop@protonmail.com
 
 For research use only. Not for human consumption.`,
-      tags: [
-        { name: 'type', value: 'order_confirmation' },
-        { name: 'order_id', value: orderId }
-      ]
-    })
-    .then(() => console.log('[Checkout] ✅ Customer confirmation sent'))
-    .catch(err => console.warn('[Checkout] ⚠️ Customer confirmation failed:', err.message));
+        tags: [
+          { name: 'type', value: 'order_confirmation' },
+          { name: 'order_id', value: orderId }
+        ]
+      })
+      .then(() => console.log('[Checkout] ✅ Customer confirmation sent'))
+      .catch(err => console.warn('[Checkout] ⚠️ Customer confirmation failed:', err.message));
+    }
 
     // 4. Скасовуємо cart recovery
     console.log('[Checkout] 🔄 Canceling cart recovery');

@@ -36,6 +36,202 @@
     }
     .checkout-hero .title{ position:relative; z-index:1; font-weight:900; font-size:clamp(2.2rem,4.5vw,3.4rem); color:#1e293b; margin:0 0 10px; }
     .checkout-hero .sub{ position:relative; z-index:1; color:#64748b; font-size:1.1rem; max-width:680px; margin:0 auto; }
+
+    /* ============================================ */
+    /* Payment Method Selection - Redesigned       */
+    /* ============================================ */
+    .payment-option {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      padding: 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: #fff;
+      position: relative;
+    }
+
+    .payment-option:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .payment-option:has(input:checked) {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Custom Radio Button */
+    .payment-radio {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .payment-radio input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .radio-mark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 24px;
+      height: 24px;
+      border: 2px solid #cbd5e1;
+      border-radius: 50%;
+      background: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .radio-mark::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #3b82f6;
+      transition: transform 0.2s ease;
+    }
+
+    .payment-radio input:checked ~ .radio-mark {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+
+    .payment-radio input:checked ~ .radio-mark::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Payment Content */
+    .payment-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .payment-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .payment-methods {
+      font-size: 12px;
+      font-weight: 500;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .discount-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .payment-description {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .payment-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      width: fit-content;
+      margin-top: 4px;
+    }
+
+    .payment-badge.warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .payment-badge.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .bitcoin-savings {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #dcfdf7 0%, #d1fae5 100%);
+      border-left: 4px solid #10b981;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #065f46;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 640px) {
+      .payment-option {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .payment-radio {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+      }
+
+      .payment-content {
+        padding-left: 0;
+      }
+
+      .payment-title {
+        font-size: 15px;
+      }
+
+      .payment-methods {
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -198,6 +394,58 @@
               </span>
             </label>
 
+            <!-- Payment Method Selection -->
+            <div class="payment-method-section" style="margin-top:32px;margin-bottom:24px;">
+              <h3 style="font-size:17px;font-weight:700;margin-bottom:20px;color:#1e293b;text-align:center;">Choose Payment Method</h3>
+
+              <div class="payment-options" style="display:grid;gap:16px;">
+                <!-- Manual Payment Option (Default) -->
+                <label class="payment-option" data-payment="manual">
+                  <div class="payment-radio">
+                    <input type="radio" name="paymentMethod" value="manual" id="paymentManual" checked />
+                    <span class="radio-mark"></span>
+                  </div>
+                  <div class="payment-content">
+                    <div class="payment-title">
+                      Manual Payment
+                      <span class="payment-methods">SWIFT • SEPA • PayPal • Crypto</span>
+                    </div>
+                    <div class="payment-description">
+                      We'll arrange payment details individually via email
+                    </div>
+                    <div class="payment-badge warning">
+                      <span>⏱</span>
+                      <span>Requires manual confirmation (1-3 business days)</span>
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Bitcoin Payment Option (with discount) -->
+                <label class="payment-option" data-payment="bitcoin">
+                  <div class="payment-radio">
+                    <input type="radio" name="paymentMethod" value="bitcoin" id="paymentBitcoin" />
+                    <span class="radio-mark"></span>
+                  </div>
+                  <div class="payment-content">
+                    <div class="payment-title">
+                      Bitcoin Payment
+                      <span class="discount-badge">Save 10%</span>
+                    </div>
+                    <div class="payment-description">
+                      Pay with Bitcoin via BTCPay Server — instant confirmation
+                    </div>
+                    <div class="payment-badge success">
+                      <span>⚡</span>
+                      <span>Automatic confirmation — No waiting!</span>
+                    </div>
+                    <div id="bitcoinSavings" class="bitcoin-savings">
+                      <!-- Динамічно відображається savings -->
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
             <div class="form-actions">
               <button id="submitOrderBtn" class="btn btn-primary" type="submit">
                 Submit Order Request
@@ -312,7 +560,14 @@
     </div>
   </footer>
 
-  <!-- App JS -->
+  <!-- ============================================ -->
+  <!-- ✅ BTCPay Integration Scripts (BEFORE main.js!) -->
+  <!-- ============================================ -->
+  <script src="js/btcpay-config.js"></script>
+  <script src="js/btcpay.js"></script>
+  <script src="js/checkout-payment-selector.js"></script>
+
+  <!-- App JS (after BTCPay modules) -->
   <script src="js/main.js?v=34"></script>
 
   <!-- ============================================ -->

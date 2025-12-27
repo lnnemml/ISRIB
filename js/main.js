@@ -2267,6 +2267,40 @@ function initCheckoutForm() {
       promoCode: appliedPromoCode
     };
 
+    // ============================================
+    // ✅ ПЕРЕВІРКА PAYMENT METHOD
+    // ============================================
+    const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'manual';
+
+    console.log('[Checkout] 💳 Selected payment method:', selectedPaymentMethod);
+
+    // Якщо вибрано Bitcoin - викликаємо спеціальний handler
+    if (selectedPaymentMethod === 'bitcoin') {
+      console.log('[Checkout] 🪙 Routing to Bitcoin payment flow');
+
+      const bitcoinOrderData = {
+        orderId: orderIdFinal,
+        firstName, lastName, email, country, region, city, postal, address,
+        messenger, handle, notes,
+        items,
+        total,
+        subtotal,
+        discount,
+        promoCode: appliedPromoCode
+      };
+
+      // Викликаємо Bitcoin payment handler
+      await handleBitcoinPayment(bitcoinOrderData, form);
+
+      isSubmitting = false;
+      return; // Завершуємо виконання, Bitcoin handler сам все зробить
+    }
+
+    // ============================================
+    // ✅ MANUAL PAYMENT FLOW (існуючий код)
+    // ============================================
+    console.log('[Checkout] 📝 Processing manual payment order');
+
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = '⏳ Processing...';
@@ -2381,6 +2415,270 @@ function parseQtyToMgLabel(s) {
 }
 
 
+/* ============================ BITCOIN PAYMENT ============================ */
+
+/**
+ * Обробка Bitcoin payment через BTCPay Server
+ * @param {Object} orderData - Дані замовлення
+ * @param {HTMLFormElement} form - Форма checkout
+ * @returns {Promise<void>}
+ */
+async function handleBitcoinPayment(orderData, form) {
+  console.log('[Bitcoin Payment] 🪙 Starting Bitcoin payment flow');
+
+  const submitBtn = document.getElementById('submitOrderBtn');
+  const formMsg = document.getElementById('formMsg');
+
+  try {
+    // Перевіряємо чи завантажені BTCPay модулі
+    if (typeof BTCPayClient === 'undefined' || typeof BTCPAY_CONFIG === 'undefined') {
+      throw new Error('BTCPay modules not loaded. Please refresh the page.');
+    }
+
+    // Розраховуємо ціну з Bitcoin знижкою (10%)
+    const bitcoinPrice = orderData.total * 0.90;
+    const savedAmount = orderData.total - bitcoinPrice;
+
+    console.log('[Bitcoin Payment] 💰 Price calculation:', {
+      original: orderData.total,
+      discounted: bitcoinPrice,
+      saved: savedAmount
+    });
+
+    // Показуємо loading state
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = '₿ Creating Bitcoin invoice...';
+      submitBtn.style.opacity = '0.6';
+    }
+    if (formMsg) {
+      formMsg.textContent = '⏳ Creating Bitcoin payment invoice...';
+      formMsg.style.color = '#3b82f6';
+    }
+
+    // Створюємо BTCPay client
+    const btcpay = new BTCPayClient();
+
+    // Створюємо invoice
+    const invoice = await btcpay.createInvoice({
+      orderId: orderData.orderId,
+      price: bitcoinPrice,
+      currency: 'USD',
+      buyerEmail: orderData.email,
+      redirectURL: `${window.location.origin}/success.html`,
+      metadata: {
+        items: orderData.items,
+        originalPrice: orderData.total,
+        discountedPrice: bitcoinPrice,
+        discount: savedAmount,
+        paymentMethod: 'bitcoin_btcpay',
+        firstName: orderData.firstName,
+        lastName: orderData.lastName,
+        country: orderData.country,
+        city: orderData.city
+      }
+    });
+
+    console.log('[Bitcoin Payment] ✅ Invoice created:', invoice.id);
+
+    // Відправляємо "Order Received - Awaiting Bitcoin Payment" email через API
+    try {
+      console.log('[Bitcoin Payment] 📧 Sending order received email...');
+
+      await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...orderData,
+          paymentMethod: 'bitcoin',
+          bitcoinInvoiceId: invoice.id,
+          bitcoinCheckoutLink: invoice.checkoutLink,
+          discountedTotal: bitcoinPrice,
+          bitcoinDiscount: savedAmount
+        })
+      });
+
+      console.log('[Bitcoin Payment] ✅ Order received email sent');
+
+    } catch (emailError) {
+      console.warn('[Bitcoin Payment] ⚠️ Email send failed:', emailError);
+      // Продовжуємо навіть якщо email не відправився
+    }
+
+    // Оновлюємо UI
+    if (formMsg) {
+      formMsg.textContent = '₿ Opening Bitcoin checkout...';
+    }
+
+    // Відкриваємо BTCPay checkout
+    btcpay.openCheckout(invoice.checkoutLink, 'window');
+
+    // Оновлюємо UI для waiting state
+    if (submitBtn) {
+      submitBtn.textContent = '⏳ Awaiting Bitcoin payment...';
+    }
+    if (formMsg) {
+      formMsg.innerHTML = `
+        <div style="color:#3b82f6;">
+          <strong>₿ Awaiting Bitcoin payment...</strong><br>
+          <span style="font-size:12px;">Complete payment in the BTCPay window</span><br>
+          <span style="font-size:12px;">This page will automatically update when payment is confirmed</span>
+        </div>
+      `;
+    }
+
+    console.log('[Bitcoin Payment] 🔄 Starting payment polling...');
+
+    // Починаємо polling статусу invoice
+    const finalStatus = await btcpay.pollInvoiceStatus(invoice.id, (status) => {
+      console.log('[Bitcoin Payment] 📊 Status update:', status.status);
+
+      if (status.status === 'paid') {
+        if (formMsg) {
+          formMsg.innerHTML = `
+            <div style="color:#f59e0b;">
+              <strong>💰 Payment received!</strong><br>
+              <span style="font-size:12px;">Waiting for blockchain confirmation...</span>
+            </div>
+          `;
+        }
+      }
+    });
+
+    console.log('[Bitcoin Payment] ✅ Payment confirmed!', finalStatus);
+
+    // Відправляємо "Payment Confirmed" email та оновлюємо статус в Redis
+    try {
+      console.log('[Bitcoin Payment] 📧 Confirming payment in backend...');
+
+      const confirmResponse = await fetch('/api/btcpay-callback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: orderData.orderId,
+          invoiceId: invoice.id,
+          status: finalStatus.status,
+          amountPaid: finalStatus.price,
+          currency: finalStatus.currency
+        })
+      });
+
+      if (!confirmResponse.ok) {
+        throw new Error('Failed to confirm payment in backend');
+      }
+
+      const confirmData = await confirmResponse.json();
+      console.log('[Bitcoin Payment] ✅ Payment confirmed in backend');
+
+      // GTM dataLayer purchase event
+      if (window.dataLayer) {
+        console.log('[GA4] 📤 Pushing purchase event...');
+
+        window.dataLayer.push({
+          event: 'purchase',
+          ecommerce: {
+            transaction_id: invoice.id,
+            value: bitcoinPrice,
+            currency: 'USD',
+            tax: 0,
+            shipping: 0,
+            coupon: 'BITCOIN10',
+            payment_type: 'bitcoin_btcpay_automatic',
+            items: orderData.items.map(item => ({
+              item_id: item.sku || 'unknown',
+              item_name: item.name,
+              item_variant: item.display,
+              item_category: 'Research Compounds',
+              price: Number(item.price || 0),
+              quantity: Number(item.qty || 1)
+            }))
+          },
+          payment_method: 'bitcoin_btcpay',
+          payment_status: 'confirmed'
+        });
+
+        console.log('[GA4] ✅ Purchase event pushed');
+      }
+
+      // Reddit Pixel purchase event
+      if (window.RedditPixel && typeof window.RedditPixel.trackPurchase === 'function') {
+        window.RedditPixel.trackPurchase(invoice.id, bitcoinPrice);
+        console.log('[Reddit Pixel] ✅ Purchase event sent');
+      }
+
+    } catch (confirmError) {
+      console.error('[Bitcoin Payment] ❌ Confirmation error:', confirmError);
+      // Показуємо помилку але не блокуємо redirect
+    }
+
+    // Показуємо success
+    if (formMsg) {
+      formMsg.innerHTML = `
+        <div style="color:#10b981;">
+          <strong>✓ Payment confirmed!</strong><br>
+          <span style="font-size:12px;">Redirecting to success page...</span>
+        </div>
+      `;
+    }
+
+    // Зберігаємо дані для success page
+    try {
+      const successData = {
+        order_id: orderData.orderId,
+        subtotal: orderData.total,
+        discount: savedAmount,
+        promo: 'BITCOIN10',
+        total: bitcoinPrice,
+        items: orderData.items,
+        timestamp: Date.now(),
+        paymentMethod: 'bitcoin',
+        bitcoinInvoiceId: invoice.id
+      };
+
+      localStorage.setItem('_order_success_data', JSON.stringify(successData));
+      console.log('[Bitcoin Payment] 💾 Success data saved');
+
+    } catch (saveErr) {
+      console.error('[Bitcoin Payment] ⚠️ Save success data failed:', saveErr);
+    }
+
+    // Очищаємо кошик
+    writeCart([]);
+    updateCartBadge([]);
+
+    // Редірект на success page
+    console.log('[Bitcoin Payment] 🔄 Redirecting to success page...');
+    setTimeout(() => {
+      window.location.href = '/success.html';
+    }, 1500);
+
+  } catch (error) {
+    console.error('[Bitcoin Payment] ❌ Error:', error);
+
+    // Показуємо error message
+    if (formMsg) {
+      formMsg.innerHTML = `
+        <div style="color:#dc2626;">
+          <strong>❌ Bitcoin payment failed</strong><br>
+          <span style="font-size:12px;">${error.message || 'Unknown error'}</span><br>
+          <span style="font-size:12px;">You can try again or use manual payment</span>
+        </div>
+      `;
+    }
+
+    // Відновлюємо кнопку
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Order Request';
+      submitBtn.style.opacity = '1';
+    }
+
+    // Показуємо toast якщо є
+    try {
+      showToast?.('Bitcoin payment failed. Try again or use manual payment.', 'error');
+    } catch {}
+  }
+}
 
 
 /* ============================ CONTACT ============================ */
