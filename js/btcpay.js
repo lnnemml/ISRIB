@@ -9,21 +9,29 @@
   'use strict';
 
   // Перевіряємо чи завантажена конфігурація
+  // Примітка: btcpay-config.js завантажується async, тому конфіг може бути ще не готовий
+  // Це нормально - конфіг буде готовий до моменту використання
   if (typeof window.BTCPAY_CONFIG === 'undefined') {
-    console.error('[BTCPay] ❌ BTCPAY_CONFIG not loaded! Include btcpay-config.js first.');
-    return;
+    console.log('[BTCPay] ⏳ BTCPay config is loading asynchronously...');
   }
-
-  const CONFIG = window.BTCPAY_CONFIG;
 
   // ============================================
   // BTCPay API Client
   // ============================================
   class BTCPayClient {
     constructor() {
+      // Отримуємо конфіг динамічно (може завантажитись async)
+      const CONFIG = window.BTCPAY_CONFIG;
+
+      if (!CONFIG) {
+        throw new Error('BTCPAY_CONFIG not loaded. Please wait for config to load.');
+      }
+
       this.serverUrl = CONFIG.serverUrl;
       this.apiKey = CONFIG.apiKey;
       this.storeId = CONFIG.storeId;
+      this.polling = CONFIG.polling;
+      this.discount = CONFIG.discount;
       this.pollingInterval = null;
       this.pollingAttempts = 0;
     }
@@ -140,8 +148,8 @@
       console.log('[BTCPay] 🔄 Starting invoice polling:', invoiceId);
 
       this.pollingAttempts = 0;
-      const maxAttempts = CONFIG.polling.maxAttempts;
-      const interval = CONFIG.polling.interval;
+      const maxAttempts = this.polling.maxAttempts;
+      const interval = this.polling.interval;
 
       return new Promise((resolve, reject) => {
         this.pollingInterval = setInterval(async () => {
@@ -289,7 +297,7 @@
    * Розраховує ціну з Bitcoin знижкою
    */
   function calculateBitcoinPrice(originalPrice) {
-    const discount = CONFIG.discount;
+    const discount = window.BTCPAY_CONFIG?.discount || 0.10;
     const discountedPrice = originalPrice * (1 - discount);
     const savedAmount = originalPrice - discountedPrice;
 
