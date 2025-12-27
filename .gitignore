@@ -31,6 +31,12 @@ yarn-error.log*
 .env*.local
 .env
 
+# BTCPay integration files (не використовується)
+js/btcpay*.js
+js/checkout-payment-selector.js
+api/btcpay*.js
+BTCPAY*.md
+
 # vercel
 .vercel
 
