@@ -1,0 +1,387 @@
+{
+  "exportFormatVersion": 2,
+  "containerVersion": {
+    "container": {
+      "publicId": "GTM-M2QCB45Q",
+      "accountId": "",
+      "containerId": "",
+      "name": "ISRIB Shop Enhanced Analytics"
+    },
+    "description": "Comprehensive analytics setup for isrib.shop - includes engagement, navigation, product, form, error, and attribution tracking"
+  },
+  "comment": "IMPORTANT: This is a configuration reference, not a direct import file. Use this to manually configure GTM as described in GTM_ANALYTICS_SETUP.md",
+
+  "variables": {
+    "builtIn": [
+      "Page URL",
+      "Page Hostname",
+      "Page Path",
+      "Referrer",
+      "Click Element",
+      "Click Classes",
+      "Click ID",
+      "Click URL",
+      "Click Text",
+      "Form Element",
+      "Form ID",
+      "Scroll Depth Threshold",
+      "Scroll Direction",
+      "Error Message",
+      "Error URL",
+      "Error Line"
+    ],
+    "userDefined": [
+      {
+        "name": "DLV - Event Category",
+        "type": "dataLayerVariable",
+        "parameter": "event_category",
+        "defaultValue": "(not set)"
+      },
+      {
+        "name": "DLV - Event Label",
+        "type": "dataLayerVariable",
+        "parameter": "event_label",
+        "defaultValue": "(not set)"
+      },
+      {
+        "name": "DLV - Scroll Depth Custom",
+        "type": "dataLayerVariable",
+        "parameter": "scroll_percent",
+        "defaultValue": "0"
+      },
+      {
+        "name": "DLV - Time on Page",
+        "type": "dataLayerVariable",
+        "parameter": "time_on_page",
+        "defaultValue": "0"
+      },
+      {
+        "name": "DLV - User Type",
+        "type": "dataLayerVariable",
+        "parameter": "user_type",
+        "defaultValue": "new"
+      },
+      {
+        "name": "DLV - Page Type",
+        "type": "dataLayerVariable",
+        "parameter": "page_type",
+        "defaultValue": "other"
+      },
+      {
+        "name": "DLV - Engagement Level",
+        "type": "dataLayerVariable",
+        "parameter": "engagement_level",
+        "defaultValue": "low"
+      },
+      {
+        "name": "DLV - Session ID",
+        "type": "dataLayerVariable",
+        "parameter": "session_id"
+      },
+      {
+        "name": "DLV - Ecommerce Value",
+        "type": "dataLayerVariable",
+        "parameter": "ecommerce.value",
+        "defaultValue": "0"
+      },
+      {
+        "name": "DLV - Ecommerce Items",
+        "type": "dataLayerVariable",
+        "parameter": "ecommerce.items"
+      },
+      {
+        "name": "DLV - Transaction ID",
+        "type": "dataLayerVariable",
+        "parameter": "transaction_id"
+      },
+      {
+        "name": "JS - Device Type",
+        "type": "customJavascript",
+        "code": "function() { var w = window.innerWidth || document.documentElement.clientWidth; if (w < 768) return 'mobile'; if (w < 1024) return 'tablet'; return 'desktop'; }"
+      },
+      {
+        "name": "JS - User Type",
+        "type": "customJavascript",
+        "code": "function() { try { var k = '_isrib_visitor'; var e = localStorage.getItem(k); if (e) return 'returning'; localStorage.setItem(k, Date.now()); return 'new'; } catch(err) { return 'unknown'; } }"
+      },
+      {
+        "name": "JS - Get Page Type",
+        "type": "customJavascript",
+        "code": "function() { var p = window.location.pathname.toLowerCase(); if (p === '/' || p === '/index.html') return 'homepage'; if (p.includes('product_')) return 'product'; if (p.includes('checkout')) return 'checkout'; if (p.includes('success')) return 'success'; if (p.includes('cart')) return 'cart'; if (p.includes('faq')) return 'faq'; if (p.includes('research') || p.includes('about')) return 'content'; if (p.includes('contact')) return 'contact'; return 'other'; }"
+      },
+      {
+        "name": "JS - Get Traffic Source",
+        "type": "customJavascript",
+        "code": "function() { var r = document.referrer || ''; var s = window.location.search; var utm = s.match(/utm_source=([^&]+)/); if (utm) { var src = decodeURIComponent(utm[1]).toLowerCase(); if (src.includes('reddit')) return 'reddit'; if (src.includes('facebook') || src.includes('meta')) return 'meta'; if (src.includes('email')) return 'email'; return src; } if (!r || r.includes(location.hostname)) return 'direct'; if (r.includes('reddit.com')) return 'reddit'; if (r.includes('facebook.com')) return 'meta'; if (r.includes('google.')) return 'organic_google'; return 'referral'; }"
+      },
+      {
+        "name": "JS - Calculate Engagement Level",
+        "type": "customJavascript",
+        "code": "function() { var scroll = parseInt({{DLV - Scroll Depth Custom}} || 0); var time = parseInt({{DLV - Time on Page}} || 0); var score = 0; if (scroll >= 75) score += 3; else if (scroll >= 50) score += 2; else if (scroll >= 25) score += 1; if (time >= 120) score += 3; else if (time >= 60) score += 2; else if (time >= 30) score += 1; if (score >= 5) return 'high'; if (score >= 3) return 'medium'; return 'low'; }"
+      }
+    ]
+  },
+
+  "triggers": {
+    "scrollDepth": [
+      { "name": "Scroll Depth - 25%", "type": "scrollDepth", "percentages": [25] },
+      { "name": "Scroll Depth - 50%", "type": "scrollDepth", "percentages": [50] },
+      { "name": "Scroll Depth - 75%", "type": "scrollDepth", "percentages": [75] },
+      { "name": "Scroll Depth - 90%", "type": "scrollDepth", "percentages": [90] },
+      { "name": "Scroll Depth - 100%", "type": "scrollDepth", "percentages": [100] }
+    ],
+    "timers": [
+      { "name": "Timer - 15 seconds", "type": "timer", "interval": 15000, "limit": 1 },
+      { "name": "Timer - 30 seconds", "type": "timer", "interval": 30000, "limit": 1 },
+      { "name": "Timer - 60 seconds", "type": "timer", "interval": 60000, "limit": 1 },
+      { "name": "Timer - 120 seconds", "type": "timer", "interval": 120000, "limit": 1 },
+      { "name": "Timer - 300 seconds", "type": "timer", "interval": 300000, "limit": 1 }
+    ],
+    "clicks": [
+      {
+        "name": "CTA Click",
+        "type": "click",
+        "filter": "Click Classes contains 'btn' OR Click Classes contains 'add-to-cart' OR Click Element matches '[data-cta]'"
+      },
+      {
+        "name": "Internal Link Click",
+        "type": "linkClick",
+        "filter": "Click URL contains 'isrib.shop' OR Click URL starts with '/'"
+      },
+      {
+        "name": "External Link Click",
+        "type": "linkClick",
+        "filter": "Click URL does not contain 'isrib.shop' AND Click URL does not start with '/'"
+      },
+      {
+        "name": "Nav Menu Click",
+        "type": "click",
+        "filter": "Click Element matches '.nav a, header nav a'"
+      },
+      {
+        "name": "Lab Report Click",
+        "type": "click",
+        "filter": "Click URL contains 'coa' OR Click URL contains 'nmr' OR Click URL contains '.pdf'"
+      }
+    ],
+    "customEvents": [
+      { "name": "CE - section_view", "type": "customEvent", "eventName": "section_view" },
+      { "name": "CE - cta_visible", "type": "customEvent", "eventName": "cta_visible" },
+      { "name": "CE - faq_expand", "type": "customEvent", "eventName": "faq_expand" },
+      { "name": "CE - exit_intent", "type": "customEvent", "eventName": "exit_intent" },
+      { "name": "CE - dead_click", "type": "customEvent", "eventName": "dead_click" },
+      { "name": "CE - click_rage", "type": "customEvent", "eventName": "click_rage" },
+      { "name": "CE - cart_abandonment", "type": "customEvent", "eventName": "cart_abandonment" },
+      { "name": "CE - product_variant_select", "type": "customEvent", "eventName": "product_variant_select" },
+      { "name": "CE - promo_code_attempt", "type": "customEvent", "eventName": "promo_code_attempt" },
+      { "name": "CE - form_field_focus", "type": "customEvent", "eventName": "form_field_focus" },
+      { "name": "CE - form_field_complete", "type": "customEvent", "eventName": "form_field_complete" },
+      { "name": "CE - form_submit", "type": "customEvent", "eventName": "form_submit" }
+    ],
+    "pageView": [
+      {
+        "name": "Product Page View",
+        "type": "pageView",
+        "filter": "Page Path contains 'product_'"
+      }
+    ],
+    "errors": [
+      { "name": "JavaScript Error", "type": "jsError" }
+    ]
+  },
+
+  "tags": {
+    "engagement": [
+      {
+        "name": "GA4 - Engagement - Scroll 25%",
+        "type": "ga4Event",
+        "eventName": "scroll_depth",
+        "parameters": {
+          "scroll_percent": 25,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "{{JS - Calculate Engagement Level}}"
+        },
+        "trigger": "Scroll Depth - 25%"
+      },
+      {
+        "name": "GA4 - Engagement - Scroll 50%",
+        "type": "ga4Event",
+        "eventName": "scroll_depth",
+        "parameters": {
+          "scroll_percent": 50,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "{{JS - Calculate Engagement Level}}"
+        },
+        "trigger": "Scroll Depth - 50%"
+      },
+      {
+        "name": "GA4 - Engagement - Scroll 75%",
+        "type": "ga4Event",
+        "eventName": "scroll_depth",
+        "parameters": {
+          "scroll_percent": 75,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "{{JS - Calculate Engagement Level}}"
+        },
+        "trigger": "Scroll Depth - 75%"
+      },
+      {
+        "name": "GA4 - Engagement - Scroll 90%",
+        "type": "ga4Event",
+        "eventName": "scroll_depth",
+        "parameters": {
+          "scroll_percent": 90,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "{{JS - Calculate Engagement Level}}"
+        },
+        "trigger": "Scroll Depth - 90%"
+      },
+      {
+        "name": "GA4 - Engagement - Scroll 100%",
+        "type": "ga4Event",
+        "eventName": "scroll_depth",
+        "parameters": {
+          "scroll_percent": 100,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "{{JS - Calculate Engagement Level}}"
+        },
+        "trigger": "Scroll Depth - 100%"
+      },
+      {
+        "name": "GA4 - Engagement - Time 15s",
+        "type": "ga4Event",
+        "eventName": "time_on_page",
+        "parameters": {
+          "time_seconds": 15,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "low"
+        },
+        "trigger": "Timer - 15 seconds"
+      },
+      {
+        "name": "GA4 - Engagement - Time 30s",
+        "type": "ga4Event",
+        "eventName": "time_on_page",
+        "parameters": {
+          "time_seconds": 30,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "low"
+        },
+        "trigger": "Timer - 30 seconds"
+      },
+      {
+        "name": "GA4 - Engagement - Time 60s",
+        "type": "ga4Event",
+        "eventName": "time_on_page",
+        "parameters": {
+          "time_seconds": 60,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "medium"
+        },
+        "trigger": "Timer - 60 seconds"
+      },
+      {
+        "name": "GA4 - Engagement - Time 120s",
+        "type": "ga4Event",
+        "eventName": "time_on_page",
+        "parameters": {
+          "time_seconds": 120,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "medium"
+        },
+        "trigger": "Timer - 120 seconds"
+      },
+      {
+        "name": "GA4 - Engagement - Time 300s",
+        "type": "ga4Event",
+        "eventName": "time_on_page",
+        "parameters": {
+          "time_seconds": 300,
+          "page_type": "{{JS - Get Page Type}}",
+          "engagement_level": "high"
+        },
+        "trigger": "Timer - 300 seconds"
+      },
+      {
+        "name": "GA4 - Engagement - CTA Click",
+        "type": "ga4Event",
+        "eventName": "cta_click",
+        "parameters": {
+          "cta_text": "{{Click Text}}",
+          "cta_classes": "{{Click Classes}}",
+          "cta_id": "{{Click ID}}",
+          "page_type": "{{JS - Get Page Type}}"
+        },
+        "trigger": "CTA Click"
+      }
+    ],
+    "navigation": [
+      {
+        "name": "GA4 - Navigation - Internal Link",
+        "type": "ga4Event",
+        "eventName": "internal_link_click",
+        "parameters": {
+          "link_url": "{{Click URL}}",
+          "link_text": "{{Click Text}}",
+          "page_type": "{{JS - Get Page Type}}"
+        },
+        "trigger": "Internal Link Click"
+      },
+      {
+        "name": "GA4 - Navigation - External Link",
+        "type": "ga4Event",
+        "eventName": "external_link_click",
+        "parameters": {
+          "link_url": "{{Click URL}}",
+          "link_text": "{{Click Text}}",
+          "page_type": "{{JS - Get Page Type}}"
+        },
+        "trigger": "External Link Click"
+      },
+      {
+        "name": "GA4 - Navigation - Nav Menu",
+        "type": "ga4Event",
+        "eventName": "nav_menu_click",
+        "parameters": {
+          "nav_item": "{{Click Text}}",
+          "nav_url": "{{Click URL}}"
+        },
+        "trigger": "Nav Menu Click"
+      }
+    ],
+    "errors": [
+      {
+        "name": "GA4 - Error - JavaScript",
+        "type": "ga4Event",
+        "eventName": "js_error",
+        "parameters": {
+          "error_message": "{{Error Message}}",
+          "error_url": "{{Error URL}}",
+          "error_line": "{{Error Line}}",
+          "page_url": "{{Page URL}}"
+        },
+        "trigger": "JavaScript Error"
+      }
+    ],
+    "customHTML": [
+      {
+        "name": "Analytics Modules Loader",
+        "type": "customHTML",
+        "html": "<script src=\"/analytics/analytics-loader.js\" defer></script>",
+        "trigger": "All Pages - DOM Ready",
+        "priority": "high",
+        "notes": "Loads all enhanced analytics modules. Fire on DOM Ready to ensure proper initialization."
+      }
+    ]
+  },
+
+  "implementation_notes": {
+    "step1": "Create all User-Defined Variables first",
+    "step2": "Enable all Built-in Variables listed",
+    "step3": "Create all Triggers",
+    "step4": "Create all Tags and link to appropriate triggers",
+    "step5": "Add Custom HTML tag to load analytics modules",
+    "step6": "Test in Preview mode",
+    "step7": "Publish container"
+  }
+}

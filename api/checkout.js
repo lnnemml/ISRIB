@@ -42,7 +42,6 @@ function normalizeItem(it) {
 
 function validatePromoCode(code) {
   const PROMO_CODES = {
-    'RETURN15': { discount: 0.15, label: '15% off' },
     'WELCOME15': { discount: 0.15, label: '15% off' },
     'BUNDLE15': { discount: 0.15, label: '15% off' }
   };
