@@ -24,25 +24,50 @@ const parseQtyToMg = (s) => {
 };
 
 function normalizeItem(it) {
+  console.log('[normalizeItem] 📥 INPUT:', JSON.stringify({
+    name: it.name,
+    grams: it.grams,
+    display: it.display,
+    format: it.format,
+    capsuleQuantity: it.capsuleQuantity
+  }, null, 2));
+
   let grams = toNum(it.grams || 0);
   const display = it.display || it.quantity || it.qtyLabel || '';
   const format = it.format || 'powder';
+
+  console.log(`[normalizeItem] Format detected: "${format}"`);
+  console.log(`[normalizeItem] Display: "${display}"`);
+  console.log(`[normalizeItem] Grams before processing: ${grams}`);
 
   // For capsules, use the grams value sent from frontend (already calculated)
   // For powder, try to parse from display string
   if (format !== 'capsules' && display) {
     const mg = parseQtyToMg(display);
+    console.log(`[normalizeItem] Parsed mg from display (powder): ${mg}`);
     if (mg) grams = mg;
+  } else if (format === 'capsules') {
+    console.log(`[normalizeItem] Capsules detected - keeping grams as is: ${grams}`);
   } else if (!display) {
     if (grams >= 100000) grams = Math.round(grams / 1000);
   }
 
-  return {
+  const result = {
     ...it,
     grams,
     display: it.display || fmtAmount(grams),
     format: format
   };
+
+  console.log('[normalizeItem] 📤 OUTPUT:', JSON.stringify({
+    name: result.name,
+    grams: result.grams,
+    display: result.display,
+    format: result.format,
+    capsuleQuantity: result.capsuleQuantity
+  }, null, 2));
+
+  return result;
 }
 
 function validatePromoCode(code) {
@@ -166,15 +191,23 @@ export default async function handler(req, res) {
       return res.status(422).json({ code: 'EMPTY_CART', error: 'Cart is empty.' });
     }
 
-    const items = itemsInput.map((it) => {
+    console.log('[Checkout] 🔍 RAW ITEMS FROM FRONTEND:', JSON.stringify(itemsInput, null, 2));
+
+    const items = itemsInput.map((it, idx) => {
       const name  = norm(it.name ?? it.title ?? it.id);
       const qty   = toNum(it.qty ?? it.quantity ?? 0);
       const price = toNum(it.price);
       if (!name || !Number.isFinite(qty) || qty < 1 || !Number.isFinite(price) || price < 0) {
         throw new Error('INVALID_CART_ITEM');
       }
-      return normalizeItem({ ...it, name, qty, price });
+
+      const normalized = normalizeItem({ ...it, name, qty, price });
+      console.log(`[Checkout] 📦 Item ${idx} AFTER normalizeItem:`, JSON.stringify(normalized, null, 2));
+
+      return normalized;
     });
+
+    console.log('[Checkout] ✅ FINAL ITEMS ARRAY:', JSON.stringify(items, null, 2));
 
     // ---- суми ----
     const getQty       = (it) => toNum(it.qty ?? it.quantity ?? 1);
@@ -257,6 +290,10 @@ export default async function handler(req, res) {
     // ---- розділяємо items на капсули та порошок ----
     const capsuleItems = items.filter(it => it.format === 'capsules');
     const powderItems = items.filter(it => it.format !== 'capsules');
+
+    console.log('[Checkout] 🔍 SPLITTING ITEMS:');
+    console.log(`  💊 Capsule items: ${capsuleItems.length}`, capsuleItems.map(it => ({ name: it.name, format: it.format, display: it.display })));
+    console.log(`  ⚗️ Powder items: ${powderItems.length}`, powderItems.map(it => ({ name: it.name, format: it.format, display: it.display })));
 
     // ---- рендер таблиці для капсул (БЕЗ Total amount) ----
     const capsuleRows = capsuleItems.map(it => {

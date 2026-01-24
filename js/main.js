@@ -2417,16 +2417,28 @@ function initCheckoutForm() {
 
     const appliedPromoCode = (promoInputEl?.value || '').trim().toUpperCase();
     const cart = normalizeCartUnits(readCart());
-    
+
+    console.log('[Checkout Form] 🛒 CART FROM LOCALSTORAGE:', JSON.stringify(cart, null, 2));
+
     const items = cart.map(i => {
+      console.log(`[Checkout Form] Processing cart item:`, {
+        name: i.name,
+        format: i.format,
+        display: i.display,
+        grams: i.grams,
+        capsuleQuantity: i.capsuleQuantity
+      });
+
       // For capsules, use the already calculated grams value (e.g., 50 capsules × 20mg = 1000mg)
       // For powder, parse from display string
       let mgPerPack;
       if (i.format === 'capsules') {
         mgPerPack = Number(i.grams || 0);
+        console.log(`[Checkout Form] ✅ Capsules - using grams: ${mgPerPack}`);
       } else {
         const mgFromLabel = parseQtyToMgLabel(i.display);
         mgPerPack = mgFromLabel || Number(i.grams || 0);
+        console.log(`[Checkout Form] ⚗️ Powder - parsed mg: ${mgPerPack}`);
       }
 
       const item = {
@@ -2441,15 +2453,22 @@ function initCheckoutForm() {
       // Add format information if present
       if (i.format) {
         item.format = i.format;
+        console.log(`[Checkout Form] Added format: ${i.format}`);
+      } else {
+        console.warn(`[Checkout Form] ⚠️ NO FORMAT FIELD for item: ${i.name}`);
       }
 
       // Add capsule quantity if it's a capsule product
       if (i.format === 'capsules' && i.capsuleQuantity) {
         item.capsuleQuantity = i.capsuleQuantity;
+        console.log(`[Checkout Form] Added capsuleQuantity: ${i.capsuleQuantity}`);
       }
 
+      console.log(`[Checkout Form] 📤 Final item to send:`, item);
       return item;
     });
+
+    console.log('[Checkout Form] 📨 ITEMS TO SEND TO API:', JSON.stringify(items, null, 2));
 
     const subtotal = items.reduce((s, it) => s + it.qty * it.price, 0);
     let discount = 0;
