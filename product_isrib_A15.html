@@ -206,7 +206,35 @@
           <div class="spec-row"><span class="spec-label">COA:</span><span class="spec-value">Included</span></div>
         </div>
 
-        <!-- 🎯 NEW TIER PRICING CALCULATOR -->
+        <!-- 🎯 FORMAT SELECTOR (Powder vs Capsules) -->
+        <div class="format-selector-wrap">
+          <h3 class="tier-title">Select Format</h3>
+          <div class="format-options">
+            <label class="format-option">
+              <input type="radio" name="product-format" value="powder" checked>
+              <div class="format-card">
+                <div class="format-icon">⚗️</div>
+                <div class="format-info">
+                  <strong>Powder</strong>
+                  <span class="format-desc">Flexible dosing, bulk pricing</span>
+                </div>
+              </div>
+            </label>
+            <label class="format-option">
+              <input type="radio" name="product-format" value="capsules">
+              <div class="format-card">
+                <div class="format-icon">💊</div>
+                <div class="format-info">
+                  <strong>Capsules</strong>
+                  <span class="format-desc">Pre-measured 20mg doses</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 🎯 POWDER QUANTITY SECTION -->
+        <div class="powder-quantity-section">
         <div class="tier-pricing-wrap">
           <h3 class="tier-title">Select Quantity</h3>
 
@@ -254,11 +282,9 @@
               <input type="number"
                      id="customQuantity"
                      class="quantity-input"
-                     min="100"
-                     max="30000"
-                     step="100"
-                     value="1000"
-                     placeholder="1000">
+                     step="0.1"
+                     value="1"
+                     placeholder="1">
               <select id="quantityUnit" class="quantity-unit">
                 <option value="mg">mg</option>
                 <option value="g" selected>g</option>
@@ -293,6 +319,65 @@
             </div>
           </div>
         </div>
+        </div>
+        <!-- End of Powder Quantity Section -->
+
+        <!-- 🎯 CAPSULE QUANTITY SECTION -->
+        <div class="capsule-quantity-section" style="display: none;">
+          <h3 class="tier-title">Select Quantity</h3>
+
+          <div class="capsule-options">
+            <label class="capsule-option-card">
+              <input type="radio" name="capsule-quantity" value="0">
+              <div class="capsule-card">
+                <div class="capsule-badge">Starter</div>
+                <div class="capsule-amount">25 Capsules</div>
+                <div class="capsule-dosage">20mg per capsule</div>
+                <div class="capsule-total">500mg total</div>
+                <div class="capsule-price">$170</div>
+                <div class="capsule-note">Equivalent to 500mg powder</div>
+              </div>
+            </label>
+
+            <label class="capsule-option-card">
+              <input type="radio" name="capsule-quantity" value="1" checked>
+              <div class="capsule-card">
+                <div class="capsule-badge">⭐ Popular</div>
+                <div class="capsule-amount">50 Capsules</div>
+                <div class="capsule-dosage">20mg per capsule</div>
+                <div class="capsule-total">1g total</div>
+                <div class="capsule-price">$240</div>
+                <div class="capsule-note">Equivalent to 1g powder</div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Hidden select for easier JavaScript handling -->
+          <select id="capsuleQuantity" style="display: none;">
+            <option value="0">25 capsules - $170</option>
+            <option value="1" selected>50 capsules - $240</option>
+          </select>
+
+          <!-- Price Display -->
+          <div class="price-breakdown">
+            <div class="breakdown-row main">
+              <span class="label">Total Price:</span>
+              <span class="value" id="totalPrice">$240.00</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="label">Quantity:</span>
+              <span class="value" id="selectedQuantity">50 capsules (1g total)</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="label">Dosage:</span>
+              <span class="value" id="pricePerGram">20mg per capsule</span>
+            </div>
+            <div class="breakdown-row tier-info">
+              <span class="tier-label" id="tierLabel">💊 Capsules - 50 count</span>
+            </div>
+          </div>
+        </div>
+        <!-- End of Capsule Quantity Section -->
 
        <div class="product-footer">
   <div class="action-buttons">

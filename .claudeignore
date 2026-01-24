@@ -1,0 +1,4 @@
+echo "node_modules/
+.git/
+dist/
+build/" > .claudeignore

@@ -3670,3 +3670,203 @@ h1, .hero h1, .page-title{ margin-top: 0 !important; }
     font-size: 1.4rem;
   }
 }
+
+/* ========== FORMAT SELECTOR (Powder vs Capsules) ========== */
+.format-selector-wrap {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 28px;
+  margin: 24px 0;
+}
+
+.format-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.format-option {
+  cursor: pointer;
+  display: block;
+}
+
+.format-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.format-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.format-option:hover .format-card {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.format-option input[type="radio"]:checked + .format-card {
+  border-color: #10b981;
+  background: #ecfdf5;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.format-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.format-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.format-info strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.format-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ========== CAPSULE QUANTITY OPTIONS ========== */
+.capsule-quantity-section {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 28px;
+  margin: 24px 0;
+}
+
+.capsule-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.capsule-option-card {
+  cursor: pointer;
+  display: block;
+}
+
+.capsule-option-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.capsule-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.capsule-option-card:hover .capsule-card {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.capsule-option-card input[type="radio"]:checked + .capsule-card {
+  border-color: #10b981;
+  background: #ecfdf5;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.capsule-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.capsule-option-card input[type="radio"]:checked + .capsule-card .capsule-badge {
+  background: #10b981;
+  color: white;
+}
+
+.capsule-amount {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.capsule-dosage {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.capsule-total {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.capsule-price {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e40af;
+  margin-bottom: 8px;
+}
+
+.capsule-note {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* Mobile responsive for format selector and capsules */
+@media (max-width: 768px) {
+  .format-options,
+  .capsule-options {
+    grid-template-columns: 1fr;
+  }
+
+  .format-card {
+    padding: 16px;
+  }
+
+  .capsule-card {
+    padding: 20px;
+  }
+
+  .capsule-amount {
+    font-size: 1.2rem;
+  }
+
+  .capsule-price {
+    font-size: 1.4rem;
+  }
+}

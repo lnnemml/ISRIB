@@ -93,9 +93,60 @@ window.hasActiveTransaction = function() {
 };
 
 // ============================================
+// PRODUCT CONFIGURATION - CAPSULE VARIANTS
+// ============================================
+
+/**
+ * Capsule variant configuration for ISRIB products
+ */
+window.CAPSULE_VARIANTS = {
+  'isrib-a15': {
+    name: 'ISRIB A15',
+    dosagePerCapsule: 20, // mg per capsule
+    variants: [
+      {
+        quantity: 25,
+        price: 170,
+        display: '25 capsules',
+        totalDosage: '500mg total',
+        equivalentTo: '500mg powder @ $130'
+      },
+      {
+        quantity: 50,
+        price: 240,
+        display: '50 capsules',
+        totalDosage: '1g total',
+        equivalentTo: '1g powder @ $200'
+      }
+    ]
+  },
+  'isrib': {
+    name: 'ISRIB Original',
+    dosagePerCapsule: 20, // mg per capsule
+    variants: [
+      {
+        quantity: 25,
+        price: 100,
+        display: '25 capsules',
+        totalDosage: '500mg total',
+        equivalentTo: '500mg powder'
+      },
+      {
+        quantity: 50,
+        price: 140,
+        display: '50 capsules',
+        totalDosage: '1g total',
+        equivalentTo: '1g powder'
+      }
+    ]
+  }
+};
+
+// ============================================
 // CONSOLE INFO (опціонально, для debugging)
 // ============================================
 console.log('[ISRIB] 🔧 Transaction ID management loaded');
+console.log('[ISRIB] 💊 Capsule variants loaded:', window.CAPSULE_VARIANTS);
 console.log('[ISRIB] Functions available:', {
   getOrCreateTransactionId: 'Generate or retrieve transaction ID',
   getTransactionId: 'Get existing transaction ID',
@@ -197,6 +248,7 @@ function initializeApp() {
   initContactFormResend(); // сабміт форми через ваш бекенд/серверлес із Resend
   initTierPricingCalculator(); // 🎯 Tier pricing calculator для A15
   initISRIBTierPricingCalculator(); // 🎯 Tier pricing calculator для ISRIB original
+  initFormatSelector(); // 🎯 Format selector (powder vs capsules)
   initProductDropdowns(); // 🎯 Product page dropdown selectors
   // Back-compat helpers some code expects:
   try { updateContactLinks(); } catch {}
@@ -1040,6 +1092,155 @@ function initISRIBTierPricingCalculator() {
   console.log('[ISRIB Tier Pricing] Initialized');
 }
 
+/* ========================= FORMAT SELECTOR (POWDER vs CAPSULES) ========================= */
+
+/**
+ * Initialize format selector for product pages (powder vs capsules)
+ * Handles both ISRIB A15 and ISRIB Original products
+ */
+function initFormatSelector() {
+  // Check if we're on a product page with format selector
+  const formatRadios = document.querySelectorAll('input[name="product-format"]');
+  if (!formatRadios.length) {
+    console.log('[Format Selector] Not found on this page');
+    return;
+  }
+
+  const productCard = document.querySelector('.product-card--order');
+  if (!productCard) return;
+
+  const sku = productCard.dataset.sku;
+  const capsuleConfig = window.CAPSULE_VARIANTS[sku];
+
+  if (!capsuleConfig) {
+    console.warn('[Format Selector] No capsule config found for SKU:', sku);
+    return;
+  }
+
+  // Get UI elements
+  const powderSection = document.querySelector('.powder-quantity-section');
+  const capsuleSection = document.querySelector('.capsule-quantity-section');
+  const capsuleQuantitySelect = document.getElementById('capsuleQuantity');
+  const addToCartBtn = document.querySelector('.add-to-cart');
+
+  // Get price display elements
+  const totalPriceEl = document.getElementById('totalPrice') || document.getElementById('totalPriceISRIB');
+  const selectedQuantityEl = document.getElementById('selectedQuantity') || document.getElementById('selectedQuantityISRIB');
+  const pricePerGramEl = document.getElementById('pricePerGram') || document.getElementById('pricePerGramISRIB');
+  const savingsRowEl = document.getElementById('savingsRow') || document.getElementById('savingsRowISRIB');
+  const tierLabelEl = document.getElementById('tierLabel') || document.getElementById('tierLabelISRIB');
+
+  /**
+   * Update UI and cart button based on selected format and capsule quantity
+   */
+  function updateFormatDisplay() {
+    const selectedFormat = document.querySelector('input[name="product-format"]:checked')?.value;
+
+    if (selectedFormat === 'capsules') {
+      // Hide powder section, show capsule section
+      if (powderSection) powderSection.style.display = 'none';
+      if (capsuleSection) capsuleSection.style.display = 'block';
+
+      // Get selected capsule quantity
+      const selectedIndex = parseInt(capsuleQuantitySelect?.value || '0');
+      const capsuleVariant = capsuleConfig.variants[selectedIndex];
+
+      if (capsuleVariant && addToCartBtn) {
+        // Find price display elements within capsule section
+        const capsuleTotalPrice = capsuleSection.querySelector('.breakdown-row.main .value');
+        const capsuleSelectedQty = capsuleSection.querySelectorAll('.breakdown-row .value')[1];
+        const capsuleDosage = capsuleSection.querySelectorAll('.breakdown-row .value')[2];
+        const capsuleTierLabel = capsuleSection.querySelector('.tier-label');
+
+        // Update price display in capsule section
+        if (capsuleTotalPrice) capsuleTotalPrice.textContent = `$${capsuleVariant.price.toFixed(2)}`;
+        if (capsuleSelectedQty) capsuleSelectedQty.textContent = `${capsuleVariant.display} (${capsuleVariant.totalDosage})`;
+        if (capsuleDosage) capsuleDosage.textContent = `${capsuleConfig.dosagePerCapsule}mg per capsule`;
+        if (capsuleTierLabel) capsuleTierLabel.textContent = `💊 Capsules - ${capsuleVariant.display}`;
+
+        // Update Add to Cart button data attributes
+        addToCartBtn.dataset.format = 'capsules';
+        addToCartBtn.dataset.capsuleQuantity = String(capsuleVariant.quantity);
+        addToCartBtn.dataset.price = String(capsuleVariant.price);
+        addToCartBtn.dataset.display = capsuleVariant.display;
+        addToCartBtn.dataset.grams = String(capsuleVariant.quantity * capsuleConfig.dosagePerCapsule); // total mg
+
+        // Update button text
+        const btnText = addToCartBtn.querySelector('.btn-text') || addToCartBtn;
+        btnText.textContent = `➕ Add to cart — ${capsuleVariant.display} for $${capsuleVariant.price}`;
+
+        console.log('[Format Selector] Capsules selected:', capsuleVariant);
+      }
+    } else {
+      // Show powder section, hide capsule section
+      if (powderSection) powderSection.style.display = 'block';
+      if (capsuleSection) capsuleSection.style.display = 'none';
+
+      // Reset add to cart button format
+      if (addToCartBtn) {
+        delete addToCartBtn.dataset.format;
+        delete addToCartBtn.dataset.capsuleQuantity;
+        console.log('[Format Selector] Powder selected');
+      }
+
+      // Trigger recalculation of powder pricing in silent mode (no alerts)
+      const quantityInput = document.getElementById('customQuantity') || document.getElementById('customQuantityISRIB');
+      if (quantityInput) {
+        // Trigger blur event which calls handleCalculate(true) - silent mode
+        quantityInput.dispatchEvent(new Event('blur'));
+      }
+    }
+
+    // Track format selection in analytics
+    if (window.dataLayer) {
+      window.dataLayer.push({
+        event: 'product_format_selected',
+        product_sku: sku,
+        product_name: capsuleConfig.name,
+        format: selectedFormat,
+        format_detail: selectedFormat === 'capsules' ?
+          capsuleConfig.variants[parseInt(capsuleQuantitySelect?.value || '0')].display :
+          'powder'
+      });
+    }
+  }
+
+  // Event listeners
+  formatRadios.forEach(radio => {
+    radio.addEventListener('change', updateFormatDisplay);
+  });
+
+  if (capsuleQuantitySelect) {
+    capsuleQuantitySelect.addEventListener('change', updateFormatDisplay);
+  }
+
+  // Handle capsule radio button clicks (sync with hidden select)
+  const capsuleRadios = document.querySelectorAll('input[name="capsule-quantity"]');
+  capsuleRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (capsuleQuantitySelect) {
+        capsuleQuantitySelect.value = e.target.value;
+        updateFormatDisplay();
+      }
+    });
+  });
+
+  // Sync hidden select with checked radio button on initialization
+  const checkedCapsuleRadio = document.querySelector('input[name="capsule-quantity"]:checked');
+  if (checkedCapsuleRadio && capsuleQuantitySelect) {
+    capsuleQuantitySelect.value = checkedCapsuleRadio.value;
+  }
+
+  // Initialize with powder selected (default)
+  const powderRadio = document.querySelector('input[name="product-format"][value="powder"]');
+  if (powderRadio) {
+    powderRadio.checked = true;
+    updateFormatDisplay();
+  }
+
+  console.log('[Format Selector] Initialized for SKU:', sku);
+}
+
 /* ========================= BUNDLE WIDGET ========================= */
 
 /* ========================= BUNDLE WIDGET (Dynamic) ========================= */
@@ -1285,32 +1486,49 @@ function updateCartBadge(arr) {
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = String(total); });
 }
 
-function addToCart(name, sku, grams, price, display) {
+function addToCart(name, sku, grams, price, display, format = 'powder', capsuleQuantity = null) {
   const cart = readCart();
-  
+
   // КРИТИЧНО: grams має бути в мг (не множити на 1000!)
   const gramsInMg = Number(grams) || 0;
-  
-  const idx = cart.findIndex(i => 
-    i.sku === sku && 
-    Number(i.grams) === gramsInMg && 
-    Number(i.price) === Number(price)
-  );
-  
+
+  // For capsules, find by format and capsule quantity instead of grams
+  const idx = cart.findIndex(i => {
+    if (format === 'capsules') {
+      return i.sku === sku &&
+             i.format === 'capsules' &&
+             i.capsuleQuantity === capsuleQuantity &&
+             Number(i.price) === Number(price);
+    } else {
+      return i.sku === sku &&
+             (!i.format || i.format === 'powder') &&
+             Number(i.grams) === gramsInMg &&
+             Number(i.price) === Number(price);
+    }
+  });
+
   if (idx >= 0) {
     cart[idx].count = Number(cart[idx].count || 1) + 1;
   } else {
-    cart.push({ 
-      name, 
-      sku, 
+    const item = {
+      name,
+      sku,
       grams: gramsInMg,  // ← вже в мг
-      price: Number(price) || 0, 
-      display: display || null, 
-      count: 1, 
-      unit: 'pack' 
-    });
+      price: Number(price) || 0,
+      display: display || null,
+      count: 1,
+      unit: 'pack',
+      format: format || 'powder'
+    };
+
+    // Add capsule-specific data if applicable
+    if (format === 'capsules' && capsuleQuantity) {
+      item.capsuleQuantity = capsuleQuantity;
+    }
+
+    cart.push(item);
   }
-  
+
   writeCart(cart);
 }
 
@@ -1328,18 +1546,22 @@ function mountAddToCartButtons() {
       const card = btn.closest('.product-card');
       const name = card?.querySelector('.product-name')?.textContent || btn.dataset.name || 'Unknown';
       const sku = btn.dataset.sku || card?.dataset.sku || 'sku-unknown';
-      
+
       let grams = parseFloat(btn.dataset.grams || '0') || 0;
       const display = btn.dataset.display || '';
-      
+
       if (display) {
         const mgFromDisplay = parseQtyToMg(display);
         if (mgFromDisplay) grams = mgFromDisplay;
       }
-      
+
       const price = parseFloat(btn.dataset.price || '0') || 0;
 
-      addToCart(name, sku, grams, price, display);
+      // Get format and capsule quantity if present
+      const format = btn.dataset.format || 'powder';
+      const capsuleQuantity = btn.dataset.capsuleQuantity ? parseInt(btn.dataset.capsuleQuantity) : null;
+
+      addToCart(name, sku, grams, price, display, format, capsuleQuantity);
       updateCartBadge?.();
       showToast?.(`Added to cart — ${display || (grams >= 1000 ? (grams/1000)+'g' : grams+'mg')} for $${price}`);
 
@@ -1514,11 +1736,22 @@ function renderCheckoutCart(){
     return;
   }
 
-  wrap.innerHTML = cart.map((it, idx) => `
+  wrap.innerHTML = cart.map((it, idx) => {
+    // Format display text based on format type
+    let displayText = it.display || (it.grams ? (it.grams>=1000 ? (it.grams/1000)+'g' : it.grams+'mg') : '');
+
+    // Add dosage indicator for capsules (20mg per capsule)
+    if (it.format === 'capsules') {
+      const config = window.CAPSULE_VARIANTS?.[it.sku];
+      const dosage = config?.dosagePerCapsule || 20;
+      displayText += ` • ${dosage}mg`;
+    }
+
+    return `
     <div class="cart-row">
       <div class="cart-title">
         <strong>${it.name}</strong>
-        <span class="muted">(${it.display || (it.grams ? (it.grams>=1000 ? (it.grams/1000)+'g' : it.grams+'mg') : '')})</span>
+        <span class="muted">(${displayText})</span>
       </div>
       <div class="cart-ctrl">
         <span class="price">${fmtUSD(it.price)}</span>
@@ -1527,7 +1760,8 @@ function renderCheckoutCart(){
         <button class="link danger cart-remove" data-idx="${idx}">Remove</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   // ⚡ Передаємо збережений promo якщо є
   recalcTotals(cart, window._appliedPromo || null);
@@ -2179,7 +2413,7 @@ function initCheckoutForm() {
     const items = cart.map(i => {
       const mgFromLabel = parseQtyToMgLabel(i.display);
       const mgPerPack = mgFromLabel || Number(i.grams || 0);
-      return {
+      const item = {
         name: i.name,
         sku: i.sku || i.id || '',
         qty: Number(i.count || 1),
@@ -2187,6 +2421,18 @@ function initCheckoutForm() {
         grams: mgPerPack,
         display: i.display || (mgPerPack ? (mgPerPack >= 1000 ? (mgPerPack / 1000) + 'g' : mgPerPack + 'mg') : '')
       };
+
+      // Add format information if present
+      if (i.format) {
+        item.format = i.format;
+      }
+
+      // Add capsule quantity if it's a capsule product
+      if (i.format === 'capsules' && i.capsuleQuantity) {
+        item.capsuleQuantity = i.capsuleQuantity;
+      }
+
+      return item;
     });
 
     const subtotal = items.reduce((s, it) => s + it.qty * it.price, 0);
