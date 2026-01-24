@@ -25,7 +25,8 @@
       'click-quality.js',
       'section-visibility.js',
       'form-tracking.js',
-      'cart-abandonment.js'
+      'cart-abandonment.js',
+      'basic-analytics.js'
     ],
 
     // Load modules asynchronously
@@ -168,7 +169,8 @@
  *     '/analytics/click-quality.js',
  *     '/analytics/section-visibility.js',
  *     '/analytics/form-tracking.js',
- *     '/analytics/cart-abandonment.js'
+ *     '/analytics/cart-abandonment.js',
+       
  *   ];
  *
  *   scripts.forEach(function(src) {
