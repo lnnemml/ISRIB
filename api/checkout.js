@@ -254,26 +254,59 @@ export default async function handler(req, res) {
 
     await savePendingOrder(pendingOrderData);
 
-    // ---- рендер таблиці ----
-    const itemsRows = items.map(it => {
-      const packs    = getQty(it);
-      const mg       = getMgPerPack(it);
-      const totalMg  = mg * packs;
-      const packSize = it.display || fmtAmount(mg);
+    // ---- розділяємо items на капсули та порошок ----
+    const capsuleItems = items.filter(it => it.format === 'capsules');
+    const powderItems = items.filter(it => it.format !== 'capsules');
 
-      // For capsules, add dosage info
-      const formatInfo = it.format === 'capsules' ? ' • 20mg' : '';
+    // ---- рендер таблиці для капсул (БЕЗ Total amount) ----
+    const capsuleRows = capsuleItems.map(it => {
+      const packs = getQty(it);
+      const packSize = it.display || '';
+      const capsuleQty = it.capsuleQuantity || '';
 
       return `<tr>
         <td style="padding:6px 10px;border:1px solid #e5e7eb">${it.name}</td>
-        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packSize}${formatInfo}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packSize}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">20mg per capsule</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packs}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">${fmtUSD(getPrice(it))}</td>
+      </tr>`;
+    }).join('');
+
+    const capsuleTable = capsuleItems.length > 0 ? `
+      <h3 style="margin:${capsuleItems.length > 0 && powderItems.length === 0 ? '0' : '24px'} 0 12px;color:#475569;">💊 Capsules</h3>
+      <table style="border-collapse:collapse;border:1px solid #e5e7eb;width:100%;">
+        <thead>
+          <tr>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:left">Item</th>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">Quantity</th>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">Dosage</th>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">Packs</th>
+            <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">Unit price</th>
+          </tr>
+        </thead>
+        <tbody>${capsuleRows}</tbody>
+      </table>
+    ` : '';
+
+    // ---- рендер таблиці для порошку (З Total amount) ----
+    const powderRows = powderItems.map(it => {
+      const packs = getQty(it);
+      const mg = getMgPerPack(it);
+      const totalMg = mg * packs;
+      const packSize = it.display || fmtAmount(mg);
+
+      return `<tr>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb">${it.name}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packSize}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packs}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${fmtAmount(totalMg)}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">${fmtUSD(getPrice(it))}</td>
       </tr>`;
     }).join('');
 
-    const itemsTable = `
+    const powderTable = powderItems.length > 0 ? `
+      <h3 style="margin:${powderItems.length > 0 && capsuleItems.length === 0 ? '0' : '24px'} 0 12px;color:#475569;">⚗️ Powder</h3>
       <table style="border-collapse:collapse;border:1px solid #e5e7eb;width:100%;">
         <thead>
           <tr>
@@ -284,8 +317,12 @@ export default async function handler(req, res) {
             <th style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">Unit price</th>
           </tr>
         </thead>
-        <tbody>${itemsRows || `<tr><td colspan="5" style="padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280">No items</td></tr>`}</tbody>
-      </table>`;
+        <tbody>${powderRows}</tbody>
+      </table>
+    ` : '';
+
+    // ---- об'єднуємо таблиці ----
+    const itemsTable = capsuleTable + powderTable;
 
     const totalsBlockHtml = `
       <div style="margin-top:10px">
@@ -410,13 +447,22 @@ ${promoCode ? `\nPromo code: ${promoCode} (${promoData.label})` : ''}
 ${notes ? `Notes:\n${notes}\n` : ''}
 
 Order Items:
-${items.map(it => {
+
+${capsuleItems.length > 0 ? `💊 CAPSULES:
+${capsuleItems.map(it => {
+  const packs = getQty(it);
+  const packSize = it.display || '';
+  return `- ${it.name} — ${packSize} (20mg/capsule) × ${packs} @ ${fmtUSD(getPrice(it))}`;
+}).join('\n')}
+` : ''}
+${powderItems.length > 0 ? `⚗️ POWDER:
+${powderItems.map(it => {
   const packs = getQty(it);
   const mg = getMgPerPack(it);
   const totalMg = mg * packs;
   return `- ${it.name} — ${fmtAmount(mg)} × ${packs} = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
 }).join('\n')}
-
+` : ''}
 Subtotal: ${fmtUSD(subtotal)}
 ${discount > 0 ? `Discount (${promoCode}): −${fmtUSD(discount)}` : ''}
 Shipping: FREE
@@ -662,13 +708,22 @@ Your Order ID: ${orderId}
 We've received it and will get back to you shortly.
 
 Order Summary:
-${items.map(it => {
+
+${capsuleItems.length > 0 ? `💊 CAPSULES:
+${capsuleItems.map(it => {
+  const packs = getQty(it);
+  const packSize = it.display || '';
+  return `- ${it.name} — ${packSize} (20mg/capsule) × ${packs} @ ${fmtUSD(getPrice(it))}`;
+}).join('\n')}
+` : ''}
+${powderItems.length > 0 ? `⚗️ POWDER:
+${powderItems.map(it => {
   const packs = getQty(it);
   const mg = getMgPerPack(it);
   const totalMg = mg * packs;
   return `- ${it.name} — ${fmtAmount(mg)} × ${packs} = ${fmtAmount(totalMg)} @ ${fmtUSD(getPrice(it))}`;
 }).join('\n')}
-
+` : ''}
 Subtotal: ${fmtUSD(subtotal)}
 ${discount > 0 ? `Discount (${promoCode}): −${fmtUSD(discount)}` : ''}
 Shipping: FREE
