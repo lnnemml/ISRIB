@@ -31,6 +31,32 @@ const TEMPLATES = {
 </body>
 </html>`
   },
+  '4': {
+    subject: '{{firstName}}, product update',
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
+  <div style="max-width:600px;margin:40px auto;padding:0 20px;">
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick update — we added capsules to the shop.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Both ISRIB and ISRIB A15 are now available in 20mg capsules (25 or 50 count). Same pharmaceutical-grade compounds, just more convenient — no measuring needed.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib.shop/products.html?utm_source=email&utm_campaign=capsule_launch&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Visit isrib.shop</a></p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 8px;">Available now:</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• ISRIB A15 capsules (20mg × 25 or 50)<br>• ISRIB capsules (20mg × 25 or 50)<br>• Original powders (500mg, 1g, bulk)</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Thanks,</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
+    <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
+      <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Verified COA • Worldwide shipping</p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="https://isrib.shop/unsubscribe?email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
+    </div>
+  </div>
+</body>
+</html>`
+  },
   '2': {
     subject: 'Re: {{firstName}}, we moved to ISRIB.shop',
     html: `<!DOCTYPE html>
@@ -85,14 +111,18 @@ const TEMPLATES = {
 };
 
 function personalizeEmail(html, customer) {
+  // Handle "subscriber" firstName by replacing with "there"
+  const firstName = customer.firstName === 'subscriber' ? 'there' : (customer.firstName || 'there');
   return html
-    .replace(/{{firstName}}/g, customer.firstName || 'there')
+    .replace(/{{firstName}}/g, firstName)
     .replace(/{{email}}/g, customer.email || '');
 }
 
 function personalizeSubject(subject, customer) {
+  // Handle "subscriber" firstName by replacing with "there"
+  const firstName = customer.firstName === 'subscriber' ? 'there' : (customer.firstName || 'there');
   return subject
-    .replace(/{{firstName}}/g, customer.firstName || 'there');
+    .replace(/{{firstName}}/g, firstName);
 }
 
 function sleep(ms) {
@@ -122,8 +152,8 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    if (!campaignId || !['1', '2', '3'].includes(campaignId)) {
-      return res.status(400).json({ error: 'Invalid campaignId. Use "1", "2", or "3"' });
+    if (!campaignId || !['1', '2', '3', '4'].includes(campaignId)) {
+      return res.status(400).json({ error: 'Invalid campaignId. Use "1", "2", "3", or "4"' });
     }
 
     if (!Array.isArray(customers) || customers.length === 0) {
