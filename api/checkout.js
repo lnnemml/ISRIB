@@ -26,17 +26,22 @@ const parseQtyToMg = (s) => {
 function normalizeItem(it) {
   let grams = toNum(it.grams || 0);
   const display = it.display || it.quantity || it.qtyLabel || '';
+  const format = it.format || 'powder';
 
-  if (display) {
+  // For capsules, use the grams value sent from frontend (already calculated)
+  // For powder, try to parse from display string
+  if (format !== 'capsules' && display) {
     const mg = parseQtyToMg(display);
     if (mg) grams = mg;
-  } else {
+  } else if (!display) {
     if (grams >= 100000) grams = Math.round(grams / 1000);
   }
+
   return {
     ...it,
     grams,
-    display: it.display || fmtAmount(grams)
+    display: it.display || fmtAmount(grams),
+    format: format
   };
 }
 
@@ -256,9 +261,12 @@ export default async function handler(req, res) {
       const totalMg  = mg * packs;
       const packSize = it.display || fmtAmount(mg);
 
+      // For capsules, add dosage info
+      const formatInfo = it.format === 'capsules' ? ' • 20mg' : '';
+
       return `<tr>
         <td style="padding:6px 10px;border:1px solid #e5e7eb">${it.name}</td>
-        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packSize}</td>
+        <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packSize}${formatInfo}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${packs}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:center">${fmtAmount(totalMg)}</td>
         <td style="padding:6px 10px;border:1px solid #e5e7eb;text-align:right">${fmtUSD(getPrice(it))}</td>
