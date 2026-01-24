@@ -1450,16 +1450,22 @@ function getProductName(sku) {
 function normalizeCartUnits(arr) {
   return (arr || []).map((i) => {
     let grams = Number(i.grams || 0);
-    // якщо є людський лейбл "100mg/1g" — він найнадійніший
-    if (i.display) {
-      const mgFromLabel = parseQtyToMg(i.display);
-      if (mgFromLabel) grams = mgFromLabel;
-    } else {
-      // fallback: якщо явно бачимо "1000×" — це старий формат, ділимо на 1000
-      if (grams >= 100000) grams = Math.round(grams / 1000);
+
+    // For capsules, keep the grams value as is (already calculated: capsules × dosage)
+    // For powder, parse from display string
+    if (i.format !== 'capsules') {
+      // якщо є людський лейбл "100mg/1g" — він найнадійніший
+      if (i.display) {
+        const mgFromLabel = parseQtyToMg(i.display);
+        if (mgFromLabel) grams = mgFromLabel;
+      } else {
+        // fallback: якщо явно бачимо "1000×" — це старий формат, ділимо на 1000
+        if (grams >= 100000) grams = Math.round(grams / 1000);
+      }
     }
-    return { 
-      ...i, 
+
+    return {
+      ...i,
       grams,
       count: Number(i.count || 1),
       price: Number(i.price || 0)
@@ -1547,19 +1553,21 @@ function mountAddToCartButtons() {
       const name = card?.querySelector('.product-name')?.textContent || btn.dataset.name || 'Unknown';
       const sku = btn.dataset.sku || card?.dataset.sku || 'sku-unknown';
 
+      // Get format and capsule quantity if present
+      const format = btn.dataset.format || 'powder';
+      const capsuleQuantity = btn.dataset.capsuleQuantity ? parseInt(btn.dataset.capsuleQuantity) : null;
+
       let grams = parseFloat(btn.dataset.grams || '0') || 0;
       const display = btn.dataset.display || '';
 
-      if (display) {
+      // For capsules, use the grams value from dataset (already calculated)
+      // For powder, try to parse from display string
+      if (format !== 'capsules' && display) {
         const mgFromDisplay = parseQtyToMg(display);
         if (mgFromDisplay) grams = mgFromDisplay;
       }
 
       const price = parseFloat(btn.dataset.price || '0') || 0;
-
-      // Get format and capsule quantity if present
-      const format = btn.dataset.format || 'powder';
-      const capsuleQuantity = btn.dataset.capsuleQuantity ? parseInt(btn.dataset.capsuleQuantity) : null;
 
       addToCart(name, sku, grams, price, display, format, capsuleQuantity);
       updateCartBadge?.();
@@ -2411,8 +2419,16 @@ function initCheckoutForm() {
     const cart = normalizeCartUnits(readCart());
     
     const items = cart.map(i => {
-      const mgFromLabel = parseQtyToMgLabel(i.display);
-      const mgPerPack = mgFromLabel || Number(i.grams || 0);
+      // For capsules, use the already calculated grams value (e.g., 50 capsules × 20mg = 1000mg)
+      // For powder, parse from display string
+      let mgPerPack;
+      if (i.format === 'capsules') {
+        mgPerPack = Number(i.grams || 0);
+      } else {
+        const mgFromLabel = parseQtyToMgLabel(i.display);
+        mgPerPack = mgFromLabel || Number(i.grams || 0);
+      }
+
       const item = {
         name: i.name,
         sku: i.sku || i.id || '',
