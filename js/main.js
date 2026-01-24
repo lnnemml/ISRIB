@@ -1135,6 +1135,7 @@ function initFormatSelector() {
    */
   function updateFormatDisplay() {
     const selectedFormat = document.querySelector('input[name="product-format"]:checked')?.value;
+    console.log('[updateFormatDisplay] 🔄 Called, selected format:', selectedFormat);
 
     if (selectedFormat === 'capsules') {
       // Hide powder section, show capsule section
@@ -1158,12 +1159,33 @@ function initFormatSelector() {
         if (capsuleDosage) capsuleDosage.textContent = `${capsuleConfig.dosagePerCapsule}mg per capsule`;
         if (capsuleTierLabel) capsuleTierLabel.textContent = `💊 Capsules - ${capsuleVariant.display}`;
 
+        // Calculate total mg explicitly with error handling
+        const dosagePerCapsule = Number(capsuleConfig.dosagePerCapsule) || 20;
+        const quantity = Number(capsuleVariant.quantity) || 0;
+        const totalMg = quantity * dosagePerCapsule;
+
+        console.log('[Format Selector] 🧮 Calculating grams:', {
+          quantity: quantity,
+          dosagePerCapsule: dosagePerCapsule,
+          totalMg: totalMg,
+          capsuleConfig: capsuleConfig,
+          capsuleVariant: capsuleVariant
+        });
+
         // Update Add to Cart button data attributes
         addToCartBtn.dataset.format = 'capsules';
-        addToCartBtn.dataset.capsuleQuantity = String(capsuleVariant.quantity);
+        addToCartBtn.dataset.capsuleQuantity = String(quantity);
         addToCartBtn.dataset.price = String(capsuleVariant.price);
         addToCartBtn.dataset.display = capsuleVariant.display;
-        addToCartBtn.dataset.grams = String(capsuleVariant.quantity * capsuleConfig.dosagePerCapsule); // total mg
+        addToCartBtn.dataset.grams = String(totalMg); // total mg
+
+        console.log('[Format Selector] 💊 Set button data attributes:', {
+          format: addToCartBtn.dataset.format,
+          capsuleQuantity: addToCartBtn.dataset.capsuleQuantity,
+          grams: addToCartBtn.dataset.grams,
+          price: addToCartBtn.dataset.price,
+          display: addToCartBtn.dataset.display
+        });
 
         // Update button text
         const btnText = addToCartBtn.querySelector('.btn-text') || addToCartBtn;
@@ -1449,40 +1471,94 @@ function getProductName(sku) {
 // Глобальна функція нормалізації одиниць виміру
 function normalizeCartUnits(arr) {
   return (arr || []).map((i) => {
+    console.log('[normalizeCartUnits] Processing item:', {
+      name: i.name,
+      format: i.format,
+      grams: i.grams,
+      capsuleQuantity: i.capsuleQuantity,
+      display: i.display
+    });
+
     let grams = Number(i.grams || 0);
 
-    // For capsules, keep the grams value as is (already calculated: capsules × dosage)
-    // For powder, parse from display string
-    if (i.format !== 'capsules') {
-      // якщо є людський лейбл "100mg/1g" — він найнадійніший
+    // ✅ АВТОМАТИЧНЕ РОЗПІЗНАВАННЯ КАПСУЛ
+    // Якщо format не вказано, але є ознаки капсул - визначаємо як капсули
+    let format = i.format;
+    if (!format && (i.capsuleQuantity || (i.display && i.display.toLowerCase().includes('capsule')))) {
+      format = 'capsules';
+      console.log('[normalizeCartUnits] 🔍 Auto-detected capsules from display or capsuleQuantity');
+    }
+
+    // For capsules, recalculate grams if value seems incorrect
+    if (format === 'capsules') {
+      // Якщо grams виглядає як кількість капсул (20-100), а не мг (400-2000)
+      if (i.capsuleQuantity && grams < 200) {
+        const capsuleCount = Number(i.capsuleQuantity);
+        const dosagePerCapsule = 20; // 20mg per capsule (standard for ISRIB)
+        grams = capsuleCount * dosagePerCapsule;
+        console.log(`[normalizeCartUnits] 💊 Recalculated grams: ${capsuleCount} × ${dosagePerCapsule}mg = ${grams}mg`);
+      } else {
+        console.log(`[normalizeCartUnits] 💊 Capsules - preserving grams: ${grams}`);
+      }
+    } else {
+      // For powder, parse from display string
       if (i.display) {
         const mgFromLabel = parseQtyToMg(i.display);
-        if (mgFromLabel) grams = mgFromLabel;
+        if (mgFromLabel) {
+          console.log(`[normalizeCartUnits] ⚗️ Powder - parsed grams: ${grams} → ${mgFromLabel}`);
+          grams = mgFromLabel;
+        }
       } else {
         // fallback: якщо явно бачимо "1000×" — це старий формат, ділимо на 1000
         if (grams >= 100000) grams = Math.round(grams / 1000);
       }
     }
 
-    return {
+    const result = {
       ...i,
       grams,
+      format: format || 'powder',  // ✅ додаємо format якщо його немає
       count: Number(i.count || 1),
       price: Number(i.price || 0)
     };
+
+    console.log('[normalizeCartUnits] Result:', {
+      name: result.name,
+      format: result.format,
+      grams: result.grams,
+      capsuleQuantity: result.capsuleQuantity
+    });
+
+    return result;
   });
 }
 
 function readCart() {
-  try { 
-    const raw = JSON.parse(localStorage.getItem('isrib_cart') || '[]') || [];
-    return normalizeCartUnits(raw);
+  try {
+    const rawString = localStorage.getItem('isrib_cart') || '[]';
+    console.log('[readCart] 📂 Raw localStorage string:', rawString);
+
+    const raw = JSON.parse(rawString) || [];
+    console.log('[readCart] 📦 Parsed cart array:', JSON.stringify(raw, null, 2));
+
+    const normalized = normalizeCartUnits(raw);
+    console.log('[readCart] ✅ After normalize:', JSON.stringify(normalized, null, 2));
+
+    return normalized;
   }
-  catch { return []; }
+  catch(e) {
+    console.error('[readCart] ❌ Error reading cart:', e);
+    return [];
+  }
 }
 
 function writeCart(arr) {
+  console.log('[writeCart] 💾 Saving to localStorage:', JSON.stringify(arr, null, 2));
   localStorage.setItem('isrib_cart', JSON.stringify(arr || []));
+
+  // Immediately read back to verify
+  const stored = localStorage.getItem('isrib_cart');
+  console.log('[writeCart] ✅ Verified localStorage contents:', stored);
 }
 
 function updateCartBadge(arr) {
@@ -1493,6 +1569,10 @@ function updateCartBadge(arr) {
 }
 
 function addToCart(name, sku, grams, price, display, format = 'powder', capsuleQuantity = null) {
+  console.log('[addToCart] 📥 Called with:', {
+    name, sku, grams, price, display, format, capsuleQuantity
+  });
+
   const cart = readCart();
 
   // КРИТИЧНО: grams має бути в мг (не множити на 1000!)
@@ -1515,6 +1595,7 @@ function addToCart(name, sku, grams, price, display, format = 'powder', capsuleQ
 
   if (idx >= 0) {
     cart[idx].count = Number(cart[idx].count || 1) + 1;
+    console.log(`[addToCart] ➕ Incremented existing item count: ${cart[idx].count}`);
   } else {
     const item = {
       name,
@@ -1530,12 +1611,16 @@ function addToCart(name, sku, grams, price, display, format = 'powder', capsuleQ
     // Add capsule-specific data if applicable
     if (format === 'capsules' && capsuleQuantity) {
       item.capsuleQuantity = capsuleQuantity;
+      console.log(`[addToCart] 💊 Added capsule data: quantity=${capsuleQuantity}`);
     }
 
+    console.log('[addToCart] 📦 New item to add:', item);
     cart.push(item);
   }
 
   writeCart(cart);
+  console.log('[addToCart] ✅ Cart saved to localStorage. Total items:', cart.length);
+  console.log('[addToCart] 📊 Full cart:', JSON.stringify(cart, null, 2));
 }
 
 // Оновіть існуючу функцію mountAddToCartButtons():
@@ -1560,14 +1645,38 @@ function mountAddToCartButtons() {
       let grams = parseFloat(btn.dataset.grams || '0') || 0;
       const display = btn.dataset.display || '';
 
+      console.log('[Add to Cart] 🔍 Button data attributes:', {
+        format: btn.dataset.format,
+        capsuleQuantity: btn.dataset.capsuleQuantity,
+        grams: btn.dataset.grams,
+        display: btn.dataset.display,
+        price: btn.dataset.price
+      });
+
+      console.log('[Add to Cart] 📝 Parsed values:', {
+        format,
+        capsuleQuantity,
+        grams,
+        display
+      });
+
       // For capsules, use the grams value from dataset (already calculated)
       // For powder, try to parse from display string
       if (format !== 'capsules' && display) {
         const mgFromDisplay = parseQtyToMg(display);
-        if (mgFromDisplay) grams = mgFromDisplay;
+        if (mgFromDisplay) {
+          console.log(`[Add to Cart] ⚗️ Powder - overriding grams: ${grams} → ${mgFromDisplay}`);
+          grams = mgFromDisplay;
+        }
+      } else if (format === 'capsules') {
+        console.log(`[Add to Cart] 💊 Capsules - keeping grams: ${grams}`);
       }
 
       const price = parseFloat(btn.dataset.price || '0') || 0;
+
+      console.log('[Add to Cart] 🛒 Calling addToCart with:', {
+        name, sku, grams, price, display, format, capsuleQuantity
+      });
 
       addToCart(name, sku, grams, price, display, format, capsuleQuantity);
       updateCartBadge?.();
@@ -2450,18 +2559,21 @@ function initCheckoutForm() {
         display: i.display || (mgPerPack ? (mgPerPack >= 1000 ? (mgPerPack / 1000) + 'g' : mgPerPack + 'mg') : '')
       };
 
-      // Add format information if present
-      if (i.format) {
-        item.format = i.format;
-        console.log(`[Checkout Form] Added format: ${i.format}`);
-      } else {
-        console.warn(`[Checkout Form] ⚠️ NO FORMAT FIELD for item: ${i.name}`);
-      }
+      // Add format information - завжди додаємо, навіть якщо 'powder'
+      item.format = i.format || 'powder';
+      console.log(`[Checkout Form] Added format: ${item.format}`);
 
       // Add capsule quantity if it's a capsule product
       if (i.format === 'capsules' && i.capsuleQuantity) {
         item.capsuleQuantity = i.capsuleQuantity;
         console.log(`[Checkout Form] Added capsuleQuantity: ${i.capsuleQuantity}`);
+      } else if (i.format === 'capsules' && !i.capsuleQuantity) {
+        // ✅ Якщо format = capsules але capsuleQuantity відсутнє, витягуємо з display
+        const match = i.display?.match(/(\d+)\s*capsule/i);
+        if (match) {
+          item.capsuleQuantity = parseInt(match[1]);
+          console.log(`[Checkout Form] 🔍 Extracted capsuleQuantity from display: ${item.capsuleQuantity}`);
+        }
       }
 
       console.log(`[Checkout Form] 📤 Final item to send:`, item);

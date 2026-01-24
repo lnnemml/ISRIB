@@ -34,20 +34,35 @@ function normalizeItem(it) {
 
   let grams = toNum(it.grams || 0);
   const display = it.display || it.quantity || it.qtyLabel || '';
-  const format = it.format || 'powder';
+
+  // ✅ АВТОМАТИЧНЕ РОЗПІЗНАВАННЯ КАПСУЛ
+  // Якщо format не вказано, але є ознаки капсул - встановлюємо format = 'capsules'
+  let format = it.format || 'powder';
+  if (!it.format && (it.capsuleQuantity || (display && display.toLowerCase().includes('capsule')))) {
+    format = 'capsules';
+    console.log('[normalizeItem] 🔍 Auto-detected capsules from display or capsuleQuantity');
+  }
 
   console.log(`[normalizeItem] Format detected: "${format}"`);
   console.log(`[normalizeItem] Display: "${display}"`);
   console.log(`[normalizeItem] Grams before processing: ${grams}`);
 
-  // For capsules, use the grams value sent from frontend (already calculated)
-  // For powder, try to parse from display string
-  if (format !== 'capsules' && display) {
+  // For capsules, calculate total mg if grams seems incorrect
+  if (format === 'capsules') {
+    // Якщо grams виглядає як кількість капсул (20-100), а не мг (400-2000)
+    if (it.capsuleQuantity && grams < 200) {
+      const capsuleCount = toNum(it.capsuleQuantity);
+      const dosagePerCapsule = 20; // 20mg per capsule (standard)
+      grams = capsuleCount * dosagePerCapsule;
+      console.log(`[normalizeItem] 💊 Recalculated grams from capsuleQuantity: ${capsuleCount} × ${dosagePerCapsule}mg = ${grams}mg`);
+    } else {
+      console.log(`[normalizeItem] 💊 Capsules - keeping grams as is: ${grams}`);
+    }
+  } else if (display) {
+    // For powder, try to parse from display string
     const mg = parseQtyToMg(display);
-    console.log(`[normalizeItem] Parsed mg from display (powder): ${mg}`);
+    console.log(`[normalizeItem] ⚗️ Parsed mg from display (powder): ${mg}`);
     if (mg) grams = mg;
-  } else if (format === 'capsules') {
-    console.log(`[normalizeItem] Capsules detected - keeping grams as is: ${grams}`);
   } else if (!display) {
     if (grams >= 100000) grams = Math.round(grams / 1000);
   }
