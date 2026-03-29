@@ -2649,6 +2649,20 @@ function initCheckoutForm() {
     }
 
     // ============================================
+    // ✅ GET TRACKING IDs
+    // ============================================
+    // Get tracking IDs
+    const tracking = window.CheckoutTracking
+      ? window.CheckoutTracking.getTrackingData()
+      : {
+          fbp: localStorage.getItem('fbp') || '',
+          fbc: localStorage.getItem('fbc') || '',
+          ga_client_id: localStorage.getItem('ga_client_id') || ''
+        };
+
+    console.log('[Checkout Form] 📤 Including tracking data:', tracking);
+
+    // ============================================
     // ✅ PAYLOAD З ORDER ID
     // ============================================
     const payload = {
@@ -2657,7 +2671,11 @@ function initCheckoutForm() {
       messenger, handle, notes,
       _gotcha: gotcha,
       items,
-      promoCode: appliedPromoCode
+      promoCode: appliedPromoCode,
+      // ✅ Tracking IDs
+      fbp: tracking.fbp,
+      fbc: tracking.fbc,
+      ga_client_id: tracking.ga_client_id
     };
 
     // ============================================
@@ -2679,7 +2697,11 @@ function initCheckoutForm() {
         total,
         subtotal,
         discount,
-        promoCode: appliedPromoCode
+        promoCode: appliedPromoCode,
+        // ✅ Tracking IDs
+        fbp: tracking.fbp,
+        fbc: tracking.fbc,
+        ga_client_id: tracking.ga_client_id
       };
 
       // Викликаємо Bitcoin payment handler
