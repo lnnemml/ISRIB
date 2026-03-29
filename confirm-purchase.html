@@ -588,6 +588,32 @@
             console.error('[GA4] ❌ Failed to send purchase event:', gaError);
             console.error('[GA4] Stack:', gaError.stack);
           }
+
+          // ============================================
+          // ✅ META PIXEL PURCHASE EVENT
+          // ============================================
+          try {
+            console.log('[Meta Pixel] 📤 Sending purchase event...');
+  
+            if (typeof fbq !== 'undefined') {
+               fbq('track', 'Purchase', {
+                value: orderValue,
+                currency: 'USD',
+                content_ids: (data.order.items || []).map(i => i.item_id || i.sku),
+                content_name: (data.order.items || []).map(i => i.item_name || i.name).join(', '),
+                content_type: 'product',
+                num_items: (data.order.items || []).reduce((sum, i) => sum + (i.quantity || 1), 0)
+                }, {
+                eventID: orderId  // ← ВАЖЛИВО: Deduplication з CAPI
+                });
+    
+            console.log('[Meta Pixel] ✅ Purchase event sent');
+          } else {
+              console.error('[Meta Pixel] ❌ fbq not loaded');
+          }
+          } catch(fbError) {
+          console.error('[Meta Pixel] ❌ Error:', fbError);
+          }
           
           // ============================================
           // ✅ REDDIT PIXEL PURCHASE EVENT
