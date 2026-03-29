@@ -119,6 +119,13 @@ export default async function handler(req, res) {
       // ============================================
       // ✅ ПОВЕРТАЄМО ПОВНІ ДАНІ ДЛЯ GA4 PURCHASE
       // ============================================
+      console.log('[Admin] 📊 Returning order with tracking:', {
+        order_id: orderId,
+        has_fbp: !!order.fbp,
+        has_fbc: !!order.fbc,
+        has_ga_client_id: !!order.ga_client_id
+      });
+
       return res.status(200).json({
         success: true,
         message: 'Payment confirmed successfully',
@@ -135,6 +142,10 @@ export default async function handler(req, res) {
           currency: 'USD',
           tax: 0,
           shipping: 0,
+          // ✅ Tracking IDs for server-side analytics
+          fbp: order.fbp || '',
+          fbc: order.fbc || '',
+          ga_client_id: order.ga_client_id || '',
           // ✅ КРИТИЧНО: Повертаємо items у форматі GA4
           items: (order.items || []).map(item => ({
             item_id: item.sku || 'unknown',
