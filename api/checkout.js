@@ -196,7 +196,8 @@ export default async function handler(req, res) {
       orderId,
       email,
       country,
-      promoCode: promoCode || 'none'
+      promoCode: promoCode || 'none',
+      tracking: { fbp: fbp || 'none', fbc: fbc || 'none', ga_client_id: ga_client_id || 'none' }
     });
 
     // ---- кошик ----
@@ -272,6 +273,19 @@ export default async function handler(req, res) {
     }
 
     // ============================================
+    // ✅ EXTRACT TRACKING IDs
+    // ============================================
+    const fbp = norm(data.fbp || data.tracking?.fbp || '');
+    const fbc = norm(data.fbc || data.tracking?.fbc || '');
+    const ga_client_id = norm(data.ga_client_id || data.clientId || data.tracking?.ga_client_id || '');
+
+    console.log('[Checkout] 🔍 Tracking IDs from request:', {
+      fbp: fbp || 'MISSING',
+      fbc: fbc || 'MISSING',
+      ga_client_id: ga_client_id || 'MISSING'
+    });
+
+    // ============================================
     // ✅ ЗБЕРІГАЄМО PENDING ORDER В REDIS
     // ============================================
     const pendingOrderData = {
@@ -287,6 +301,10 @@ export default async function handler(req, res) {
       messenger: messenger,
       handle: handle,
       notes: notes,
+      // ✅ Tracking IDs for attribution
+      fbp: fbp,
+      fbc: fbc,
+      ga_client_id: ga_client_id,
       items: items,
       subtotal: subtotal,
       discount: discount,
