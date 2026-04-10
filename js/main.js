@@ -1938,7 +1938,8 @@ function bindCheckoutCartEvents(){
 const PROMO_CODES = {
   'RETURN15': { discount: 0.15, label: '15% off' },
   'WELCOME15': { discount: 0.15, label: '15% off' },
-  'BUNDLE15': { discount: 0.15, label: '15% off' }
+  'BUNDLE15': { discount: 0.15, label: '15% off' },
+  'SORRY15': { discount: 0.15, label: '15% off' }
 };
 
 // 🎯 Глобальна функція для застосування промокоду (можна викликати з будь-якого місця)
@@ -2586,7 +2587,7 @@ function initCheckoutForm() {
     let discount = 0;
     let discountPercent = 0;
     if (appliedPromoCode) {
-      const PROMO_CODES = { 'RETURN15': 0.15, 'WELCOME15': 0.15 };
+      const PROMO_CODES = { 'RETURN15': 0.15, 'WELCOME15': 0.15, 'SORRY15': 0.15 };
       discountPercent = PROMO_CODES[appliedPromoCode] || 0;
       discount = subtotal * discountPercent;
     }

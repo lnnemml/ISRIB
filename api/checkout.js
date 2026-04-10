@@ -88,7 +88,9 @@ function normalizeItem(it) {
 function validatePromoCode(code) {
   const PROMO_CODES = {
     'WELCOME15': { discount: 0.15, label: '15% off' },
-    'BUNDLE15': { discount: 0.15, label: '15% off' }
+    'BUNDLE15': { discount: 0.15, label: '15% off' },
+    'RETURN15': { discount: 0.15, label: '15% off' },
+    'SORRY15': { discount: 0.15, label: '15% off' }
   };
 
   const upper = norm(code).toUpperCase();
