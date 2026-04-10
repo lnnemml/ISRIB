@@ -88,6 +88,17 @@
       color: #64748b;
       font-family: monospace;
     }
+    .template-preview {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #1e3a8a;
+      display: none;
+    }
+    .template-preview.show { display: block; }
   </style>
 </head>
 <body>
@@ -96,7 +107,7 @@
     <p class="subtitle">Send ISRIB relaunch emails to customers</p>
 
     <div class="warning">
-      ⚠️ <strong>Free tier limit:</strong> Maximum 100 emails per batch. Split your list if needed.
+      ⚠️ <strong>Pro tier limit:</strong> Maximum 1000 emails per batch. Split your list if needed.
     </div>
 
     <form id="campaignForm">
@@ -115,20 +126,33 @@
             <option value="2">Email 2: "Last call" (deadline)</option>
             <option value="3">🔥 Email 3: Black Friday 25% OFF (48h)</option>
             <option value="4">Email 4: Capsule Launch</option>
+            <option value="5">Email 5: Technical Issue Fixed (SORRY15)</option>
          </select>
+         <div id="templatePreview" class="template-preview"></div>
       </div>
 
       <!-- Customer List -->
       <div class="section">
-        <label for="customerList">Customer List (JSON format)</label>
+        <label for="customerList">Customer List (JSON format) <span id="emailCount" style="color: #64748b; font-weight: normal;"></span></label>
+        <input type="file" id="fileUpload" accept=".json" style="margin-bottom: 12px;">
         <textarea id="customerList" placeholder='[
   {"email": "john@example.com", "firstName": "John"},
   {"email": "jane@example.com", "firstName": "Jane"}
 ]' required></textarea>
         <div class="example">
           Example format:<br>
-          [{"email": "test@example.com", "firstName": "Test"}]
+          [{"email": "test@example.com", "firstName": "Test"}]<br>
+          <em>Tip: Upload a .json file or paste JSON directly</em><br>
+          <button type="button" id="loadTestList" style="margin-top: 8px; padding: 4px 12px; background: #64748b; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Load Test Email (your email)</button>
         </div>
+      </div>
+
+      <!-- Options -->
+      <div class="section" style="margin-bottom: 20px;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" id="shuffleList" style="width: auto; margin-right: 8px;">
+          <span>Shuffle customer list (randomize send order)</span>
+        </label>
       </div>
 
       <button type="submit" class="btn" id="sendBtn">Send Campaign</button>
@@ -145,6 +169,100 @@
     const sendBtn = document.getElementById('sendBtn');
     const progress = document.getElementById('progress');
     const log = document.getElementById('log');
+    const fileUpload = document.getElementById('fileUpload');
+    const customerList = document.getElementById('customerList');
+    const emailCount = document.getElementById('emailCount');
+    const campaignSelect = document.getElementById('campaignId');
+    const templatePreview = document.getElementById('templatePreview');
+
+    // Template descriptions
+    const templateDescriptions = {
+      '1': {
+        subject: '{{firstName}}, we moved to ISRIB.shop',
+        promo: 'RETURN15 (15% off, 72 hours)',
+        content: 'Platform migration announcement with promo code for returning customers'
+      },
+      '2': {
+        subject: 'Re: {{firstName}}, we moved to ISRIB.shop',
+        promo: 'RETURN15 (expires midnight GMT)',
+        content: 'Urgent reminder - promo code expiring soon'
+      },
+      '3': {
+        subject: '{{firstName}}, quick update',
+        promo: 'BLACK25 (25% off through Sunday)',
+        content: 'Weekend Black Friday offer with worldwide shipping'
+      },
+      '4': {
+        subject: '{{firstName}}, product update',
+        promo: 'None',
+        content: 'Capsule launch announcement - ISRIB & A15 in 20mg capsules'
+      },
+      '5': {
+        subject: '{{firstName}}, quick note',
+        promo: 'SORRY15 (15% off, 7 days)',
+        content: 'Technical issue resolved - compensation discount for affected customers'
+      }
+    };
+
+    // Show template preview
+    campaignSelect.addEventListener('change', (e) => {
+      const id = e.target.value;
+      if (id && templateDescriptions[id]) {
+        const desc = templateDescriptions[id];
+        templatePreview.innerHTML = `
+          <strong>Subject:</strong> ${desc.subject}<br>
+          <strong>Promo Code:</strong> ${desc.promo}<br>
+          <strong>Content:</strong> ${desc.content}
+        `;
+        templatePreview.classList.add('show');
+      } else {
+        templatePreview.classList.remove('show');
+      }
+    });
+
+    // Update email count
+    function updateEmailCount() {
+      try {
+        const json = JSON.parse(customerList.value.trim() || '[]');
+        const count = Array.isArray(json) ? json.length : 0;
+        emailCount.textContent = count > 0 ? `(${count} email${count !== 1 ? 's' : ''})` : '';
+        emailCount.style.color = count > 1000 ? '#ef4444' : '#64748b';
+      } catch {
+        emailCount.textContent = '';
+      }
+    }
+
+    // File upload handler
+    fileUpload.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+        customerList.value = JSON.stringify(json, null, 2);
+        updateEmailCount();
+        alert(`✓ Loaded ${Array.isArray(json) ? json.length : 'unknown'} customers from ${file.name}`);
+      } catch (error) {
+        alert(`Error reading file: ${error.message}`);
+      }
+    });
+
+    // Live counter
+    customerList.addEventListener('input', updateEmailCount);
+
+    // Load test list
+    document.getElementById('loadTestList').addEventListener('click', () => {
+      const testEmail = prompt('Enter your email for testing:', 'test@example.com');
+      if (!testEmail) return;
+
+      const testList = [
+        { email: testEmail.trim(), firstName: 'Test' }
+      ];
+
+      customerList.value = JSON.stringify(testList, null, 2);
+      updateEmailCount();
+    });
 
     function addLog(message, type = 'info') {
       const entry = document.createElement('div');
@@ -160,6 +278,7 @@
       const secretKey = document.getElementById('secretKey').value.trim();
       const campaignId = document.getElementById('campaignId').value;
       const customerListRaw = document.getElementById('customerList').value.trim();
+      const shuffle = document.getElementById('shuffleList').checked;
 
       // Parse customers
       let customers;
@@ -175,13 +294,17 @@
         return;
       }
 
-      if (customers.length > 100) {
-        alert('Maximum 100 emails per batch (free tier limit)');
+      if (customers.length > 1000) {
+        alert('Maximum 1000 emails per batch (Pro tier limit)');
         return;
       }
 
       // Confirm
-      if (!confirm(`Send Email ${campaignId} to ${customers.length} customers?`)) {
+      const shuffleNote = shuffle ? ' (shuffled)' : '';
+      const estimatedMinutes = Math.round(customers.length * 3.5 / 60);
+      const timeNote = estimatedMinutes > 0 ? `\n\nEstimated time: ~${estimatedMinutes} minute${estimatedMinutes !== 1 ? 's' : ''}` : '';
+
+      if (!confirm(`Send Email ${campaignId} to ${customers.length} customers${shuffleNote}?${timeNote}`)) {
         return;
       }
 
@@ -191,13 +314,13 @@
       sendBtn.disabled = true;
       sendBtn.textContent = 'Sending...';
 
-      addLog(`Starting campaign ${campaignId} for ${customers.length} customers...`, 'info');
+      addLog(`Starting campaign ${campaignId} for ${customers.length} customers${shuffleNote}...`, 'info');
 
       try {
         const response = await fetch('/api/send-campaign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ secretKey, campaignId, customers })
+          body: JSON.stringify({ secretKey, campaignId, customers, shuffle })
         });
 
         const result = await response.json();
@@ -209,13 +332,27 @@
         addLog(`✅ Campaign complete!`, 'success');
         addLog(`Total: ${result.results.total}`, 'info');
         addLog(`Sent: ${result.results.sent}`, 'success');
+        addLog(`Skipped: ${result.results.skipped}`, result.results.skipped > 0 ? 'warning' : 'info');
         addLog(`Failed: ${result.results.failed}`, result.results.failed > 0 ? 'error' : 'info');
 
-        if (result.results.errors.length > 0) {
+        if (result.results.skippedEmails && result.results.skippedEmails.length > 0) {
+          addLog(`Skipped (unsubscribed):`, 'warning');
+          result.results.skippedEmails.slice(0, 5).forEach(skip => {
+            addLog(`  ${skip.email} (${skip.firstName})`, 'warning');
+          });
+          if (result.results.skippedEmails.length > 5) {
+            addLog(`  ... and ${result.results.skippedEmails.length - 5} more`, 'warning');
+          }
+        }
+
+        if (result.results.errors && result.results.errors.length > 0) {
           addLog(`Errors:`, 'error');
-          result.results.errors.forEach(err => {
+          result.results.errors.slice(0, 5).forEach(err => {
             addLog(`  ${err.email}: ${err.error}`, 'error');
           });
+          if (result.results.errors.length > 5) {
+            addLog(`  ... and ${result.results.errors.length - 5} more errors`, 'error');
+          }
         }
 
         alert(`Campaign sent! ${result.results.sent}/${result.results.total} emails delivered.`);
