@@ -196,8 +196,7 @@ export default async function handler(req, res) {
       orderId,
       email,
       country,
-      promoCode: promoCode || 'none',
-      tracking: { fbp: fbp || 'none', fbc: fbc || 'none', ga_client_id: ga_client_id || 'none' }
+      promoCode: promoCode || 'none'
     });
 
     // ---- кошик ----
