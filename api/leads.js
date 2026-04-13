@@ -170,7 +170,7 @@ async function handleSubscribe(req, res) {
 
   for (let i = 0; i < 4; i++) {
     const emailNumber = i + 1;
-    const qstashRes = await fetch('https://qstash.upstash.io/v2/publish/' + encodeURIComponent(targetUrl), {
+    const qstashRes = await fetch('https://qstash.upstash.io/v2/publish/' + targetUrl, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + process.env.QSTASH_TOKEN,
