@@ -635,10 +635,11 @@
         <p>Get our exclusive 4-day email course on ISRIB A15 science, effects, and research findings</p>
         
         <form class="isrib-popup-form" id="isribEmailForm">
-            <input 
-                type="email" 
-                id="isribEmailInput" 
-                placeholder="Enter your email" 
+            <input type="text" id="isribNameInput" placeholder="Your first name" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:6px;font-size:15px;box-sizing:border-box;margin-bottom:10px;" maxlength="50">
+            <input
+                type="email"
+                id="isribEmailInput"
+                placeholder="Enter your email"
                 required
             >
             <button type="submit">Start My Journey</button>
@@ -653,7 +654,7 @@
 <script>
 (function() {
     // ⚠️ IMPORTANT: ЗАМІНІТЬ цей URL на ваш n8n webhook URL
-    const WEBHOOK_URL = 'https://isrib.app.n8n.cloud/webhook/isrib-signup';
+    const WEBHOOK_URL = '/api/leads?action=subscribe';
     
     // Settings
     const config = {
@@ -717,6 +718,7 @@
         e.preventDefault();
         
         const email = emailInput.value.trim();
+        const name = document.getElementById('isribNameInput').value.trim();
         const submitBtn = form.querySelector('button');
         
         submitBtn.disabled = true;
@@ -730,8 +732,8 @@
                 },
                 body: JSON.stringify({
                     email: email,
-                    timestamp: new Date().toISOString(),
-                    source: 'website_popup'
+                    name: name,
+                    source: 'shop'
                 })
             });
 
