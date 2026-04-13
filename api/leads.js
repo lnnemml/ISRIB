@@ -124,6 +124,31 @@ async function handleSubscribe(req, res) {
     return;
   }
 
+  // Rate limiting: max 5 requests per IP per 60 seconds
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.headers['x-real-ip'] || 'unknown';
+  const rateLimitKey = 'rate:subscribe:' + ip;
+  const countRes = await fetch(
+    process.env.UPSTASH_REDIS_REST_URL + '/pipeline',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + process.env.UPSTASH_REDIS_REST_TOKEN,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([
+        ['INCR', rateLimitKey],
+        ['EXPIRE', rateLimitKey, 60]
+      ]),
+    }
+  );
+  const countData = await countRes.json();
+  const requestCount = countData[0]?.result ?? 0;
+
+  if (requestCount > 5) {
+    res.status(429).json({ error: 'Too many requests. Please try again later.' });
+    return;
+  }
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
@@ -154,7 +179,7 @@ async function handleSubscribe(req, res) {
   // duplicate check
   const existing = await sql`SELECT id FROM leads WHERE email = ${email}`;
   if (existing.length > 0) {
-    res.status(200).json({ success: true, duplicate: true });
+    res.status(200).json({ success: true });
     return;
   }
 
