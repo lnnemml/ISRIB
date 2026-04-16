@@ -2794,6 +2794,47 @@ function initCheckoutForm() {
         console.error('[Checkout] ❌ Save failed:', saveErr);
       }
 
+      // --- order_submitted analytics event ---
+      (function() {
+        try {
+          var _utm = window.ISRIBTracking && window.ISRIBTracking.getUTM
+            ? window.ISRIBTracking.getUTM() : {};
+          var cart = JSON.parse(localStorage.getItem('isrib_cart') || '[]');
+          var cartValue = cart.reduce(function(sum, item) {
+            return sum + (Number(item.price) * Number(item.count || 1));
+          }, 0);
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'order_submitted',
+            order_id: window._generatedOrderId,
+            value: cartValue,
+            currency: 'USD',
+            utm_source:   _utm.utm_source   || '(none)',
+            utm_medium:   _utm.utm_medium   || '(none)',
+            utm_campaign: _utm.utm_campaign || '(none)',
+            utm_content:  _utm.utm_content  || '(none)',
+            fbclid:       _utm.fbclid       || undefined,
+            ecommerce: {
+              transaction_id: window._generatedOrderId,
+              value: cartValue,
+              currency: 'USD',
+              items: cart.map(function(item) {
+                return {
+                  item_id:      item.sku,
+                  item_name:    item.name,
+                  item_variant: item.display,
+                  price:        Number(item.price),
+                  quantity:     Number(item.count || 1)
+                };
+              })
+            }
+          });
+        } catch(e) {
+          console.warn('[analytics] order_submitted failed:', e);
+        }
+      })();
+      // --- end order_submitted ---
+
       // Очищаємо кошик
       writeCart([]);
       updateCartBadge([]);
