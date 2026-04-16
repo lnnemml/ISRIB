@@ -550,9 +550,16 @@
             
             window.dataLayer = window.dataLayer || [];
             
+            var _utm = (window.ISRIBTracking && window.ISRIBTracking.getUTM)
+              ? window.ISRIBTracking.getUTM() : {};
+
             const purchaseEvent = {
               event: 'purchase',
               payment_confirmed: true,
+              utm_source:   _utm.utm_source   || '(none)',
+              utm_medium:   _utm.utm_medium   || '(none)',
+              utm_campaign: _utm.utm_campaign || '(none)',
+              utm_content:  _utm.utm_content  || '(none)',
               ecommerce: {
                 transaction_id: orderId,
                 value: orderValue,
