@@ -8,7 +8,7 @@
   console.log('[GA4 Fallback] 🔧 Initializing...');
   
   const MEASUREMENT_ID = 'G-LJEBV5NPCT';
-  const API_SECRET = 'YOUR_API_SECRET_HERE'; // ✅ ЗАМІНІТЬ на ваш API secret з GA4
+  const API_SECRET = 'WcsFZaPQTcuqu-RzTBHlSA'; // ✅ ЗАМІНІТЬ на ваш API secret з GA4
   
   // ============================================
   // HELPER: Generate/Get Client ID
