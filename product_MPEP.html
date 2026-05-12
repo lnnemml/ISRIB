@@ -45,7 +45,7 @@
       "sku": "MPEP-100MG",
       "name": "MPEP • 100 mg",
       "priceCurrency": "USD",
-      "price": "50",
+      "price": "60",
       "availability": "https://schema.org/InStock",
       "url": "https://isrib.shop/product_mpep.html",
       "priceValidUntil": "2026-12-31",
@@ -87,6 +87,14 @@
     .a15-hero::before{content:'';position:absolute;inset:0;
       background:radial-gradient(circle at 18% 82%,rgba(30,64,175,.10) 0%,transparent 50%),
                  radial-gradient(circle at 84% 18%,rgba(14,165,233,.10) 0%,transparent 50%)}
+    /* NMR Lightbox */
+    .nmr-lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+    .nmr-lightbox-overlay.open{display:flex}
+    .nmr-lightbox-overlay img{max-width:100%;max-height:90vh;border-radius:10px;object-fit:contain;cursor:default;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+    .nmr-lightbox-close{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.6rem;line-height:1;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .nmr-lightbox-close:hover{background:rgba(255,255,255,.3)}
+    .nmr-thumb{cursor:zoom-in;transition:opacity .15s}
+    .nmr-thumb:hover{opacity:.85}
   </style>
 </head>
 <body class="page-product-a15">
@@ -163,7 +171,7 @@
         <!-- ПРАВО: копірайт -->
         <div class="a15-copy">
           <div class="row">
-            <span class="pill out-of-stock">⛔ Out of stock</span>
+            <span class="pill in-stock">✓ In stock</span>
           </div>
           <h1 class="a15-title">MPEP Oxalate</h1>
           <p class="a15-chem mono">2‑Methyl‑6‑(phenylethynyl)pyridine · Oxalate</p>
@@ -171,7 +179,8 @@
             Selective negative allosteric modulator of mGluR5. High specificity and potency.
           </p>
           <div class="cta-buttons">
-            <a href="#order" class="btn btn-primary" aria-disabled="true" style="pointer-events:none;opacity:.6;">Out of stock</a>
+            <a href="#order" class="btn btn-primary">🧪 Order MPEP Oxalate</a>
+            <a href="#mechanism" class="btn btn-ghost">📖 Learn More</a>
           </div>
         </div>
       </div>
@@ -198,21 +207,26 @@
           <div class="quantity-title">Select Quantity</div>
           <div class="quantity-row">
             <!-- налаштуй ціни під свої -->
-            <div class="quantity-option active" data-quantity="100mg" data-grams="100" data-price="50"><span class="tag">100mg</span><span class="price">$50</span></div>
+            <div class="quantity-option active" data-quantity="100mg" data-grams="100" data-price="60"><span class="tag">100mg</span><span class="price">$60</span></div>
             <div class="quantity-option" data-quantity="500mg" data-grams="500" data-price="130"><span class="tag">500mg</span><span class="price">$130</span></div>
             <div class="quantity-option" data-quantity="1g" data-grams="1000" data-price="200"><span class="tag">1g</span><span class="price">$200</span></div>
           </div>
         </div>
 
         <div class="price-line">
-          <span class="current-price">$50.00</span>
-          <small class="price-per-mg">($0.50/mg)</small>
+          <span class="current-price">$60.00</span>
+          <small class="price-per-mg">($0.60/mg)</small>
         </div>
 
         <div class="product-footer">
           <div class="action-buttons" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-primary add-to-cart" disabled aria-disabled="true">
-              Out of stock
+            <button class="btn btn-primary add-to-cart"
+                    data-name="MPEP Oxalate"
+                    data-sku="mpep-oxalate"
+                    data-grams="100"
+                    data-display="100mg"
+                    data-price="60">
+              ➕ Add to cart — 100mg for $60
             </button>
             <a class="view-cart" href="checkout.html">View Cart</a>
           </div>
@@ -229,66 +243,211 @@
     </div>
   </section>
 
- <!-- Scientific Background -->
-  <section style="background: white; padding: 80px 0;" id="mechanism">
-    <div class="container">
-      <div style="max-width: 1000px; margin: 0 auto;">
-        <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 40px;">Understanding MPEP</h2>
+<section style="background:#fff; padding:80px 0 60px;" id="mechanism">
+  <div class="container">
+    <div style="max-width:860px; margin:0 auto;">
 
-        <div style="display:block; max-width:820px; margin:0 auto 60px; text-align:center;">
-          <div>
-            <h3 style="color: #059669; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">🎯 Selective Modulation</h3>
-            <p style="color: #64748b; line-height: 1.7; margin-bottom: 20px;">MPEP (2-methyl-6-(phenylethynyl)pyridine) is a highly selective negative allosteric modulator of the metabotropic glutamate receptor subtype 5 (mGluR5). Its exceptional selectivity and potency have made it an indispensable tool in glutamate research.</p>
-            <p style="color: #64748b; line-height: 1.7;">As a negative allosteric modulator (NAM), MPEP binds to a site distinct from the glutamate binding site, providing non-competitive inhibition that offers unique research advantages over competitive antagonists.</p>
+      <p style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#059669; font-weight:600; text-align:center; margin:0 0 10px;">Scientific background</p>
+      <h2 style="font-size:2.2rem; font-weight:800; color:#1e293b; text-align:center; margin:0 0 16px; line-height:1.25;">Understanding MPEP Oxalate</h2>
+      <p style="color:#64748b; text-align:center; font-size:1rem; line-height:1.7; max-width:640px; margin:0 auto 64px;">
+        A look at the pharmacology, research applications, and mechanism behind one of the most studied mGluR5 antagonists in neuroscience.
+      </p>
+
+      <!-- BLOCK 1 — What is MPEP Oxalate? -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+          <div style="width:28px; height:28px; background:#f0fdf4; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
           </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">What is MPEP Oxalate?</h3>
         </div>
-
-        <div style="background: linear-gradient(135deg, #f0fdf4, #dcfdf7); border-radius: 20px; padding: 40px; margin-bottom: 60px;">
-          <h3 style="color: #1e293b; font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 30px;">Mechanism of Action</h3>
-          <div class="moa-grid">
-            <div style="text-align: center; padding: 20px;">
-              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">1</div>
-              <h4 style="color: #1e293b; margin-bottom: 10px;">Allosteric Binding</h4>
-              <p style="color: #059669; font-size: 0.9rem;">MPEP binds to the transmembrane domain of mGluR5, distinct from the glutamate binding site.</p>
-            </div>
-            <div style="text-align: center; padding: 20px;">
-              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">2</div>
-              <h4 style="color: #1e293b; margin-bottom: 10px;">Receptor Inhibition</h4>
-              <p style="color: #059669; font-size: 0.9rem;">Non-competitive inhibition blocks mGluR5-mediated signaling pathways.</p>
-            </div>
-            <div style="text-align: center; padding: 20px;">
-              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem; font-weight: 700;">3</div>
-              <h4 style="color: #1e293b; margin-bottom: 10px;">Downstream Effects</h4>
-              <p style="color: #059669; font-size: 0.9rem;">Modulates synaptic plasticity, neuronal excitability, and behavioral responses.</p>
-            </div>
-          </div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 16px;">
+          MPEP Oxalate (2-Methyl-6-(phenylethynyl)pyridine oxalate) is a potent, highly selective <strong style="color:#1e293b;">negative allosteric modulator (NAM)</strong> of the metabotropic glutamate receptor subtype 5 (mGluR5). Synthesised as an oxalate salt for enhanced stability and ease of handling, it is widely regarded in the research community as a <em>gold-standard pharmacological tool</em> for dissecting glutamatergic neurotransmission.
+        </p>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">
+          Unlike competitive antagonists that block the glutamate binding site directly, MPEP acts allosterically — binding to a separate transmembrane domain and reducing receptor sensitivity without occupying the orthosteric pocket. This non-competitive profile affords greater selectivity and predictable dose-response relationships, making it the preferred probe in hundreds of pre-clinical studies across addiction, cognition, and neurodegeneration.
+        </p>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+            <thead>
+              <tr style="background:#f0fdf4;">
+                <th style="padding:12px 20px; text-align:left; color:#059669; font-weight:600; border-bottom:1px solid #e2e8f0; width:38%;">Property</th>
+                <th style="padding:12px 20px; text-align:left; color:#059669; font-weight:600; border-bottom:1px solid #e2e8f0;">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 20px; color:#64748b;">Chemical name</td><td style="padding:11px 20px; color:#1e293b; font-family:’Courier New’,monospace; font-size:0.85rem;">2-Methyl-6-(phenylethynyl)pyridine · C₂H₂O₄</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;"><td style="padding:11px 20px; color:#64748b;">Mechanism class</td><td style="padding:11px 20px; color:#1e293b;">Negative allosteric modulator (NAM)</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 20px; color:#64748b;">Primary target</td><td style="padding:11px 20px; color:#1e293b;">mGluR5 (Group I metabotropic glutamate receptor)</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;"><td style="padding:11px 20px; color:#64748b;">BBB permeability</td><td style="padding:11px 20px; color:#1e293b;">High — rapid CNS entry after systemic dosing</td></tr>
+              <tr><td style="padding:11px 20px; color:#64748b;">Research status</td><td style="padding:11px 20px; color:#059669; font-weight:600;">Gold-standard mGluR5 tool compound</td></tr>
+            </tbody>
+          </table>
         </div>
-
-        <!-- Applications -->
-        <div style="background: white; border-radius: 15px; padding: 30px; border: 1px solid #e5e7eb;">
-          <h3 style="color: #1e293b; font-size: 1.5rem; font-weight: 700; margin-bottom: 25px; text-align: center;">🏆 Key Research Applications</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
-            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-              <div style="font-size: 2rem; margin-bottom: 10px;">🧠</div>
-              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Learning & Memory</h4>
-              <p style="color: #64748b; font-size: 0.9rem;">Study mGluR5’s role in cognition and memory formation</p>
-            </div>
-            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-              <div style="font-size: 2rem; margin-bottom: 10px;">🔬</div>
-              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Synaptic Plasticity</h4>
-              <p style="color: #64748b; font-size: 0.9rem;">Investigate mGluR5-dependent LTP/LTD mechanisms</p>
-            </div>
-            <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px;">
-              <div style="font-size: 2rem; margin-bottom: 10px;">⚕️</div>
-              <h4 style="color: #1e293b; font-weight: 600; margin-bottom: 8px;">Disease Models</h4>
-              <p style="color: #64748b; font-size: 0.9rem;">Autism, schizophrenia, addiction models with glutamatergic dysfunction</p>
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 2 — Anti-Addictive Mechanism -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+          <div style="width:28px; height:28px; background:#fef3c7; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">The anti-addictive mechanism — mGluR5 and craving</h3>
+        </div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 16px;">
+          mGluR5 receptors are densely expressed in the nucleus accumbens, prefrontal cortex, and ventral tegmental area — the circuit that governs reward, motivation, and compulsive behaviour. Under normal conditions, glutamate signalling through mGluR5 amplifies dopamine-driven reward signals. In addiction, this amplification becomes pathologically overactive: the receptor effectively locks the brain into a state of craving and drug-seeking.
+        </p>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">
+          MPEP has been used in over 200 pre-clinical studies to probe this circuitry. By silencing mGluR5 activity, it selectively attenuates the reward salience of a substance — without broadly suppressing appetite, locomotion, or natural reward — making it an indispensable pharmacological scalpel.
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;">
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; border-top:3px solid #059669;">
+            <p style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#059669; font-weight:600; margin:0 0 10px;">Alcohol</p>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">MPEP significantly reduces voluntary ethanol self-administration and prevents reinstatement of alcohol-seeking in rodent models. Critically, it targets the rewarding properties of alcohol without affecting caloric intake or general fluid consumption — demonstrating receptor-specific action on the reward pathway rather than non-specific suppression.</p>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; border-top:3px solid #0891b2;">
+            <p style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#0891b2; font-weight:600; margin:0 0 10px;">Nicotine</p>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">In nicotine self-administration paradigms, MPEP reduces breakpoint responding — the effort an animal will exert to obtain the drug — indicating a blunting of nicotine’s motivational value. This makes it a valuable probe for studying the glutamatergic component of tobacco dependence and for evaluating candidate cessation therapies.</p>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; border-top:3px solid #7c3aed;">
+            <p style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#7c3aed; font-weight:600; margin:0 0 10px;">Stimulants — cocaine &amp; amphetamine</p>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">MPEP blocks the development of conditioned place preference to cocaine, attenuates psychomotor sensitisation, and reduces cue-induced reinstatement. The mechanism involves suppression of AMPA receptor trafficking in the nucleus accumbens — a glutamatergic cascade that normally consolidates drug-associated memories.</p>
+          </div>
+        </div>
+        <div style="border-left:3px solid #059669; padding:16px 20px; background:#f0fdf4; margin-top:24px; border-radius:0 8px 8px 0;">
+          <p style="color:#065f46; font-size:0.92rem; line-height:1.7; margin:0; font-style:italic;">"mGluR5 antagonism offers a mechanistically distinct approach to addiction research — one that targets the glutamatergic amplification of reward rather than the dopamine signal itself, potentially avoiding the tolerability issues of dopamine-based interventions."</p>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 3 — Cognitive Research -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+          <div style="width:28px; height:28px; background:#ede9fe; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3zM14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3z"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">Cognitive research — mGluR5 in learning and mental health</h3>
+        </div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">Beyond addiction, mGluR5 sits at the intersection of synaptic plasticity, mood regulation, and neurodevelopmental disease. MPEP has become the standard pharmacological tool for selectively ablating mGluR5 function in cognitive research — enabling precise interrogation of the receptor’s contribution to learning, memory, and emotional processing.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:22px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div style="width:36px; height:36px; background:#e0e7ff; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <strong style="color:#1e293b; font-size:0.95rem;">LTP / LTD — synaptic plasticity</strong>
+            </div>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">mGluR5 co-activates NMDA receptors and is required for mGluR-dependent long-term depression (mGluR-LTD) at hippocampal and cortical synapses. MPEP allows researchers to selectively eliminate this LTD component while preserving NMDA-dependent LTP — dissecting which arm of plasticity drives a given learning paradigm.</p>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:22px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div style="width:36px; height:36px; background:#fce7f3; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#be185d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8l4 4-4 4"/></svg>
+              </div>
+              <strong style="color:#1e293b; font-size:0.95rem;">Fragile X syndrome</strong>
+            </div>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">The "mGluR theory of Fragile X" proposes that loss of FMRP leads to unchecked mGluR5-driven protein synthesis, causing exaggerated mGluR-LTD. MPEP was the critical pharmacological proof-of-concept: in <em>Fmr1</em> knockout mice, MPEP rescued audiogenic seizures, normalised dendritic spine morphology, and corrected prepulse inhibition.</p>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:22px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div style="width:36px; height:36px; background:#d1fae5; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <strong style="color:#1e293b; font-size:0.95rem;">Anxiety &amp; stress resilience</strong>
+            </div>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">MPEP produces robust anxiolytic effects in elevated plus-maze and fear-conditioning assays — comparable in magnitude to benzodiazepines, but without sedation or tolerance. mGluR5 activity in the basolateral amygdala gates fear consolidation, and MPEP administration disrupts this without erasing previously acquired memories.</p>
+          </div>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 4 — Mechanism of Action (3 steps, no connector arrows) -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
+          <div style="width:28px; height:28px; background:#f0fdf4; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">Mechanism of action</h3>
+        </div>
+        <div style="background:linear-gradient(135deg,#f0fdf4,#f0f9ff); border-radius:16px; padding:32px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px;">
+            <div style="text-align:center; padding:16px;">
+              <div style="width:56px; height:56px; background:#059669; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#fff; font-size:1.3rem; font-weight:800;">1</div>
+              <h4 style="color:#1e293b; font-size:0.95rem; font-weight:700; margin:0 0 10px;">Selective binding</h4>
+              <p style="color:#475569; font-size:0.88rem; line-height:1.7; margin:0;">MPEP rapidly crosses the blood-brain barrier and binds with high affinity to the allosteric transmembrane site of mGluR5 — a pocket entirely distinct from the orthosteric glutamate binding domain. No cross-reactivity with mGluR1 or ionotropic glutamate receptors at pharmacologically relevant concentrations.</p>
+            </div>
+            <div style="text-align:center; padding:16px;">
+              <div style="width:56px; height:56px; background:#0891b2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#fff; font-size:1.3rem; font-weight:800;">2</div>
+              <h4 style="color:#1e293b; font-size:0.95rem; font-weight:700; margin:0 0 10px;">Negative modulation</h4>
+              <p style="color:#475569; font-size:0.88rem; line-height:1.7; margin:0;">Binding induces a conformational shift in the receptor’s seven-transmembrane domain, reducing the efficiency of G-protein coupling. The receptor remains intact but becomes markedly less sensitive to glutamate — analogous to turning down a volume knob rather than cutting the wire. Efficacy is maintained even under high glutamate conditions.</p>
+            </div>
+            <div style="text-align:center; padding:16px;">
+              <div style="width:56px; height:56px; background:#7c3aed; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#fff; font-size:1.3rem; font-weight:800;">3</div>
+              <h4 style="color:#1e293b; font-size:0.95rem; font-weight:700; margin:0 0 10px;">Cascade inhibition</h4>
+              <p style="color:#475569; font-size:0.88rem; line-height:1.7; margin:0;">Reduced mGluR5 signalling suppresses downstream IP₃-mediated calcium release and attenuates ERK / mTOR phosphorylation — dampening neuronal hyperexcitability, reducing pathological protein synthesis at the synapse, and protecting against excitotoxic calcium overload.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 5 — Key Research Applications -->
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
+          <div style="width:28px; height:28px; background:#fef9c3; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">Key research applications</h3>
+        </div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">The breadth of MPEP’s utility spans from fundamental synapse biology to translational disease modelling. Below are the primary research domains where MPEP is currently deployed as a pharmacological standard.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;">
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#f0fdf4; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Neuroprotection &amp; ischaemia</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">mGluR5 overactivation following stroke or TBI drives excitotoxic calcium influx. MPEP reduces infarct volume and improves neurological outcomes in rodent ischaemia models — serving as a benchmark for neuroprotective candidates.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#ede9fe; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8l4 4-4 4"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Autism spectrum &amp; Fragile X</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">MPEP remains the canonical pharmacological test of the mGluR theory of FXS. Beyond FXS, it is used to model and correct social behaviour deficits, repetitive behaviours, and sensory hypersensitivity across diverse ASD models.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#fef9c3; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Addictive behaviour &amp; relapse</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">MPEP is the workhorse probe in glutamate-addiction research. It enables modelling of cue-induced reinstatement — the most clinically relevant stage of addiction — and evaluation of how mGluR5 blockade modifies extinction learning and stress-induced relapse.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#fee2e2; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Chronic &amp; neuropathic pain</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">mGluR5 is upregulated in the spinal dorsal horn following nerve injury. MPEP reduces allodynia and thermal hyperalgesia in neuropathic pain models — revealing mGluR5 as a key driver of pain sensitisation and benchmarking novel analgesic candidates.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#e0f2fe; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3zM14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3z"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Schizophrenia &amp; psychosis models</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">MPEP interrogates how mGluR5 modulates prepulse inhibition deficits and hyperlocomotion in PCP/ketamine models — providing a pharmacological bridge between NMDA hypofunction and mGluR5-targeted therapeutic strategies.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#fce7f3; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#be185d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Synaptic plasticity &amp; memory encoding</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">Used to isolate mGluR-LTD from NMDA-LTP in hippocampal preparations and in vivo learning paradigms. MPEP has established the temporal and spatial requirements for mGluR5 in fear extinction, spatial navigation, and working memory.</p></div>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- Technical Specifications -->
   <section style="background: #1e293b; color: white; padding: 80px 0;">
@@ -299,17 +458,17 @@
           <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">🧪 Chemical Properties</h3>
           <div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Molecular Formula:</span><span style="color:#f1f5f9; font-family:'Courier New', monospace;">C₁₁H₁₀N₂•C₂H₂O₄</span></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Molecular Weight:</span><span style="color:#f1f5f9;">260.25 g/mol</span></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">CAS Number:</span><span style="color:#f1f5f9;">219911-35-0</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Molecular Weight:</span><span style="color:#f1f5f9;">283.25 g/mol</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">CAS Number:</span><span style="color:#f1f5f9;">96206-92-7</span></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Purity:</span><span style="color:#10b981; font-weight:600;">≥98%</span></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Form:</span><span style="color:#f1f5f9;">White to off-white powder</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Form:</span><span style="color:#f1f5f9;">Yellow-white powder</span></div>
             <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Solubility:</span><span style="color:#f1f5f9;">DMSO, Ethanol</span></div>
           </div>
         </div>
         <div style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px;">
           <h3 style="color: #f1f5f9; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">📦 Storage & Handling</h3>
           <div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Storage Temp:</span><span style="color:#f1f5f9;">-20°C</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Storage Temp:</span><span style="color:#f1f5f9;">2-8°C</span></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Stability:</span><span style="color:#f1f5f9;">2+ years</span></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Light Sensitivity:</span><span style="color:#f59e0b;">Store in dark</span></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Moisture:</span><span style="color:#f59e0b;">Keep dry</span></div>
@@ -321,13 +480,109 @@
           <div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">COA:</span><span style="color:#10b981; font-weight:600;">✓ Included</span></div>
             <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">¹H NMR:</span><span style="color:#10b981; font-weight:600;">✓ Available</span></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">Mass Spec:</span><span style="color:#10b981; font-weight:600;">✓ Available</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span style="color:#94a3b8;">¹³C NMR:</span><span style="color:#10b981; font-weight:600;">✓ Available</span></div>
             <div style="display:flex; justify-content:space-between;"><span style="color:#94a3b8;">Safety Data:</span><span style="color:#10b981; font-weight:600;">✓ Provided</span></div>
           </div>
         </div>
       </div>
     </div>
   </section>
+
+<!-- NMR Characterization & Raw Data -->
+<section style="background:#f8fafc; padding:80px 0 60px;">
+  <div class="container">
+    <div style="max-width:900px; margin:0 auto;">
+
+      <p style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#059669; font-weight:600; text-align:center; margin:0 0 10px;">Quality verification</p>
+      <h2 style="font-size:2.2rem; font-weight:800; color:#1e293b; text-align:center; margin:0 0 16px; line-height:1.25;">NMR Characterization</h2>
+      <p style="color:#64748b; text-align:center; font-size:1rem; line-height:1.7; max-width:680px; margin:0 auto 16px;">
+        Every batch is characterised by ¹H and ¹³C NMR spectroscopy. We publish both processed spectra and <strong style="color:#1e293b;">raw FID data</strong> so any researcher with NMR software can independently verify the structure and purity of what they receive.
+      </p>
+      <p style="color:#64748b; text-align:center; font-size:0.9rem; margin:0 auto 48px; max-width:600px;">
+        Raw FID files are compatible with MestReNova, TopSpin, and other standard NMR processing software.
+      </p>
+
+      <!-- Spectra images -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px; margin-bottom:40px;">
+
+        <!-- H1 -->
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;">
+          <div style="padding:16px 20px 12px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+              <span style="font-size:0.8rem; font-weight:700; color:#059669; letter-spacing:.05em; text-transform:uppercase;">¹H NMR</span>
+              <p style="font-size:0.85rem; color:#64748b; margin:2px 0 0;">400 MHz · CDCl₃</p>
+            </div>
+            <span style="background:#f0fdf4; color:#059669; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:20px; border:1px solid #bbf7d0;">Batch 2</span>
+          </div>
+          <div style="padding:16px; background:#fafafa;">
+            <img src="images/mpep-nmr-h1.png"
+                 alt="¹H NMR spectrum of MPEP Oxalate — Batch 2"
+                 class="nmr-thumb"
+                 style="width:100%; height:auto; display:block; border-radius:8px;"
+                 loading="lazy">
+          </div>
+          <div style="padding:12px 20px 16px;">
+            <p style="font-size:0.82rem; color:#64748b; line-height:1.6; margin:0;">
+              Key signals: δ 7.73 (t, ArH, 1H), 7.60 (m, ArH, 2H), 7.45 (m, ArH, 4H), 7.28 (d, ArH, 1H), 5.45 (br s, COOH × 2), 2.48 (s, CH₃, 3H)
+            </p>
+          </div>
+        </div>
+
+        <!-- C13 -->
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;">
+          <div style="padding:16px 20px 12px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+              <span style="font-size:0.8rem; font-weight:700; color:#7c3aed; letter-spacing:.05em; text-transform:uppercase;">¹³C NMR</span>
+              <p style="font-size:0.85rem; color:#64748b; margin:2px 0 0;">100 MHz · CDCl₃</p>
+            </div>
+            <span style="background:#f5f3ff; color:#7c3aed; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:20px; border:1px solid #ddd6fe;">Batch 2</span>
+          </div>
+          <div style="padding:16px; background:#fafafa;">
+            <img src="images/mpep-nmr-c13.png"
+                 alt="¹³C NMR spectrum of MPEP Oxalate — Batch 2"
+                 class="nmr-thumb"
+                 style="width:100%; height:auto; display:block; border-radius:8px;"
+                 loading="lazy">
+          </div>
+          <div style="padding:12px 20px 16px;">
+            <p style="font-size:0.82rem; color:#64748b; line-height:1.6; margin:0;">
+              Key signals: δ 161.00, 158.57 (C=O oxalate), 141.32, 137.10, 131.64, 129.36, 128.83, 123.10, 121.43 (ArC), 88.95, 88.05 (alkyne C≡C), 23.80 (CH₃)
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Raw data download banner -->
+      <div style="background:linear-gradient(135deg,#1e293b,#0f172a); border-radius:16px; padding:32px; display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between;">
+        <div style="flex:1; min-width:220px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <h3 style="color:#f1f5f9; font-size:1.1rem; font-weight:700; margin:0;">Download raw FID data</h3>
+          </div>
+          <p style="color:#94a3b8; font-size:0.9rem; line-height:1.65; margin:0;">
+            We don't just show you pictures. Download the original spectrometer output and process it yourself in MestReNova, TopSpin, or any compatible NMR software. Every peak, every integration — fully verifiable.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
+          <a href="downloads/MPEP_H1_fid.zip"
+             download
+             style="display:inline-flex; align-items:center; gap:8px; background:#059669; color:#fff; font-weight:700; font-size:0.9rem; padding:11px 20px; border-radius:10px; text-decoration:none; white-space:nowrap;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            ¹H FID data (.zip)
+          </a>
+          <a href="downloads/MPEP_C13_fid.zip"
+             download
+             style="display:inline-flex; align-items:center; gap:8px; background:#7c3aed; color:#fff; font-weight:700; font-size:0.9rem; padding:11px 20px; border-radius:10px; text-decoration:none; white-space:nowrap;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            ¹³C FID data (.zip)
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
   <!-- Footer -->
   <footer class="footer">
@@ -394,12 +649,12 @@ window.dataLayer.push({
   event: 'view_item',
   ecommerce: {
     currency: 'USD',
-    value: 50,  // поточна ціна активного варування
+    value: 60,  // поточна ціна активного варування
     items: [{
       item_id: 'mpep',                   // стабільний ID (SKU)
       item_name: 'MPEP',
       item_category: 'Research Chemicals',
-      price: 50,                         // ціна активного варіанта
+      price: 60,                         // ціна активного варіанта
       item_variant: '100mg'              // активний варіант
     }]
   }
@@ -409,5 +664,36 @@ window.dataLayer.push({
 <!-- Enhanced Analytics -->
 <script src="/analytics/analytics-loader.js" defer></script>
 
+<!-- NMR Lightbox -->
+<div class="nmr-lightbox-overlay" id="nmrLightbox" role="dialog" aria-modal="true" aria-label="NMR spectrum enlarged view">
+  <button class="nmr-lightbox-close" id="nmrLightboxClose" aria-label="Close">✕</button>
+  <img src="" id="nmrLightboxImg" alt="NMR spectrum enlarged">
+</div>
+<script>
+(function(){
+  var overlay = document.getElementById('nmrLightbox');
+  var img     = document.getElementById('nmrLightboxImg');
+  var close   = document.getElementById('nmrLightboxClose');
+
+  document.querySelectorAll('.nmr-thumb').forEach(function(el){
+    el.addEventListener('click', function(){
+      img.src = el.src;
+      img.alt = el.alt;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeLightbox(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    img.src = '';
+  }
+
+  close.addEventListener('click', closeLightbox);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeLightbox(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLightbox(); });
+})();
+</script>
 </body>
 </html>

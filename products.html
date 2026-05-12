@@ -288,10 +288,10 @@
 
             <div class="quantity-wrap">
               <label class="quantity-title">Select Size:</label>
-              <select class="quantity-dropdown" data-product="mpep" disabled>
-                <option value="100" data-price="50" data-display="100mg">100mg - $50</option>
+              <select class="quantity-dropdown" data-product="mpep">
+                <option value="100" data-price="60" data-display="100mg">100mg - $60</option>
                 <option value="500" data-price="130" data-display="500mg">500mg - $130</option>
-                <option value="1000" data-price="200" data-display="1g" selected>1000mg - $200 Most Popular</option>
+                <option value="1000" data-price="200" data-display="1g" selected>1g - $200 Most Popular</option>
               </select>
             </div>
 
@@ -306,7 +306,15 @@
 
             <div class="product-footer">
     <div class="top-buttons" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-      <button class="btn-primary add-to-cart" disabled aria-disabled="true">Out of stock</button>
+      <button
+        class="btn-primary add-to-cart"
+        data-name="MPEP Oxalate"
+        data-sku="mpep-oxalate"
+        data-grams="1000"
+        data-display="1g"
+        data-price="200">
+        ➕ Add to Cart — <span class="add-label">1g</span>
+      </button>
       <a class="view-cart" href="checkout.html">View Cart</a>
       <a class="view-cart view-product" href="product_MPEP.html">View Details</a>
     </div>
