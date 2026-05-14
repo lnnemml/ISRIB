@@ -147,7 +147,7 @@ const TEMPLATES = {
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 8px;">Now available:</p>
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 4px;padding-left:20px;">• Bromantane — dopaminergic actoprotector, TH upregulator</p>
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 4px;padding-left:20px;">• N-Acetyl-Bromantane — 5 times safer acylated analog, LD50 5,640 mg/kg (vs 1,020 mg/kg in bromantane)</p>
-    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• MPEP Oxalate — selective mGluR5 NAM, addiction &amp; cognition research</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• MPEP Oxalate — selective mGluR5 NAM, antiaddiction &amp; cognition research</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Thanks,</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
     <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
