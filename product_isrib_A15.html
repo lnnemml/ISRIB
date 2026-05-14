@@ -82,7 +82,23 @@
 </script>
 
 
-  <link rel="stylesheet" href="css/styles.css?v=26"/>
+  <link rel="stylesheet" href="css/styles.css?v=27"/>
+
+  <!-- Hero background + NMR Lightbox -->
+  <style>
+    .a15-hero{background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);padding:52px 0 38px;position:relative}
+    .a15-hero::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 18% 82%,rgba(30,64,175,.10) 0%,transparent 50%),
+                 radial-gradient(circle at 84% 18%,rgba(14,165,233,.10) 0%,transparent 50%)}
+    /* NMR Lightbox */
+    .nmr-lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+    .nmr-lightbox-overlay.open{display:flex}
+    .nmr-lightbox-overlay img{max-width:100%;max-height:90vh;border-radius:10px;object-fit:contain;cursor:default;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+    .nmr-lightbox-close{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.6rem;line-height:1;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .nmr-lightbox-close:hover{background:rgba(255,255,255,.3)}
+    .nmr-thumb{cursor:zoom-in;transition:opacity .15s}
+    .nmr-thumb:hover{opacity:.85}
+  </style>
 </head>
 <body class="page-product-a15">
   <!-- Header (slim + sticky + burger) -->
@@ -172,7 +188,7 @@
           </p>
           <div class="cta-buttons">
             <a href="#order" class="btn btn-primary">🧬 Order ISRIB A15</a>
-            <a href="#science" class="btn btn-ghost">📖 The Science</a>
+            <a href="#mechanism" class="btn btn-ghost">📖 Learn More</a>
           </div>
         </div>
       </div>
@@ -190,7 +206,7 @@
     </div>
   </section>
 
-  <!-- ORDER — одразу після hero -->
+  <!-- ORDER -->
   <section id="order" class="order-section">
     <div class="container">
       <h2 class="section-title">Order ISRIB A15</h2>
@@ -405,158 +421,215 @@
     </div>
   </section>
 
-      
-<!-- Frequently Bought Together (Dynamic) -->
-<section class="bundle-section">
+<section style="background:#fff; padding:80px 0 60px;" id="mechanism">
   <div class="container">
-    <div class="bundle-card">
-      <div class="bundle-header">
-        <h2 class="bundle-title">🔥 Frequently bought together</h2>
-        <p class="bundle-subtitle">Researchers who bought this also ordered:</p>
-      </div>
-      
-      <div class="bundle-grid">
-        <!-- Current Product (NO checkbox here) -->
-        <div class="bundle-item current">
-          <div class="bundle-check-static">✓</div>
-          <img src="images/isrib-a15-formula.svg" alt="ISRIB A15" class="bundle-img">
-          <div class="bundle-info">
-            <strong>ISRIB A15</strong>
-            <span class="bundle-qty">100mg</span>
-            <span class="bundle-price">$50.00</span>
+    <div style="max-width:860px; margin:0 auto;">
+
+      <p style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#059669; font-weight:600; text-align:center; margin:0 0 10px;">Scientific background</p>
+      <h2 style="font-size:2.2rem; font-weight:800; color:#1e293b; text-align:center; margin:0 0 16px; line-height:1.25;">Understanding ISRIB A15</h2>
+      <p style="color:#64748b; text-align:center; font-size:1rem; line-height:1.7; max-width:640px; margin:0 auto 64px;">
+        A look at the pharmacology, research applications, and mechanism behind the highest-potency eIF2B activator in the ISRIB compound family.
+      </p>
+
+      <!-- BLOCK 1 — What is ISRIB A15? -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+          <div style="width:28px; height:28px; background:#f0fdf4; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
           </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">What is ISRIB A15?</h3>
         </div>
-
-        <div class="bundle-plus">+</div>
-
-        <!-- Upsell Product (WITH checkbox) -->
-        <div class="bundle-item upsell" data-upsell>
-          <label class="bundle-check">
-            <input type="checkbox" id="bundle-zzl7" checked>
-          </label>
-          <img src="images/zzl7-formula.svg" alt="ZZL-7" class="bundle-img">
-          <div class="bundle-info">
-            <strong>ZZL-7</strong>
-            <span class="bundle-qty">100mg</span>
-            <span class="bundle-price">$50.00</span>
-          </div>
-        </div>
-
-        <div class="bundle-equals">=</div>
-
-        <!-- Total (dynamic) -->
-        <div class="bundle-total">
-          <div class="bundle-total-original">
-            Regular: <span class="strike">$100.00</span>
-          </div>
-          <div class="bundle-total-discounted">
-            Bundle: <strong id="bundleTotal">$85.00</strong>
-          </div>
-          <div class="bundle-savings">Save $15 (15% off)</div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 16px;">
+          ISRIB A15 (also known as ISR-IN-2) is an analog of ISRIB, developed through structure-activity relationship (SAR) studies at UCSF. Unlike the parent molecule — which suffered from poor aqueous solubility limiting its oral utility — A15 incorporates dichlorophenoxy groups that dramatically improve both potency and pharmacokinetic profile.
+        </p>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">
+          At its core, A15 is a molecular stabilizer of the eIF2B decamer complex. Under cellular stress, phosphorylated eIF2α binds and inactivates eIF2B — shutting down protein synthesis globally. A15 binds at the β/δ subunit interface of eIF2B, acting as a "molecular staple" that locks the decameric complex in its active conformation regardless of eIF2α phosphorylation state. This is a fundamentally different intervention point than nootropics that modulate neurotransmitter levels.
+        </p>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+            <thead>
+              <tr style="background:#f0fdf4;">
+                <th style="padding:12px 20px; text-align:left; color:#059669; font-weight:600; border-bottom:1px solid #e2e8f0; width:38%;">Property</th>
+                <th style="padding:12px 20px; text-align:left; color:#059669; font-weight:600; border-bottom:1px solid #e2e8f0;">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 20px; color:#64748b;">Chemical name</td><td style="padding:11px 20px; color:#1e293b; font-family:’Courier New’,monospace; font-size:0.85rem;">N,N'-((1r,4r)-cyclohexane-1,4-diyl)bis(2-(3,4-dichlorophenoxy)acetamide)</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;"><td style="padding:11px 20px; color:#64748b;">Molecular formula</td><td style="padding:11px 20px; color:#1e293b; font-family:’Courier New’,monospace; font-size:0.85rem;">C₂₂H₂₂Cl₄N₂O₄</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 20px; color:#64748b;">Mechanism class</td><td style="padding:11px 20px; color:#1e293b;">eIF2B activator / ISR inhibitor</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;"><td style="padding:11px 20px; color:#64748b;">Primary target</td><td style="padding:11px 20px; color:#1e293b;">eIF2B (eukaryotic initiation factor 2B)</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:11px 20px; color:#64748b;">EC50</td><td style="padding:11px 20px; color:#1e293b;">0.8 nM (vs 5 nM for original ISRIB — 6.25× more potent)</td></tr>
+              <tr style="border-bottom:1px solid #f1f5f9; background:#fafafa;"><td style="padding:11px 20px; color:#64748b;">BBB permeability</td><td style="padding:11px 20px; color:#1e293b;">High — rapid CNS equilibration (~8h plasma half-life)</td></tr>
+              <tr><td style="padding:11px 20px; color:#64748b;">Research status</td><td style="padding:11px 20px; color:#059669; font-weight:600;">Next-generation ISR tool compound</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div class="bundle-actions">
-        <button class="btn btn-primary btn-large" id="addBundleBtn">
-          🛒 Add Bundle to Cart — $85
-        </button>
-        <p class="bundle-note">✅ Both compounds included • Free worldwide shipping • 15% bundle discount</p>
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 2 — The ISR Window -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+          <div style="width:28px; height:28px; background:#fef3c7; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">The ISR Window — targeted suppression of chronic stress signaling</h3>
+        </div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 16px;">
+          The Integrated Stress Response is a conserved cellular program triggered by four distinct kinases (PERK, GCN2, HRI, PKR), each responding to different stressors: unfolded proteins, nutrient deprivation, heme deficiency, and viral infection. All four converge on a single phosphorylation event: eIF2α-Ser51. Once phosphorylated, eIF2α acts as a competitive inhibitor of eIF2B, halting global protein synthesis.
+        </p>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">
+          In healthy tissue, this is a brief protective pause. In aging brain and chronic stress conditions, eIF2α phosphorylation becomes tonically elevated — creating a persistent brake on the protein synthesis required for long-term potentiation, memory consolidation, and synaptic remodeling.
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;">
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; border-top:3px solid #0891b2;">
+            <p style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#0891b2; font-weight:600; margin:0 0 10px;">Aging Brain</p>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">ISR becomes chronically activated in the aging brain. eLife 2020: ISRIB treatment in aged mice (equivalent to 65+ human years) restored spatial learning and memory to levels comparable to young mice. Improvements persisted weeks after dosing cessation — suggesting restoration of functional capacity rather than temporary masking.</p>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; border-top:3px solid #059669;">
+            <p style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#059669; font-weight:600; margin:0 0 10px;">Traumatic Brain Injury</p>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">2017 landmark study (Rosi/Walter, UCSF): ISRIB reversed memory deficits in mice weeks after traumatic brain injury. A short treatment course "reset" chronically activated ISR in neurons, restoring dendritic spine density and working memory performance to levels indistinguishable from uninjured controls.</p>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; border-top:3px solid #7c3aed;">
+            <p style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#7c3aed; font-weight:600; margin:0 0 10px;">eIF2B-Related Disorders</p>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">ISRIB A15 and analogs have shown efficacy in models of Vanishing White Matter Disease (VWMD) — a genetic leukodystrophy caused by destabilizing mutations in eIF2B subunits. A15 rescues eIF2B complex stability in VWMD-associated mutants, identifying it as a research tool for eIF2B structural biology and therapeutic development.</p>
+          </div>
+        </div>
+        <div style="border-left:3px solid #059669; padding:16px 20px; background:#f0fdf4; margin-top:24px; border-radius:0 8px 8px 0;">
+          <p style="color:#065f46; font-size:0.92rem; line-height:1.7; margin:0; font-style:italic;">"Unlike PERK inhibitors — which completely abolish ISR signaling and cause dose-limiting pancreatic toxicity — A15 operates within a defined activation window. It suppresses low-to-moderate chronic ISR activity but does not block strong acute stress responses, which remain essential for cell survival. This selectivity profile, documented by the Walter Lab (UCSF), explains the absence of overt toxicity in animal studies."</p>
+        </div>
       </div>
+
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 3 — Translational Restoration -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+          <div style="width:28px; height:28px; background:#ede9fe; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3zM14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3z"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">Translational restoration — how A15 reconnects cognition to protein synthesis</h3>
+        </div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 16px;">Memory formation is not merely electrical — it requires the physical synthesis of new proteins at synapses. Long-term potentiation (LTP), the cellular correlate of learning, depends on local dendritic protein synthesis within minutes to hours of synaptic activation. When the ISR is active, this synthesis is blocked upstream before it can begin.</p>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">A15’s intervention point — eIF2B stabilization — sits directly in this pathway. By maintaining eIF2B in its active decameric form, A15 allows translation to resume even in the presence of stress signals, restoring the protein supply chain for synaptic plasticity.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:22px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div style="width:36px; height:36px; background:#e0e7ff; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <strong style="color:#1e293b; font-size:0.95rem;">LTP &amp; Synaptic Plasticity</strong>
+            </div>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">eIF2B is the rate-limiting factor for mRNA translation initiation at activated synapses. A15’s eIF2B stabilization allows continued synthesis of plasticity-related proteins (Arc, CaMKII, BDNF) during periods of cellular stress — maintaining the molecular substrate for long-term memory formation when it would otherwise be suppressed.</p>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:22px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div style="width:36px; height:36px; background:#fce7f3; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#be185d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8l4 4-4 4"/></svg>
+              </div>
+              <strong style="color:#1e293b; font-size:0.95rem;">Integrated Stress Response &amp; Neurodegeneration</strong>
+            </div>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">Multiple neurodegenerative conditions (Alzheimer’s, Parkinson’s, ALS, prion disease) involve chronic ISR activation as a shared pathological mechanism. A15 provides a pharmacological probe for isolating the contribution of eIF2B dysregulation to disease progression — distinct from approaches targeting specific protein aggregates.</p>
+          </div>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:22px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div style="width:36px; height:36px; background:#d1fae5; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <strong style="color:#1e293b; font-size:0.95rem;">Decamer Stability &amp; Structural Biology</strong>
+            </div>
+            <p style="color:#475569; font-size:0.9rem; line-height:1.75; margin:0;">The eIF2B decamer (composed of two α₂βγδε tetramers) is the enzymatic core of translational control. A15’s binding site at the β/δ interface provides a chemical handle for structural studies of decamer assembly, making it a valuable tool for cryo-EM and crystallography research into ISR biology.</p>
+          </div>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 4 — Mechanism of Action (3 steps) -->
+      <div style="margin-bottom:56px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
+          <div style="width:28px; height:28px; background:#f0fdf4; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">Mechanism of action</h3>
+        </div>
+        <div style="background:linear-gradient(135deg,#f0fdf4,#f0f9ff); border-radius:16px; padding:32px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px;">
+            <div style="text-align:center; padding:16px;">
+              <div style="width:56px; height:56px; background:#059669; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#fff; font-size:1.3rem; font-weight:800;">1</div>
+              <h4 style="color:#1e293b; font-size:0.95rem; font-weight:700; margin:0 0 10px;">eIF2B Binding</h4>
+              <p style="color:#475569; font-size:0.88rem; line-height:1.7; margin:0;">A15 crosses the blood-brain barrier rapidly (high CNS penetration, ~8h plasma half-life in rodents) and binds with sub-nanomolar affinity (EC50 ≈ 0.8 nM) at the interface of the eIF2B β and δ subunits — a site geometrically distinct from the eIF2α regulatory interface.</p>
+            </div>
+            <div style="text-align:center; padding:16px;">
+              <div style="width:56px; height:56px; background:#0891b2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#fff; font-size:1.3rem; font-weight:800;">2</div>
+              <h4 style="color:#1e293b; font-size:0.95rem; font-weight:700; margin:0 0 10px;">Decamer Stabilization</h4>
+              <p style="color:#475569; font-size:0.88rem; line-height:1.7; margin:0;">Binding induces conformational stabilization of the eIF2B decameric complex, facilitating assembly of two eIF2B(βγδε) tetramers with one eIF2B(α)₂ dimer. This decamer is the maximally active form of eIF2B and is sterically resistant to competitive inhibition by phosphorylated eIF2α — effectively overriding the ISR brake without eliminating stress sensing.</p>
+            </div>
+            <div style="text-align:center; padding:16px;">
+              <div style="width:56px; height:56px; background:#7c3aed; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#fff; font-size:1.3rem; font-weight:800;">3</div>
+              <h4 style="color:#1e293b; font-size:0.95rem; font-weight:700; margin:0 0 10px;">Translational Restoration</h4>
+              <p style="color:#475569; font-size:0.88rem; line-height:1.7; margin:0;">Active eIF2B catalyzes GDP→GTP exchange on eIF2α, regenerating the eIF2-GTP-Met-tRNAi ternary complex required for ribosomal scanning and AUG recognition. Restored ternary complex availability enables resumption of cap-dependent mRNA translation — including synthesis of plasticity proteins at activated synapses.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #f1f5f9; margin:0 0 56px;">
+
+      <!-- BLOCK 5 — Key Research Applications -->
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
+          <div style="width:28px; height:28px; background:#fef9c3; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h3 style="font-size:1.3rem; font-weight:700; color:#1e293b; margin:0;">Key research applications</h3>
+        </div>
+        <p style="color:#475569; line-height:1.8; font-size:0.97rem; margin:0 0 24px;">The breadth of A15’s utility spans from fundamental translational biology to disease-specific therapeutic probe development. Below are the primary research domains where A15 is deployed as the preferred high-potency ISR tool compound.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;">
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#f0fdf4; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Neurodegeneration &amp; ISR Biology</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">A15 is the highest-potency available ISR inhibitor, making it the preferred tool compound for dissecting eIF2B function in neurodegeneration models. Active in ALS, Alzheimer’s, Parkinson’s, and prion disease research contexts where chronic ISR activation is a shared pathological feature.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#ede9fe; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8l4 4-4 4"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">TBI &amp; Neurological Recovery</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">Based on the 2017 Rosi/Walter study demonstrating post-TBI memory restoration in rodent models. A15 enables investigation of the temporal window for ISR intervention after brain injury and the relationship between eIF2B activity and neurological recovery trajectories.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#fef9c3; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Aging &amp; Cognitive Decline</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">The ISR becomes chronically elevated in aged brain tissue. A15 provides a pharmacological tool for studying whether ISR-dependent translational suppression is a driver — rather than correlate — of age-related cognitive decline, and for exploring intervention windows in aging models.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#fee2e2; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">eIF2B Structural Biology</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">A15’s defined binding site at the eIF2B β/δ interface makes it an ideal ligand for cryo-EM co-crystallization studies, hydrogen-deuterium exchange mass spectrometry (HDX-MS), and allosteric network mapping of the eIF2B decamer complex.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#e0f2fe; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3zM14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3z"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">Vanishing White Matter Disease</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">VWMD is caused by heterozygous mutations across eIF2B subunits that destabilize decamer assembly. A15 rescues mutant eIF2B complex stability in cellular models of VWMD, positioning it as a probe for gain-of-function stabilization strategies in eIF2B-related leukodystrophies.</p></div>
+          </div>
+          <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:38px; height:38px; background:#fce7f3; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#be185d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div><strong style="display:block; color:#1e293b; font-size:0.95rem; margin-bottom:6px;">ISR-Plasticity Coupling</strong><p style="color:#64748b; font-size:0.88rem; line-height:1.7; margin:0;">For researchers investigating the relationship between cellular stress responses and synaptic plasticity, A15 enables conditional restoration of eIF2B activity in specific contexts — allowing dissection of which aspects of LTP, fear memory, and spatial navigation are ISR-gated.</p></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-      
-   <!-- SCIENCE (переміщено після покупки) -->
-  <section id="science" class="science-section">
-    <div class="container">
-      <h2 class="section-title">The Science behind ISRIB A15</h2>
-
-      <div class="science-grid">
-        <div>
-          <h3 class="science-h3">🔬 Discovery at UCSF</h3>
-          <p class="muted">Originally discovered by Peter Walter’s team at UCSF, ISRIB restored learning & memory in brain‑injured and elderly mice. A15 is an optimized analog with improved potency and PK, tuned for oral bioavailability.</p>
-        </div>
-        <div class="science-card">
-          <div class="icon">🧬</div>
-          <h4>Published Research</h4>
-          <p class="muted">Featured across peer‑reviewed literature (Science, eLife, Nature).</p>
-        </div>
-      </div>
-
-      <div class="how-works">
-        <h3>How A15 Works</h3>
-        <div class="steps">
-          <div class="step">
-            <div class="bubble">1</div>
-            <h4>ISR Activation</h4>
-            <p class="muted">Stress/aging triggers the Integrated Stress Response.</p>
-          </div>
-          <div class="step">
-            <div class="bubble">2</div>
-            <h4>eIF2B Enhancement</h4>
-            <p class="muted">A15 binds eIF2B, stabilizing translation despite stress signals.</p>
-          </div>
-          <div class="step">
-            <div class="bubble">3</div>
-            <h4>Cognitive Restoration</h4>
-            <p class="muted">Neurons resume protein synthesis required for memory & plasticity.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-<!-- Why A15 vs Original ISRIB -->
-  <section style="background: #f8fafc; padding: 80px 0;">
-    <div class="container">
-      <h2 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; text-align: center; margin-bottom: 60px;">Why ISRIB A15 Over Original ISRIB?</h2>
-      <div class="a15-compare" style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,.1);">
-        <div>
-          <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr style="background: #f8fafc;">
-                <th style="padding: 20px; text-align: left; font-weight: 700; color: #1e293b; border-bottom: 2px solid #e5e7eb;">Feature</th>
-                <th style="padding: 20px; text-align: center; font-weight: 700; color: #dc2626; border-bottom: 2px solid #e5e7eb;">ISRIB A15</th>
-                <th style="padding: 20px; text-align: center; font-weight: 700; color: #64748b; border-bottom: 2px solid #e5e7eb;">Original ISRIB</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Potency</td>
-                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">10x Higher</td>
-                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">Baseline</td>
-              </tr>
-              <tr style="background: #f8fafc;">
-                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Effective Dose</td>
-                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">5–15 mg</td>
-                <td style="padding: 15px; text-align: center; color: #64748b; border-bottom: 1px solid #f1f5f9;">50+ mg</td>
-              </tr>
-              <tr>
-                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Oral Bioavailability</td>
-                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Enhanced</td>
-                <td style="padding: 15px; text-align: center; color: #dc2626; border-bottom: 1px solid #f1f5f9;">Limited</td>
-              </tr>
-              <tr style="background: #f8fafc;">
-                <td style="padding: 15px; font-weight: 600; color: #374151; border-bottom: 1px solid #f1f5f9;">Solubility</td>
-                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Improved</td>
-                <td style="padding: 15px; text-align: center; color: #dc2626; border-bottom: 1px solid #f1f5f9;">Poor</td>
-              </tr>
-              <tr>
-                <td style="padding: 15px; font-weight: 600; color: #374151;">Cost per Effect</td>
-                <td style="padding: 15px; text-align: center; color: #059669; font-weight: 600;">Lower</td>
-                <td style="padding: 15px; text-align: center; color: #dc2626;">Higher</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div style="background: #dcfdf7; border: 1px solid #10b981; border-radius: 12px; padding: 25px; margin-top: 30px;">
-          <h4 style="color: #059669; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 1.2rem;">💡</span> ISRIB A15 delivers similar cognitive benefits at much lower doses with better absorption and cost‑effectiveness.
-          </h4>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Technical Specifications -->
   <section style="background: #1e293b; color: white; padding: 80px 0;">
@@ -588,13 +661,110 @@
           <div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">COA:</span><span style="color: #10b981; font-weight: 600;">✓ Included</span></div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">¹H NMR:</span><span style="color: #10b981; font-weight: 600;">✓ Available</span></div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">Mass Spec:</span><span style="color: #10b981; font-weight: 600;">✓ Available</span></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><span style="color: #94a3b8;">¹³C NMR</span><span style="color: #10b981; font-weight: 600;">✓ Available</span></div>
             <div style="display: flex; justify-content: space-between;"><span style="color: #94a3b8;">Safety Data:</span><span style="color: #10b981; font-weight: 600;">✓ Provided</span></div>
           </div>
         </div>
       </div>
     </div>
   </section>
+
+
+  <!-- NMR Characterization & Raw Data -->
+<section style="background:#f8fafc; padding:80px 0 60px;">
+  <div class="container">
+    <div style="max-width:900px; margin:0 auto;">
+
+      <p style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#059669; font-weight:600; text-align:center; margin:0 0 10px;">Quality verification</p>
+      <h2 style="font-size:2.2rem; font-weight:800; color:#1e293b; text-align:center; margin:0 0 16px; line-height:1.25;">NMR Characterization</h2>
+      <p style="color:#64748b; text-align:center; font-size:1rem; line-height:1.7; max-width:680px; margin:0 auto 16px;">
+        Every batch is characterised by ¹H and ¹³C NMR spectroscopy. We publish both processed spectra and <strong style="color:#1e293b;">raw FID data</strong> so any researcher with NMR software can independently verify the structure and purity of what they receive.
+      </p>
+      <p style="color:#64748b; text-align:center; font-size:0.9rem; margin:0 auto 48px; max-width:600px;">
+        Raw FID files are compatible with MestReNova, TopSpin, and other standard NMR processing software.
+      </p>
+
+      <!-- Spectra images -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px; margin-bottom:40px;">
+
+        <!-- H1 -->
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;">
+          <div style="padding:16px 20px 12px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+              <span style="font-size:0.8rem; font-weight:700; color:#059669; letter-spacing:.05em; text-transform:uppercase;">¹H NMR</span>
+              <p style="font-size:0.85rem; color:#64748b; margin:2px 0 0;">400 MHz · DMSO-d₆</p>
+            </div>
+            <span style="background:#f0fdf4; color:#059669; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:20px; border:1px solid #bbf7d0;">Batch 2</span>
+          </div>
+          <div style="padding:16px; background:#fafafa;">
+            <img src="images/isrib-a15-nmr-h1.png"
+                 alt="¹H NMR spectrum of ISRIB A15 — Batch 2"
+                 class="nmr-thumb"
+                 style="width:100%; height:auto; display:block; border-radius:8px;"
+                 loading="lazy">
+          </div>
+          <div style="padding:12px 20px 16px;">
+            <p style="font-size:0.82rem; color:#64748b; line-height:1.6; margin:0;">
+              Key signals: δ 7.54 (d, ArH, 2H), 7.24 (d, ArH, 2H), 6.99 (d, ArH, 2H), 4.51 (s, OCH₂, 4H), 3.60 (m, CH, 2H), 1.79 (m, CH₂, 4H), 1.35 (m, CH₂/CH₃, 4H)
+            </p>
+          </div>
+        </div>
+
+        <!-- C13 -->
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;">
+          <div style="padding:16px 20px 12px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; justify-content:space-between;">
+            <div>
+              <span style="font-size:0.8rem; font-weight:700; color:#7c3aed; letter-spacing:.05em; text-transform:uppercase;">¹³C NMR</span>
+              <p style="font-size:0.85rem; color:#64748b; margin:2px 0 0;">100 MHz · DMSO-d₆</p>
+            </div>
+            <span style="background:#f5f3ff; color:#7c3aed; font-size:0.75rem; font-weight:600; padding:4px 10px; border-radius:20px; border:1px solid #ddd6fe;">Batch 2</span>
+          </div>
+          <div style="padding:16px; background:#fafafa;">
+            <img src="images/isrib-a15-nmr-c13.png"
+                 alt="¹³C NMR spectrum of ISRIB A15 — Batch 2"
+                 class="nmr-thumb"
+                 style="width:100%; height:auto; display:block; border-radius:8px;"
+                 loading="lazy">
+          </div>
+          <div style="padding:12px 20px 16px;">
+            <p style="font-size:0.82rem; color:#64748b; line-height:1.6; margin:0;">
+              Key signals: δ 166.08 (C=O amide), 157.25 (ArC-O), 131.41, 130.91, 122.91, 116.87, 115.62 (ArCH), 67.29 (OCH₂), 46.93 (CH), 30.82 (CH₂)
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Raw data download banner -->
+      <div style="background:linear-gradient(135deg,#1e293b,#0f172a); border-radius:16px; padding:32px; display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between;">
+        <div style="flex:1; min-width:220px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <h3 style="color:#f1f5f9; font-size:1.1rem; font-weight:700; margin:0;">Download raw FID data</h3>
+          </div>
+          <p style="color:#94a3b8; font-size:0.9rem; line-height:1.65; margin:0;">
+            We don’t just show you pictures. Download the original spectrometer output and process it yourself in MestReNova, TopSpin, or any compatible NMR software. Every peak, every integration — fully verifiable.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
+          <a href="downloads/ISRIB-A15-H1.zip"
+             download
+             style="display:inline-flex; align-items:center; gap:8px; background:#059669; color:#fff; font-weight:700; font-size:0.9rem; padding:11px 20px; border-radius:10px; text-decoration:none; white-space:nowrap;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            ¹H FID data (.zip)
+          </a>
+          <a href="downloads/ISRIB-A15-C13.zip"
+             download
+             style="display:inline-flex; align-items:center; gap:8px; background:#7c3aed; color:#fff; font-weight:700; font-size:0.9rem; padding:11px 20px; border-radius:10px; text-decoration:none; white-space:nowrap;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            ¹³C FID data (.zip)
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
   
  <!-- Footer -->
   <footer class="footer">
@@ -609,9 +779,11 @@
           <h3>Products</h3>
           <ul>
             <li><a href="product_isrib_A15.html">ISRIB-A15</a></li>
-            <li><a href="product_isrib.html">ISRIB</a></li>
-            <li><a href="product_zzl_7.html">ZZL-7</a></li>
+            <li><a href="product_isrib.html">ISRIB Original</a></li>
             <li><a href="product_MPEP.html">MPEP Oxalate</a></li>
+            <li><a href="product_n_acetyl_bromantane.html">N-Acetyl-Bromantane</a></li>
+            <li><a href="product_bromantane.html">Bromantane</a></li>
+            <li><a href="product_zzl_7.html">ZZL-7</a></li>
             <li><a href="products.html">All Products</a></li>
           </ul>
         </div>
@@ -690,5 +862,36 @@ window.dataLayer.push({
 <!-- Enhanced Analytics -->
 <script src="/analytics/analytics-loader.js" defer></script>
 
+<!-- NMR Lightbox -->
+<div class="nmr-lightbox-overlay" id="nmrLightbox" role="dialog" aria-modal="true" aria-label="NMR spectrum enlarged view">
+  <button class="nmr-lightbox-close" id="nmrLightboxClose" aria-label="Close">✕</button>
+  <img src="" id="nmrLightboxImg" alt="NMR spectrum enlarged">
+</div>
+<script>
+(function(){
+  var overlay = document.getElementById('nmrLightbox');
+  var img     = document.getElementById('nmrLightboxImg');
+  var close   = document.getElementById('nmrLightboxClose');
+
+  document.querySelectorAll('.nmr-thumb').forEach(function(el){
+    el.addEventListener('click', function(){
+      img.src = el.src;
+      img.alt = el.alt;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeLightbox(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    img.src = '';
+  }
+
+  close.addEventListener('click', closeLightbox);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeLightbox(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLightbox(); });
+})();
+</script>
 </body>
 </html>
