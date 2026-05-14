@@ -145,7 +145,9 @@ const TEMPLATES = {
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">All three are synthesised in-house and verified by NMR — we publish both processed spectra and raw FID data so you can check the structure yourself.</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib.shop/products.html?utm_source=email&utm_campaign=new_products_may26&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">View new products</a></p>
     <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 8px;">Now available:</p>
-    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• Bromantane — dopaminergic actoprotector, TH upregulator<br>• N-Acetyl-Bromantane — safer acylated analog, LD₅₀ 5,640 mg/kg (vs 1,020 mg/kg in bromantane)<br>• MPEP Oxalate — selective mGluR5 NAM, antiaddiction &amp; cognition research chemical</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 4px;padding-left:20px;">• Bromantane — dopaminergic actoprotector, TH upregulator</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 4px;padding-left:20px;">• N-Acetyl-Bromantane — 5 times safer acylated analog, LD50 5,640 mg/kg (vs 1,020 mg/kg in bromantane)</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• MPEP Oxalate — selective mGluR5 NAM, addiction &amp; cognition research</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Thanks,</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
     <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
