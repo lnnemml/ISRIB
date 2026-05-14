@@ -129,6 +129,32 @@ const TEMPLATES = {
   </div>
 </body>
 </html>`
+  },
+  '6': {
+    subject: '{{firstName}}, product update',
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
+  <div style="max-width:600px;margin:40px auto;padding:0 20px;">
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick update — we added three new compounds to the shop.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">All three are synthesised in-house and verified by NMR — we publish both processed spectra and raw FID data so you can check the structure yourself.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib.shop/products.html?utm_source=email&utm_campaign=new_products_may26&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">View new products</a></p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 8px;">Now available:</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:20px;">• Bromantane — dopaminergic actoprotector, TH upregulator<br>• N-Acetyl-Bromantane — acylated analog, LD₅₀ 5,640 mg/kg<br>• MPEP Oxalate — selective mGluR5 NAM, addiction &amp; cognition research</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">Thanks,</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">Danylo<br><span style="color:#64748b;font-size:14px;">ISRIB Shop</span></p>
+    <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
+      <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Verified COA • Worldwide shipping</p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="https://isrib.shop/api/leads?action=unsubscribe&email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
+    </div>
+  </div>
+</body>
+</html>`
   }
 };
 
@@ -174,8 +200,8 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    if (!campaignId || !['1', '2', '3', '4', '5'].includes(campaignId)) {
-      return res.status(400).json({ error: 'Invalid campaignId. Use "1", "2", "3", "4", or "5"' });
+    if (!campaignId || !['1', '2', '3', '4', '5', '6'].includes(campaignId)) {
+      return res.status(400).json({ error: 'Invalid campaignId. Use "1" through "6"' });
     }
 
     if (!Array.isArray(customers) || customers.length === 0) {
