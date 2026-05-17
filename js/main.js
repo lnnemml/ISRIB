@@ -2835,28 +2835,26 @@ function initCheckoutForm() {
           var trackingFbc = localStorage.getItem('fbc') || '';
           var trackingEmail = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
 
-          fetch('https://isrib-analytics-api-fbqy.vercel.app/api/order-submitted', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              orderId: window._generatedOrderId,
-              email: trackingEmail,
-              value: cartValue,
-              currency: 'USD',
-              fbp: trackingFbp,
-              fbc: trackingFbc,
-              contents: cart.map(function(item) {
-                return {
-                  id: item.sku || 'isrib-a15',
-                  quantity: Number(item.count || 1),
-                  item_price: Number(item.price || 0)
-                };
-              })
+          var capiPayload = JSON.stringify({
+            orderId: window._generatedOrderId,
+            email: trackingEmail,
+            value: cartValue,
+            currency: 'USD',
+            fbp: trackingFbp,
+            fbc: trackingFbc,
+            contents: cart.map(function(item) {
+              return {
+                id: item.sku || 'isrib-a15',
+                quantity: Number(item.count || 1),
+                item_price: Number(item.price || 0)
+              };
             })
-          })
-          .then(function(r) { return r.json(); })
-          .then(function(d) { console.log('[CAPI order_submitted] ✅', d); })
-          .catch(function(e) { console.warn('[CAPI order_submitted] ⚠️', e); });
+          });
+          var beaconSent = navigator.sendBeacon(
+            'https://isrib-analytics-api-fbqy.vercel.app/api/order-submitted',
+            new Blob([capiPayload], { type: 'application/json' })
+          );
+          console.log('[CAPI order_submitted] beacon sent:', beaconSent);
         } catch(e) {
           console.warn('[analytics] order_submitted failed:', e);
         }
