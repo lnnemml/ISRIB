@@ -665,38 +665,7 @@
             console.error('[Reddit Pixel] ❌ Failed to send purchase event:', rdtError);
           }
 
-          // ============================================
-          // SERVER-SIDE: Meta CAPI + GA4 Measurement Protocol
-          // ============================================
-          try {
-            if (data.order.fbp || data.order.fbc || data.order.ga_client_id) {
-              fetch('https://isrib-analytics-api-fbqy.vercel.app/api/confirm-purchase', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  orderId: orderId,
-                  email: data.order.email || 'unknown@isrib.shop',
-                  value: orderValue,
-                  currency: 'USD',
-                  fbp: data.order.fbp || '',
-                  fbc: data.order.fbc || '',
-                  contents: (data.order.items || []).map(item => ({
-                    id: item.item_id || item.sku || 'ISRIB-A15',
-                    quantity: Number(item.quantity || 1),
-                    item_price: Number(item.price || 0)
-                  }))
-                })
-              })
-              .then(r => r.json())
-              .then(d => console.log('[CAPI] ✅ Sent:', d))
-              .catch(e => console.error('[CAPI] ❌ Failed:', e));
-            } else {
-              console.warn('[CAPI] ⚠️ No tracking IDs in order, skipping server-side call');
-            }
-          } catch(capiError) {
-            console.error('[CAPI] ❌ Error:', capiError);
-          }
-
+          
           // Reload orders
           setTimeout(() => loadOrders(), 2000);
           
