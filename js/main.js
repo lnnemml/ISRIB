@@ -2831,41 +2831,32 @@ function initCheckoutForm() {
           });
 
           // Meta CAPI: order_submitted
-          (function() {
-            try {
-              var _utm2 = window.ISRIBTracking && window.ISRIBTracking.getUTM
-                ? window.ISRIBTracking.getUTM() : {};
-              var trackingFbp = localStorage.getItem('fbp') || '';
-              var trackingFbc = localStorage.getItem('fbc') || '';
-              var trackingEmail = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
-              var capiValue = cartValue || 0;
+          var trackingFbp = localStorage.getItem('fbp') || '';
+          var trackingFbc = localStorage.getItem('fbc') || '';
+          var trackingEmail = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
 
-              fetch('https://isrib-analytics-api-fbqy.vercel.app/api/order-submitted', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  orderId: window._generatedOrderId,
-                  email: trackingEmail,
-                  value: capiValue,
-                  currency: 'USD',
-                  fbp: trackingFbp,
-                  fbc: trackingFbc,
-                  contents: cart.map(function(item) {
-                    return {
-                      id: item.sku || 'isrib-a15',
-                      quantity: Number(item.count || 1),
-                      item_price: Number(item.price || 0)
-                    };
-                  })
-                })
+          fetch('https://isrib-analytics-api-fbqy.vercel.app/api/order-submitted', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: window._generatedOrderId,
+              email: trackingEmail,
+              value: cartValue,
+              currency: 'USD',
+              fbp: trackingFbp,
+              fbc: trackingFbc,
+              contents: cart.map(function(item) {
+                return {
+                  id: item.sku || 'isrib-a15',
+                  quantity: Number(item.count || 1),
+                  item_price: Number(item.price || 0)
+                };
               })
-              .then(function(r) { return r.json(); })
-              .then(function(d) { console.log('[CAPI order_submitted] ✅', d); })
-              .catch(function(e) { console.warn('[CAPI order_submitted] ⚠️', e); });
-            } catch(capiErr) {
-              console.warn('[CAPI order_submitted] setup error:', capiErr);
-            }
-          })();
+            })
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(d) { console.log('[CAPI order_submitted] ✅', d); })
+          .catch(function(e) { console.warn('[CAPI order_submitted] ⚠️', e); });
         } catch(e) {
           console.warn('[analytics] order_submitted failed:', e);
         }
