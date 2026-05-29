@@ -534,7 +534,58 @@
       });
       
       console.log('[GA4] ✅ begin_checkout pushed to dataLayer');
-      
+
+      // ============================================
+      // ✅ META CAPI: ViewContent / Begin Checkout
+      // ============================================
+      (function sendBeginCheckoutCAPI() {
+        try {
+          // Get or create session-scoped event_id for deduplication
+          var capiEidKey = '_capi_eid_begin_checkout';
+          var capiEventId = sessionStorage.getItem(capiEidKey);
+          if (!capiEventId) {
+            capiEventId = 'begin_checkout_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+            sessionStorage.setItem(capiEidKey, capiEventId);
+          }
+
+          // Get fbp from cookie
+          var fbpMatch = document.cookie.split('; ').find(function(r) { return r.startsWith('_fbp='); });
+          var fbpVal = fbpMatch ? fbpMatch.split('=')[1] : (localStorage.getItem('fbp') || undefined);
+
+          // Get fbc from cookie or construct from fbclid
+          var fbcMatch = document.cookie.split('; ').find(function(r) { return r.startsWith('_fbc='); });
+          var fbcVal = fbcMatch ? fbcMatch.split('=')[1] : (localStorage.getItem('fbc') || undefined);
+          if (!fbcVal) {
+            try {
+              var utm = window.ISRIBTracking && window.ISRIBTracking.getUTM ? window.ISRIBTracking.getUTM() : {};
+              if (utm.fbclid) fbcVal = 'fb.1.' + Date.now() + '.' + utm.fbclid;
+            } catch(e) {}
+          }
+
+          var capiPayload = JSON.stringify({
+            event_name: 'InitiateCheckout',
+            event_id: capiEventId,
+            source_url: window.location.href,
+            fbp: fbpVal,
+            fbc: fbcVal,
+            value: cartValue,
+            currency: 'USD',
+            content_ids: ['isrib-a15'],
+            content_name: 'ISRIB A15',
+            content_type: 'product',
+          });
+
+          var capiBlob = new Blob([capiPayload], { type: 'application/json' });
+          var beaconResult = navigator.sendBeacon(
+            'https://isrib-analytics-api-fbqy.vercel.app/api/funnel-event',
+            capiBlob
+          );
+          console.log('[CAPI begin_checkout] beacon sent:', beaconResult, 'value:', cartValue);
+        } catch(capiErr) {
+          console.warn('[CAPI begin_checkout] failed:', capiErr);
+        }
+      })();
+
       // ============================================
       // ✅ REDDIT PIXEL EVENT: AddToCart (Begin Checkout)
       // ============================================
