@@ -2855,6 +2855,19 @@ function initCheckoutForm() {
             new Blob([capiPayload], { type: 'application/json' })
           );
           console.log('[CAPI order_submitted] beacon sent:', beaconSent);
+          // Browser-side Meta Purchase event (deduplication with CAPI via eventID)
+          if (typeof fbq === 'function') {
+            fbq('track', 'Purchase', {
+              value: cartValue,
+              currency: 'USD',
+              content_ids: cart.map(function(item) { return item.sku || 'isrib-a15'; }),
+              content_type: 'product',
+              num_items: cart.reduce(function(n, item) { return n + Number(item.count || 1); }, 0)
+            }, {
+              eventID: window._generatedOrderId
+            });
+            console.log('[Meta Pixel] ✅ Purchase tracked, eventID:', window._generatedOrderId, 'value:', cartValue);
+          }
         } catch(e) {
           console.warn('[analytics] order_submitted failed:', e);
         }
