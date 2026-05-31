@@ -32,8 +32,6 @@
       { selector: '#shippingSection, .shipping-form', name: 'shipping_form' },
       { selector: '#paymentSection, .payment-form', name: 'payment_form' },
       { selector: '.order-summary, #orderSummary', name: 'order_summary' },
-      { selector: '#checkoutUpsell', name: 'checkout_upsell' },
-
       // General
       { selector: '.cta-section, .call-to-action', name: 'cta' },
       { selector: 'footer, .site-footer', name: 'footer' }
