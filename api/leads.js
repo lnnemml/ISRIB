@@ -69,9 +69,9 @@ async function ensureTable(sql) {
 
 const SUBJECTS = {
   1: "Your brain isn't broken — it's stuck",
-  2: 'The lab accident that reversed brain damage',
-  3: 'What actually happens in the first 72 hours',
-  4: 'The complete ISRIB A15 protocol',
+  2: 'Your skepticism is the product.',
+  3: 'The mud cleared.',
+  4: 'The protocol. What to take, when, and what to expect.',
 };
 
 // ─── QStash signature verification ──────────────────────────────────────────
