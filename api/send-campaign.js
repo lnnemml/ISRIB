@@ -290,10 +290,9 @@ export default async function handler(req, res) {
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
-          replyTo: 'isrib.shop@protonmail.com',
-          
+
           headers: {
-            'List-Unsubscribe': `<https://isrib.shop/unsubscribe?email=${encodeURIComponent(customer.email)}>`,
+            'List-Unsubscribe': `<https://isrib.shop/api/leads?action=unsubscribe&email=${encodeURIComponent(customer.email)}>`,
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
           },
           
