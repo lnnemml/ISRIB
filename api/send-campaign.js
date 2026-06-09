@@ -172,12 +172,12 @@ const TEMPLATES = {
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick heads up — I put together a research hub at isrib-research.com.</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Most questions I get about the mechanism, dosing, and how A15 compares to modafinil or racetams — it's all there now, written for people who actually read papers.</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">A few pieces worth checking depending on where you are:</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">→ <a href="https://isrib-research.com/guide/isrib-a15-complete-guide?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Full A15 guide</a></p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">→ <a href="https://isrib-research.com/blog/how-to-fix-brain-fog?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Brain fog — what actually works</a></p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib-research.com/compare/isrib-vs-modafinil?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">A15 vs modafinil</a></p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">If you've been thinking about ordering — <a href="https://isrib.shop/products.html?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">isrib.shop</a> has everything in stock.</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 4px;">SR</p>
-    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 32px;">The Synthesis Lab</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">→ <a href="https://isrib-research.com/guide/isrib-a15-complete-guide" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Full A15 guide</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">→ <a href="https://isrib-research.com/blog/how-to-fix-brain-fog" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Brain fog — what actually works</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib-research.com/compare/isrib-vs-modafinil" style="color:#0ea5e9;text-decoration:none;font-weight:600;">A15 vs modafinil</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">If you've been thinking about ordering — <a href="https://isrib.shop/products.html" style="color:#0ea5e9;text-decoration:none;font-weight:600;">isrib.shop</a> has everything in stock.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 4px;">Danylo</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 32px;">ISRIB Shop</p>
     <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
       <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Verified COA • Worldwide shipping</p>
       <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="https://isrib.shop/api/leads?action=unsubscribe&email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
