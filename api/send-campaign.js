@@ -157,6 +157,34 @@ const TEMPLATES = {
   </div>
 </body>
 </html>`
+  },
+  '7': {
+    subject: '{{firstName}}, quick heads up',
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
+  <div style="max-width:600px;margin:40px auto;padding:0 20px;">
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Quick heads up — I put together a research hub at isrib-research.com.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Most questions I get about the mechanism, dosing, and how A15 compares to modafinil or racetams — it's all there now, written for people who actually read papers.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">A few pieces worth checking depending on where you are:</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">→ <a href="https://isrib-research.com/guide/isrib-a15-complete-guide?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Full A15 guide</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 8px;">→ <a href="https://isrib-research.com/blog/how-to-fix-brain-fog?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Brain fog — what actually works</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">→ <a href="https://isrib-research.com/compare/isrib-vs-modafinil?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">A15 vs modafinil</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">If you've been thinking about ordering — <a href="https://isrib.shop/products.html?utm_source=email&utm_campaign=research_hub&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">isrib.shop</a> has everything in stock.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 4px;">SR</p>
+    <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 32px;">The Synthesis Lab</p>
+    <div style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:40px;">
+      <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin:0 0 8px;">Research compounds • Verified COA • Worldwide shipping</p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;"><a href="https://isrib.shop/api/leads?action=unsubscribe&email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
+    </div>
+  </div>
+</body>
+</html>`
   }
 };
 
@@ -202,8 +230,8 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    if (!campaignId || !['1', '2', '3', '4', '5', '6'].includes(campaignId)) {
-      return res.status(400).json({ error: 'Invalid campaignId. Use "1" through "6"' });
+    if (!campaignId || !['1', '2', '3', '4', '5', '6', '7'].includes(campaignId)) {
+      return res.status(400).json({ error: 'Invalid campaignId. Use "1" through "7"' });
     }
 
     if (!Array.isArray(customers) || customers.length === 0) {
