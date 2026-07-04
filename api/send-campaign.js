@@ -181,6 +181,26 @@ const TEMPLATES = {
   </div>
 </body>
 </html>`
+  },
+  '8': {
+    subject: '{{firstName}}, happy 4th',
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
+  <div style="max-width:600px;margin:40px auto;padding:0 20px;">
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Happy Independence Day — whether you're celebrating or not, here's something from me.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">Here's <strong>USA15</strong> for 15% off, valid through Sunday, July 6th.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">→ <a href="https://isrib.shop/products.html?promo=USA15&utm_source=email&utm_campaign=4thjuly_2026&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Shop ISRIB A15</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 4px;">Danylo</p>
+    <p style="color:#94a3b8;font-size:12px;margin:0;margin-top:40px;"><a href="https://isrib.shop/api/leads?action=unsubscribe&email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
+  </div>
+</body>
+</html>`
   }
 };
 
@@ -226,8 +246,8 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    if (!campaignId || !['1', '2', '3', '4', '5', '6', '7'].includes(campaignId)) {
-      return res.status(400).json({ error: 'Invalid campaignId. Use "1" through "7"' });
+    if (!campaignId || !['1', '2', '3', '4', '5', '6', '7', '8'].includes(campaignId)) {
+      return res.status(400).json({ error: 'Invalid campaignId. Use "1" through "8"' });
     }
 
     if (!Array.isArray(customers) || customers.length === 0) {
