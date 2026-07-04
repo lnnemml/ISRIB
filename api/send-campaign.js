@@ -193,11 +193,12 @@ const TEMPLATES = {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;">
   <div style="max-width:600px;margin:40px auto;padding:0 20px;">
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi {{firstName}},</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Happy Independence Day — whether you're celebrating or not, here's something from me.</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">Here's <strong>USA15</strong> for 15% off, valid through Sunday, July 6th.</p>
-    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 32px;">→ <a href="https://isrib.shop/products.html?promo=USA15&utm_source=email&utm_campaign=4thjuly_2026&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;font-weight:600;">Shop ISRIB A15</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Happy 4th — hope it's a good one wherever you are.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">Running 15% off through Sunday. Code is USA15 — works at checkout on anything in the shop.</p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;"><a href="https://isrib.shop/products.html?promo=USA15&utm_source=email&utm_campaign=4thjuly_2026&utm_content={{firstName}}" style="color:#0ea5e9;text-decoration:none;">isrib.shop</a></p>
+    <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">How's everything been going since your last order? Happy to answer anything — just reply here.</p>
     <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 4px;">Danylo</p>
-    <p style="color:#94a3b8;font-size:12px;margin:0;margin-top:40px;"><a href="https://isrib.shop/api/leads?action=unsubscribe&email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
+    <p style="color:#94a3b8;font-size:12px;margin:0;margin-top:48px;"><a href="https://isrib.shop/api/leads?action=unsubscribe&email={{email}}" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a></p>
   </div>
 </body>
 </html>`
@@ -303,6 +304,7 @@ export default async function handler(req, res) {
 
         const result = await resend.emails.send({
           from: 'Danylo from ISRIB <noreply@isrib.shop>',
+          replyTo: 'danylo@isrib.shop',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
