@@ -304,7 +304,7 @@ export default async function handler(req, res) {
 
         const result = await resend.emails.send({
           from: 'Danylo from ISRIB <noreply@isrib.shop>',
-          replyTo: 'danylo@isrib.shop',
+          replyTo: 'isrib.shop@protonmail.com',
           to: customer.email,
           subject: personalizedSubject,
           html: personalizedHtml,
